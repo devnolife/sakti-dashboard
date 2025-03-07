@@ -17,38 +17,38 @@ interface RoleMobileMenuProps {
 }
 
 export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
-  const pathname = usePathname()
+  const pathname = usePathname() ?? "";
   const [isOpen, setIsOpen] = useState(false)
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
   const { user, logout } = useAuth()
 
-  // Close the mobile menu when navigating
+  
   useEffect(() => {
     setIsOpen(false)
   }, [pathname])
 
-  // Initialize open menus based on current path
+  
   useEffect(() => {
     const newOpenMenus: Record<string, boolean> = {}
 
-    // Get the menu items for the current role
+    
     const items = menuItems[role] || []
 
-    // Check each menu item to see if it or its children match the current path
+    
     items.forEach((item) => {
-      // Check if the current path starts with this item's href
+      
       if (pathname.startsWith(item.href)) {
         newOpenMenus[item.id] = true
       }
 
-      // Check children if they exist
-      if (item.children) {
+      
+      if ('children' in item && item.children && Array.isArray(item.children)) {
         item.children.forEach((child) => {
           if (pathname.startsWith(child.href)) {
             newOpenMenus[item.id] = true
 
-            // If this child also has children, check them too
-            if (child.children) {
+            
+            if ('children' in child && child.children) {
               newOpenMenus[`${child.id}`] = true
             }
           }
@@ -71,15 +71,15 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
   }
 
   const isActive = (href: string) => {
-    // Exact match for dashboard root
+    
     if (href === `/dashboard/${role}` && pathname === `/dashboard/${role}`) {
       return true
     }
 
-    // For other pages, check if the pathname starts with the href
-    // But make sure it's not just a partial match of a parent route
+    
+    
     if (href !== `/dashboard/${role}` && pathname.startsWith(href)) {
-      // Check if the next character after href in pathname is '/' or nothing
+      
       const nextChar = pathname.charAt(href.length)
       return nextChar === "/" || nextChar === ""
     }
@@ -89,18 +89,18 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
 
   const roleItems = menuItems[role] || []
 
-  // Recursive function to render menu items and their children
+  
   const renderMenuItem = (item: any, depth = 0) => {
     const active = isActive(item.href)
-    const hasChildren = item.children && item.children.length > 0
+    const hasChildren = 'children' in item && item.children && item.children.length > 0
 
-    // Check if any child is active
+    
     const isChildActive =
       hasChildren &&
       item.children.some(
         (child: any) =>
           isActive(child.href) ||
-          (child.children && child.children.some((grandchild: any) => isActive(grandchild.href))),
+          ('children' in child && child.children && child.children.some((grandchild: any) => isActive(grandchild.href))),
       )
 
     return (

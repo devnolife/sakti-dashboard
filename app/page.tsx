@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
       <header className="text-white bg-gradient-to-r from-blue-600 to-indigo-700">
         <div className="container px-4 py-16 mx-auto md:py-24">
           <div className="max-w-3xl mx-auto text-center">
