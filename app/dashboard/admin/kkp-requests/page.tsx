@@ -121,8 +121,8 @@ export default function KKPRequestsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Loading...</h2>
-          <p className="text-muted-foreground">Please wait while we check your permissions.</p>
+          <h2 className="text-xl font-semibold">Memuat...</h2>
+          <p className="text-muted-foreground">Harap tunggu sementara kami memeriksa izin Anda.</p>
         </div>
       </div>
     )
@@ -156,8 +156,8 @@ export default function KKPRequestsPage() {
 
     // Show success toast
     toast({
-      title: "Letter Generated Successfully",
-      description: `Approval letter for request ${requestId} has been generated.`,
+      title: "Surat Berhasil Dibuat",
+      description: `Surat persetujuan untuk permintaan ${requestId} telah dibuat.`,
       duration: 5000,
     })
   }
@@ -173,8 +173,8 @@ export default function KKPRequestsPage() {
     )
 
     toast({
-      title: "Request Approved",
-      description: `Request ${requestId} has been approved.`,
+      title: "Permintaan Disetujui",
+      description: `Permintaan ${requestId} telah disetujui.`,
       duration: 5000,
     })
   }
@@ -190,8 +190,8 @@ export default function KKPRequestsPage() {
     )
 
     toast({
-      title: "Request Rejected",
-      description: `Request ${requestId} has been rejected.`,
+      title: "Permintaan Ditolak",
+      description: `Permintaan ${requestId} telah ditolak.`,
       duration: 5000,
     })
   }
@@ -203,28 +203,28 @@ export default function KKPRequestsPage() {
         return (
           <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Pending
+            Menunggu
           </Badge>
         )
       case "approved":
         return (
           <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-            Approved
+            Disetujui
           </Badge>
         )
       case "rejected":
         return (
           <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20">
             <XCircle className="h-3.5 w-3.5 mr-1" />
-            Rejected
+            Ditolak
           </Badge>
         )
       case "in-review":
         return (
           <Badge className="bg-blue-500/10 text-blue-500 hover:bg-blue-500/20">
             <AlertCircle className="h-3.5 w-3.5 mr-1" />
-            In Review
+            Dalam Tinjauan
           </Badge>
         )
       default:
@@ -237,11 +237,11 @@ export default function KKPRequestsPage() {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            KKP Request Management
+            Manajemen Permintaan KKP
           </span>
         </h2>
         <p className="text-muted-foreground mt-2">
-          Manage student KKP requests, review documents, and generate approval letters
+          Kelola permintaan KKP mahasiswa, tinjau dokumen, dan buat surat persetujuan
         </p>
       </div>
 
@@ -249,9 +249,9 @@ export default function KKPRequestsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
-            <span>Student KKP Requests</span>
+            <span>Permintaan KKP Mahasiswa</span>
           </CardTitle>
-          <CardDescription>Review and process student KKP requests</CardDescription>
+          <CardDescription>Tinjau dan proses permintaan KKP mahasiswa</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
@@ -259,7 +259,7 @@ export default function KKPRequestsPage() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by name or ID..."
+                placeholder="Cari berdasarkan nama atau NIM..."
                 className="w-full pl-8 rounded-full border-primary/20 focus-visible:ring-primary"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -268,14 +268,14 @@ export default function KKPRequestsPage() {
             <div className="flex gap-2 w-full md:w-auto">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder="Filter berdasarkan status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-review">In Review</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="pending">Menunggu</SelectItem>
+                  <SelectItem value="in-review">Dalam Tinjauan</SelectItem>
+                  <SelectItem value="approved">Disetujui</SelectItem>
+                  <SelectItem value="rejected">Ditolak</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" size="sm" className="rounded-full">
@@ -287,11 +287,11 @@ export default function KKPRequestsPage() {
 
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
-              <TabsTrigger value="all">All Requests</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="in-review">In Review</TabsTrigger>
-              <TabsTrigger value="approved">Approved</TabsTrigger>
-              <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsTrigger value="all">Semua Permintaan</TabsTrigger>
+              <TabsTrigger value="pending">Menunggu</TabsTrigger>
+              <TabsTrigger value="in-review">Dalam Tinjauan</TabsTrigger>
+              <TabsTrigger value="approved">Disetujui</TabsTrigger>
+              <TabsTrigger value="rejected">Ditolak</TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab}>
@@ -299,14 +299,14 @@ export default function KKPRequestsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[250px]">Student</TableHead>
-                      <TableHead>Request ID</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Group</TableHead>
-                      <TableHead>Submission Date</TableHead>
+                      <TableHead className="w-[250px]">Mahasiswa</TableHead>
+                      <TableHead>ID Permintaan</TableHead>
+                      <TableHead>Lokasi</TableHead>
+                      <TableHead>Kelompok</TableHead>
+                      <TableHead>Tanggal Pengajuan</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Documents</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>Dokumen</TableHead>
+                      <TableHead className="text-right">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -315,7 +315,7 @@ export default function KKPRequestsPage() {
                         <TableCell colSpan={8} className="text-center py-8">
                           <div className="flex flex-col items-center justify-center gap-2">
                             <AlertCircle className="h-8 w-8 text-muted-foreground" />
-                            <p className="text-muted-foreground">No requests found</p>
+                            <p className="text-muted-foreground">Tidak ada permintaan ditemukan</p>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -373,11 +373,11 @@ export default function KKPRequestsPage() {
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-1">
                                     <ChevronDown className="h-3 w-3" />
-                                    <span className="sr-only">View group members</span>
+                                    <span className="sr-only">Lihat anggota kelompok</span>
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start">
-                                  <DropdownMenuLabel>Group Members</DropdownMenuLabel>
+                                  <DropdownMenuLabel>Anggota Kelompok</DropdownMenuLabel>
                                   <DropdownMenuSeparator />
                                   {request.group.members.map((member) => (
                                     <DropdownMenuItem key={member.id}>
@@ -418,19 +418,19 @@ export default function KKPRequestsPage() {
                                 <div
                                   className={`h-2 w-2 rounded-full ${request.documents.parentalConsent ? "bg-green-500" : "bg-red-500"}`}
                                 ></div>
-                                <span className="text-xs">Parental Consent</span>
+                                <span className="text-xs">Persetujuan Orang Tua</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <div
                                   className={`h-2 w-2 rounded-full ${request.documents.transcript ? "bg-green-500" : "bg-red-500"}`}
                                 ></div>
-                                <span className="text-xs">Transcript</span>
+                                <span className="text-xs">Transkrip</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <div
                                   className={`h-2 w-2 rounded-full ${request.documents.applicationLetter ? "bg-green-500" : "bg-red-500"}`}
                                 ></div>
-                                <span className="text-xs">Application Letter</span>
+                                <span className="text-xs">Surat Pengajuan</span>
                               </div>
                             </div>
                           </TableCell>
@@ -440,7 +440,7 @@ export default function KKPRequestsPage() {
                                 <>
                                   <Button variant="outline" size="sm" onClick={() => handleApproveRequest(request.id)}>
                                     <CheckCircle2 className="h-4 w-4 mr-1" />
-                                    Approve
+                                    Setujui
                                   </Button>
                                   <Button
                                     variant="outline"
@@ -449,27 +449,27 @@ export default function KKPRequestsPage() {
                                     onClick={() => handleRejectRequest(request.id)}
                                   >
                                     <XCircle className="h-4 w-4 mr-1" />
-                                    Reject
+                                    Tolak
                                   </Button>
                                 </>
                               )}
                               {request.status === "approved" && !request.letterGenerated && (
                                 <Button variant="default" size="sm" onClick={() => handleGenerateLetter(request.id)}>
                                   <FileCheck className="h-4 w-4 mr-1" />
-                                  Generate Letter
+                                  Buat Surat
                                 </Button>
                               )}
                               {request.status === "approved" && request.letterGenerated && (
                                 <Button variant="outline" size="sm">
                                   <Download className="h-4 w-4 mr-1" />
-                                  Download Letter
+                                  Unduh Surat
                                 </Button>
                               )}
                               {request.status === "in-review" && (
                                 <>
                                   <Button variant="outline" size="sm" onClick={() => handleApproveRequest(request.id)}>
                                     <CheckCircle2 className="h-4 w-4 mr-1" />
-                                    Approve
+                                    Setujui
                                   </Button>
                                   <Button
                                     variant="outline"
@@ -478,14 +478,14 @@ export default function KKPRequestsPage() {
                                     onClick={() => handleRejectRequest(request.id)}
                                   >
                                     <XCircle className="h-4 w-4 mr-1" />
-                                    Reject
+                                    Tolak
                                   </Button>
                                 </>
                               )}
                               {request.status === "rejected" && (
                                 <Button variant="outline" size="sm">
                                   <FileText className="h-4 w-4 mr-1" />
-                                  View Details
+                                  Lihat Detail
                                 </Button>
                               )}
                             </div>
