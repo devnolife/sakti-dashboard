@@ -58,15 +58,15 @@ export default function ApplicationPage() {
     {
       id: "APP-2023-001",
       companyName: "PT Inovasi Teknologi",
-      industry: "Information Technology",
+      industry: "Teknologi Informasi",
       city: "Surabaya",
-      submissionDate: "September 10, 2023",
+      submissionDate: "10 September 2023",
       status: "pending",
       details: {
         address: "Jl. Teknologi No. 123, Surabaya",
-        positions: ["Software Developer", "UI/UX Designer"],
+        positions: ["Pengembang Perangkat Lunak", "Desainer UI/UX"],
         contactName: "Budi Santoso",
-        contactPosition: "HR Manager",
+        contactPosition: "Manajer HR",
         contactEmail: "budi@inovasitech.com",
         contactPhone: "081234567890",
         description:
@@ -76,15 +76,15 @@ export default function ApplicationPage() {
     {
       id: "APP-2023-002",
       companyName: "CV Desain Kreatif",
-      industry: "Media & Communication",
+      industry: "Media & Komunikasi",
       city: "Yogyakarta",
-      submissionDate: "August 5, 2023",
+      submissionDate: "5 Agustus 2023",
       status: "approved",
       details: {
         address: "Jl. Malioboro No. 45, Yogyakarta",
-        positions: ["Graphic Designer", "Content Creator"],
+        positions: ["Desainer Grafis", "Pembuat Konten"],
         contactName: "Siti Rahayu",
-        contactPosition: "Creative Director",
+        contactPosition: "Direktur Kreatif",
         contactEmail: "siti@desainkreatif.com",
         contactPhone: "085678901234",
         description:
@@ -94,16 +94,16 @@ export default function ApplicationPage() {
     {
       id: "APP-2023-003",
       companyName: "PT Logistik Cepat",
-      industry: "Logistics & Transportation",
+      industry: "Logistik & Transportasi",
       city: "Jakarta",
-      submissionDate: "July 20, 2023",
+      submissionDate: "20 Juli 2023",
       status: "rejected",
       rejectionReason: "Posisi yang diajukan sudah terisi penuh.",
       details: {
         address: "Jl. Gatot Subroto No. 78, Jakarta Selatan",
-        positions: ["Supply Chain Analyst", "Logistics Coordinator"],
+        positions: ["Analis Rantai Pasok", "Koordinator Logistik"],
         contactName: "Hendra Wijaya",
-        contactPosition: "Operations Manager",
+        contactPosition: "Manajer Operasional",
         contactEmail: "hendra@logistikcepat.com",
         contactPhone: "087890123456",
         description:
@@ -113,14 +113,14 @@ export default function ApplicationPage() {
     {
       id: "APP-2023-004",
       companyName: "Koperasi Sejahtera",
-      industry: "Finance",
+      industry: "Keuangan",
       city: "Bandung",
       status: "draft",
       details: {
         address: "Jl. Asia Afrika No. 56, Bandung",
-        positions: ["Financial Analyst", "Accounting Assistant"],
+        positions: ["Analis Keuangan", "Asisten Akuntansi"],
         contactName: "Dewi Anggraini",
-        contactPosition: "Finance Manager",
+        contactPosition: "Manajer Keuangan",
         contactEmail: "dewi@koperasisejahtera.com",
         contactPhone: "089012345678",
         description:
@@ -199,7 +199,7 @@ export default function ApplicationPage() {
           ? {
               ...app,
               status: "pending",
-              submissionDate: new Date().toLocaleDateString("en-US", {
+              submissionDate: new Date().toLocaleDateString("id-ID", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
@@ -225,28 +225,28 @@ export default function ApplicationPage() {
         return (
           <Badge className="bg-amber-500/10 text-amber-500">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Pending Review
+            Menunggu Tinjauan
           </Badge>
         )
       case "approved":
         return (
           <Badge className="bg-green-500/10 text-green-500">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-            Approved
+            Disetujui
           </Badge>
         )
       case "rejected":
         return (
           <Badge className="bg-red-500/10 text-red-500">
             <XCircle className="h-3.5 w-3.5 mr-1" />
-            Rejected
+            Ditolak
           </Badge>
         )
       case "draft":
         return (
           <Badge variant="outline">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Draft
+            Draf
           </Badge>
         )
       default:
@@ -259,76 +259,76 @@ export default function ApplicationPage() {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Internship Applications
+            Aplikasi Magang
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Manage your internship location applications</p>
+        <p className="text-muted-foreground mt-2">Kelola aplikasi lokasi magang Anda</p>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-5 w-full md:w-auto">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
-            <TabsTrigger value="draft">Draft</TabsTrigger>
+            <TabsTrigger value="all">Semua</TabsTrigger>
+            <TabsTrigger value="pending">Menunggu</TabsTrigger>
+            <TabsTrigger value="approved">Disetujui</TabsTrigger>
+            <TabsTrigger value="rejected">Ditolak</TabsTrigger>
+            <TabsTrigger value="draft">Draf</TabsTrigger>
           </TabsList>
         </Tabs>
         <Dialog open={showNewApplicationDialog} onOpenChange={setShowNewApplicationDialog}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              New Application
+              Aplikasi Baru
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Submit New Location Application</DialogTitle>
+              <DialogTitle>Ajukan Aplikasi Lokasi Baru</DialogTitle>
               <DialogDescription>
-                Fill out the form below to submit a new internship location application
+                Isi formulir di bawah ini untuk mengajukan aplikasi lokasi magang baru
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="company-name" className="text-sm font-medium">
-                    Company/Institution Name
+                    Nama Perusahaan/Institusi
                   </label>
                   <Input
                     id="company-name"
                     value={newApplication.companyName}
                     onChange={(e) => setNewApplication({ ...newApplication, companyName: e.target.value })}
-                    placeholder="PT Example Indonesia"
+                    placeholder="PT Contoh Indonesia"
                   />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="industry" className="text-sm font-medium">
-                    Industry
+                    Industri
                   </label>
                   <Select
                     value={newApplication.industry}
                     onValueChange={(value) => setNewApplication({ ...newApplication, industry: value })}
                   >
                     <SelectTrigger id="industry">
-                      <SelectValue placeholder="Select industry" />
+                      <SelectValue placeholder="Pilih industri" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Information Technology">Information Technology</SelectItem>
-                      <SelectItem value="Banking & Finance">Banking & Finance</SelectItem>
-                      <SelectItem value="Healthcare">Healthcare</SelectItem>
-                      <SelectItem value="Education">Education</SelectItem>
-                      <SelectItem value="Government">Government</SelectItem>
-                      <SelectItem value="Media & Communication">Media & Communication</SelectItem>
-                      <SelectItem value="Logistics & Transportation">Logistics & Transportation</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                      <SelectItem value="Teknologi Informasi">Teknologi Informasi</SelectItem>
+                      <SelectItem value="Perbankan & Keuangan">Perbankan & Keuangan</SelectItem>
+                      <SelectItem value="Kesehatan">Kesehatan</SelectItem>
+                      <SelectItem value="Pendidikan">Pendidikan</SelectItem>
+                      <SelectItem value="Pemerintahan">Pemerintahan</SelectItem>
+                      <SelectItem value="Media & Komunikasi">Media & Komunikasi</SelectItem>
+                      <SelectItem value="Logistik & Transportasi">Logistik & Transportasi</SelectItem>
+                      <SelectItem value="Lainnya">Lainnya</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="space-y-2">
                 <label htmlFor="address" className="text-sm font-medium">
-                  Full Address
+                  Alamat Lengkap
                 </label>
                 <Input
                   id="address"
@@ -339,13 +339,13 @@ export default function ApplicationPage() {
                       details: { ...newApplication.details, address: e.target.value },
                     })
                   }
-                  placeholder="Jl. Example No. 123, Jakarta"
+                  placeholder="Jl. Contoh No. 123, Jakarta"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="city" className="text-sm font-medium">
-                    City
+                    Kota
                   </label>
                   <Input
                     id="city"
@@ -356,7 +356,7 @@ export default function ApplicationPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="positions" className="text-sm font-medium">
-                    Internship Positions (comma separated)
+                    Posisi Magang (dipisahkan dengan koma)
                   </label>
                   <Input
                     id="positions"
@@ -373,13 +373,13 @@ export default function ApplicationPage() {
                         },
                       })
                     }
-                    placeholder="Software Developer, UI/UX Designer"
+                    placeholder="Pengembang Perangkat Lunak, Desainer UI/UX"
                   />
                 </div>
               </div>
               <div className="space-y-2">
                 <label htmlFor="description" className="text-sm font-medium">
-                  Company Description
+                  Deskripsi Perusahaan
                 </label>
                 <Textarea
                   id="description"
@@ -390,14 +390,14 @@ export default function ApplicationPage() {
                       details: { ...newApplication.details, description: e.target.value },
                     })
                   }
-                  placeholder="Brief description about the company/institution"
+                  placeholder="Deskripsi singkat tentang perusahaan/institusi"
                   className="min-h-[80px]"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="contact-name" className="text-sm font-medium">
-                    Contact Name
+                    Nama Kontak
                   </label>
                   <Input
                     id="contact-name"
@@ -408,12 +408,12 @@ export default function ApplicationPage() {
                         details: { ...newApplication.details, contactName: e.target.value },
                       })
                     }
-                    placeholder="Full name of contact person"
+                    placeholder="Nama lengkap orang yang dapat dihubungi"
                   />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="contact-position" className="text-sm font-medium">
-                    Position
+                    Posisi
                   </label>
                   <Input
                     id="contact-position"
@@ -424,7 +424,7 @@ export default function ApplicationPage() {
                         details: { ...newApplication.details, contactPosition: e.target.value },
                       })
                     }
-                    placeholder="HR Manager"
+                    placeholder="Manajer HR"
                   />
                 </div>
               </div>
@@ -443,12 +443,12 @@ export default function ApplicationPage() {
                         details: { ...newApplication.details, contactEmail: e.target.value },
                       })
                     }
-                    placeholder="email@example.com"
+                    placeholder="email@contoh.com"
                   />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="contact-phone" className="text-sm font-medium">
-                    Phone Number
+                    Nomor Telepon
                   </label>
                   <Input
                     id="contact-phone"
@@ -466,13 +466,13 @@ export default function ApplicationPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowNewApplicationDialog(false)}>
-                Cancel
+                Batal
               </Button>
               <Button variant="outline" onClick={handleCreateApplication}>
-                Save as Draft
+                Simpan sebagai Draf
               </Button>
               <Button type="submit" onClick={handleCreateApplication}>
-                Submit Application
+                Ajukan Aplikasi
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -481,8 +481,8 @@ export default function ApplicationPage() {
 
       <Card className="overflow-hidden gradient-border">
         <CardHeader>
-          <CardTitle>Application List</CardTitle>
-          <CardDescription>Track the status of your internship location applications</CardDescription>
+          <CardTitle>Daftar Aplikasi</CardTitle>
+          <CardDescription>Lacak status aplikasi lokasi magang Anda</CardDescription>
         </CardHeader>
         <CardContent>
           <TabsContent value={activeTab} className="mt-0">
@@ -490,12 +490,12 @@ export default function ApplicationPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Company Name</TableHead>
-                    <TableHead>Industry</TableHead>
-                    <TableHead>City</TableHead>
-                    <TableHead>Submission Date</TableHead>
+                    <TableHead className="w-[250px]">Nama Perusahaan</TableHead>
+                    <TableHead>Industri</TableHead>
+                    <TableHead>Kota</TableHead>
+                    <TableHead>Tanggal Pengajuan</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -504,7 +504,7 @@ export default function ApplicationPage() {
                       <TableCell colSpan={6} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">No applications found</p>
+                          <p className="text-muted-foreground">Tidak ada aplikasi ditemukan</p>
                           <Button
                             variant="outline"
                             size="sm"
@@ -512,7 +512,7 @@ export default function ApplicationPage() {
                             onClick={() => setShowNewApplicationDialog(true)}
                           >
                             <Plus className="h-4 w-4 mr-2" />
-                            Create New Application
+                            Buat Aplikasi Baru
                           </Button>
                         </div>
                       </TableCell>
@@ -529,7 +529,7 @@ export default function ApplicationPage() {
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="sm" onClick={() => setSelectedApplication(application)}>
                               <Eye className="h-4 w-4 mr-1" />
-                              {application.status === "draft" ? "Edit" : "Details"}
+                              {application.status === "draft" ? "Edit" : "Detail"}
                             </Button>
                             {application.status === "draft" && (
                               <Button
@@ -537,7 +537,7 @@ export default function ApplicationPage() {
                                 size="sm"
                                 onClick={() => handleSubmitApplication(application.id)}
                               >
-                                Submit
+                                Ajukan
                               </Button>
                             )}
                           </div>
@@ -568,7 +568,7 @@ export default function ApplicationPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">Application ID:</span>
+                  <span className="text-sm font-medium">ID Aplikasi:</span>
                   <span className="text-sm">{selectedApplication.id}</span>
                 </div>
                 {getStatusBadge(selectedApplication.status)}
@@ -577,20 +577,20 @@ export default function ApplicationPage() {
               {selectedApplication.submissionDate && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">Submission Date:</span>
+                  <span className="text-sm font-medium">Tanggal Pengajuan:</span>
                   <span className="text-sm">{selectedApplication.submissionDate}</span>
                 </div>
               )}
 
               {selectedApplication.rejectionReason && (
                 <div className="p-3 rounded-md bg-red-500/10 text-red-500 text-sm">
-                  <div className="font-medium mb-1">Rejection Reason:</div>
+                  <div className="font-medium mb-1">Alasan Penolakan:</div>
                   {selectedApplication.rejectionReason}
                 </div>
               )}
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Company Details</h4>
+                <h4 className="text-sm font-medium">Detail Perusahaan</h4>
                 <div className="space-y-1">
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -599,7 +599,7 @@ export default function ApplicationPage() {
                   <div className="flex items-start gap-2">
                     <Briefcase className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div className="text-sm">
-                      <div className="font-medium">Available Positions:</div>
+                      <div className="font-medium">Posisi Tersedia:</div>
                       <ul className="list-disc list-inside">
                         {selectedApplication.details.positions.map((position, index) => (
                           <li key={index}>{position}</li>
@@ -610,7 +610,7 @@ export default function ApplicationPage() {
                   <div className="flex items-start gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div className="text-sm">
-                      <div className="font-medium">Description:</div>
+                      <div className="font-medium">Deskripsi:</div>
                       <p>{selectedApplication.details.description}</p>
                     </div>
                   </div>
@@ -618,14 +618,14 @@ export default function ApplicationPage() {
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Contact Information</h4>
+                <h4 className="text-sm font-medium">Informasi Kontak</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="text-sm">
-                    <div className="font-medium">Name:</div>
+                    <div className="font-medium">Nama:</div>
                     <p>{selectedApplication.details.contactName}</p>
                   </div>
                   <div className="text-sm">
-                    <div className="font-medium">Position:</div>
+                    <div className="font-medium">Posisi:</div>
                     <p>{selectedApplication.details.contactPosition}</p>
                   </div>
                   <div className="text-sm">
@@ -633,7 +633,7 @@ export default function ApplicationPage() {
                     <p>{selectedApplication.details.contactEmail}</p>
                   </div>
                   <div className="text-sm">
-                    <div className="font-medium">Phone:</div>
+                    <div className="font-medium">Telepon:</div>
                     <p>{selectedApplication.details.contactPhone}</p>
                   </div>
                 </div>
@@ -649,7 +649,7 @@ export default function ApplicationPage() {
                       setSelectedApplication(null)
                     }}
                   >
-                    Delete Draft
+                    Hapus Draf
                   </Button>
                   <Button
                     onClick={() => {
@@ -657,11 +657,11 @@ export default function ApplicationPage() {
                       setSelectedApplication(null)
                     }}
                   >
-                    Submit Application
+                    Ajukan Aplikasi
                   </Button>
                 </>
               ) : (
-                <Button onClick={() => setSelectedApplication(null)}>Close</Button>
+                <Button onClick={() => setSelectedApplication(null)}>Tutup</Button>
               )}
             </DialogFooter>
           </DialogContent>
@@ -670,4 +670,3 @@ export default function ApplicationPage() {
     </div>
   )
 }
-
