@@ -5,4 +5,3 @@ import { MahasiswaCorrespondence } from "@/components/correspondence/mahasiswa-c
 export default function CorrespondencePage() {
   return <MahasiswaCorrespondence />
 }
-
