@@ -13,4 +13,3 @@ export default function StaffTULayout({ children }: { children: ReactNode }) {
     </div>
   )
 }
-

@@ -157,4 +157,3 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
     </div>
   )
 }
-
