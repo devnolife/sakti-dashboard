@@ -243,15 +243,15 @@ export function AvailableLabsTab() {
       <Card className="overflow-hidden border-none shadow-sm bg-gradient-to-r from-white to-gray-50 dark:from-gray-900 dark:to-gray-900/80">
         <CardContent className="p-6">
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col gap-4 md:flex-row">
               <div className="relative flex-1 group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-100/20 to-accent-100/20 dark:from-primary-900/20 dark:to-accent-900/20 opacity-0 group-focus-within:opacity-100 rounded-md transition-opacity -m-1 p-1"></div>
+                <div className="absolute inset-0 p-1 -m-1 transition-opacity rounded-md opacity-0 bg-gradient-to-r from-primary-100/20 to-accent-100/20 dark:from-primary-900/20 dark:to-accent-900/20 group-focus-within:opacity-100"></div>
                 <Search
                   className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${isSearching ? "text-primary" : "text-muted-foreground"} transition-colors`}
                 />
                 <Input
                   placeholder="Search laboratories by name, description, instructor, or tags..."
-                  className="pl-10 border-muted bg-white dark:bg-gray-950 transition-all focus-visible:ring-primary/20 focus-visible:border-primary/30"
+                  className="pl-10 transition-all bg-white border-muted dark:bg-gray-950 focus-visible:ring-primary/20 focus-visible:border-primary/30"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearching(true)}
@@ -261,10 +261,10 @@ export function AvailableLabsTab() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
+                    className="absolute -translate-y-1/2 right-2 top-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
                     onClick={() => setSearchQuery("")}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="w-4 h-4" />
                   </Button>
                 )}
               </div>
@@ -273,14 +273,14 @@ export function AvailableLabsTab() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="flex items-center gap-2 border-muted bg-white dark:bg-gray-950 hover:bg-muted/50"
+                    className="flex items-center gap-2 bg-white border-muted dark:bg-gray-950 hover:bg-muted/50"
                   >
-                    <SlidersHorizontal className="h-4 w-4" />
+                    <SlidersHorizontal className="w-4 h-4" />
                     <span>Filters</span>
                     {activeFilters.length > 0 && (
                       <Badge
                         variant="secondary"
-                        className="ml-1 bg-primary/10 text-primary hover:bg-primary/20 border-none"
+                        className="ml-1 border-none bg-primary/10 text-primary hover:bg-primary/20"
                       >
                         {activeFilters.length}
                       </Badge>
@@ -317,24 +317,24 @@ export function AvailableLabsTab() {
             </div>
 
             {activeFilters.length > 0 && (
-              <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm text-muted-foreground">Active filters:</span>
                 {activeFilters.map((filter) => (
                   <Badge
                     key={filter}
                     variant="outline"
-                    className="flex items-center gap-1 px-3 py-1 bg-muted/50 hover:bg-muted transition-colors"
+                    className="flex items-center gap-1 px-3 py-1 transition-colors bg-muted/50 hover:bg-muted"
                   >
                     {formatStatus(filter)}
                     <button className="ml-1 rounded-full hover:bg-background" onClick={() => removeFilter(filter)}>
-                      <X className="h-3 w-3" />
+                      <X className="w-3 h-3" />
                     </button>
                   </Badge>
                 ))}
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                  className="text-xs h-7 text-muted-foreground hover:text-foreground"
                   onClick={clearAllFilters}
                 >
                   Clear all
@@ -371,13 +371,13 @@ export function AvailableLabsTab() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="text-center py-16 px-4 border rounded-xl bg-muted/10 flex flex-col items-center"
+            className="flex flex-col items-center px-4 py-16 text-center border rounded-xl bg-muted/10"
           >
-            <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
-              <Search className="h-8 w-8 text-muted-foreground" />
+            <div className="flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-muted/30">
+              <Search className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium mb-2">No laboratories found</h3>
-            <p className="text-muted-foreground max-w-md mb-6">
+            <h3 className="mb-2 text-lg font-medium">No laboratories found</h3>
+            <p className="max-w-md mb-6 text-muted-foreground">
               We couldn't find any laboratories matching your search criteria. Try adjusting your filters or search
               terms.
             </p>
