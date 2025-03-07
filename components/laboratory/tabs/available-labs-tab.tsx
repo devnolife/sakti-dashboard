@@ -360,8 +360,9 @@ export function AvailableLabsTab() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="flex h-full"
               >
-                <LabCard lab={lab} onRegister={() => handleRegister(lab)} />
+                <LabCard lab={lab} onRegister={() => handleRegister(lab)} className="flex flex-col w-full" />
               </motion.div>
             ))}
           </motion.div>

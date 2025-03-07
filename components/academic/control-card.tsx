@@ -196,7 +196,7 @@ export default function AcademicControlCard() {
       toast({
         title: "PDF berhasil diunduh",
         description: "File telah disimpan ke perangkat Anda",
-        variant: "success",
+        variant: "default",
       })
     } catch (error) {
       console.error("Error generating PDF:", error)
