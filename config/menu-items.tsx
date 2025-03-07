@@ -186,7 +186,7 @@ export const mahasiswaMenuItems = [
   },
 ]
 
-export const staffTuMenuItems = [
+  export const staffTuMenuItems = [
   {
     id: "dashboard",
     title: "Dashboard",
