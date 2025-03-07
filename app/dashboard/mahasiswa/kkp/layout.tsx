@@ -9,7 +9,7 @@ export default function KkpLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">

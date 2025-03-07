@@ -6,7 +6,7 @@ import Link from "next/link"
 
 export default function StaffTuDashboardPage() {
   return (
-    <div className="flex-1 p-6 space-y-6">
+    <div className="flex-1 space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Dashboard Staff TU</h2>
         <p className="mt-2 text-muted-foreground">
