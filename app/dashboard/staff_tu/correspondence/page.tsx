@@ -1,0 +1,28 @@
+import { Suspense } from "react"
+import type { Metadata } from "next"
+import { CorrespondenceStaffDashboard } from "@/components/correspondence/correspondence-staff-dashboard"
+import { SkeletonCorrespondenceDashboard } from "@/components/correspondence/skeleton-correspondence-dashboard"
+
+export const metadata: Metadata = {
+  title: "Manajemen Layanan Surat | Staff TU",
+  description: "Sistem manajemen layanan surat untuk Staff TU",
+}
+
+export default function StaffCorrespondencePage() {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Manajemen Layanan Surat
+          </h2>
+          <p className="text-muted-foreground">Kelola semua permohonan surat dari mahasiswa</p>
+        </div>
+      </div>
+      <Suspense fallback={<SkeletonCorrespondenceDashboard />}>
+        <CorrespondenceStaffDashboard />
+      </Suspense>
+    </div>
+  )
+}
+

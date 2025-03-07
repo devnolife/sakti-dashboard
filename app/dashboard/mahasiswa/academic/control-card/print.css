@@ -1,0 +1,28 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #control-card-printable,
+  #control-card-printable * {
+    visibility: visible;
+  }
+
+  #control-card-printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
+

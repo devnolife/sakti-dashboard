@@ -1,0 +1,78 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.status-badge-submitted {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: rgb(59, 130, 246);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.status-badge-in-review {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: rgb(245, 158, 11);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-badge-approved {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: rgb(16, 185, 129);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-badge-completed {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: rgb(16, 185, 129);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-badge-rejected {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.correspondence-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.correspondence-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.guide-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.guide-card:hover {
+  transform: scale(1.02);
+}
+
+.stats-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+  transform: skewX(-15deg) translateX(100%);
+  transition: all 0.5s ease;
+}
+
+.stats-card:hover::after {
+  transform: skewX(-15deg) translateX(-50px);
+}
+

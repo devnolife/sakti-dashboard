@@ -1,0 +1,153 @@
+import type { Exam } from "@/types/exam"
+
+export const mockExams: Exam[] = [
+  {
+    id: "exam-1",
+    studentName: "Ahmad Fauzi",
+    studentNIM: "1234567890",
+    program: "Computer Science",
+    title: "Implementation of Machine Learning for Predicting Student Performance",
+    abstract:
+      "This research focuses on implementing machine learning algorithms to predict student academic performance based on various factors such as attendance, participation, and previous grades.",
+    submissionDate: "2025-03-01T00:00:00.000Z",
+    scheduledDate: "2025-03-15T09:00:00.000Z",
+    type: "proposal",
+    status: "scheduled",
+    committee: [
+      { name: "Dr. Budi Santoso", role: "Chair" },
+      { name: "Dr. Siti Rahayu", role: "Member" },
+      { name: "Dr. Joko Widodo", role: "Member" },
+    ],
+  },
+  {
+    id: "exam-2",
+    studentName: "Siti Nurhaliza",
+    studentNIM: "2345678901",
+    program: "Information Systems",
+    title: "Analysis of E-Commerce User Experience in Indonesia",
+    abstract:
+      "This study analyzes the user experience of e-commerce platforms in Indonesia, focusing on usability, accessibility, and customer satisfaction.",
+    submissionDate: "2025-03-02T00:00:00.000Z",
+    type: "proposal",
+    status: "pending",
+  },
+  {
+    id: "exam-3",
+    studentName: "Budi Doremi",
+    studentNIM: "3456789012",
+    program: "Computer Science",
+    title: "Blockchain Implementation for Academic Record Verification",
+    abstract:
+      "This research proposes a blockchain-based system for verifying academic records, ensuring their authenticity and preventing fraud.",
+    submissionDate: "2025-03-03T00:00:00.000Z",
+    scheduledDate: "2025-03-20T13:00:00.000Z",
+    type: "proposal",
+    status: "scheduled",
+    committee: [
+      { name: "Dr. Andi Wijaya", role: "Chair" },
+      { name: "Dr. Dewi Sartika", role: "Member" },
+      { name: "Dr. Rudi Hartono", role: "Member" },
+    ],
+  },
+  {
+    id: "exam-4",
+    studentName: "Dewi Kartika",
+    studentNIM: "4567890123",
+    program: "Information Systems",
+    title: "Impact of Social Media on Student Academic Performance",
+    abstract:
+      "This study examines the impact of social media usage on the academic performance of university students, considering factors such as time spent, platform used, and purpose of use.",
+    submissionDate: "2025-02-15T00:00:00.000Z",
+    completionDate: "2025-03-01T00:00:00.000Z",
+    type: "proposal",
+    status: "passed",
+  },
+  {
+    id: "exam-5",
+    studentName: "Rudi Salim",
+    studentNIM: "5678901234",
+    program: "Computer Science",
+    title: "Development of Mobile Application for Campus Navigation",
+    abstract:
+      "This project involves the development of a mobile application that helps students navigate the university campus, locate classrooms, offices, and facilities.",
+    submissionDate: "2025-02-20T00:00:00.000Z",
+    completionDate: "2025-03-05T00:00:00.000Z",
+    type: "proposal",
+    status: "failed",
+  },
+  {
+    id: "exam-6",
+    studentName: "Nina Zatulini",
+    studentNIM: "6789012345",
+    program: "Information Systems",
+    title: "Implementation of IoT for Smart Classroom",
+    abstract:
+      "This research focuses on implementing Internet of Things (IoT) technology to create smart classrooms that enhance the learning experience through automation and data collection.",
+    submissionDate: "2025-03-05T00:00:00.000Z",
+    type: "result",
+    status: "pending",
+  },
+  {
+    id: "exam-7",
+    studentName: "Andi Maulana",
+    studentNIM: "7890123456",
+    program: "Computer Science",
+    title: "Cybersecurity Awareness Among University Students",
+    abstract:
+      "This study assesses the level of cybersecurity awareness among university students and proposes strategies to improve their knowledge and practices.",
+    submissionDate: "2025-03-06T00:00:00.000Z",
+    scheduledDate: "2025-03-25T10:00:00.000Z",
+    type: "result",
+    status: "scheduled",
+    committee: [
+      { name: "Dr. Hadi Santoso", role: "Chair" },
+      { name: "Dr. Maya Angelina", role: "Member" },
+      { name: "Dr. Tono Sucipto", role: "Member" },
+    ],
+  },
+  {
+    id: "exam-8",
+    studentName: "Maya Sari",
+    studentNIM: "8901234567",
+    program: "Information Systems",
+    title: "Digital Transformation in Higher Education",
+    abstract:
+      "This research examines the process of digital transformation in higher education institutions, focusing on challenges, opportunities, and best practices.",
+    submissionDate: "2025-02-25T00:00:00.000Z",
+    completionDate: "2025-03-10T00:00:00.000Z",
+    type: "result",
+    status: "passed",
+  },
+  {
+    id: "exam-9",
+    studentName: "Joko Susilo",
+    studentNIM: "9012345678",
+    program: "Computer Science",
+    title: "Artificial Intelligence for Automated Essay Grading",
+    abstract:
+      "This study develops and evaluates an artificial intelligence system for automatically grading student essays, considering factors such as content, structure, and grammar.",
+    submissionDate: "2025-02-28T00:00:00.000Z",
+    completionDate: "2025-03-12T00:00:00.000Z",
+    type: "result",
+    status: "failed",
+  },
+  {
+    id: "exam-10",
+    studentName: "Lina Marlina",
+    studentNIM: "0123456789",
+    program: "Information Systems",
+    title: "Cloud Computing Adoption in Indonesian Universities",
+    abstract:
+      "This research investigates the adoption of cloud computing in Indonesian universities, examining factors that influence adoption decisions and implementation strategies.",
+    submissionDate: "2025-03-07T00:00:00.000Z",
+    scheduledDate: "2025-03-30T14:00:00.000Z",
+    type: "result",
+    status: "scheduled",
+    committee: [
+      { name: "Dr. Bambang Supomo", role: "Chair" },
+      { name: "Dr. Ratna Sari", role: "Member" },
+      { name: "Dr. Dedi Kurniawan", role: "Member" },
+    ],
+  },
+]
+
