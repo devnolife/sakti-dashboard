@@ -1,7 +1,6 @@
 "use server"
 import type { LetterRequest, LetterStatus } from "@/types/correspondence"
 
-// Define letter types with their properties
 export const LETTER_TYPES: Record<
   string,
   {
@@ -257,9 +256,9 @@ export const LETTER_TYPES: Record<
   },
 }
 
-// Comprehensive mock data for letter requests
+
 const MOCK_LETTER_REQUESTS: LetterRequest[] = [
-  // Active Student Letters
+  
   {
     id: "letter-001",
     type: "active_student",
@@ -349,7 +348,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Leave of Absence Letters
+  
   {
     id: "letter-004",
     type: "leave_absence",
@@ -427,7 +426,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Loan Application Letters
+  
   {
     id: "letter-006",
     type: "loan_application",
@@ -514,7 +513,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Tuition Extension Letters
+  
   {
     id: "letter-008",
     type: "tuition_extension",
@@ -582,7 +581,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Internship Recommendation Letters
+  
   {
     id: "letter-010",
     type: "internship_recommendation",
@@ -659,7 +658,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Scholarship Recommendation Letters
+  
   {
     id: "letter-012",
     type: "scholarship_recommendation",
@@ -737,7 +736,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Transcript Request Letters
+  
   {
     id: "letter-014",
     type: "transcript_request",
@@ -802,7 +801,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Research Permission Letters
+  
   {
     id: "letter-016",
     type: "research_permission",
@@ -874,7 +873,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Graduation Confirmation Letters
+  
   {
     id: "letter-018",
     type: "graduation_confirmation",
@@ -951,7 +950,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     ],
   },
 
-  // Additional recent submissions
+  
   {
     id: "letter-020",
     type: "active_student",
@@ -1025,32 +1024,32 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
   },
 ]
 
-// Function to get letter requests for approval
+
 export async function getLetterRequestsForApproval(role: string): Promise<LetterRequest[]> {
-  // In a real app, this would fetch from a database, filtering by role
+  
   return MOCK_LETTER_REQUESTS.filter((req) => req.approvalRole === role)
 }
 
-// Function to get letter requests for a student
+
 export async function getStudentLetterRequests(studentId: string): Promise<LetterRequest[]> {
-  // In a real app, this would fetch from a database
-  // For now, we'll return mock data
+  
+  
   return MOCK_LETTER_REQUESTS.filter((req) => req.studentId === studentId)
 }
 
-// Function to get letter request by ID
+
 export async function getLetterRequestById(requestId: string): Promise<LetterRequest | null> {
-  // In a real app, this would fetch from a database
+  
   const request = MOCK_LETTER_REQUESTS.find((req) => req.id === requestId)
   return request || null
 }
 
-// Function to submit a new letter request
+
 export async function submitLetterRequest(
   formData: FormData,
 ): Promise<{ success: boolean; message: string; requestId?: string }> {
-  // In a real app, this would save to a database
-  // For now, we'll just return a success response
+  
+  
   return {
     success: true,
     message: "Permohonan surat berhasil diajukan",
@@ -1058,7 +1057,7 @@ export async function submitLetterRequest(
   }
 }
 
-// Function to update letter request status
+
 export async function updateLetterRequestStatus(
   requestId: string,
   newStatus: LetterStatus,
@@ -1066,32 +1065,32 @@ export async function updateLetterRequestStatus(
   updatedBy?: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
-    // In a real app, this would update a database record
+    
     const requestIndex = MOCK_LETTER_REQUESTS.findIndex((req) => req.id === requestId)
 
     if (requestIndex === -1) {
       return { success: false, message: "Permohonan surat tidak ditemukan" }
     }
 
-    // Update the request status
+    
     MOCK_LETTER_REQUESTS[requestIndex].status = newStatus
 
-    // Add notes if provided
+    
     if (notes) {
       MOCK_LETTER_REQUESTS[requestIndex].rejectedReason = notes
     }
 
-    // Update updatedBy if provided
+    
     if (updatedBy) {
       MOCK_LETTER_REQUESTS[requestIndex].approvedBy = updatedBy
     }
 
-    // If status is approved, set approvedDate
+    
     if (newStatus === "approved") {
       MOCK_LETTER_REQUESTS[requestIndex].approvedDate = new Date().toISOString()
     }
 
-    // If status is completed, set completedDate
+    
     if (newStatus === "completed") {
       MOCK_LETTER_REQUESTS[requestIndex].completedDate = new Date().toISOString()
     }
@@ -1106,26 +1105,26 @@ export async function updateLetterRequestStatus(
   }
 }
 
-// Function to delete a letter request
+
 export async function deleteLetterRequest(requestId: string): Promise<{ success: boolean; message: string }> {
   try {
-    // In a real app, this would delete from a database
+    
     const requestIndex = MOCK_LETTER_REQUESTS.findIndex((req) => req.id === requestId)
 
     if (requestIndex === -1) {
       return { success: false, message: "Permohonan surat tidak ditemukan" }
     }
 
-    // Check if the request can be deleted (only draft or rejected)
+    
     const request = MOCK_LETTER_REQUESTS[requestIndex]
-    if (request.status !== "draft" && request.status !== "rejected") {
+    if (request.status !== "submitted" && request.status !== "rejected") {
       return {
         success: false,
         message: "Hanya permohonan dengan status draft atau ditolak yang dapat dihapus",
       }
     }
 
-    // Remove the request
+    
     MOCK_LETTER_REQUESTS.splice(requestIndex, 1)
 
     return {

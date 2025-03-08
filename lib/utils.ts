@@ -5,19 +5,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount)
+}
+
 export function formatDate(dateString: string): string {
-  if (!dateString) return "-"
-
   const date = new Date(dateString)
-
-  // Check if date is valid
-  if (isNaN(date.getTime())) return "-"
-
-  return new Intl.DateTimeFormat("id-ID", {
+  return date.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(date)
+  })
 }
 
 export function formatDateTime(dateString: string): string {
@@ -52,5 +55,17 @@ export function getStatusColor(status: string): string {
     default:
       return "bg-gray-100 text-gray-800"
   }
+}
+
+export function formatBytes(bytes: number, decimals = 2) {
+  if (bytes === 0) return "0 Bytes"
+
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
 }
 
