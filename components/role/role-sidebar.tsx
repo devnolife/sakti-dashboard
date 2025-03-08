@@ -154,29 +154,6 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
         <nav className="space-y-2">{(menuItems[role] || []).map((item) => renderMenuItem(item))}</nav>
       </div>
 
-      <div className="p-4 border-t">
-        <div className="flex items-center gap-3 p-2 mb-4 rounded-lg bg-muted/50">
-          <Avatar className="w-10 h-10 border-2 border-primary/10">
-            <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />
-            <AvatarFallback className="font-medium bg-primary/10 text-primary">
-              {user?.name?.substring(0, 2).toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">{user?.name || "User"}</span>
-            <span className="text-xs text-muted-foreground">{user?.username || "username"}</span>
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="justify-start w-full text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={logout}
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          Logout
-        </Button>
-      </div>
     </div>
   )
 }
