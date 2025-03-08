@@ -105,12 +105,12 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
                 )}
               </div>
               <div className="transition-transform duration-200">
-                {isMenuOpen(item.id) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                {isMenuOpen(item.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </div>
             </button>
 
             {isMenuOpen(item.id) && (
-              <div className="mt-1 space-y-1 border-l-2 border-muted pl-3 ml-4 py-1">
+              <div className="py-1 pl-3 mt-1 ml-4 space-y-1 border-l-2 border-muted">
                 {item.children.map((child: any) => renderMenuItem(child, depth + 1))}
               </div>
             )}
@@ -139,26 +139,26 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
   }
 
   return (
-    <div className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r bg-background lg:flex">
+    <div className="fixed inset-y-0 left-0 z-30 flex-col hidden w-64 border-r bg-background lg:flex">
       {/* Logo and App Name */}
-      <div className="flex h-20 items-center justify-center border-b px-6">
+      <div className="flex items-center justify-center h-20 px-6 border-b">
         <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary">
+          <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary">
             <span className="text-xl font-bold text-primary-foreground">S</span>
           </div>
-          <span className="font-semibold text-xl">SIAKAD</span>
+          <span className="text-xl font-semibold">SAKTI</span>
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 p-4 overflow-y-auto">
         <nav className="space-y-2">{(menuItems[role] || []).map((item) => renderMenuItem(item))}</nav>
       </div>
 
-      <div className="border-t p-4">
-        <div className="mb-4 flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-          <Avatar className="h-10 w-10 border-2 border-primary/10">
+      <div className="p-4 border-t">
+        <div className="flex items-center gap-3 p-2 mb-4 rounded-lg bg-muted/50">
+          <Avatar className="w-10 h-10 border-2 border-primary/10">
             <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />
-            <AvatarFallback className="bg-primary/10 text-primary font-medium">
+            <AvatarFallback className="font-medium bg-primary/10 text-primary">
               {user?.name?.substring(0, 2).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
@@ -170,10 +170,10 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
         <Button
           variant="outline"
           size="sm"
-          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          className="justify-start w-full text-destructive hover:text-destructive hover:bg-destructive/10"
           onClick={logout}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="w-4 h-4 mr-2" />
           Logout
         </Button>
       </div>

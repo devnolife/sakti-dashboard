@@ -130,12 +130,12 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
                 )}
               </div>
               <div className="transition-transform duration-200">
-                {isMenuOpen(item.id) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                {isMenuOpen(item.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </div>
             </button>
 
             {isMenuOpen(item.id) && (
-              <div className="mt-1 space-y-1 pl-2 border-l-2 border-muted ml-4 py-1">
+              <div className="py-1 pl-2 mt-1 ml-4 space-y-1 border-l-2 border-muted">
                 {item.children.map((child: any) => renderMenuItem(child, depth + 1))}
               </div>
             )}
@@ -167,41 +167,41 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg lg:hidden"
+        className="fixed z-40 flex items-center justify-center rounded-full shadow-lg bottom-4 right-4 h-14 w-14 bg-primary text-primary-foreground lg:hidden"
         aria-label="Open menu"
       >
-        <Menu className="h-6 w-6" />
+        <Menu className="w-6 h-6" />
       </button>
 
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm lg:hidden">
-          <div className="flex h-16 items-center justify-between border-b px-6">
+          <div className="flex items-center justify-between h-16 px-6 border-b">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary">
+              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary">
                 <span className="text-lg font-bold text-primary-foreground">S</span>
               </div>
-              <span className="font-semibold text-xl">SIAKAD</span>
+              <span className="text-xl font-semibold">SAKTI</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-muted"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-muted"
               aria-label="Close menu"
             >
-              <X className="h-5 w-5" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* User Profile Section */}
-          <div className="border-b p-6">
+          <div className="p-6 border-b">
             <div className="flex items-center gap-4">
-              <Avatar className="h-14 w-14 border-2 border-primary/10">
+              <Avatar className="border-2 h-14 w-14 border-primary/10">
                 <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />
-                <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                <AvatarFallback className="font-medium bg-primary/10 text-primary">
                   {user?.name?.substring(0, 2).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-medium text-lg">{user?.name || "User"}</h3>
+                <h3 className="text-lg font-medium">{user?.name || "User"}</h3>
                 <p className="text-sm text-muted-foreground">{user?.username || "username"}</p>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
 
           {/* Tab Navigation */}
           <div className="flex border-b">
-            <button className="flex-1 py-3 text-center font-medium text-primary border-b-2 border-primary">Menu</button>
+            <button className="flex-1 py-3 font-medium text-center border-b-2 text-primary border-primary">Menu</button>
           </div>
 
           <div className="h-[calc(100vh-13rem)] overflow-y-auto p-4">
@@ -217,10 +217,10 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
           </div>
 
           {/* Bottom Actions */}
-          <div className="absolute bottom-0 left-0 right-0 border-t p-4 bg-background">
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background">
             <div className="flex items-center justify-between">
               <Button variant="outline" size="sm" className="text-muted-foreground">
-                <Search className="mr-2 h-4 w-4" />
+                <Search className="w-4 h-4 mr-2" />
                 Search
               </Button>
               <Button
@@ -229,7 +229,7 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={logout}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
             </div>

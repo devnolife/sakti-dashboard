@@ -10,8 +10,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SIAKAD - Sistem Informasi Akademik",
-  description: "Sistem Informasi Akademik Universitas",
+  title: "sakti - Sistem Informasi Akademik Fakultas Teknik",
+  description: "Sistem Informasi Akademik Fakultas Teknik",
     generator: 'v0.dev'
 }
 

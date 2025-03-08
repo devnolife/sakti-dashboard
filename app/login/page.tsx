@@ -40,17 +40,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="flex flex-col min-h-screen md:flex-row bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Login Form Section */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6">
+      <div className="flex items-center justify-center w-full p-6 md:w-1/2">
         <Card className="w-full max-w-md border-none shadow-lg">
           <CardHeader className="space-y-1">
             <div className="flex justify-center mb-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-md">
+              <div className="flex items-center justify-center rounded-full shadow-md h-14 w-14 bg-primary">
                 <span className="text-2xl font-bold text-primary-foreground">S</span>
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Welcome to SIAKAD</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Welcome to SAKTI</CardTitle>
             <CardDescription className="text-center">
               Enter your credentials to access the academic information system
             </CardDescription>
@@ -69,7 +69,7 @@ export default function LoginPage() {
                     className="pl-10"
                     required
                   />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <div className="absolute -translate-y-1/2 left-3 top-1/2 text-muted-foreground">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -98,7 +98,7 @@ export default function LoginPage() {
                     className="pl-10"
                     required
                   />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <div className="absolute -translate-y-1/2 left-3 top-1/2 text-muted-foreground">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -117,7 +117,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute -translate-y-1/2 right-3 top-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -137,16 +137,16 @@ export default function LoginPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   For demo purposes, any username and password will work
                 </p>
               </div>
-              {formError && <p className="text-destructive text-center text-sm">{formError}</p>}
-              {error && <p className="text-destructive text-center text-sm">{error}</p>}
+              {formError && <p className="text-sm text-center text-destructive">{formError}</p>}
+              {error && <p className="text-sm text-center text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Signing in...
                   </>
                 ) : (
@@ -156,8 +156,8 @@ export default function LoginPage() {
             </form>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <div className="text-center text-sm text-muted-foreground">
-              <Link href="/" className="text-primary hover:underline underline-offset-4 transition-colors">
+            <div className="text-sm text-center text-muted-foreground">
+              <Link href="/" className="transition-colors text-primary hover:underline underline-offset-4">
                 Back to home
               </Link>
             </div>
@@ -166,17 +166,17 @@ export default function LoginPage() {
       </div>
 
       {/* Illustration Section */}
-      <div className="w-full md:w-1/2 bg-primary/10 hidden md:flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 z-0"></div>
-        <div className="relative z-10 p-8 max-w-lg">
+      <div className="relative items-center justify-center hidden w-full overflow-hidden md:w-1/2 bg-primary/10 md:flex">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/20 to-primary/5"></div>
+        <div className="relative z-10 max-w-lg p-8">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-primary mb-4">Universitas Muhammadiyah Makassar</h2>
+            <h2 className="mb-4 text-3xl font-bold text-primary">Universitas Muhammadiyah Makassar</h2>
             <p className="text-muted-foreground">
               Access your academic information system to manage courses, view grades, and stay connected with your
               university community.
             </p>
           </div>
-          <div className="rounded-xl overflow-hidden shadow-2xl">
+          <div className="overflow-hidden shadow-2xl rounded-xl">
             <Image
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ilustrtasi%20login.JPG-AStvbOfJ5MWIe5OVmLNlQjGmwSO6Zn.jpeg"
               alt="Universitas Muhammadiyah Makassar Campus"
@@ -185,10 +185,10 @@ export default function LoginPage() {
               className="object-cover"
             />
           </div>
-          <div className="mt-6 flex items-center justify-center space-x-4">
-            <div className="h-2 w-2 rounded-full bg-primary"></div>
-            <div className="h-2 w-2 rounded-full bg-primary/60"></div>
-            <div className="h-2 w-2 rounded-full bg-primary/40"></div>
+          <div className="flex items-center justify-center mt-6 space-x-4">
+            <div className="w-2 h-2 rounded-full bg-primary"></div>
+            <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+            <div className="w-2 h-2 rounded-full bg-primary/40"></div>
           </div>
         </div>
       </div>
