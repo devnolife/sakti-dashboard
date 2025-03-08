@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useAuth } from "@/context/auth-context"
 import { type Role, roleConfigs } from "@/types/role"
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
+import { Loader2, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
@@ -20,7 +21,7 @@ export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<Role>("mahasiswa")
   const [showPassword, setShowPassword] = useState(false)
   const [formError, setFormError] = useState("")
-  const { login, isLoading } = useAuth()
+  const { login, isLoading, error } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,112 +31,167 @@ export default function LoginPage() {
       setFormError("Username and password are required.")
       return
     }
-    try {
-      await login(username, password, selectedRole)
+    const success = await login(username, password, selectedRole)
+    if (success) {
       router.push("/dashboard")
-    } catch {
+    } else {
       setFormError("Invalid username or password.")
     }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary">
-              <span className="text-2xl font-bold text-primary-foreground">S</span>
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-blue-50 to-indigo-50">
+      {/* Login Form Section */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-6">
+        <Card className="w-full max-w-md border-none shadow-lg">
+          <CardHeader className="space-y-1">
+            <div className="flex justify-center mb-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-md">
+                <span className="text-2xl font-bold text-primary-foreground">S</span>
+              </div>
             </div>
-          </div>
-          <CardTitle className="text-2xl font-bold text-center">Sign in to SAKTI</CardTitle>
-          <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="your.username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="relative space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute -translate-y-1/2 right-4 top-1/2"
-              >
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.707l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 011.414-1.414L9 10.586l2.293-2.293a1 1 0 111.414 1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+            <CardTitle className="text-2xl font-bold text-center">Welcome to SIAKAD</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials to access the academic information system
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <div className="relative">
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="your.username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as Role)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(roleConfigs).map(([role, config]) => (
+                      <SelectItem key={role} value={role}>
+                        {config.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  For demo purposes, any username and password will work
+                </p>
+              </div>
+              {formError && <p className="text-destructive text-center text-sm">{formError}</p>}
+              {error && <p className="text-destructive text-center text-sm">{error}</p>}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  "Sign in"
                 )}
-              </button>
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="text-center text-sm text-muted-foreground">
+              <Link href="/" className="text-primary hover:underline underline-offset-4 transition-colors">
+                Back to home
+              </Link>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
-              <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as Role)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(roleConfigs).map(([role, config]) => (
-                    <SelectItem key={role} value={role}>
-                      {config.displayName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="mt-1 text-xs text-muted-foreground">
-                For demo purposes, any username and password will work
-              </p>
-            </div>
-            {formError && <p className="text-center text-red-500">{formError}</p>}
-            {/* Error display removed because property 'error' does not exist in AuthContext */}
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign in"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-sm text-center text-muted-foreground">
-            <Link href="/" className="underline underline-offset-4 hover:text-primary">
-              Back to home
-            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+
+      {/* Illustration Section */}
+      <div className="w-full md:w-1/2 bg-primary/10 hidden md:flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 z-0"></div>
+        <div className="relative z-10 p-8 max-w-lg">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-primary mb-4">Universitas Muhammadiyah Makassar</h2>
+            <p className="text-muted-foreground">
+              Access your academic information system to manage courses, view grades, and stay connected with your
+              university community.
+            </p>
           </div>
-        </CardFooter>
-      </Card>
+          <div className="rounded-xl overflow-hidden shadow-2xl">
+            <Image
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ilustrtasi%20login.JPG-AStvbOfJ5MWIe5OVmLNlQjGmwSO6Zn.jpeg"
+              alt="Universitas Muhammadiyah Makassar Campus"
+              width={600}
+              height={400}
+              className="object-cover"
+            />
+          </div>
+          <div className="mt-6 flex items-center justify-center space-x-4">
+            <div className="h-2 w-2 rounded-full bg-primary"></div>
+            <div className="h-2 w-2 rounded-full bg-primary/60"></div>
+            <div className="h-2 w-2 rounded-full bg-primary/40"></div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

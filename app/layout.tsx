@@ -10,8 +10,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SAKTI - Sistem Informasi Akademik Fakultas Teknik",
-  description: "Sistem Informasi Akademik Fakultas Teknik",
+  title: "SIAKAD - Sistem Informasi Akademik",
+  description: "Sistem Informasi Akademik Universitas",
     generator: 'v0.dev'
 }
 
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="id">
+    <html lang="en">
       <body className={inter.className}>
         <RoleProvider>
           <AuthProvider>

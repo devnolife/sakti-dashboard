@@ -1,6 +1,10 @@
-import ExamDashboard from "@/components/exam/exam-dashboard"
+import { ExamsDashboard } from "@/components/staff_tu/exams-dashboard"
 
 export default function ClosedExamsPage() {
-  return <ExamDashboard defaultTab="closed" />
+  return (
+    <div className="container mx-auto py-6">
+      <ExamsDashboard initialTab="completed" />
+    </div>
+  )
 }
 

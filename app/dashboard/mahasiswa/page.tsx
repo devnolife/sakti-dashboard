@@ -22,38 +22,38 @@ export default function MahasiswaPage() {
     <div className="space-y-8">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold tracking-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
             Student Dashboard
           </span>
         </h1>
-        <p className="mt-2 text-muted-foreground">Welcome back, Andi. Here's your academic overview.</p>
+        <p className="text-muted-foreground mt-2">Welcome back, Andi. Here's your academic overview.</p>
       </div>
 
       <MahasiswaDashboard />
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="border bg-background h-11">
+        <TabsList className="bg-background border h-11">
           <TabsTrigger value="overview" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-            <BarChart4 className="w-4 h-4 mr-2" />
+            <BarChart4 className="h-4 w-4 mr-2" />
             Overview
           </TabsTrigger>
           <TabsTrigger value="courses" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-            <BookOpen className="w-4 h-4 mr-2" />
+            <BookOpen className="h-4 w-4 mr-2" />
             Courses
           </TabsTrigger>
           <TabsTrigger value="schedule" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-            <Calendar className="w-4 h-4 mr-2" />
+            <Calendar className="h-4 w-4 mr-2" />
             Schedule
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-primary/5 to-primary/10">
+            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-primary/5 to-primary/10">
                 <CardTitle className="text-sm font-medium">Current GPA</CardTitle>
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20">
-                  <GraduationCap className="w-4 h-4 text-primary" />
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <GraduationCap className="h-4 w-4 text-primary" />
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
@@ -66,24 +66,24 @@ export default function MahasiswaPage() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-secondary/5 to-secondary/10">
+            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-secondary/5 to-secondary/10">
                 <CardTitle className="text-sm font-medium">Current Credits</CardTitle>
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/20">
-                  <BookOpen className="w-4 h-4 text-secondary" />
+                <div className="h-8 w-8 rounded-full bg-secondary/20 flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="text-2xl font-bold">21</div>
-                <p className="mt-1 text-xs text-muted-foreground">6 active courses</p>
+                <p className="text-xs text-muted-foreground mt-1">6 active courses</p>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-green-500/5 to-green-500/10">
+            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-green-500/5 to-green-500/10">
                 <CardTitle className="text-sm font-medium">Attendance</CardTitle>
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/20">
-                  <Clock className="w-4 h-4 text-green-500" />
+                <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <Clock className="h-4 w-4 text-green-500" />
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
@@ -91,7 +91,7 @@ export default function MahasiswaPage() {
                 <div className="flex items-center mt-1">
                   <Badge
                     variant="outline"
-                    className="text-xs font-normal text-green-600 border-green-200 bg-green-500/10"
+                    className="text-xs font-normal bg-green-500/10 text-green-600 border-green-200"
                   >
                     3 absences
                   </Badge>
@@ -99,11 +99,11 @@ export default function MahasiswaPage() {
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-amber-500/5 to-amber-500/10">
+            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-amber-500/5 to-amber-500/10">
                 <CardTitle className="text-sm font-medium">Upcoming Tasks</CardTitle>
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/20">
-                  <CalendarDays className="w-4 h-4 text-amber-500" />
+                <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center">
+                  <CalendarDays className="h-4 w-4 text-amber-500" />
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
@@ -125,29 +125,29 @@ export default function MahasiswaPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle>Academic Activities</CardTitle>
-                  <Button variant="ghost" size="sm" className="h-8 text-primary">
+                  <Button variant="ghost" size="sm" className="text-primary h-8">
                     View All
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-500/10">
-                      <AlertCircle className="w-5 h-5 text-red-500" />
+                  <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                      <AlertCircle className="h-5 w-5 text-red-500" />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Midterm Exams</p>
                       <p className="text-sm text-muted-foreground">October 15, 2023</p>
                     </div>
-                    <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
+                    <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
                       Urgent
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10">
-                      <FileText className="w-5 h-5 text-amber-500" />
+                  <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-amber-500" />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Algorithm Assignment</p>
@@ -158,9 +158,9 @@ export default function MahasiswaPage() {
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                      <Bell className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Bell className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Group Presentation</p>
@@ -171,9 +171,9 @@ export default function MahasiswaPage() {
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10">
-                      <BookOpen className="w-5 h-5 text-secondary" />
+                  <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                    <div className="h-10 w-10 rounded-full bg-secondary/10 flex items-center justify-center">
+                      <BookOpen className="h-5 w-5 text-secondary" />
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Database Practicum</p>
@@ -191,25 +191,25 @@ export default function MahasiswaPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle>Announcements</CardTitle>
-                  <Button variant="ghost" size="sm" className="h-8 text-primary">
+                  <Button variant="ghost" size="sm" className="text-primary h-8">
                     View All
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
+                      <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
                         Important
                       </Badge>
                       <p className="text-xs text-muted-foreground">Oct 5, 2023</p>
                     </div>
                     <p className="font-medium">National Holiday</p>
-                    <p className="mt-1 text-sm text-muted-foreground">October 17, 2023 - All classes canceled</p>
+                    <p className="text-sm text-muted-foreground mt-1">October 17, 2023 - All classes canceled</p>
                   </div>
 
-                  <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                         Event
@@ -217,18 +217,18 @@ export default function MahasiswaPage() {
                       <p className="text-xs text-muted-foreground">Oct 3, 2023</p>
                     </div>
                     <p className="font-medium">Career Seminar</p>
-                    <p className="mt-1 text-sm text-muted-foreground">October 20, 2023 - Main Auditorium</p>
+                    <p className="text-sm text-muted-foreground mt-1">October 20, 2023 - Main Auditorium</p>
                   </div>
 
-                  <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
+                      <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
                         Registration
                       </Badge>
                       <p className="text-xs text-muted-foreground">Oct 1, 2023</p>
                     </div>
                     <p className="font-medium">KKP Registration Open</p>
-                    <p className="mt-1 text-sm text-muted-foreground">November 1, 2023 - Apply early</p>
+                    <p className="text-sm text-muted-foreground mt-1">November 1, 2023 - Apply early</p>
                   </div>
                 </div>
               </CardContent>
@@ -294,7 +294,7 @@ export default function MahasiswaPage() {
                     color: "blue-500",
                   },
                 ].map((course, index) => (
-                  <Card key={index} className="overflow-hidden transition-all border shadow-sm hover:shadow-md">
+                  <Card key={index} className="overflow-hidden border shadow-sm hover:shadow-md transition-all">
                     <div className={`h-2 bg-${course.color}`} />
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">{course.title}</CardTitle>
@@ -303,11 +303,11 @@ export default function MahasiswaPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-2">
-                      <div className="flex items-center justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Grade:</span>
                         <span className="font-medium">{course.grade}</span>
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Attendance:</span>
                         <span className="font-medium">{course.attendance}</span>
                       </div>
@@ -339,7 +339,7 @@ export default function MahasiswaPage() {
                   { name: "Mobile Application Development", progress: 70, color: "blue-500" },
                 ].map((course, index) => (
                   <div key={index} className="space-y-1">
-                    <div className="flex items-center justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">{course.name}</span>
                       <span className="text-sm font-medium">{course.progress}%</span>
                     </div>
@@ -392,18 +392,18 @@ export default function MahasiswaPage() {
                     color: "purple-500",
                   },
                 ].map((day, index) => (
-                  <div key={index} className="overflow-hidden border rounded-lg">
+                  <div key={index} className="rounded-lg border overflow-hidden">
                     <div className={`bg-${day.color}/10 px-4 py-3 font-medium border-b`}>{day.day}</div>
                     <div className="p-4">
                       {day.classes.length > 0 ? (
                         <div className="space-y-4">
                           {day.classes.map((cls, idx) => (
-                            <div key={idx} className="flex items-start justify-between p-3 rounded-lg bg-muted/50">
+                            <div key={idx} className="flex justify-between items-start p-3 rounded-lg bg-muted/50">
                               <div>
                                 <p className="font-medium">{cls.name}</p>
                                 <p className="text-sm text-muted-foreground">{cls.time}</p>
                               </div>
-                              <div className="px-2 py-1 text-sm border rounded-md text-muted-foreground bg-background">
+                              <div className="text-sm text-muted-foreground bg-background px-2 py-1 rounded-md border">
                                 {cls.location}
                               </div>
                             </div>
@@ -428,35 +428,35 @@ export default function MahasiswaPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-500/10">
-                    <CalendarDays className="w-5 h-5 text-red-500" />
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                  <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <CalendarDays className="h-5 w-5 text-red-500" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">Midterm Examination Period</p>
                     <p className="text-sm text-muted-foreground">October 15-25, 2023</p>
                   </div>
-                  <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
+                  <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
                     10 days
                   </Badge>
                 </div>
 
-                <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10">
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                  <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">Course Registration for Next Semester</p>
                     <p className="text-sm text-muted-foreground">November 1-15, 2023</p>
                   </div>
-                  <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
+                  <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
                     27 days
                   </Badge>
                 </div>
 
-                <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10">
-                    <Bell className="w-5 h-5 text-amber-500" />
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
+                  <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                    <Bell className="h-5 w-5 text-amber-500" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">Final Examination Period</p>

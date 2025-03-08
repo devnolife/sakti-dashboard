@@ -41,11 +41,11 @@ export default function LocationsPage() {
       name: "PT Teknologi Maju",
       address: "Jl. Sudirman No. 123, Jakarta Selatan",
       city: "Jakarta",
-      industry: "Teknologi",
-      positions: ["Pengembang Perangkat Lunak", "Desainer UI/UX"],
+      industry: "Technology",
+      positions: ["Software Developer", "UI/UX Designer"],
       quota: 10,
       remaining: 5,
-      status: "tersedia",
+      status: "available",
       distance: 3.2,
       favorite: true,
     },
@@ -54,11 +54,11 @@ export default function LocationsPage() {
       name: "Bank Nasional Indonesia",
       address: "Jl. MH Thamrin No. 45, Jakarta Pusat",
       city: "Jakarta",
-      industry: "Perbankan & Keuangan",
-      positions: ["Analis Keuangan", "Manajemen Risiko"],
+      industry: "Banking & Finance",
+      positions: ["Financial Analyst", "Risk Management"],
       quota: 8,
       remaining: 2,
-      status: "terbatas",
+      status: "limited",
       distance: 5.7,
     },
     {
@@ -66,11 +66,11 @@ export default function LocationsPage() {
       name: "Rumah Sakit Medika",
       address: "Jl. Diponegoro No. 78, Bandung",
       city: "Bandung",
-      industry: "Kesehatan",
-      positions: ["Sistem Informasi Medis"],
+      industry: "Healthcare",
+      positions: ["Medical Information Systems"],
       quota: 5,
       remaining: 0,
-      status: "penuh",
+      status: "full",
       distance: 120.3,
     },
     {
@@ -78,11 +78,11 @@ export default function LocationsPage() {
       name: "Kementerian Pendidikan",
       address: "Jl. Jenderal Sudirman, Jakarta Pusat",
       city: "Jakarta",
-      industry: "Pemerintahan",
-      positions: ["Kebijakan Pendidikan", "Sistem Informasi"],
+      industry: "Government",
+      positions: ["Education Policy", "Information Systems"],
       quota: 12,
       remaining: 8,
-      status: "tersedia",
+      status: "available",
       distance: 4.8,
     },
   ])
@@ -103,7 +103,7 @@ export default function LocationsPage() {
     positions: [],
     quota: 0,
     remaining: 0,
-    status: "tersedia",
+    status: "available",
   })
 
   // Get unique industries and cities for filters
@@ -156,7 +156,7 @@ export default function LocationsPage() {
       positions: newLocation.positions || [],
       quota: newLocation.quota || 0,
       remaining: newLocation.remaining || 0,
-      status: (newLocation.status as "tersedia" | "terbatas" | "penuh") || "tersedia",
+      status: (newLocation.status as "available" | "limited" | "full") || "available",
       distance: Math.random() * 10, // Random distance for demo
     }
 
@@ -169,7 +169,7 @@ export default function LocationsPage() {
       positions: [],
       quota: 0,
       remaining: 0,
-      status: "tersedia",
+      status: "available",
     })
     setShowAddDialog(false)
   }
@@ -190,12 +190,12 @@ export default function LocationsPage() {
   // Get status badge
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "tersedia":
-        return <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Tersedia</Badge>
-      case "terbatas":
-        return <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">Terbatas</Badge>
-      case "penuh":
-        return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20">Penuh</Badge>
+      case "available":
+        return <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Available</Badge>
+      case "limited":
+        return <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">Limited</Badge>
+      case "full":
+        return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20">Full</Badge>
       default:
         return null
     }
@@ -206,10 +206,10 @@ export default function LocationsPage() {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Lokasi Magang
+            Internship Locations
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Jelajahi, kelola, dan ajukan ke lokasi magang</p>
+        <p className="text-muted-foreground mt-2">Browse, manage, and apply to internship locations</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -217,7 +217,7 @@ export default function LocationsPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Cari lokasi..."
+            placeholder="Search locations..."
             className="w-full pl-8 rounded-full border-primary/20 focus-visible:ring-primary"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -226,10 +226,10 @@ export default function LocationsPage() {
         <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <Select value={industryFilter} onValueChange={setIndustryFilter}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Industri" />
+              <SelectValue placeholder="Industry" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Industri</SelectItem>
+              <SelectItem value="all">All Industries</SelectItem>
               {industries.map((industry) => (
                 <SelectItem key={industry} value={industry}>
                   {industry}
@@ -240,10 +240,10 @@ export default function LocationsPage() {
 
           <Select value={cityFilter} onValueChange={setCityFilter}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Kota" />
+              <SelectValue placeholder="City" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Kota</SelectItem>
+              <SelectItem value="all">All Cities</SelectItem>
               {cities.map((city) => (
                 <SelectItem key={city} value={city}>
                   {city}
@@ -257,21 +257,21 @@ export default function LocationsPage() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Status</SelectItem>
-              <SelectItem value="tersedia">Tersedia</SelectItem>
-              <SelectItem value="terbatas">Terbatas</SelectItem>
-              <SelectItem value="penuh">Penuh</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="available">Available</SelectItem>
+              <SelectItem value="limited">Limited</SelectItem>
+              <SelectItem value="full">Full</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Urutkan berdasarkan" />
+              <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="name">Nama</SelectItem>
-              <SelectItem value="distance">Jarak</SelectItem>
-              <SelectItem value="availability">Ketersediaan</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="distance">Distance</SelectItem>
+              <SelectItem value="availability">Availability</SelectItem>
             </SelectContent>
           </Select>
 
@@ -279,54 +279,54 @@ export default function LocationsPage() {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Tambah Lokasi
+                Add Location
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>Tambah Lokasi Baru</DialogTitle>
-                <DialogDescription>Masukkan detail lokasi magang baru</DialogDescription>
+                <DialogTitle>Add New Location</DialogTitle>
+                <DialogDescription>Enter the details of the new internship location</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">
-                      Nama Perusahaan/Institusi
+                      Company/Institution Name
                     </label>
                     <Input
                       id="name"
                       value={newLocation.name}
                       onChange={(e) => setNewLocation({ ...newLocation, name: e.target.value })}
-                      placeholder="PT Contoh Indonesia"
+                      placeholder="PT Example Indonesia"
                     />
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="industry" className="text-sm font-medium">
-                      Industri
+                      Industry
                     </label>
                     <Input
                       id="industry"
                       value={newLocation.industry}
                       onChange={(e) => setNewLocation({ ...newLocation, industry: e.target.value })}
-                      placeholder="Teknologi"
+                      placeholder="Technology"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="address" className="text-sm font-medium">
-                    Alamat
+                    Address
                   </label>
                   <Input
                     id="address"
                     value={newLocation.address}
                     onChange={(e) => setNewLocation({ ...newLocation, address: e.target.value })}
-                    placeholder="Jl. Contoh No. 123, Jakarta"
+                    placeholder="Jl. Example No. 123, Jakarta"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="city" className="text-sm font-medium">
-                      Kota
+                      City
                     </label>
                     <Input
                       id="city"
@@ -337,7 +337,7 @@ export default function LocationsPage() {
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="positions" className="text-sm font-medium">
-                      Posisi (dipisahkan dengan koma)
+                      Positions (comma separated)
                     </label>
                     <Input
                       id="positions"
@@ -351,14 +351,14 @@ export default function LocationsPage() {
                             .filter((p) => p),
                         })
                       }
-                      placeholder="Pengembang Perangkat Lunak, Desainer UI/UX"
+                      placeholder="Software Developer, UI/UX Designer"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="quota" className="text-sm font-medium">
-                      Kuota Total
+                      Total Quota
                     </label>
                     <Input
                       id="quota"
@@ -375,7 +375,7 @@ export default function LocationsPage() {
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="remaining" className="text-sm font-medium">
-                      Slot Tersisa
+                      Remaining Slots
                     </label>
                     <Input
                       id="remaining"
@@ -399,17 +399,17 @@ export default function LocationsPage() {
                       onValueChange={(value) =>
                         setNewLocation({
                           ...newLocation,
-                          status: value as "tersedia" | "terbatas" | "penuh",
+                          status: value as "available" | "limited" | "full",
                         })
                       }
                     >
                       <SelectTrigger id="status">
-                        <SelectValue placeholder="Pilih status" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="tersedia">Tersedia</SelectItem>
-                        <SelectItem value="terbatas">Terbatas</SelectItem>
-                        <SelectItem value="penuh">Penuh</SelectItem>
+                        <SelectItem value="available">Available</SelectItem>
+                        <SelectItem value="limited">Limited</SelectItem>
+                        <SelectItem value="full">Full</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -417,9 +417,9 @@ export default function LocationsPage() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-                  Batal
+                  Cancel
                 </Button>
-                <Button onClick={handleAddLocation}>Tambah Lokasi</Button>
+                <Button onClick={handleAddLocation}>Add Location</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -434,7 +434,7 @@ export default function LocationsPage() {
               className={cn(
                 "rounded-lg border p-4 hover:bg-muted/30 transition-colors",
                 selectedLocation?.id === location.id && "border-primary bg-primary/5",
-                location.status === "penuh" && "opacity-70",
+                location.status === "full" && "opacity-70",
               )}
               onClick={() => setSelectedLocation(selectedLocation?.id === location.id ? null : location)}
             >
@@ -448,7 +448,7 @@ export default function LocationsPage() {
                       <h3 className="font-medium">{location.name}</h3>
                       {location.favorite && (
                         <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
-                          Favorit
+                          Favorite
                         </Badge>
                       )}
                     </div>
@@ -475,7 +475,7 @@ export default function LocationsPage() {
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
-                    Kuota: {location.remaining}/{location.quota} tersisa
+                    Quota: {location.remaining}/{location.quota} remaining
                   </span>
                 </div>
               </div>
@@ -489,7 +489,7 @@ export default function LocationsPage() {
                     toggleFavorite(location.id)
                   }}
                 >
-                  {location.favorite ? "Hapus Favorit" : "Tambah ke Favorit"}
+                  {location.favorite ? "Remove Favorite" : "Add to Favorites"}
                 </Button>
                 <Button
                   variant="destructive"
@@ -509,11 +509,11 @@ export default function LocationsPage() {
             <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
               <Building className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium">Tidak ada lokasi ditemukan</h3>
-            <p className="text-sm text-muted-foreground mt-1">Coba sesuaikan filter Anda atau tambahkan lokasi baru</p>
+            <h3 className="text-lg font-medium">No locations found</h3>
+            <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or add a new location</p>
             <Button className="mt-4" onClick={() => setShowAddDialog(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Tambah Lokasi
+              Add Location
             </Button>
           </div>
         )}
@@ -545,7 +545,7 @@ export default function LocationsPage() {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-sm font-medium">Posisi Tersedia</h4>
+              <h4 className="text-sm font-medium">Available Positions</h4>
               <div className="flex flex-wrap gap-2">
                 {selectedLocation.positions.map((position, index) => (
                   <Badge key={index} variant="outline" className="bg-primary/10">
@@ -556,11 +556,11 @@ export default function LocationsPage() {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-sm font-medium">Ketersediaan</h4>
+              <h4 className="text-sm font-medium">Availability</h4>
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">
-                  {selectedLocation.remaining} dari {selectedLocation.quota} posisi tersedia
+                  {selectedLocation.remaining} of {selectedLocation.quota} positions available
                 </span>
               </div>
               <div className="w-full bg-muted rounded-full h-2.5">
@@ -573,15 +573,15 @@ export default function LocationsPage() {
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => toggleFavorite(selectedLocation.id)}>
-                {selectedLocation.favorite ? "Hapus dari Favorit" : "Tambah ke Favorit"}
+                {selectedLocation.favorite ? "Remove from Favorites" : "Add to Favorites"}
               </Button>
-              <Button disabled={selectedLocation.status === "penuh"}>
-                {selectedLocation.status === "penuh" ? (
-                  "Tidak Ada Posisi Tersedia"
+              <Button disabled={selectedLocation.status === "full"}>
+                {selectedLocation.status === "full" ? (
+                  "No Positions Available"
                 ) : (
                   <>
                     <UserPlus className="h-4 w-4 mr-2" />
-                    Bentuk Tim & Ajukan
+                    Form Team & Apply
                   </>
                 )}
               </Button>

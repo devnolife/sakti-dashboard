@@ -1,6 +1,6 @@
-import KkpProdiDashboard from "@/components/kkp/kkp-prodi-dashboard"
+import { redirect } from "next/navigation"
 
 export default function ProdiKkpPage() {
-  return <KkpProdiDashboard />
+  redirect("/dashboard/prodi/kkp-locations")
 }
 

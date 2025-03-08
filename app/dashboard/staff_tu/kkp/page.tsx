@@ -47,6 +47,8 @@ import {
   BookOpen,
   GraduationCap,
   ClipboardList,
+  UserPlus,
+  ExternalLink,
 } from "lucide-react"
 import {
   getAllKkpApplications,
@@ -679,306 +681,354 @@ export default function StaffKkpManagementPage() {
       {/* Application Details Dialog */}
       {selectedApplication && (
         <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-primary" />
-                {selectedApplication.title}
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-primary" />
+                  <span className="font-bold">{selectedApplication.title}</span>
+                </div>
               </DialogTitle>
-              <DialogDescription>
-                {selectedApplication.applicationNumber} • {selectedApplication.company.name}
-              </DialogDescription>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                  {selectedApplication.applicationNumber}
+                </Badge>
+                {getStatusBadge(selectedApplication.status)}
+                <div className="text-sm text-muted-foreground">
+                  Diajukan pada{" "}
+                  {new Date(selectedApplication.submissionDate).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
             </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div className="mt-2 grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Student Information */}
               <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Informasi Mahasiswa</h3>
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Avatar className="h-12 w-12 border border-primary/10">
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            {getInitials(selectedApplication.student.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{selectedApplication.student.name}</p>
-                          <p className="text-sm text-muted-foreground">{selectedApplication.student.nim}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Program Studi:</span>
-                          <span>{selectedApplication.student.major}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Semester:</span>
-                          <span>{selectedApplication.student.semester}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Email:</span>
-                          <span className="truncate max-w-[150px]">{selectedApplication.student.email}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Telepon:</span>
-                          <span>{selectedApplication.student.phone}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                <div className="bg-muted/30 rounded-lg p-4 border border-border">
+                  <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
+                    <User className="h-4 w-4 text-primary" />
+                    Informasi Mahasiswa
+                  </h3>
+                  <div className="flex items-center gap-3 mb-4">
+                    <Avatar className="h-14 w-14 border-2 border-primary/10">
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {getInitials(selectedApplication.student.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold text-lg">{selectedApplication.student.name}</p>
+                      <p className="text-sm font-medium text-primary">{selectedApplication.student.nim}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-2 text-sm">
+                    <div className="text-muted-foreground">Program Studi</div>
+                    <div className="font-medium text-right">{selectedApplication.student.major}</div>
+
+                    <div className="text-muted-foreground">Semester</div>
+                    <div className="font-medium text-right">{selectedApplication.student.semester}</div>
+
+                    <div className="text-muted-foreground">Email</div>
+                    <div className="font-medium text-right truncate">{selectedApplication.student.email}</div>
+
+                    <div className="text-muted-foreground">Telepon</div>
+                    <div className="font-medium text-right">{selectedApplication.student.phone}</div>
+                  </div>
                 </div>
 
                 {selectedApplication.groupMembers && selectedApplication.groupMembers.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Anggota Kelompok</h3>
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="space-y-3">
-                          {selectedApplication.groupMembers.map((member) => (
-                            <div key={member.id} className="flex items-center gap-2">
-                              <Avatar className="h-8 w-8 border border-primary/10">
-                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                                  {getInitials(member.name)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="text-sm font-medium">{member.name}</p>
-                                <p className="text-xs text-muted-foreground">{member.nim}</p>
-                              </div>
-                            </div>
-                          ))}
+                  <div className="bg-muted/30 rounded-lg p-4 border border-border">
+                    <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
+                      <UserPlus className="h-4 w-4 text-primary" />
+                      Anggota Kelompok
+                    </h3>
+                    <div className="space-y-3">
+                      {selectedApplication.groupMembers.map((member) => (
+                        <div key={member.id} className="flex items-center gap-2 p-2 rounded-md bg-background">
+                          <Avatar className="h-8 w-8 border border-primary/10">
+                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                              {getInitials(member.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-sm font-medium">{member.name}</p>
+                            <p className="text-xs text-muted-foreground">{member.nim}</p>
+                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                      ))}
+                    </div>
                   </div>
                 )}
 
                 {selectedApplication.supervisor && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Pembimbing</h3>
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Avatar className="h-8 w-8 border border-primary/10">
-                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                              {getInitials(selectedApplication.supervisor.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">{selectedApplication.supervisor.name}</p>
-                            <p className="text-xs text-muted-foreground">{selectedApplication.supervisor.nip}</p>
-                          </div>
-                        </div>
-                        <div className="space-y-1 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Departemen:</span>
-                            <span>{selectedApplication.supervisor.department}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Email:</span>
-                            <span className="truncate max-w-[150px]">{selectedApplication.supervisor.email}</span>
-                          </div>
-                          {selectedApplication.supervisor.specialization && (
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Spesialisasi:</span>
-                              <span>{selectedApplication.supervisor.specialization}</span>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
+                  <div className="bg-muted/30 rounded-lg p-4 border border-border">
+                    <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
+                      <GraduationCap className="h-4 w-4 text-primary" />
+                      Pembimbing
+                    </h3>
+                    <div className="flex items-center gap-3 mb-3">
+                      <Avatar className="h-10 w-10 border border-primary/10">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {getInitials(selectedApplication.supervisor.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{selectedApplication.supervisor.name}</p>
+                        <p className="text-xs text-muted-foreground">{selectedApplication.supervisor.nip}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-y-2 text-sm">
+                      <div className="text-muted-foreground">Departemen</div>
+                      <div className="font-medium text-right">{selectedApplication.supervisor.department}</div>
+
+                      <div className="text-muted-foreground">Email</div>
+                      <div className="font-medium text-right truncate">{selectedApplication.supervisor.email}</div>
+
+                      {selectedApplication.supervisor.specialization && (
+                        <>
+                          <div className="text-muted-foreground">Spesialisasi</div>
+                          <div className="font-medium text-right">{selectedApplication.supervisor.specialization}</div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Middle Column - Company and Application Details */}
               <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Informasi Perusahaan</h3>
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        {selectedApplication.company.logo ? (
-                          <img
-                            src={selectedApplication.company.logo || "/placeholder.svg"}
-                            alt={selectedApplication.company.name}
-                            className="h-12 w-12 rounded-full"
-                          />
-                        ) : (
-                          <Building className="h-12 w-12 text-muted-foreground" />
-                        )}
-                        <div>
-                          <p className="font-medium">{selectedApplication.company.name}</p>
-                          <p className="text-sm text-muted-foreground">{selectedApplication.company.industry}</p>
+                <div className="bg-muted/30 rounded-lg p-4 border border-border">
+                  <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
+                    <Building className="h-4 w-4 text-primary" />
+                    Informasi Perusahaan
+                  </h3>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center border-2 border-primary/10">
+                      {selectedApplication.company.logo ? (
+                        <img
+                          src={selectedApplication.company.logo || "/placeholder.svg"}
+                          alt={selectedApplication.company.name}
+                          className="h-12 w-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <Building className="h-8 w-8 text-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-lg">{selectedApplication.company.name}</p>
+                      <p className="text-sm text-primary">{selectedApplication.company.industry}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-y-2 text-sm">
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="text-muted-foreground col-span-1">Alamat</div>
+                      <div className="font-medium col-span-2">{selectedApplication.company.address}</div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="text-muted-foreground col-span-1">Kota</div>
+                      <div className="font-medium col-span-2">{selectedApplication.company.city}</div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="text-muted-foreground col-span-1">Kontak Person</div>
+                      <div className="font-medium col-span-2">{selectedApplication.company.contactPerson}</div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="text-muted-foreground col-span-1">Telepon Kontak</div>
+                      <div className="font-medium col-span-2">{selectedApplication.company.contactPhone}</div>
+                    </div>
+
+                    {selectedApplication.company.website && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="text-muted-foreground col-span-1">Website</div>
+                        <div className="font-medium col-span-2">
+                          <a
+                            href={
+                              selectedApplication.company.website.startsWith("http")
+                                ? selectedApplication.company.website
+                                : `http://${selectedApplication.company.website}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline flex items-center gap-1"
+                          >
+                            {selectedApplication.company.website}
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
                         </div>
                       </div>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Alamat:</span>
-                          <span className="text-right">{selectedApplication.company.address}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Kota:</span>
-                          <span>{selectedApplication.company.city}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Kontak Person:</span>
-                          <span>{selectedApplication.company.contactPerson}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Telepon Kontak:</span>
-                          <span>{selectedApplication.company.contactPhone}</span>
-                        </div>
-                        {selectedApplication.company.website && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Website:</span>
-                            <a
-                              href={
-                                selectedApplication.company.website.startsWith("http")
-                                  ? selectedApplication.company.website
-                                  : `http://${selectedApplication.company.website}`
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline"
-                            >
-                              {selectedApplication.company.website}
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                    )}
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Detail Aplikasi</h3>
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="space-y-3">
-                        <div>
-                          <p className="text-sm text-muted-foreground mb-1">Deskripsi:</p>
-                          <p className="text-sm">{selectedApplication.description}</p>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Tanggal Pengajuan:</span>
-                          <span className="text-sm">
-                            {new Date(selectedApplication.submissionDate).toLocaleDateString("id-ID", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Tanggal Mulai:</span>
-                          <span className="text-sm">
-                            {new Date(selectedApplication.startDate).toLocaleDateString("id-ID", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Tanggal Selesai:</span>
-                          <span className="text-sm">
-                            {new Date(selectedApplication.endDate).toLocaleDateString("id-ID", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">Status:</span>
-                          <span>{getStatusBadge(selectedApplication.status)}</span>
-                        </div>
+                <div className="bg-muted/30 rounded-lg p-4 border border-border">
+                  <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                    Detail Aplikasi
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="text-sm">
+                      <div className="text-muted-foreground mb-1">Deskripsi:</div>
+                      <p className="bg-background p-2 rounded-md">{selectedApplication.description}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-y-3 text-sm mt-3">
+                      <div className="text-muted-foreground">Tanggal Mulai</div>
+                      <div className="font-medium text-right">
+                        {new Date(selectedApplication.startDate).toLocaleDateString("id-ID", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
+
+                      <div className="text-muted-foreground">Tanggal Selesai</div>
+                      <div className="font-medium text-right">
+                        {new Date(selectedApplication.endDate).toLocaleDateString("id-ID", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
+
+                      <div className="text-muted-foreground">Durasi</div>
+                      <div className="font-medium text-right">
+                        {Math.ceil(
+                          (new Date(selectedApplication.endDate).getTime() -
+                            new Date(selectedApplication.startDate).getTime()) /
+                            (1000 * 60 * 60 * 24),
+                        )}{" "}
+                        hari
+                      </div>
+                    </div>
+
+                    {((selectedApplication.approvedBy && selectedApplication.approvedDate) ||
+                      (selectedApplication.rejectedBy && selectedApplication.rejectedDate)) && (
+                      <div className="mt-3 pt-3 border-t border-border">
                         {selectedApplication.approvedBy && selectedApplication.approvedDate && (
-                          <div className="pt-2 border-t">
-                            <p className="text-sm text-muted-foreground mb-1">Disetujui oleh:</p>
-                            <p className="text-sm font-medium">{selectedApplication.approvedBy}</p>
-                            <p className="text-xs text-muted-foreground">
+                          <div className="flex justify-between items-center text-sm rounded-md bg-green-50 dark:bg-green-950/20 p-2 mb-2">
+                            <div>
+                              <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
+                                Disetujui oleh
+                              </Badge>
+                              <p className="font-medium mt-1">{selectedApplication.approvedBy}</p>
+                            </div>
+                            <div className="text-right text-muted-foreground">
                               {new Date(selectedApplication.approvedDate).toLocaleDateString("id-ID", {
-                                year: "numeric",
-                                month: "long",
                                 day: "numeric",
+                                month: "short",
+                                year: "numeric",
                               })}
-                            </p>
+                            </div>
                           </div>
                         )}
+
                         {selectedApplication.rejectedBy && selectedApplication.rejectedDate && (
-                          <div className="pt-2 border-t">
-                            <p className="text-sm text-muted-foreground mb-1">Ditolak oleh:</p>
-                            <p className="text-sm font-medium">{selectedApplication.rejectedBy}</p>
-                            <p className="text-xs text-muted-foreground">
+                          <div className="flex justify-between items-center text-sm rounded-md bg-red-50 dark:bg-red-950/20 p-2">
+                            <div>
+                              <Badge variant="outline" className="bg-red-100 text-red-700 border-red-200">
+                                Ditolak oleh
+                              </Badge>
+                              <p className="font-medium mt-1">{selectedApplication.rejectedBy}</p>
+                            </div>
+                            <div className="text-right text-muted-foreground">
                               {new Date(selectedApplication.rejectedDate).toLocaleDateString("id-ID", {
-                                year: "numeric",
-                                month: "long",
                                 day: "numeric",
+                                month: "short",
+                                year: "numeric",
                               })}
-                            </p>
-                          </div>
-                        )}
-                        {selectedApplication.rejectionReason && (
-                          <div className="pt-2">
-                            <p className="text-sm text-muted-foreground mb-1">Alasan Penolakan:</p>
-                            <p className="text-sm text-red-500">{selectedApplication.rejectionReason}</p>
+                            </div>
                           </div>
                         )}
                       </div>
-                    </CardContent>
-                  </Card>
+                    )}
+
+                    {selectedApplication.rejectionReason && (
+                      <div className="mt-2 text-sm">
+                        <p className="text-muted-foreground mb-1">Alasan Penolakan:</p>
+                        <p className="bg-red-50 dark:bg-red-950/20 p-2 rounded-md text-red-700 dark:text-red-400">
+                          {selectedApplication.rejectionReason}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Right Column - Documents */}
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Dokumen</h3>
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      {selectedApplication.documents.map((document) => (
-                        <div key={document.id} className="flex items-center justify-between">
+              <div className="bg-muted/30 rounded-lg p-4 border border-border h-fit">
+                <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
+                  <FileText className="h-4 w-4 text-primary" />
+                  Dokumen
+                </h3>
+
+                {selectedApplication.documents.length > 0 ? (
+                  <div className="space-y-3">
+                    {selectedApplication.documents.map((document) => (
+                      <div
+                        key={document.id}
+                        className="p-3 rounded-lg border border-border hover:bg-background transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                              <p className="text-sm font-medium">{document.name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(document.uploadDate).toLocaleDateString("id-ID", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
-                              </p>
+                            <div className="p-1.5 bg-primary/10 rounded-md">
+                              <FileText className="h-4 w-4 text-primary" />
                             </div>
+                            <span className="font-medium text-sm">{document.name}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {getDocumentStatusBadge(document.status)}
-                            <Button variant="ghost" size="sm" onClick={() => handleViewDocument(document)}>
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" asChild>
-                              <a href={document.url} target="_blank" rel="noopener noreferrer">
-                                <Download className="h-4 w-4" />
-                              </a>
-                            </Button>
+                          {getDocumentStatusBadge(document.status)}
+                        </div>
+
+                        <div className="text-xs text-muted-foreground mb-2">
+                          Diunggah pada{" "}
+                          {new Date(document.uploadDate).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </div>
+
+                        {document.notes && (
+                          <div className="bg-muted p-2 rounded-md mb-2 text-xs">
+                            <span className="font-medium">Catatan:</span> {document.notes}
                           </div>
+                        )}
+
+                        <div className="flex items-center justify-end gap-1 mt-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewDocument(document)}
+                            className="h-8"
+                          >
+                            <Eye className="h-3.5 w-3.5 mr-1" />
+                            Verifikasi
+                          </Button>
+                          <Button variant="ghost" size="sm" asChild className="h-8">
+                            <a href={document.url} target="_blank" rel="noopener noreferrer">
+                              <Download className="h-3.5 w-3.5 mr-1" />
+                              Unduh
+                            </a>
+                          </Button>
                         </div>
-                      ))}
-                      {selectedApplication.documents.length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-4">
-                          <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">Tidak ada dokumen ditemukan</p>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-center bg-background rounded-lg">
+                    <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                    <p className="text-muted-foreground">Tidak ada dokumen ditemukan</p>
+                  </div>
+                )}
               </div>
             </div>
-            <DialogFooter className="gap-2">
+
+            <DialogFooter className="gap-2 mt-4 pt-4 border-t">
               <Button variant="outline" onClick={() => setShowDetailsDialog(false)}>
                 Tutup
               </Button>
@@ -991,8 +1041,8 @@ export default function StaffKkpManagementPage() {
                       setShowRejectionDialog(true)
                     }}
                   >
-                    <XCircle className="h-4 w-4 mr-1" />
-                    Tolak
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Tolak Permintaan
                   </Button>
                   <Button
                     variant="default"
@@ -1001,14 +1051,14 @@ export default function StaffKkpManagementPage() {
                       handleUpdateStatus(selectedApplication.id, "approved")
                     }}
                   >
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Setujui
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Setujui Permintaan
                   </Button>
                 </>
               )}
               {selectedApplication.status === "approved" && (
                 <Button variant="outline">
-                  <Download className="h-4 w-4 mr-1" />
+                  <Download className="h-4 w-4 mr-2" />
                   Unduh Surat
                 </Button>
               )}

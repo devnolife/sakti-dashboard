@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation"
 
 export default function DashboardPage() {
-  // Alihkan ke dashboard mahasiswa secara default
+  // Redirect to the mahasiswa dashboard by default
   redirect("/dashboard/mahasiswa")
 }
+

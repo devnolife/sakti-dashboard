@@ -64,10 +64,10 @@ export default function NotificationsPage() {
   return (
     <div className="container mx-auto py-6">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Notifikasi</h1>
+        <h1 className="text-2xl font-bold">Notifications</h1>
         {notifications.some((n) => !n.read) && (
           <Button variant="outline" onClick={markAllAsRead}>
-            Tandai semua sebagai sudah dibaca
+            Mark all as read
           </Button>
         )}
       </div>
@@ -76,7 +76,7 @@ export default function NotificationsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Cari notifikasi..."
+            placeholder="Search notifications..."
             className="pl-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -86,37 +86,37 @@ export default function NotificationsPage() {
           <SelectTrigger className="w-full sm:w-[180px]">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              <SelectValue placeholder="Filter berdasarkan tipe" />
+              <SelectValue placeholder="Filter by type" />
             </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">
               <div className="flex items-center justify-between">
-                <span>Semua notifikasi</span>
+                <span>All notifications</span>
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs">{counts.all}</span>
               </div>
             </SelectItem>
             <SelectItem value="kkp-invitation">
               <div className="flex items-center justify-between">
-                <span>Undangan KKP</span>
+                <span>KKP Invitations</span>
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs">{counts["kkp-invitation"]}</span>
               </div>
             </SelectItem>
             <SelectItem value="kkp-accepted">
               <div className="flex items-center justify-between">
-                <span>Undangan Diterima</span>
+                <span>Accepted Invitations</span>
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs">{counts["kkp-accepted"]}</span>
               </div>
             </SelectItem>
             <SelectItem value="kkp-approved">
               <div className="flex items-center justify-between">
-                <span>Aplikasi Disetujui</span>
+                <span>Approved Applications</span>
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs">{counts["kkp-approved"]}</span>
               </div>
             </SelectItem>
             <SelectItem value="general">
               <div className="flex items-center justify-between">
-                <span>Umum</span>
+                <span>General</span>
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs">{counts.general}</span>
               </div>
             </SelectItem>
@@ -128,22 +128,22 @@ export default function NotificationsPage() {
         <TabsList className="mb-4 grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="all" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
-            <span className="hidden sm:inline">Semua</span>
+            <span className="hidden sm:inline">All</span>
             <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{counts.all}</span>
           </TabsTrigger>
           <TabsTrigger value="kkp-invitation" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Undangan</span>
+            <span className="hidden sm:inline">Invitations</span>
             <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{counts["kkp-invitation"]}</span>
           </TabsTrigger>
           <TabsTrigger value="kkp-accepted" className="flex items-center gap-2">
             <Check className="h-4 w-4" />
-            <span className="hidden sm:inline">Diterima</span>
+            <span className="hidden sm:inline">Accepted</span>
             <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{counts["kkp-accepted"]}</span>
           </TabsTrigger>
           <TabsTrigger value="kkp-approved" className="flex items-center gap-2">
             <Check className="h-4 w-4" />
-            <span className="hidden sm:inline">Disetujui</span>
+            <span className="hidden sm:inline">Approved</span>
             <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{counts["kkp-approved"]}</span>
           </TabsTrigger>
         </TabsList>
@@ -155,7 +155,7 @@ export default function NotificationsPage() {
               .map(([date, notifications]) => (
                 <div key={date} className="mb-6">
                   <h3 className="mb-3 text-sm font-medium text-muted-foreground">
-                    {new Date(date).toLocaleDateString("id-ID", {
+                    {new Date(date).toLocaleDateString("en-US", {
                       weekday: "long",
                       year: "numeric",
                       month: "long",
@@ -178,9 +178,9 @@ export default function NotificationsPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-12">
               <Bell className="mb-4 h-12 w-12 text-muted-foreground" />
-              <h3 className="text-lg font-medium">Tidak ada notifikasi ditemukan</h3>
+              <h3 className="text-lg font-medium">No notifications found</h3>
               <p className="text-muted-foreground">
-                {searchQuery ? "Coba sesuaikan kriteria pencarian atau filter Anda" : "Anda sudah membaca semua notifikasi!"}
+                {searchQuery ? "Try adjusting your search or filter criteria" : "You're all caught up!"}
               </p>
             </div>
           )}
@@ -189,3 +189,4 @@ export default function NotificationsPage() {
     </div>
   )
 }
+
