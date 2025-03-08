@@ -216,12 +216,6 @@ export const mahasiswaMenuItems = [
     ],
   },
   {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
-  {
     id: "settings",
     title: "Pengaturan",
     href: "/dashboard/mahasiswa/settings",
@@ -325,12 +319,7 @@ export const staffTuMenuItems = [
     icon: Briefcase,
     badge: { text: "12", variant: "destructive" },
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
   {
     id: "settings",
     title: "Pengaturan",
@@ -410,12 +399,7 @@ export const prodiMenuItems = [
     href: "/dashboard/prodi/faculty-directory",
     icon: Users,
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
   {
     id: "settings",
     title: "Pengaturan",
@@ -556,12 +540,7 @@ export const dekanMenuItems = [
     href: "/dashboard/dekan/department-analytics",
     icon: BarChart,
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
   {
     id: "settings",
     title: "Pengaturan",
@@ -603,12 +582,7 @@ export const staffKkpMenuItems = [
     href: "/dashboard/staff_kkp/reports",
     icon: ClipboardList,
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
   {
     id: "settings",
     title: "Pengaturan",
@@ -650,12 +624,7 @@ export const adminMenuItems = [
     href: "/dashboard/admin/logs",
     icon: FileText,
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
 ]
 
 // Menu items for lecturer
@@ -727,12 +696,7 @@ export const lecturerMenuItems = [
     href: "/dashboard/lecturer/schedule",
     icon: Calendar,
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
   {
     id: "settings",
     title: "Pengaturan",
@@ -814,12 +778,7 @@ export const laboratoryAdminMenuItems = [
       },
     ],
   },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+ 
   {
     id: "settings",
     title: "Pengaturan",

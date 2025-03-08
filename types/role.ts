@@ -1,4 +1,4 @@
-export type Role = "mahasiswa" | "staff_tu" | "prodi" | "dekan" | "admin" | "staff_kkp" | "lecturer" | "kepala_jurusan"
+export type Role = "mahasiswa" | "staff_tu" | "prodi" | "dekan" | "admin" | "lecturer"
 
 export const roleConfigs = {
   mahasiswa: {
@@ -7,11 +7,11 @@ export const roleConfigs = {
   },
   staff_tu: {
     path: "/dashboard/staff_tu",
-    displayName: "Staff TU",
+    displayName: "Prodi TU",
   },
   prodi: {
     path: "/dashboard/prodi",
-    displayName: "Kepala Program Studi",
+    displayName: "Ketua Prodi",
   },
   dekan: {
     path: "/dashboard/dekan",
@@ -21,17 +21,9 @@ export const roleConfigs = {
     path: "/dashboard/admin",
     displayName: "Admin",
   },
-  staff_kkp: {
-    path: "/dashboard/staff_kkp",
-    displayName: "Staff KKP",
-  },
   lecturer: {
     path: "/dashboard/lecturer",
     displayName: "Dosen",
-  },
-  kepala_jurusan: {
-    path: "/dashboard/kepala_jurusan",
-    displayName: "Kepala Jurusan",
   },
 }
 
