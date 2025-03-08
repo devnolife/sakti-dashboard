@@ -137,7 +137,7 @@ export default function ApplicationPage() {
     status: "draft",
     details: {
       address: "",
-      positions: [],
+      positions: [], // This is already correctly initialized
       contactName: "",
       contactPosition: "",
       contactEmail: "",
@@ -145,6 +145,23 @@ export default function ApplicationPage() {
       description: "",
     },
   })
+
+  // Helper function to update a specific field in the details object
+  const updateDetailsField = (field: string, value: any) => {
+    setNewApplication({
+      ...newApplication,
+      details: {
+        address: newApplication.details?.address || "",
+        positions: newApplication.details?.positions || [],
+        contactName: newApplication.details?.contactName || "",
+        contactPosition: newApplication.details?.contactPosition || "",
+        contactEmail: newApplication.details?.contactEmail || "",
+        contactPhone: newApplication.details?.contactPhone || "",
+        description: newApplication.details?.description || "",
+        [field]: value,
+      },
+    });
+  };
 
   // Filter applications based on active tab
   const filteredApplications = applications.filter((app) => {
@@ -230,14 +247,14 @@ export default function ApplicationPage() {
         )
       case "approved":
         return (
-          <Badge className="bg-green-500/10 text-green-500">
+          <Badge className="text-green-500 bg-green-500/10">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
             Disetujui
           </Badge>
         )
       case "rejected":
         return (
-          <Badge className="bg-red-500/10 text-red-500">
+          <Badge className="text-red-500 bg-red-500/10">
             <XCircle className="h-3.5 w-3.5 mr-1" />
             Ditolak
           </Badge>
@@ -258,16 +275,16 @@ export default function ApplicationPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
             Aplikasi Magang
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Kelola aplikasi lokasi magang Anda</p>
+        <p className="mt-2 text-muted-foreground">Kelola aplikasi lokasi magang Anda</p>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 md:flex-row">
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-5 w-full md:w-auto">
+          <TabsList className="grid w-full grid-cols-5 md:w-auto">
             <TabsTrigger value="all">Semua</TabsTrigger>
             <TabsTrigger value="pending">Menunggu</TabsTrigger>
             <TabsTrigger value="approved">Disetujui</TabsTrigger>
@@ -278,7 +295,7 @@ export default function ApplicationPage() {
         <Dialog open={showNewApplicationDialog} onOpenChange={setShowNewApplicationDialog}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2" />
               Aplikasi Baru
             </Button>
           </DialogTrigger>
@@ -320,236 +337,195 @@ export default function ApplicationPage() {
                       <SelectItem value="Pendidikan">Pendidikan</SelectItem>
                       <SelectItem value="Pemerintahan">Pemerintahan</SelectItem>
                       <SelectItem value="Media & Komunikasi">Media & Komunikasi</SelectItem>
-                      <SelectItem value="Logistik & Transportasi">Logistik & Transportasi</SelectItem>
-                      <SelectItem value="Lainnya">Lainnya</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="address" className="text-sm font-medium">
+                      <SelectItem value="Logistik & Transportasi">Logistik & Transportasi</SelectItem>  // Ensure we're preserving all fields with their current values or defaults
+                      <SelectItem value="Lainnya">Lainnya</SelectItem>     address: e.target.value,
+                    </SelectContent>positions || [],
+                  </Select>      contactName: newApplication.details?.contactName || "",
+                </div>    contactPosition: newApplication.details?.contactPosition || "",
+              </div>etails?.contactEmail || "",
+              <div className="space-y-2">plication.details?.contactPhone || "",
+                <label htmlFor="address" className="text-sm font-medium"> || "",
                   Alamat Lengkap
                 </label>
                 <Input
-                  id="address"
+                  id="address"="Jl. Contoh No. 123, Jakarta"
                   value={newApplication.details?.address}
-                  onChange={(e) =>
-                    setNewApplication({
-                      ...newApplication,
-                      details: { ...newApplication.details, address: e.target.value },
-                    })
-                  }
-                  placeholder="Jl. Contoh No. 123, Jakarta"
-                />
-              </div>
+                  onChange={(e) => updateDetailsField('address', e.target.value)}
+                  placeholder="Jl. Contoh No. 123, Jakarta"ols-2 gap-4">
+                /> className="space-y-2">
+              </div>el htmlFor="city" className="text-sm font-medium">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="city" className="text-sm font-medium">
-                    Kota
-                  </label>
-                  <Input
+                    Kotaty"
+                  </label>e={newApplication.city}
+                  <Input=> setNewApplication({ ...newApplication, city: e.target.value })}
                     id="city"
                     value={newApplication.city}
                     onChange={(e) => setNewApplication({ ...newApplication, city: e.target.value })}
-                    placeholder="Jakarta"
-                  />
-                </div>
+                    placeholder="Jakarta">
+                  />positions" className="text-sm font-medium">
+                </div> koma)
                 <div className="space-y-2">
                   <label htmlFor="positions" className="text-sm font-medium">
                     Posisi Magang (dipisahkan dengan koma)
-                  </label>
-                  <Input
-                    id="positions"
-                    value={newApplication.details?.positions?.join(", ")}
-                    onChange={(e) =>
-                      setNewApplication({
-                        ...newApplication,
-                        details: {
-                          ...newApplication.details,
-                          positions: e.target.value
-                            .split(",")
-                            .map((p) => p.trim())
-                            .filter((p) => p),
-                        },
-                      })
-                    }
-                    placeholder="Pengembang Perangkat Lunak, Desainer UI/UX"
-                  />
-                </div>
-              </div>
+                  </label>ils?.positions?.join(", ")}
+                  <Inputge={(e) =>
+                    id="positions"tNewApplication({
+                    value={newApplication.details?.positions?.join(", ")}   ...newApplication,
+                    onChange={(e) => updateDetailsField('positions', e.target.value.split(",").map(p => p.trim()).filter(p => p))}
+                    placeholder="Pengembang Perangkat Lunak, Desainer UI/UX"      address: newApplication.details?.address || "",
+                  />    positions: e.target.value
+                </div>        .split(",")
+              </div>.trim())
               <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">
-                  Deskripsi Perusahaan
-                </label>
-                <Textarea
-                  id="description"
+                <label htmlFor="description" className="text-sm font-medium"> newApplication.details?.contactName || "",
+                  Deskripsi Perusahaan  contactPosition: newApplication.details?.contactPosition || "",
+                </label> contactEmail: newApplication.details?.contactEmail || "",
+                <Textareahone: newApplication.details?.contactPhone || "",
+                  id="description"?.description || "",
                   value={newApplication.details?.description}
-                  onChange={(e) =>
-                    setNewApplication({
-                      ...newApplication,
-                      details: { ...newApplication.details, description: e.target.value },
-                    })
-                  }
+                  onChange={(e) => updateDetailsField('description', e.target.value)}
                   placeholder="Deskripsi singkat tentang perusahaan/institusi"
                   className="min-h-[80px]"
                 />
-              </div>
+              </div>iv>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="contact-name" className="text-sm font-medium">
-                    Nama Kontak
+                  <label htmlFor="contact-name" className="text-sm font-medium">abel htmlFor="description" className="text-sm font-medium">
+                    Nama Kontakskripsi Perusahaan
                   </label>
                   <Input
                     id="contact-name"
-                    value={newApplication.details?.contactName}
-                    onChange={(e) =>
-                      setNewApplication({
-                        ...newApplication,
-                        details: { ...newApplication.details, contactName: e.target.value },
-                      })
-                    }
-                    placeholder="Nama lengkap orang yang dapat dihubungi"
-                  />
+                    value={newApplication.details?.contactName}lication.details?.description}
+                    onChange={(e) => updateDetailsField('contactName', e.target.value)}={(e) =>
+                    placeholder="Nama lengkap orang yang dapat dihubungi"ewApplication({
+                  />on,
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="contact-position" className="text-sm font-medium">
-                    Posisi
+                <div className="space-y-2">Application.details?.address || "",
+                  <label htmlFor="contact-position" className="text-sm font-medium">lication.details?.positions || [],
+                    Posisiplication.details?.contactName || "",
                   </label>
-                  <Input
-                    id="contact-position"
+                  <InputcontactEmail: newApplication.details?.contactEmail || "",
+                    id="contact-position"   contactPhone: newApplication.details?.contactPhone || "",
                     value={newApplication.details?.contactPosition}
-                    onChange={(e) =>
-                      setNewApplication({
-                        ...newApplication,
-                        details: { ...newApplication.details, contactPosition: e.target.value },
-                      })
-                    }
+                    onChange={(e) => updateDetailsField('contactPosition', e.target.value)}  },
                     placeholder="Manajer HR"
                   />
                 </div>
-              </div>
+              </div>e="min-h-[80px]"
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="contact-email" className="text-sm font-medium">
+                  <label htmlFor="contact-email" className="text-sm font-medium">ols-2 gap-4">
                     Email
-                  </label>
+                  </label>ntact-name" className="text-sm font-medium">
                   <Input
                     id="contact-email"
                     type="email"
-                    value={newApplication.details?.contactEmail}
-                    onChange={(e) =>
-                      setNewApplication({
-                        ...newApplication,
-                        details: { ...newApplication.details, contactEmail: e.target.value },
-                      })
-                    }
+                    value={newApplication.details?.contactEmail}contact-name"
+                    onChange={(e) => updateDetailsField('contactEmail', e.target.value)}alue={newApplication.details?.contactName}
                     placeholder="email@contoh.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="contact-phone" className="text-sm font-medium">
-                    Nomor Telepon
+                  />  setNewApplication({
+                </div>  ...newApplication,
+                <div className="space-y-2">    details: {
+                  <label htmlFor="contact-phone" className="text-sm font-medium">ils?.address || "",
+                    Nomor Teleponlication.details?.positions || [],
                   </label>
-                  <Input
-                    id="contact-phone"
-                    value={newApplication.details?.contactPhone}
-                    onChange={(e) =>
-                      setNewApplication({
-                        ...newApplication,
-                        details: { ...newApplication.details, contactPhone: e.target.value },
-                      })
-                    }
+                  <Input contactPosition: newApplication.details?.contactPosition || "",
+                    id="contact-phone"contactEmail: newApplication.details?.contactEmail || "",
+                    value={newApplication.details?.contactPhone}  contactPhone: newApplication.details?.contactPhone || "",
+                    onChange={(e) => updateDetailsField('contactPhone', e.target.value)} newApplication.details?.description || "",
                     placeholder="021-1234567"
                   />
                 </div>
-              </div>
+              </div>gkap orang yang dapat dihubungi"
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNewApplicationDialog(false)}>
-                Batal
+              <Button variant="outline" onClick={() => setShowNewApplicationDialog(false)}>ssName="space-y-2">
+                Batalbel htmlFor="contact-position" className="text-sm font-medium">
               </Button>
-              <Button variant="outline" onClick={handleCreateApplication}>
-                Simpan sebagai Draf
+              <Button variant="outline" onClick={handleCreateApplication}>label>
+                Simpan sebagai Drafut
               </Button>
               <Button type="submit" onClick={handleCreateApplication}>
-                Ajukan Aplikasi
-              </Button>
-            </DialogFooter>
+                Ajukan Aplikasi =>
+              </Button>ewApplication({
+            </DialogFooter>...newApplication,
           </DialogContent>
-        </Dialog>
-      </div>
-
-      <Card className="overflow-hidden gradient-border">
+        </Dialog>ss || "",
+      </div> newApplication.details?.positions || [],
+wApplication.details?.contactName || "",
+      <Card className="overflow-hidden gradient-border"> e.target.value,
         <CardHeader>
-          <CardTitle>Daftar Aplikasi</CardTitle>
-          <CardDescription>Lacak status aplikasi lokasi magang Anda</CardDescription>
+          <CardTitle>Daftar Aplikasi</CardTitle>  contactPhone: newApplication.details?.contactPhone || "",
+          <CardDescription>Lacak status aplikasi lokasi magang Anda</CardDescription>     description: newApplication.details?.description || "",
         </CardHeader>
-        <CardContent>
+        <CardContent>  })
           <TabsContent value={activeTab} className="mt-0">
-            <div className="rounded-md border">
-              <Table>
+            <div className="border rounded-md">placeholder="Manajer HR"
+              <Table>/>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Nama Perusahaan</TableHead>
-                    <TableHead>Industri</TableHead>
-                    <TableHead>Kota</TableHead>
+                    <TableHead className="w-[250px]">Nama Perusahaan</TableHead>assName="grid grid-cols-2 gap-4">
+                    <TableHead>Industri</TableHead>assName="space-y-2">
+                    <TableHead>Kota</TableHead>edium">
                     <TableHead>Tanggal Pengajuan</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Status</TableHead>el>
                     <TableHead className="text-right">Aksi</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredApplications.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
-                        <div className="flex flex-col items-center justify-center">
-                          <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">Tidak ada aplikasi ditemukan</p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mt-4"
-                            onClick={() => setShowNewApplicationDialog(true)}
+                  </TableRow>-email"
+                </TableHeader>e="email"
+                <TableBody>newApplication.details?.contactEmail}
+                  {filteredApplications.length === 0 ? (ge={(e) =>
+                    <TableRow>     setNewApplication({
+                      <TableCell colSpan={6} className="h-24 text-center">            ...newApplication,
+                        <div className="flex flex-col items-center justify-center">                        details: {
+                          <AlertCircle className="w-8 h-8 mb-2 text-muted-foreground" />s?.address || "",
+                          <p className="text-muted-foreground">Tidak ada aplikasi ditemukan</p>      positions: newApplication.details?.positions || [],
+                          <Buttonation.details?.contactName || "",
+                            variant="outline" "",
+                            size="sm"     contactEmail: e.target.value,
+                            className="mt-4"     contactPhone: newApplication.details?.contactPhone || "",
+                            onClick={() => setShowNewApplicationDialog(true)}ils?.description || "",
                           >
-                            <Plus className="h-4 w-4 mr-2" />
+                            <Plus className="w-4 h-4 mr-2" /> })
                             Buat Aplikasi Baru
-                          </Button>
+                          </Button>der="email@contoh.com"
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : (
+                  ) : (text-sm font-medium">
                     filteredApplications.map((application) => (
                       <TableRow key={application.id}>
                         <TableCell className="font-medium">{application.companyName}</TableCell>
-                        <TableCell>{application.industry}</TableCell>
-                        <TableCell>{application.city}</TableCell>
+                        <TableCell>{application.industry}</TableCell>t-phone"
+                        <TableCell>{application.city}</TableCell>newApplication.details?.contactPhone}
                         <TableCell>{application.submissionDate || "-"}</TableCell>
-                        <TableCell>{getStatusBadge(application.status)}</TableCell>
+                        <TableCell>{getStatusBadge(application.status)}</TableCell>plication({
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="sm" onClick={() => setSelectedApplication(application)}>
-                              <Eye className="h-4 w-4 mr-1" />
-                              {application.status === "draft" ? "Edit" : "Detail"}
-                            </Button>
-                            {application.status === "draft" && (
-                              <Button
-                                variant="default"
+                              <Eye className="w-4 h-4 mr-1" />
+                              {application.status === "draft" ? "Edit" : "Detail"}Name: newApplication.details?.contactName || "",
+                            </Button>wApplication.details?.contactPosition || "",
+                            {application.status === "draft" && (l: newApplication.details?.contactEmail || "",
+                              <Buttonrget.value,
+                                variant="default" "",
                                 size="sm"
                                 onClick={() => handleSubmitApplication(application.id)}
                               >
-                                Ajukan
+                                Ajukan1-1234567"
                               </Button>
                             )}
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))
+                    ))> setShowNewApplicationDialog(false)}>
                   )}
                 </TableBody>
-              </Table>
+              </Table>ication}>
             </div>
           </TabsContent>
-        </CardContent>
+        </CardContent>pplication}>
       </Card>
 
       {selectedApplication && (
@@ -557,66 +533,119 @@ export default function ApplicationPage() {
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5 text-primary" />
+                <Building className="w-5 h-5 text-primary" />order">
                 {selectedApplication.companyName}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription>k status aplikasi lokasi magang Anda</CardDescription>
                 {selectedApplication.industry} • {selectedApplication.city}
               </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
+            </DialogHeader>activeTab} className="mt-0">
+            <div className="space-y-4">er rounded-md">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">ID Aplikasi:</span>
-                  <span className="text-sm">{selectedApplication.id}</span>
-                </div>
-                {getStatusBadge(selectedApplication.status)}
-              </div>
-
-              {selectedApplication.submissionDate && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <FileText className="w-4 h-4 text-muted-foreground" />leRow>
+                  <span className="text-sm font-medium">ID Aplikasi:</span><TableHead className="w-[250px]">Nama Perusahaan</TableHead>
+                  <span className="text-sm">{selectedApplication.id}</span>ad>Industri</TableHead>
+                </div>ableHead>Kota</TableHead>
+                {getStatusBadge(selectedApplication.status)}  <TableHead>Tanggal Pengajuan</TableHead>
+              </div>leHead>Status</TableHead>
+ableHead className="text-right">Aksi</TableHead>
+              {selectedApplication.submissionDate && (     </TableRow>
+                <div className="flex items-center gap-2">                </TableHeader>
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Tanggal Pengajuan:</span>
                   <span className="text-sm">{selectedApplication.submissionDate}</span>
-                </div>
-              )}
-
-              {selectedApplication.rejectionReason && (
-                <div className="p-3 rounded-md bg-red-500/10 text-red-500 text-sm">
-                  <div className="font-medium mb-1">Alasan Penolakan:</div>
+                </div>leCell colSpan={6} className="h-24 text-center">
+              )}ter justify-center">
+2 text-muted-foreground" />
+              {selectedApplication.rejectionReason && (d-foreground">Tidak ada aplikasi ditemukan</p>
+                <div className="p-3 text-sm text-red-500 rounded-md bg-red-500/10">utton
+                  <div className="mb-1 font-medium">Alasan Penolakan:</div>nt="outline"
                   {selectedApplication.rejectionReason}
-                </div>
-              )}
+                </div>ame="mt-4"
+              )} onClick={() => setShowNewApplicationDialog(true)}
 
               <div className="space-y-2">
                 <h4 className="text-sm font-medium">Detail Perusahaan</h4>
                 <div className="space-y-1">
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <span className="text-sm">{selectedApplication.details.address}</span>
+                    <span className="text-sm">{selectedApplication.details.address}</span>TableRow>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <Briefcase className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <div className="text-sm">
-                      <div className="font-medium">Posisi Tersedia:</div>
+                  <div className="flex items-start gap-2">filteredApplications.map((application) => (
+                    <Briefcase className="h-4 w-4 text-muted-foreground mt-0.5" />                      <TableRow key={application.id}>
+                    <div className="text-sm">ium">{application.companyName}</TableCell>
+                      <div className="font-medium">Posisi Tersedia:</div></TableCell>
                       <ul className="list-disc list-inside">
-                        {selectedApplication.details.positions.map((position, index) => (
+                        {selectedApplication.details.positions.map((position, index) => (>
                           <li key={index}>{position}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                        ))}  <TableCell className="text-right">
+                      </ul>          <div className="flex justify-end gap-2">
+                    </div>                            <Button variant="ghost" size="sm" onClick={() => setSelectedApplication(application)}>
+                  </div>r-1" />
                   <div className="flex items-start gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <div className="text-sm">
-                      <div className="font-medium">Deskripsi:</div>
-                      <p>{selectedApplication.details.description}</p>
-                    </div>
-                  </div>
+                    <div className="text-sm">aft" && (
+                      <div className="font-medium">Deskripsi:</div>        <Button
+                      <p>{selectedApplication.details.description}</p>                variant="default"
+                    </div>                                size="sm"
+                  </div>() => handleSubmitApplication(application.id)}
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Informasi Kontak</h4>
+                <div className="grid grid-cols-2 gap-2"></TableCell>
+                  <div className="text-sm">
+                    <div className="font-medium">Nama:</div>
+                    <p>{selectedApplication.details.contactName}</p>
+                  </div>
+                  <div className="text-sm">
+                    <div className="font-medium">Posisi:</div>
+                    <p>{selectedApplication.details.contactPosition}</p>
+                  </div>
+                  <div className="text-sm">
+                    <div className="font-medium">Email:</div>
+                    <p>{selectedApplication.details.contactEmail}</p>on && (
+                  </div>{(open) => !open && setSelectedApplication(null)}>
+                  <div className="text-sm">
+                    <div className="font-medium">Telepon:</div>
+                    <p>{selectedApplication.details.contactPhone}</p>
+                  </div>
+                </div>pplication.companyName}
+              </div>tle>
+            </div>escription>
+            <DialogFooter>ectedApplication.industry} • {selectedApplication.city}
+              {selectedApplication.status === "draft" ? (              </DialogDescription>
+                <>
+                  <Button
+                    variant="destructive"between">
+                    onClick={() => {center gap-2">
+                      handleDeleteApplication(selectedApplication.id)reground" />
+                      setSelectedApplication(null)</span>
+                    }}className="text-sm">{selectedApplication.id}</span>
+                  >
+                    Hapus Draf
+                  </Button>
+                  <Button
+                    onClick={() => {onDate && (
+                      handleSubmitApplication(selectedApplication.id)
+                      setSelectedApplication(null) />
+                    }}className="text-sm font-medium">Tanggal Pengajuan:</span>
+                  >>{selectedApplication.submissionDate}</span>
+                    Ajukan Aplikasi
+                  </Button>
+                </>
+              ) : (dApplication.rejectionReason && (
+                <Button onClick={() => setSelectedApplication(null)}>Tutup</Button> className="p-3 text-sm text-red-500 rounded-md bg-red-500/10">
+              )}<div className="mb-1 font-medium">Alasan Penolakan:</div>
+            </DialogFooter>dApplication.rejectionReason}
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  )sm font-medium">Detail Perusahaan</h4>
+}
               <div className="space-y-2">
                 <h4 className="text-sm font-medium">Informasi Kontak</h4>
                 <div className="grid grid-cols-2 gap-2">
