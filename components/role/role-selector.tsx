@@ -19,14 +19,24 @@ export default function RoleSelector() {
   const { role, setRole } = useRole()
   const router = useRouter()
 
-  const roles: Role[] = ["mahasiswa", "staff_tu", "prodi", "dekan", "admin", "staff_kkp", "lecturer"]
+  // Update the roles array to include laboratory_admin
+  const roles: Role[] = [
+    "mahasiswa",
+    "staff_tu",
+    "prodi",
+    "dekan",
+    "admin",
+    "staff_kkp",
+    "lecturer",
+    "laboratory_admin",
+  ]
 
   const handleRoleChange = (newRole: Role) => {
     setRole(newRole)
     router.push(getRolePath(newRole))
   }
 
-  // Get role-specific colors
+  // Update the getRoleColor function to include laboratory_admin
   const getRoleColor = (roleType: Role) => {
     const colors: Record<Role, string> = {
       mahasiswa: "bg-blue-100 text-blue-800",
@@ -36,6 +46,7 @@ export default function RoleSelector() {
       admin: "bg-red-100 text-red-800",
       staff_kkp: "bg-teal-100 text-teal-800",
       lecturer: "bg-indigo-100 text-indigo-800",
+      laboratory_admin: "bg-cyan-100 text-cyan-800",
     }
     return colors[roleType]
   }

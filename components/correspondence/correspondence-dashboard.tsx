@@ -102,7 +102,7 @@ export function CorrespondenceDashboard() {
       <Card>
         <CardContent className="pt-6">
           <div className="flex justify-center">
-            <div className="animate-pulse">Memuat...</div>
+            <div className="animate-pulse">Loading...</div>
           </div>
         </CardContent>
       </Card>
@@ -374,3 +374,4 @@ export function CorrespondenceDashboard() {
     </>
   )
 }
+

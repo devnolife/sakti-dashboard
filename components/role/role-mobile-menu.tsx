@@ -17,38 +17,38 @@ interface RoleMobileMenuProps {
 }
 
 export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
   const { user, logout } = useAuth()
 
-  
+  // Close the mobile menu when navigating
   useEffect(() => {
     setIsOpen(false)
   }, [pathname])
 
-  
+  // Initialize open menus based on current path
   useEffect(() => {
     const newOpenMenus: Record<string, boolean> = {}
 
-    
+    // Get the menu items for the current role
     const items = menuItems[role] || []
 
-    
+    // Check each menu item to see if it or its children match the current path
     items.forEach((item) => {
-      
+      // Check if the current path starts with this item's href
       if (pathname.startsWith(item.href)) {
         newOpenMenus[item.id] = true
       }
 
-      
-      if ('children' in item && item.children && Array.isArray(item.children)) {
+      // Check children if they exist
+      if (item.children) {
         item.children.forEach((child) => {
           if (pathname.startsWith(child.href)) {
             newOpenMenus[item.id] = true
 
-            
-            if ('children' in child && child.children) {
+            // If this child also has children, check them too
+            if (child.children) {
               newOpenMenus[`${child.id}`] = true
             }
           }
@@ -71,15 +71,15 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
   }
 
   const isActive = (href: string) => {
-    
+    // Exact match for dashboard root
     if (href === `/dashboard/${role}` && pathname === `/dashboard/${role}`) {
       return true
     }
 
-    
-    
+    // For other pages, check if the pathname starts with the href
+    // But make sure it's not just a partial match of a parent route
     if (href !== `/dashboard/${role}` && pathname.startsWith(href)) {
-      
+      // Check if the next character after href in pathname is '/' or nothing
       const nextChar = pathname.charAt(href.length)
       return nextChar === "/" || nextChar === ""
     }
@@ -89,18 +89,18 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
 
   const roleItems = menuItems[role] || []
 
-  
+  // Recursive function to render menu items and their children
   const renderMenuItem = (item: any, depth = 0) => {
     const active = isActive(item.href)
-    const hasChildren = 'children' in item && item.children && item.children.length > 0
+    const hasChildren = item.children && item.children.length > 0
 
-    
+    // Check if any child is active
     const isChildActive =
       hasChildren &&
       item.children.some(
         (child: any) =>
           isActive(child.href) ||
-          ('children' in child && child.children && child.children.some((grandchild: any) => isActive(grandchild.href))),
+          (child.children && child.children.some((grandchild: any) => isActive(grandchild.href))),
       )
 
     return (
@@ -130,12 +130,12 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
                 )}
               </div>
               <div className="transition-transform duration-200">
-                {isMenuOpen(item.id) ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                {isMenuOpen(item.id) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
               </div>
             </button>
 
             {isMenuOpen(item.id) && (
-              <div className="py-1 pl-2 mt-1 ml-4 space-y-1 border-l-2 border-muted">
+              <div className="mt-1 space-y-1 pl-2 border-l-2 border-muted ml-4 py-1">
                 {item.children.map((child: any) => renderMenuItem(child, depth + 1))}
               </div>
             )}
@@ -167,41 +167,41 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed z-40 flex items-center justify-center rounded-full shadow-lg bottom-4 right-4 h-14 w-14 bg-primary text-primary-foreground lg:hidden"
+        className="fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg lg:hidden"
         aria-label="Open menu"
       >
-        <Menu className="w-6 h-6" />
+        <Menu className="h-6 w-6" />
       </button>
 
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm lg:hidden">
-          <div className="flex items-center justify-between h-16 px-6 border-b">
+          <div className="flex h-16 items-center justify-between border-b px-6">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary">
                 <span className="text-lg font-bold text-primary-foreground">S</span>
               </div>
-              <span className="text-xl font-semibold">SAKTI</span>
+              <span className="font-semibold text-xl">SIAKAD</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-muted"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-muted"
               aria-label="Close menu"
             >
-              <X className="w-5 h-5" />
+              <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* User Profile Section */}
-          <div className="p-6 border-b">
+          <div className="border-b p-6">
             <div className="flex items-center gap-4">
-              <Avatar className="border-2 h-14 w-14 border-primary/10">
+              <Avatar className="h-14 w-14 border-2 border-primary/10">
                 <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />
-                <AvatarFallback className="font-medium bg-primary/10 text-primary">
+                <AvatarFallback className="bg-primary/10 text-primary font-medium">
                   {user?.name?.substring(0, 2).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-lg font-medium">{user?.name || "User"}</h3>
+                <h3 className="font-medium text-lg">{user?.name || "User"}</h3>
                 <p className="text-sm text-muted-foreground">{user?.username || "username"}</p>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
 
           {/* Tab Navigation */}
           <div className="flex border-b">
-            <button className="flex-1 py-3 font-medium text-center border-b-2 text-primary border-primary">Menu</button>
+            <button className="flex-1 py-3 text-center font-medium text-primary border-b-2 border-primary">Menu</button>
           </div>
 
           <div className="h-[calc(100vh-13rem)] overflow-y-auto p-4">
@@ -217,10 +217,10 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
           </div>
 
           {/* Bottom Actions */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background">
+          <div className="absolute bottom-0 left-0 right-0 border-t p-4 bg-background">
             <div className="flex items-center justify-between">
               <Button variant="outline" size="sm" className="text-muted-foreground">
-                <Search className="w-4 h-4 mr-2" />
+                <Search className="mr-2 h-4 w-4" />
                 Search
               </Button>
               <Button
@@ -229,7 +229,7 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
                 className="text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={logout}
               >
-                <LogOut className="w-4 h-4 mr-2" />
+                <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </Button>
             </div>

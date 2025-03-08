@@ -11,26 +11,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
-import { id } from "date-fns/locale"
-import { cn } from "@/lib/utils"
 import { CalendarIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface CorrespondenceFiltersProps {
-  filters: {
+  filters?: {
     status?: string
     date?: string
   }
-  onFilterChange: (key: string, value: string | undefined) => void
+  onFilterChange?: (key: string, value: string | undefined) => void
+  onSearch?: (query: string) => void
 }
 
-export function CorrespondenceFilters({ filters, onFilterChange }: CorrespondenceFiltersProps) {
+export function CorrespondenceFilters({
+  filters = {},
+  onFilterChange = () => {},
+  onSearch = () => {},
+}: CorrespondenceFiltersProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [date, setDate] = useState<Date | undefined>(filters.date ? new Date(filters.date) : undefined)
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // Implement search functionality
-    console.log("Mencari:", searchQuery)
+    onSearch(searchQuery)
   }
 
   const handleStatusChange = (value: string) => {
@@ -47,6 +50,7 @@ export function CorrespondenceFilters({ filters, onFilterChange }: Correspondenc
     setDate(undefined)
     onFilterChange("status", undefined)
     onFilterChange("date", undefined)
+    onSearch("")
   }
 
   return (
@@ -101,7 +105,7 @@ export function CorrespondenceFilters({ filters, onFilterChange }: Correspondenc
                 className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP", { locale: id }) : "Pilih tanggal"}
+                {date ? format(date, "PPP") : "Pilih tanggal"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">

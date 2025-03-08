@@ -1,0 +1,334 @@
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { Search, Check, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import type { CommitteeMember } from "@/types/exam"
+
+// Mock data for lecturers
+const mockLecturers = [
+  {
+    id: "l1",
+    name: "Dr. Budi Santoso",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l2",
+    name: "Dr. Citra Dewi",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l3",
+    name: "Dr. Dian Purnama",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l4",
+    name: "Dr. Eko Prasetyo",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l5",
+    name: "Dr. Fitri Handayani",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l6",
+    name: "Dr. Gunawan Wibisono",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l7",
+    name: "Dr. Hani Fujianti",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l8",
+    name: "Dr. Irfan Hakim",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l9",
+    name: "Dr. Joko Widodo",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l10",
+    name: "Dr. Kartika Sari",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l11",
+    name: "Dr. Lukman Hakim",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l12",
+    name: "Dr. Maya Nabila",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l13",
+    name: "Dr. Nugroho Santoso",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l14",
+    name: "Dr. Olivia Putri",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "l15",
+    name: "Dr. Prabowo Subianto",
+    department: "Teknik Informatika",
+    avatarUrl: "/placeholder.svg?height=40&width=40",
+  },
+]
+
+interface CommitteeMemberDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onAddMember: (member: CommitteeMember) => void
+  existingMembers: CommitteeMember[]
+}
+
+export function CommitteeMemberDialog({
+  open,
+  onOpenChange,
+  onAddMember,
+  existingMembers,
+}: CommitteeMemberDialogProps) {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedLecturer, setSelectedLecturer] = useState<string | null>(null)
+  const [selectedRole, setSelectedRole] = useState<string>("Ketua")
+  const [filteredLecturers, setFilteredLecturers] = useState(mockLecturers)
+  const [activeTab, setActiveTab] = useState("all")
+
+  // Filter lecturers based on search query and department
+  useEffect(() => {
+    // Move the filtering of available lecturers inside the useEffect
+    const availableLecturersList = mockLecturers.filter(
+      (lecturer) => !existingMembers.some((member) => member.id === lecturer.id),
+    )
+
+    let filtered = availableLecturersList
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (lecturer) => lecturer.name.toLowerCase().includes(query) || lecturer.department.toLowerCase().includes(query),
+      )
+    }
+
+    if (activeTab !== "all") {
+      filtered = filtered.filter((lecturer) => lecturer.department === activeTab)
+    }
+
+    setFilteredLecturers(filtered)
+  }, [searchQuery, activeTab, existingMembers]) // Remove availableLecturers from dependencies
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Search is already applied via useEffect
+  }
+
+  const handleAddMember = () => {
+    if (selectedLecturer) {
+      const lecturer = mockLecturers.find((l) => l.id === selectedLecturer)
+      if (lecturer) {
+        const newMember: CommitteeMember = {
+          id: lecturer.id,
+          name: lecturer.name,
+          role: selectedRole,
+          department: lecturer.department,
+          avatarUrl: lecturer.avatarUrl,
+        }
+        onAddMember(newMember)
+        setSelectedLecturer(null)
+        setSelectedRole("Ketua")
+        setSearchQuery("")
+      }
+    }
+  }
+
+  // Get unique departments for tabs
+  const departments = Array.from(new Set(mockLecturers.map((lecturer) => lecturer.department)))
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Tambah Anggota Komite</DialogTitle>
+          <DialogDescription>Pilih dosen untuk ditambahkan sebagai anggota komite ujian</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* Search */}
+          <form onSubmit={handleSearch} className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Cari dosen..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-white dark:bg-card border border-input shadow-sm focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
+            />
+          </form>
+
+          {/* Department Tabs */}
+          <Tabs defaultValue="all" onValueChange={setActiveTab}>
+            <TabsList className="bg-muted/50 p-1 h-auto flex flex-wrap">
+              <TabsTrigger
+                value="all"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-8 px-3"
+              >
+                Semua
+              </TabsTrigger>
+              {departments.map((department) => (
+                <TabsTrigger
+                  key={department}
+                  value={department}
+                  className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-8 px-3"
+                >
+                  {department}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+
+          {/* Lecturers List */}
+          <div className="border rounded-lg overflow-hidden bg-white dark:bg-card">
+            <ScrollArea className="h-[300px]">
+              <div className="p-1">
+                {filteredLecturers.length > 0 ? (
+                  filteredLecturers.map((lecturer) => (
+                    <div
+                      key={lecturer.id}
+                      className={`flex items-center justify-between p-3 rounded-md transition-colors cursor-pointer ${
+                        selectedLecturer === lecturer.id ? "bg-primary/10 dark:bg-primary/20" : "hover:bg-muted"
+                      }`}
+                      onClick={() => setSelectedLecturer(lecturer.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border border-border">
+                          <AvatarImage src={lecturer.avatarUrl} alt={lecturer.name} />
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {lecturer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{lecturer.name}</p>
+                          <p className="text-xs text-muted-foreground">{lecturer.department}</p>
+                        </div>
+                      </div>
+                      {selectedLecturer === lecturer.id && (
+                        <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                          <Check className="h-3 w-3" />
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <div className="rounded-full bg-muted p-3 mb-4">
+                      <X className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold">Tidak ada dosen</h3>
+                    <p className="text-muted-foreground mt-1">Tidak ada dosen yang sesuai dengan pencarian.</p>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Role Selection */}
+          {selectedLecturer && (
+            <div className="space-y-2 p-4 rounded-lg border border-border bg-muted/30">
+              <Label htmlFor="role" className="text-sm font-medium">
+                Peran dalam Komite
+              </Label>
+              <RadioGroup
+                id="role"
+                value={selectedRole}
+                onValueChange={setSelectedRole}
+                className="flex flex-wrap gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Ketua" id="ketua" />
+                  <Label htmlFor="ketua" className="cursor-pointer">
+                    Ketua
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Penguji 1" id="penguji1" />
+                  <Label htmlFor="penguji1" className="cursor-pointer">
+                    Penguji 1
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Penguji 2" id="penguji2" />
+                  <Label htmlFor="penguji2" className="cursor-pointer">
+                    Penguji 2
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Penguji 3" id="penguji3" />
+                  <Label htmlFor="penguji3" className="cursor-pointer">
+                    Penguji 3
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="flex justify-between sm:justify-between">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Batal
+          </Button>
+          <Button
+            onClick={handleAddMember}
+            disabled={!selectedLecturer}
+            className={!selectedLecturer ? "opacity-50 cursor-not-allowed" : ""}
+          >
+            Tambahkan
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+

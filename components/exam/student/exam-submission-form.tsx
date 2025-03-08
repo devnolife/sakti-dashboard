@@ -65,7 +65,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
         return {
           title: "Proposal Examination Submission",
           description: "Submit your research proposal for review",
-          icon: <BookOpen className="w-5 h-5 text-blue-600" />,
+          icon: <BookOpen className="h-5 w-5 text-blue-600" />,
           color: "text-blue-800",
           descColor: "text-blue-700",
           bgColor: "from-blue-50 to-blue-100",
@@ -76,7 +76,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
         return {
           title: "Result Examination Submission",
           description: "Submit your research results for review",
-          icon: <GraduationCap className="w-5 h-5 text-purple-600" />,
+          icon: <GraduationCap className="h-5 w-5 text-purple-600" />,
           color: "text-purple-800",
           descColor: "text-purple-700",
           bgColor: "from-purple-50 to-purple-100",
@@ -87,7 +87,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
         return {
           title: "Closing Examination Submission",
           description: "Submit your final thesis for review",
-          icon: <Award className="w-5 h-5 text-teal-600" />,
+          icon: <Award className="h-5 w-5 text-teal-600" />,
           color: "text-teal-800",
           descColor: "text-teal-700",
           bgColor: "from-teal-50 to-teal-100",
@@ -109,7 +109,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
         <CardDescription className={examInfo.descColor}>{examInfo.description}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
+        <CardContent className="p-6 space-y-6">
           {requirements.map((req) => (
             <div key={req.name} className="space-y-2">
               <Label htmlFor={req.name} className="text-sm font-medium">
@@ -133,7 +133,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
                   required={req.required}
                   onChange={handleChange}
                   rows={4}
-                  className="resize-none border-input focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="border-input focus:border-primary focus:ring-1 focus:ring-primary resize-none"
                 />
               )}
 
@@ -156,13 +156,13 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
                     >
                       {fileNames[req.name] ? (
                         <div className="flex items-center justify-center gap-2">
-                          <FileText className="w-5 h-5 text-primary" />
+                          <FileText className="h-5 w-5 text-primary" />
                           <span className="font-medium text-primary">{fileNames[req.name]}</span>
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="w-6 h-6 p-0 ml-2 rounded-full"
+                            className="h-6 w-6 p-0 rounded-full ml-2"
                             onClick={(e) => {
                               e.stopPropagation()
                               setFileNames((prev) => {
@@ -179,14 +179,14 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
                               if (input) input.value = ""
                             }}
                           >
-                            <X className="w-4 h-4" />
+                            <X className="h-4 w-4" />
                           </Button>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-4">
-                          <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
+                          <Upload className="h-8 w-8 text-muted-foreground mb-2" />
                           <p className="text-sm font-medium">Click to upload or drag and drop</p>
-                          <p className="mt-1 text-xs text-muted-foreground">PDF, DOCX, PPT, PPTX up to 10MB</p>
+                          <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, PPT, PPTX up to 10MB</p>
                         </div>
                       )}
                     </div>
@@ -223,7 +223,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
             {isSubmitting ? (
               <>
                 <svg
-                  className="w-4 h-4 mr-2 -ml-1 text-white animate-spin"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

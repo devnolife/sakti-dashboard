@@ -20,11 +20,11 @@ export default function DashboardLayout() {
   }, [])
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
       <div className="flex flex-1">
         <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
-        <main className="flex-1">
+        <main className="flex-1 pt-14">
           <Content activeSection={activeSection} setActiveSection={setActiveSection} />
         </main>
       </div>

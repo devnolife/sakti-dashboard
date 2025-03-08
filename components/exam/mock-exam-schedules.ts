@@ -23,10 +23,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "08:00",
     endTime: "10:00",
     classroom: mockClassrooms[0],
-    studentName: "Ahmad Rizky",
-    studentNIM: "1234567890",
-    instructorName: "Dr. Budi Santoso",
-    examinerName: "Dr. Dewi Putri",
   },
   {
     id: "schedule-2",
@@ -35,10 +31,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "10:30",
     endTime: "12:30",
     classroom: mockClassrooms[1],
-    studentName: "Siti Nurhayati",
-    studentNIM: "2345678901",
-    instructorName: "Dr. Eko Prasetyo",
-    examinerName: "Dr. Fajar Ramadhan",
   },
   {
     id: "schedule-3",
@@ -47,10 +39,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "08:00",
     endTime: "10:00",
     classroom: mockClassrooms[2],
-    studentName: "Gita Purnama",
-    studentNIM: "3456789012",
-    instructorName: "Dr. Hendra Wijaya",
-    examinerName: "Dr. Indah Sari",
   },
   {
     id: "schedule-4",
@@ -59,10 +47,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "10:30",
     endTime: "12:30",
     classroom: mockClassrooms[3],
-    studentName: "Joko Susilo",
-    studentNIM: "4567890123",
-    instructorName: "Dr. Kartika Dewi",
-    examinerName: "Dr. Lukman Hakim",
   },
   {
     id: "schedule-5",
@@ -71,10 +55,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "08:00",
     endTime: "10:00",
     classroom: mockClassrooms[4],
-    studentName: "Maya Anggraini",
-    studentNIM: "5678901234",
-    instructorName: "Dr. Nugroho Pratama",
-    examinerName: "Dr. Olivia Putri",
   },
   {
     id: "schedule-6",
@@ -83,10 +63,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "10:30",
     endTime: "12:30",
     classroom: mockClassrooms[5],
-    studentName: "Putra Wibowo",
-    studentNIM: "6789012345",
-    instructorName: "Dr. Qori Rahmawati",
-    examinerName: "Dr. Rudi Hartono",
   },
   {
     id: "schedule-7",
@@ -95,10 +71,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "08:00",
     endTime: "10:00",
     classroom: mockClassrooms[6],
-    studentName: "Sari Indah",
-    studentNIM: "7890123456",
-    instructorName: "Dr. Tono Suryono",
-    examinerName: "Dr. Utami Widya",
   },
   {
     id: "schedule-8",
@@ -107,10 +79,6 @@ export const mockExamSchedules: ExamSchedule[] = [
     startTime: "10:30",
     endTime: "12:30",
     classroom: mockClassrooms[7],
-    studentName: "Vina Kusuma",
-    studentNIM: "8901234567",
-    instructorName: "Dr. Wahyu Purnomo",
-    examinerName: "Dr. Xaverius Yoga",
   },
 ]
 

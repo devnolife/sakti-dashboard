@@ -12,15 +12,20 @@ import {
   ClipboardList,
   Crown,
   Bell,
-  Building,
   Mail,
   GraduationCapIcon,
   CalendarClock,
   UserCheck,
   Award,
+  CreditCard,
+  GalleryVerticalEnd,
+  Wallet,
+  PieChart,
+  TrendingDown,
 } from "lucide-react"
 import type { Role } from "@/types/role"
 
+// Menu items for students (mahasiswa)
 export const mahasiswaMenuItems = [
   {
     id: "dashboard",
@@ -55,6 +60,7 @@ export const mahasiswaMenuItems = [
         id: "control-card",
         title: "Kartu Kontrol",
         href: "/dashboard/mahasiswa/academic/control-card",
+        badge: { text: "New", variant: "outline" },
       },
     ],
   },
@@ -84,6 +90,7 @@ export const mahasiswaMenuItems = [
         id: "title-submission",
         title: "Pengajuan Judul",
         href: "/dashboard/mahasiswa/library/title-submission",
+        badge: { text: "New", variant: "outline" },
       },
     ],
   },
@@ -92,18 +99,21 @@ export const mahasiswaMenuItems = [
     title: "Laboratorium",
     href: "/dashboard/mahasiswa/laboratory",
     icon: Briefcase,
+    badge: { text: "New", variant: "outline" },
   },
   {
     id: "correspondence",
     title: "Layanan Surat",
     href: "/dashboard/mahasiswa/correspondence",
     icon: Mail,
+    badge: { text: "New", variant: "outline" },
   },
   {
     id: "exams",
     title: "Ujian",
     href: "/dashboard/mahasiswa/exams",
     icon: GraduationCapIcon,
+    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "exams-dashboard",
@@ -114,6 +124,7 @@ export const mahasiswaMenuItems = [
         id: "exams-register",
         title: "Daftar Ujian",
         href: "/dashboard/mahasiswa/exams/register",
+        badge: { text: "New", variant: "outline" },
       },
       {
         id: "exams-submissions",
@@ -123,10 +134,35 @@ export const mahasiswaMenuItems = [
     ],
   },
   {
+    id: "payment",
+    title: "Pembayaran",
+    href: "/dashboard/mahasiswa/payment",
+    icon: CreditCard,
+    badge: { text: "New", variant: "outline" },
+    children: [
+      {
+        id: "payment-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/mahasiswa/payment",
+      },
+      {
+        id: "payment-history",
+        title: "Riwayat Pembayaran",
+        href: "/dashboard/mahasiswa/payment/history",
+      },
+      {
+        id: "payment-new",
+        title: "Pembayaran Baru",
+        href: "/dashboard/mahasiswa/payment/new",
+      },
+    ],
+  },
+  {
     id: "kkp",
     title: "KKP",
     href: "/dashboard/mahasiswa/kkp",
     icon: Briefcase,
+    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "kkp-dashboard",
@@ -155,6 +191,7 @@ export const mahasiswaMenuItems = [
     title: "KKP Plus",
     href: "/dashboard/mahasiswa/kkp/plus",
     icon: Award,
+    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "kkp-plus-overview",
@@ -179,6 +216,12 @@ export const mahasiswaMenuItems = [
     ],
   },
   {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
+  {
     id: "settings",
     title: "Pengaturan",
     href: "/dashboard/mahasiswa/settings",
@@ -186,7 +229,8 @@ export const mahasiswaMenuItems = [
   },
 ]
 
-  export const staffTuMenuItems = [
+// Menu items for staff (staff_tu)
+export const staffTuMenuItems = [
   {
     id: "dashboard",
     title: "Dashboard",
@@ -282,6 +326,12 @@ export const mahasiswaMenuItems = [
     badge: { text: "12", variant: "destructive" },
   },
   {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
+  {
     id: "settings",
     title: "Pengaturan",
     href: "/dashboard/staff_tu/settings",
@@ -348,31 +398,23 @@ export const prodiMenuItems = [
     badge: { text: "3", variant: "destructive" },
   },
   {
-    id: "internship-approval",
-    title: "Persetujuan Magang",
-    href: "/dashboard/prodi/internship-approval",
-    icon: ClipboardCheck,
-    badge: { text: "8", variant: "destructive" },
-  },
-  {
-    id: "kkp-management",
-    title: "Manajemen KKP",
-    href: "/dashboard/prodi/kkp",
-    icon: Briefcase,
-    badge: { text: "12", variant: "destructive" },
-  },
-  {
     id: "kkp-locations",
     title: "Lokasi KKP",
     href: "/dashboard/prodi/kkp-locations",
-    icon: Building,
-    badge: { text: "5", variant: "destructive" },
+    icon: Briefcase,
+    badge: { text: "17", variant: "destructive" },
   },
   {
     id: "faculty-directory",
     title: "Direktori Fakultas",
     href: "/dashboard/prodi/faculty-directory",
     icon: Users,
+  },
+  {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
   },
   {
     id: "settings",
@@ -391,10 +433,122 @@ export const dekanMenuItems = [
     icon: LayoutDashboard,
   },
   {
+    id: "dean-office",
+    title: "Kantor Dekan",
+    href: "/dashboard/dekan/dean-office",
+    icon: Crown,
+    children: [
+      {
+        id: "correspondence-approval",
+        title: "Persetujuan Surat",
+        href: "/dashboard/dekan/dean-office/correspondence",
+        badge: { text: "12", variant: "destructive" },
+      },
+      {
+        id: "exam-approval",
+        title: "Persetujuan Ujian",
+        href: "/dashboard/dekan/dean-office/exams",
+      },
+      {
+        id: "faculty-performance",
+        title: "Kinerja Fakultas",
+        href: "/dashboard/dekan/dean-office/performance",
+      },
+    ],
+  },
+  {
+    id: "vice-dean-1",
+    title: "Wakil Dekan 1",
+    href: "/dashboard/dekan/vice-dean-1",
+    icon: Users,
+    children: [
+      {
+        id: "student-records",
+        title: "Data Mahasiswa",
+        href: "/dashboard/dekan/vice-dean-1/student-records",
+      },
+      {
+        id: "academic-performance",
+        title: "Kinerja Akademik",
+        href: "/dashboard/dekan/vice-dean-1/academic-performance",
+      },
+      {
+        id: "student-communication",
+        title: "Komunikasi Mahasiswa",
+        href: "/dashboard/dekan/vice-dean-1/student-communication",
+      },
+    ],
+  },
+  {
+    id: "vice-dean-2",
+    title: "Wakil Dekan 2",
+    href: "/dashboard/dekan/vice-dean-2",
+    icon: BarChart,
+    children: [
+      {
+        id: "budget-management",
+        title: "Manajemen Anggaran",
+        href: "/dashboard/dekan/vice-dean-2/budget",
+      },
+      {
+        id: "expense-tracking",
+        title: "Pelacakan Pengeluaran",
+        href: "/dashboard/dekan/vice-dean-2/expenses",
+      },
+      {
+        id: "financial-reporting",
+        title: "Laporan Keuangan",
+        href: "/dashboard/dekan/vice-dean-2/reports",
+      },
+    ],
+  },
+  {
+    id: "vice-dean-3",
+    title: "Wakil Dekan 3",
+    href: "/dashboard/dekan/vice-dean-3",
+    icon: FileText,
+    children: [
+      {
+        id: "vice-dean-3-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/dekan/vice-dean-3",
+      },
+      {
+        id: "student-statistics",
+        title: "Statistik Mahasiswa",
+        href: "/dashboard/dekan/vice-dean-3/statistics",
+      },
+      {
+        id: "academic-performance",
+        title: "Kinerja Akademik",
+        href: "/dashboard/dekan/vice-dean-3/performance",
+      },
+      {
+        id: "student-welfare",
+        title: "Kesejahteraan Mahasiswa",
+        href: "/dashboard/dekan/vice-dean-3/welfare",
+      },
+    ],
+  },
+  {
+    id: "vice-dean-4",
+    title: "Wakil Dekan 4",
+    href: "/dashboard/dekan/vice-dean-4",
+    icon: ClipboardList,
+    children: [
+      {
+        id: "vice-dean-4-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/dekan/vice-dean-4",
+      },
+      // Placeholder for future functionality
+    ],
+  },
+  {
     id: "faculty-overview",
     title: "Ikhtisar Fakultas",
     href: "/dashboard/dekan/faculty-overview",
-    icon: Crown,
+    icon: GalleryVerticalEnd,
   },
   {
     id: "department-analytics",
@@ -403,53 +557,10 @@ export const dekanMenuItems = [
     icon: BarChart,
   },
   {
-    id: "faculty-management",
-    title: "Manajemen Fakultas",
-    href: "/dashboard/dekan/faculty-management",
-    icon: Users,
-    children: [
-      {
-        id: "faculty-appointments",
-        title: "Penunjukan Fakultas",
-        href: "/dashboard/dekan/faculty-management/appointments",
-      },
-      {
-        id: "faculty-performance",
-        title: "Kinerja Fakultas",
-        href: "/dashboard/dekan/faculty-management/performance",
-      },
-    ],
-  },
-  {
-    id: "exams",
-    title: "Ujian Akademik",
-    href: "/dashboard/dekan/exams",
-    icon: GraduationCapIcon,
-    children: [
-      {
-        id: "exam-overview",
-        title: "Ikhtisar Ujian",
-        href: "/dashboard/dekan/exams/overview",
-      },
-      {
-        id: "exam-approvals",
-        title: "Persetujuan Ujian",
-        href: "/dashboard/dekan/exams/approvals",
-        badge: { text: "5", variant: "destructive" },
-      },
-    ],
-  },
-  {
-    id: "budget-management",
-    title: "Manajemen Anggaran",
-    href: "/dashboard/dekan/budget-management",
-    icon: BarChart,
-  },
-  {
-    id: "strategic-planning",
-    title: "Perencanaan Strategis",
-    href: "/dashboard/dekan/strategic-planning",
-    icon: ClipboardList,
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
   },
   {
     id: "settings",
@@ -493,6 +604,12 @@ export const staffKkpMenuItems = [
     icon: ClipboardList,
   },
   {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
+  {
     id: "settings",
     title: "Pengaturan",
     href: "/dashboard/staff_kkp/settings",
@@ -533,6 +650,12 @@ export const adminMenuItems = [
     href: "/dashboard/admin/logs",
     icon: FileText,
   },
+  {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
 ]
 
 // Menu items for lecturer
@@ -544,10 +667,28 @@ export const lecturerMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    id: "kkp-supervision",
-    title: "KKP Supervision",
-    href: "/dashboard/lecturer/kkp",
+    id: "academic-guidance",
+    title: "Bimbingan Akademik",
+    href: "/dashboard/lecturer/academic-guidance",
     icon: BookOpen,
+  },
+  {
+    id: "exam-guidance",
+    title: "Bimbingan Ujian",
+    href: "/dashboard/lecturer/exam-guidance",
+    icon: GraduationCapIcon,
+  },
+  {
+    id: "kkp-guidance",
+    title: "Bimbingan KKP",
+    href: "/dashboard/lecturer/kkp-guidance",
+    icon: Briefcase,
+  },
+  {
+    id: "kkp-plus-guidance",
+    title: "Bimbingan KKP Plus",
+    href: "/dashboard/lecturer/kkp-plus-guidance",
+    icon: Award,
   },
   {
     id: "supervisions",
@@ -587,6 +728,12 @@ export const lecturerMenuItems = [
     icon: Calendar,
   },
   {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
+  {
     id: "settings",
     title: "Pengaturan",
     href: "/dashboard/lecturer/settings",
@@ -594,7 +741,94 @@ export const lecturerMenuItems = [
   },
 ]
 
-// Consolidated menu items
+// Add menu items for laboratory admin
+export const laboratoryAdminMenuItems = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/laboratory_admin",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "lab-management",
+    title: "Manajemen Lab",
+    href: "/dashboard/laboratory_admin/lab-management",
+    icon: Briefcase,
+    children: [
+      {
+        id: "lab-inventory",
+        title: "Inventaris Lab",
+        href: "/dashboard/laboratory_admin/lab-management/inventory",
+      },
+      {
+        id: "lab-schedule",
+        title: "Jadwal Lab",
+        href: "/dashboard/laboratory_admin/lab-management/schedule",
+      },
+      {
+        id: "lab-maintenance",
+        title: "Pemeliharaan Lab",
+        href: "/dashboard/laboratory_admin/lab-management/maintenance",
+      },
+    ],
+  },
+  {
+    id: "lab-registrations",
+    title: "Pendaftaran Lab",
+    href: "/dashboard/laboratory_admin/registrations",
+    icon: ClipboardList,
+    badge: { text: "8", variant: "destructive" },
+  },
+  {
+    id: "lab-reports",
+    title: "Laporan Lab",
+    href: "/dashboard/laboratory_admin/reports",
+    icon: FileText,
+  },
+  {
+    id: "lab-assistants",
+    title: "Asisten Lab",
+    href: "/dashboard/laboratory_admin/assistants",
+    icon: Users,
+  },
+  {
+    id: "lab-practicum",
+    title: "Praktikum",
+    href: "/dashboard/laboratory_admin/practicum",
+    icon: BookOpen,
+    children: [
+      {
+        id: "practicum-schedule",
+        title: "Jadwal Praktikum",
+        href: "/dashboard/laboratory_admin/practicum/schedule",
+      },
+      {
+        id: "practicum-materials",
+        title: "Materi Praktikum",
+        href: "/dashboard/laboratory_admin/practicum/materials",
+      },
+      {
+        id: "practicum-grades",
+        title: "Nilai Praktikum",
+        href: "/dashboard/laboratory_admin/practicum/grades",
+      },
+    ],
+  },
+  {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
+  {
+    id: "settings",
+    title: "Pengaturan",
+    href: "/dashboard/laboratory_admin/settings",
+    icon: Settings,
+  },
+]
+
+// Update the menuItems record to include laboratory_admin
 export const menuItems: Record<Role, typeof adminMenuItems> = {
   admin: adminMenuItems,
   dekan: dekanMenuItems,
@@ -603,6 +837,52 @@ export const menuItems: Record<Role, typeof adminMenuItems> = {
   prodi: prodiMenuItems,
   staff_tu: staffTuMenuItems,
   staff_kkp: staffKkpMenuItems,
-  kepala_jurusan: []
+  laboratory_admin: laboratoryAdminMenuItems,
 }
+
+// Add the Vice Dean 2 menu items to the dekanItems array
+export const dekanItems = [
+  {
+    title: "Dashboard",
+    href: "/dashboard/dekan",
+    icon: <LayoutDashboard className="w-5 h-5" />,
+  },
+  {
+    title: "Korespondensi",
+    href: "/dashboard/dekan/correspondence",
+    icon: <Mail className="w-5 h-5" />,
+  },
+  {
+    title: "Ujian",
+    href: "/dashboard/dekan/exams",
+    icon: <FileText className="w-5 h-5" />,
+  },
+  {
+    title: "Wakil Dekan 2",
+    href: "/dashboard/dekan/vice-dean-2",
+    icon: <Wallet className="w-5 h-5" />,
+    submenu: [
+      {
+        title: "Dashboard",
+        href: "/dashboard/dekan/vice-dean-2",
+        icon: <LayoutDashboard className="w-5 h-5" />,
+      },
+      {
+        title: "Manajemen Anggaran",
+        href: "/dashboard/dekan/vice-dean-2/budget",
+        icon: <PieChart className="w-5 h-5" />,
+      },
+      {
+        title: "Pelacakan Pengeluaran",
+        href: "/dashboard/dekan/vice-dean-2/expenses",
+        icon: <TrendingDown className="w-5 h-5" />,
+      },
+      {
+        title: "Laporan Keuangan",
+        href: "/dashboard/dekan/vice-dean-2/reports",
+        icon: <FileText className="w-5 h-5" />,
+      },
+    ],
+  },
+]
 

@@ -101,7 +101,7 @@ export default function ExamDashboard({ defaultTab = "proposal" }: ExamDashboard
           <TabsTrigger value="proposal">Proposal Exams ({proposalExams.length})</TabsTrigger>
           <TabsTrigger value="result">Result Exams ({resultExams.length})</TabsTrigger>
           <TabsTrigger value="closed">Closed Exams ({closedExams.length})</TabsTrigger>
-          <TabsTrigger value="schedule">Exam Schedule Manager</TabsTrigger>
+          <TabsTrigger value="schedule">Exam Schedule</TabsTrigger>
         </TabsList>
 
         {activeTab !== "schedule" && (

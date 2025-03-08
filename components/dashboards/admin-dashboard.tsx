@@ -11,7 +11,7 @@ export default function AdminDashboard() {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Admin Dashboard
+            Halaman Dashboard Admin
           </span>
         </h2>
         <p className="text-muted-foreground mt-2">Welcome back, Admin. Here's what's happening today.</p>

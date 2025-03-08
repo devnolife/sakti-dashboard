@@ -4,7 +4,16 @@ import { useState, useEffect } from "react"
 import { createContext, useContext, type ReactNode } from "react"
 
 // Define the available roles
-export type Role = "mahasiswa" | "staff_tu" | "prodi" | "dekan" | "admin" | "staff_kkp" | "lecturer" | "kepala_jurusan"
+export type Role =
+  | "mahasiswa"
+  | "staff_tu"
+  | "prodi"
+  | "dekan"
+  | "admin"
+  | "staff_kkp"
+  | "lecturer"
+  | "kepala_jurusan"
+  | "laboratory_admin"
 
 // Configuration for each role
 export const roleConfigs = {
@@ -40,6 +49,10 @@ export const roleConfigs = {
     path: "/dashboard/kepala_jurusan",
     displayName: "Kepala Jurusan",
   },
+  laboratory_admin: {
+    path: "/dashboard/laboratory_admin",
+    displayName: "Admin Laboratorium",
+  },
 }
 
 // Labels for role selection
@@ -52,6 +65,7 @@ export const roleLabels: Record<Role, string> = {
   staff_kkp: "Staff KKP",
   lecturer: "Dosen",
   kepala_jurusan: "Kepala Jurusan",
+  laboratory_admin: "Admin Laboratorium",
 }
 
 interface RoleContextType {

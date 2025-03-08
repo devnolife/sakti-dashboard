@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DatePicker } from "@/components/ui/date-picker"
 import type { ExamSchedule, Classroom } from "@/types/exam-schedule"
 import { mockClassrooms } from "./mock-exam-schedules"
 
@@ -20,194 +21,170 @@ interface ExamScheduleDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (schedule: ExamSchedule) => void
-  schedule?: ExamSchedule
+  schedule: ExamSchedule | null
 }
 
 export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: ExamScheduleDialogProps) {
-  const isEditing = !!schedule
+  const [courseName, setCourseName] = useState("")
+  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [startTime, setStartTime] = useState("08:00")
+  const [endTime, setEndTime] = useState("10:00")
+  const [selectedBuilding, setSelectedBuilding] = useState("all-buildings")
+  const [selectedClassroom, setSelectedClassroom] = useState("")
+  const [availableClassrooms, setAvailableClassrooms] = useState<Classroom[]>(mockClassrooms)
+  const [formError, setFormError] = useState("")
 
-  const [formData, setFormData] = useState<Partial<ExamSchedule>>(
-    schedule || {
-      courseName: "",
-      date: new Date().toISOString().split("T")[0],
-      startTime: "08:00",
-      endTime: "10:00",
-      classroom: mockClassrooms[0],
-      studentName: "",
-      studentNIM: "",
-      instructorName: "",
-      examinerName: "",
-    },
-  )
+  // Get unique buildings
+  const buildings = ["all-buildings", ...Array.from(new Set(mockClassrooms.map((c) => c.building)))]
 
-  const handleChange = (field: keyof ExamSchedule, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+  // Reset form when dialog opens/closes or editing schedule changes
+  useEffect(() => {
+    if (open && schedule) {
+      setCourseName(schedule.courseName)
+      setDate(new Date(schedule.date))
+      setStartTime(schedule.startTime)
+      setEndTime(schedule.endTime)
+      setSelectedBuilding(schedule.classroom.building)
+      setSelectedClassroom(schedule.classroom.id)
+    } else if (open && !schedule) {
+      setCourseName("")
+      setDate(new Date())
+      setStartTime("08:00")
+      setEndTime("10:00")
+      setSelectedBuilding("all-buildings")
+      setSelectedClassroom("")
+    }
+  }, [open, schedule])
 
-  const handleSubmit = () => {
-    if (
-      !formData.courseName ||
-      !formData.date ||
-      !formData.startTime ||
-      !formData.endTime ||
-      !formData.classroom ||
-      !formData.studentName ||
-      !formData.studentNIM ||
-      !formData.instructorName ||
-      !formData.examinerName
-    ) {
+  // Filter classrooms when building changes
+  useEffect(() => {
+    if (selectedBuilding === "all-buildings") {
+      setAvailableClassrooms(mockClassrooms)
+    } else {
+      setAvailableClassrooms(mockClassrooms.filter((c) => c.building === selectedBuilding))
+    }
+    setSelectedClassroom("")
+  }, [selectedBuilding])
+
+  const handleSave = () => {
+    // Validate form
+    if (!courseName) {
+      setFormError("Course name is required")
+      return
+    }
+    if (!date) {
+      setFormError("Date is required")
+      return
+    }
+    if (!startTime) {
+      setFormError("Start time is required")
+      return
+    }
+    if (!endTime) {
+      setFormError("End time is required")
+      return
+    }
+    if (!selectedClassroom) {
+      setFormError("Classroom is required")
       return
     }
 
-    onSave({
-      id: schedule?.id || `schedule-${Date.now()}`,
-      courseName: formData.courseName,
-      date: new Date(formData.date).toISOString(),
-      startTime: formData.startTime,
-      endTime: formData.endTime,
-      classroom: formData.classroom as Classroom,
-      studentName: formData.studentName,
-      studentNIM: formData.studentNIM,
-      instructorName: formData.instructorName,
-      examinerName: formData.examinerName,
-    })
+    // Check if end time is after start time
+    if (startTime >= endTime) {
+      setFormError("End time must be after start time")
+      return
+    }
 
-    onOpenChange(false)
+    const classroom = mockClassrooms.find((c) => c.id === selectedClassroom)
+    if (!classroom) {
+      setFormError("Invalid classroom selected")
+      return
+    }
+
+    const newSchedule: ExamSchedule = {
+      id: schedule?.id || "",
+      courseName,
+      date: date.toISOString(),
+      startTime,
+      endTime,
+      classroom,
+    }
+
+    onSave(newSchedule)
+    setFormError("")
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Exam Schedule" : "Add Exam Schedule"}</DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Make changes to the exam schedule here."
-              : "Fill in the details to create a new exam schedule."}
-          </DialogDescription>
+          <DialogTitle>{schedule ? "Edit Exam Schedule" : "Add Exam Schedule"}</DialogTitle>
+          <DialogDescription>Enter the details for the exam schedule.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="studentName" className="text-right">
-              Student Name
-            </Label>
-            <Input
-              id="studentName"
-              value={formData.studentName}
-              onChange={(e) => handleChange("studentName", e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="studentNIM" className="text-right">
-              Student NIM
-            </Label>
-            <Input
-              id="studentNIM"
-              value={formData.studentNIM}
-              onChange={(e) => handleChange("studentNIM", e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="courseName" className="text-right">
-              Course
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="courseName">Course Name</Label>
             <Input
               id="courseName"
-              value={formData.courseName}
-              onChange={(e) => handleChange("courseName", e.target.value)}
-              className="col-span-3"
+              value={courseName}
+              onChange={(e) => setCourseName(e.target.value)}
+              placeholder="e.g. Computer Science 101"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="instructorName" className="text-right">
-              Instructor
-            </Label>
-            <Input
-              id="instructorName"
-              value={formData.instructorName}
-              onChange={(e) => handleChange("instructorName", e.target.value)}
-              className="col-span-3"
-            />
+          <div className="grid gap-2">
+            <Label htmlFor="date">Exam Date</Label>
+            <DatePicker date={date} setDate={setDate} />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="examinerName" className="text-right">
-              Examiner
-            </Label>
-            <Input
-              id="examinerName"
-              value={formData.examinerName}
-              onChange={(e) => handleChange("examinerName", e.target.value)}
-              className="col-span-3"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="startTime">Start Time</Label>
+              <Input id="startTime" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="endTime">End Time</Label>
+              <Input id="endTime" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="date" className="text-right">
-              Date
-            </Label>
-            <Input
-              id="date"
-              type="date"
-              value={formData.date?.toString().split("T")[0]}
-              onChange={(e) => handleChange("date", e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="startTime" className="text-right">
-              Start Time
-            </Label>
-            <Input
-              id="startTime"
-              type="time"
-              value={formData.startTime}
-              onChange={(e) => handleChange("startTime", e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="endTime" className="text-right">
-              End Time
-            </Label>
-            <Input
-              id="endTime"
-              type="time"
-              value={formData.endTime}
-              onChange={(e) => handleChange("endTime", e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="classroom" className="text-right">
-              Classroom
-            </Label>
-            <Select
-              value={formData.classroom?.id}
-              onValueChange={(value) => {
-                const classroom = mockClassrooms.find((c) => c.id === value)
-                if (classroom) {
-                  handleChange("classroom", classroom)
-                }
-              }}
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a classroom" />
+          <div className="grid gap-2">
+            <Label htmlFor="building">Building</Label>
+            <Select value={selectedBuilding} onValueChange={setSelectedBuilding}>
+              <SelectTrigger id="building">
+                <SelectValue placeholder="Select building" />
               </SelectTrigger>
               <SelectContent>
-                {mockClassrooms.map((classroom) => (
+                <SelectItem value="all-buildings">All Buildings</SelectItem>
+                {buildings
+                  .filter((b) => b !== "all-buildings")
+                  .map((building) => (
+                    <SelectItem key={building} value={building}>
+                      {building}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="classroom">Classroom</Label>
+            <Select value={selectedClassroom} onValueChange={setSelectedClassroom}>
+              <SelectTrigger id="classroom">
+                <SelectValue placeholder="Select classroom" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableClassrooms.map((classroom) => (
                   <SelectItem key={classroom.id} value={classroom.id}>
-                    {classroom.name}, {classroom.building}
+                    {classroom.name} ({classroom.building})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+          {formError && <p className="text-sm text-red-500">{formError}</p>}
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>
-            {isEditing ? "Save changes" : "Add schedule"}
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
           </Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

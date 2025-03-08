@@ -39,44 +39,33 @@ export function ExamScheduleTable({ schedules, onEdit, onDelete }: ExamScheduleT
 
   return (
     <>
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Student</TableHead>
               <TableHead>Course</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Time</TableHead>
               <TableHead>Location</TableHead>
-              <TableHead>Instructor</TableHead>
-              <TableHead>Examiner</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {schedules.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   No schedules found.
                 </TableCell>
               </TableRow>
             ) : (
               schedules.map((schedule) => (
                 <TableRow key={schedule.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{schedule.studentName}</div>
-                      <div className="text-sm text-muted-foreground">{schedule.studentNIM}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{schedule.courseName}</TableCell>
+                  <TableCell className="font-medium">{schedule.courseName}</TableCell>
                   <TableCell>{format(new Date(schedule.date), "dd MMM yyyy")}</TableCell>
                   <TableCell>{formatTimeRange(schedule.startTime, schedule.endTime)}</TableCell>
                   <TableCell>
                     {schedule.classroom.name}, {schedule.classroom.building}
                   </TableCell>
-                  <TableCell>{schedule.instructorName}</TableCell>
-                  <TableCell>{schedule.examinerName}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="ghost" size="icon" onClick={() => onEdit(schedule)}>
