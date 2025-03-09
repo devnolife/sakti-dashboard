@@ -340,17 +340,15 @@ export const prodiMenuItems = [
   },
   {
     id: "correspondence",
-    title: "Layanan Surat",
+    title: "Pelayanan Surat",
     href: "/dashboard/prodi/correspondence",
-    icon: Mail,
-    badge: { text: "3", variant: "destructive" },
+    icon: Mail
   },
   {
     id: "kkp-locations",
-    title: "Lokasi KKP",
+    title: "Manajement KKP",
     href: "/dashboard/prodi/kkp-locations",
-    icon: Briefcase,
-    badge: { text: "17", variant: "destructive" },
+    icon: Briefcase
   },
   {
     id: "faculty-directory",
