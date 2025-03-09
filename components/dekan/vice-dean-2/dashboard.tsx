@@ -24,18 +24,20 @@ import {
 
 export function ViceDean2Dashboard() {
   return (
-    <div className="space-y-6">
+    <div className="pb-5 space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard Wakil Dekan 2</h2>
-        <p className="text-muted-foreground mt-2">Ikhtisar keuangan dan aktivitas akademik fakultas</p>
+        <h2 className="text-2xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text">
+          Wakil Dekan 2 
+        </h2>
+       <p className="text-muted-foreground">Pantau statistik mahasiswa, distribusi IPK, dan status akademik</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-blue-50 to-blue-100 shadow-md transition-all hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">
+        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-800/50">
-                <Wallet className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div className="p-2 bg-blue-100 rounded-full dark:bg-blue-800/50">
+                <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Total Anggaran</CardTitle>
@@ -45,18 +47,18 @@ export function ViceDean2Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">Rp 12,5 Miliar</div>
-            <div className="mt-1 flex items-center text-xs text-blue-600/80 dark:text-blue-400/80">
-              <ArrowUpRight className="mr-1 h-3 w-3" />
+            <div className="flex items-center mt-1 text-xs text-blue-600/80 dark:text-blue-400/80">
+              <ArrowUpRight className="w-3 h-3 mr-1" />
               <span>Naik 8% dari tahun lalu</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-green-50 to-green-100 shadow-md transition-all hover:shadow-lg dark:from-green-950/40 dark:to-green-900/40">
+        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-green-50 to-green-100 hover:shadow-lg dark:from-green-950/40 dark:to-green-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-green-100 p-2 dark:bg-green-800/50">
-                <Building2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <div className="p-2 bg-green-100 rounded-full dark:bg-green-800/50">
+                <Building2 className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Jumlah Departemen</CardTitle>
@@ -66,18 +68,18 @@ export function ViceDean2Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600 dark:text-green-400">5</div>
-            <div className="mt-1 flex items-center text-xs text-green-600/80 dark:text-green-400/80">
-              <TrendingUp className="mr-1 h-3 w-3" />
+            <div className="flex items-center mt-1 text-xs text-green-600/80 dark:text-green-400/80">
+              <TrendingUp className="w-3 h-3 mr-1" />
               <span>Semua departemen aktif</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-purple-50 to-purple-100 shadow-md transition-all hover:shadow-lg dark:from-purple-950/40 dark:to-purple-900/40">
+        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-purple-50 to-purple-100 hover:shadow-lg dark:from-purple-950/40 dark:to-purple-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-purple-100 p-2 dark:bg-purple-800/50">
-                <GraduationCap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <div className="p-2 bg-purple-100 rounded-full dark:bg-purple-800/50">
+                <GraduationCap className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Pendaftar Ujian</CardTitle>
@@ -87,18 +89,18 @@ export function ViceDean2Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">1,248</div>
-            <div className="mt-1 flex items-center text-xs text-purple-600/80 dark:text-purple-400/80">
-              <ArrowUpRight className="mr-1 h-3 w-3" />
+            <div className="flex items-center mt-1 text-xs text-purple-600/80 dark:text-purple-400/80">
+              <ArrowUpRight className="w-3 h-3 mr-1" />
               <span>Naik 12% dari semester lalu</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-amber-50 to-amber-100 shadow-md transition-all hover:shadow-lg dark:from-amber-950/40 dark:to-amber-900/40">
+        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-amber-50 to-amber-100 hover:shadow-lg dark:from-amber-950/40 dark:to-amber-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-800/50">
-                <Beaker className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-800/50">
+                <Beaker className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Pendapatan Lab</CardTitle>
@@ -108,8 +110,8 @@ export function ViceDean2Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">Rp 875 Juta</div>
-            <div className="mt-1 flex items-center text-xs text-amber-600/80 dark:text-amber-400/80">
-              <ArrowUpRight className="mr-1 h-3 w-3" />
+            <div className="flex items-center mt-1 text-xs text-amber-600/80 dark:text-amber-400/80">
+              <ArrowUpRight className="w-3 h-3 mr-1" />
               <span>Naik 5% dari semester lalu</span>
             </div>
           </CardContent>
@@ -119,19 +121,19 @@ export function ViceDean2Dashboard() {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">
-            <BarChart3 className="mr-2 h-4 w-4" />
+            <BarChart3 className="w-4 h-4 mr-2" />
             Ikhtisar
           </TabsTrigger>
           <TabsTrigger value="budget">
-            <PieChart className="mr-2 h-4 w-4" />
+            <PieChart className="w-4 h-4 mr-2" />
             Anggaran
           </TabsTrigger>
           <TabsTrigger value="academic">
-            <LineChart className="mr-2 h-4 w-4" />
+            <LineChart className="w-4 h-4 mr-2" />
             Akademik
           </TabsTrigger>
           <TabsTrigger value="payments">
-            <Wallet className="mr-2 h-4 w-4" />
+            <Wallet className="w-4 h-4 mr-2" />
             Laporan Pembayaran
           </TabsTrigger>
         </TabsList>

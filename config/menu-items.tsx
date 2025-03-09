@@ -375,115 +375,33 @@ export const dekanMenuItems = [
   },
   {
     id: "dean-office",
-    title: "Kantor Dekan",
+    title: "Dekan",
     href: "/dashboard/dekan/dean-office",
-    icon: Crown,
-    children: [
-      {
-        id: "correspondence-approval",
-        title: "Persetujuan Surat",
-        href: "/dashboard/dekan/dean-office/correspondence",
-        badge: { text: "12", variant: "destructive" },
-      },
-      {
-        id: "exam-approval",
-        title: "Persetujuan Ujian",
-        href: "/dashboard/dekan/dean-office/exams",
-      },
-      {
-        id: "faculty-performance",
-        title: "Kinerja Fakultas",
-        href: "/dashboard/dekan/dean-office/performance",
-      },
-    ],
+    icon: Crown
   },
   {
     id: "vice-dean-1",
     title: "Wakil Dekan 1",
     href: "/dashboard/dekan/vice-dean-1",
     icon: Users,
-    children: [
-      {
-        id: "student-records",
-        title: "Data Mahasiswa",
-        href: "/dashboard/dekan/vice-dean-1/student-records",
-      },
-      {
-        id: "academic-performance",
-        title: "Kinerja Akademik",
-        href: "/dashboard/dekan/vice-dean-1/academic-performance",
-      },
-      {
-        id: "student-communication",
-        title: "Komunikasi Mahasiswa",
-        href: "/dashboard/dekan/vice-dean-1/student-communication",
-      },
-    ],
   },
   {
     id: "vice-dean-2",
     title: "Wakil Dekan 2",
     href: "/dashboard/dekan/vice-dean-2",
     icon: BarChart,
-    children: [
-      {
-        id: "budget-management",
-        title: "Manajemen Anggaran",
-        href: "/dashboard/dekan/vice-dean-2/budget",
-      },
-      {
-        id: "expense-tracking",
-        title: "Pelacakan Pengeluaran",
-        href: "/dashboard/dekan/vice-dean-2/expenses",
-      },
-      {
-        id: "financial-reporting",
-        title: "Laporan Keuangan",
-        href: "/dashboard/dekan/vice-dean-2/reports",
-      },
-    ],
   },
   {
     id: "vice-dean-3",
     title: "Wakil Dekan 3",
     href: "/dashboard/dekan/vice-dean-3",
-    icon: FileText,
-    children: [
-      {
-        id: "vice-dean-3-dashboard",
-        title: "Dashboard",
-        href: "/dashboard/dekan/vice-dean-3",
-      },
-      {
-        id: "student-statistics",
-        title: "Statistik Mahasiswa",
-        href: "/dashboard/dekan/vice-dean-3/statistics",
-      },
-      {
-        id: "academic-performance",
-        title: "Kinerja Akademik",
-        href: "/dashboard/dekan/vice-dean-3/performance",
-      },
-      {
-        id: "student-welfare",
-        title: "Kesejahteraan Mahasiswa",
-        href: "/dashboard/dekan/vice-dean-3/welfare",
-      },
-    ],
+    icon: FileText
   },
   {
     id: "vice-dean-4",
     title: "Wakil Dekan 4",
     href: "/dashboard/dekan/vice-dean-4",
-    icon: ClipboardList,
-    children: [
-      {
-        id: "vice-dean-4-dashboard",
-        title: "Dashboard",
-        href: "/dashboard/dekan/vice-dean-4",
-      },
-      // Placeholder for future functionality
-    ],
+    icon: ClipboardList
   },
   {
     id: "faculty-overview",

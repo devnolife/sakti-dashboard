@@ -50,33 +50,33 @@ export function ViceDean4Dashboard() {
   }
 
   return (
-    <div className="space-y-6 bg-gradient-to-b from-background to-background/80 p-4 rounded-lg">
+    <div className="p-4 space-y-6 rounded-lg bg-gradient-to-b from-background to-background/80">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent">
-            Program Kerja Profesional (KKP Plus)
+          <h2 className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text">
+           Kuliah Kerja Profesi Plus
           </h2>
-          <p className="text-muted-foreground">Dashboard Wakil Dekan 4 untuk pengelolaan program kerja profesional</p>
+          <p className="text-muted-foreground">Dashboard Wakil Dekan 4 untuk pengelolaan kerja profesi plus</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             onClick={() => setIsAddLocationOpen(true)}
-            className="flex items-center gap-1 border-primary-100 hover:bg-primary-50 hover:text-primary-700 transition-all"
+            className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
           >
-            <MapPin className="h-4 w-4" />
+            <MapPin className="w-4 h-4" />
             <span>Tambah Lokasi</span>
           </Button>
           <Button
             variant="outline"
             onClick={() => setIsAddSupervisorOpen(true)}
-            className="flex items-center gap-1 border-primary-100 hover:bg-primary-50 hover:text-primary-700 transition-all"
+            className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
           >
-            <Users className="h-4 w-4" />
+            <Users className="w-4 h-4" />
             <span>Tambah Pembimbing</span>
           </Button>
-          <Button className="flex items-center gap-1 bg-primary hover:bg-primary-600 transition-all">
-            <Download className="h-4 w-4" />
+          <Button className="flex items-center gap-1 transition-all bg-primary hover:bg-primary-600">
+            <Download className="w-4 h-4" />
             <span>Ekspor Data</span>
           </Button>
         </div>
@@ -85,13 +85,13 @@ export function ViceDean4Dashboard() {
       <KkpPlusOverviewStats />
 
       <div className="flex flex-col gap-4 md:flex-row">
-        <div className="flex flex-1 items-center space-x-2">
+        <div className="flex items-center flex-1 space-x-2">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Cari berdasarkan nama, NIM, atau program..."
-              className="pl-8 border-primary-100 focus-visible:ring-primary-200 transition-all"
+              className="pl-8 transition-all border-primary-100 focus-visible:ring-primary-200"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -99,17 +99,17 @@ export function ViceDean4Dashboard() {
           <Button
             variant="outline"
             size="icon"
-            className="border-primary-100 hover:bg-primary-50 hover:text-primary-700 transition-all"
+            className="transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
           >
-            <Filter className="h-4 w-4" />
+            <Filter className="w-4 h-4" />
             <span className="sr-only">Filter</span>
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="border-primary-100 hover:bg-primary-50 hover:text-primary-700 transition-all"
+            className="transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="w-4 h-4" />
             <span className="sr-only">Refresh</span>
           </Button>
         </div>
@@ -132,12 +132,12 @@ export function ViceDean4Dashboard() {
       </div>
 
       <Tabs defaultValue="active-students" className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 bg-muted/50 p-1">
+        <TabsList className="grid grid-cols-2 p-1 md:grid-cols-5 bg-muted/50">
           <TabsTrigger
             value="active-students"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-sm transition-all"
           >
-            <Users className="h-4 w-4" />
+            <Users className="w-4 h-4" />
             <span className="hidden md:inline">Mahasiswa Aktif</span>
             <span className="inline md:hidden">Aktif</span>
           </TabsTrigger>
@@ -145,7 +145,7 @@ export function ViceDean4Dashboard() {
             value="work-programs"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-sm transition-all"
           >
-            <Briefcase className="h-4 w-4" />
+            <Briefcase className="w-4 h-4" />
             <span className="hidden md:inline">Program Kerja</span>
             <span className="inline md:hidden">Program</span>
           </TabsTrigger>
@@ -153,7 +153,7 @@ export function ViceDean4Dashboard() {
             value="history"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-sm transition-all"
           >
-            <History className="h-4 w-4" />
+            <History className="w-4 h-4" />
             <span className="hidden md:inline">Riwayat Mahasiswa</span>
             <span className="inline md:hidden">Riwayat</span>
           </TabsTrigger>
@@ -161,7 +161,7 @@ export function ViceDean4Dashboard() {
             value="locations"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-sm transition-all"
           >
-            <MapPin className="h-4 w-4" />
+            <MapPin className="w-4 h-4" />
             <span className="hidden md:inline">Lokasi Program</span>
             <span className="inline md:hidden">Lokasi</span>
           </TabsTrigger>
@@ -169,7 +169,7 @@ export function ViceDean4Dashboard() {
             value="recitation-tests"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-700 data-[state=active]:shadow-sm transition-all"
           >
-            <BookOpen className="h-4 w-4" />
+            <BookOpen className="w-4 h-4" />
             <span className="hidden md:inline">Tes Hafalan</span>
             <span className="inline md:hidden">Hafalan</span>
           </TabsTrigger>
@@ -192,13 +192,13 @@ export function ViceDean4Dashboard() {
         </TabsContent>
 
         <TabsContent value="recitation-tests" className="space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Daftar Mahasiswa Lulus Tes Hafalan</h3>
             <Button
               onClick={() => setIsAddStaffOpen(true)}
-              className="flex items-center gap-1 bg-primary hover:bg-primary-600 transition-all"
+              className="flex items-center gap-1 transition-all bg-primary hover:bg-primary-600"
             >
-              <UserPlus className="h-4 w-4" />
+              <UserPlus className="w-4 h-4" />
               <span>Tambah Staff Penguji</span>
             </Button>
           </div>
