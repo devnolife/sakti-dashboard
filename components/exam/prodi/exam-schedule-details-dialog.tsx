@@ -52,25 +52,25 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
     switch (status) {
       case "pending":
         return (
-          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+          <Badge variant="outline" className="text-yellow-700 border-yellow-200 bg-yellow-50">
             Menunggu Verifikasi
           </Badge>
         )
       case "verified":
         return (
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <Badge variant="outline" className="text-green-700 border-green-200 bg-green-50">
             Terverifikasi
           </Badge>
         )
       case "rescheduled":
         return (
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge variant="outline" className="text-blue-700 border-blue-200 bg-blue-50">
             Dijadwalkan Ulang
           </Badge>
         )
       case "cancelled":
         return (
-          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+          <Badge variant="outline" className="text-red-700 border-red-200 bg-red-50">
             Dibatalkan
           </Badge>
         )
@@ -83,19 +83,19 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
     switch (type) {
       case "proposal":
         return (
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge variant="outline" className="text-blue-700 border-blue-200 bg-blue-50">
             Proposal
           </Badge>
         )
       case "result":
         return (
-          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+          <Badge variant="outline" className="text-purple-700 border-purple-200 bg-purple-50">
             Hasil
           </Badge>
         )
       case "final":
         return (
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <Badge variant="outline" className="text-green-700 border-green-200 bg-green-50">
             Tutup
           </Badge>
         )
@@ -117,15 +117,15 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
         <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="details" className="flex items-center gap-1">
-              <FileText className="h-4 w-4" />
+              <FileText className="w-4 h-4" />
               Detail
             </TabsTrigger>
             <TabsTrigger value="committee" className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              Komite Penguji
+              <Users className="w-4 h-4" />
+              Penguji
             </TabsTrigger>
             <TabsTrigger value="notes" className="flex items-center gap-1">
-              <MessageSquare className="h-4 w-4" />
+              <MessageSquare className="w-4 h-4" />
               Catatan
             </TabsTrigger>
           </TabsList>
@@ -155,15 +155,15 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
                   </div>
                   <div>
                     <Label>Tipe Ujian</Label>
-                    <div className="font-medium flex items-center gap-2">{getExamTypeBadge(schedule.examType)}</div>
+                    <div className="flex items-center gap-2 font-medium">{getExamTypeBadge(schedule.examType)}</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>Tanggal dan Waktu</Label>
-                    <div className="font-medium flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-2 font-medium">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
                       {schedule.scheduledDate
                         ? format(new Date(schedule.scheduledDate), "dd MMMM yyyy, HH:mm")
                         : "Belum dijadwalkan"}
@@ -171,8 +171,8 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
                   </div>
                   <div>
                     <Label>Durasi</Label>
-                    <div className="font-medium flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-2 font-medium">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
                       {schedule.duration} menit
                     </div>
                   </div>
@@ -180,8 +180,8 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
 
                 <div>
                   <Label>Lokasi</Label>
-                  <div className="font-medium flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex items-center gap-2 font-medium">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
                     {schedule.location}
                   </div>
                 </div>
@@ -189,7 +189,7 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
               <CardFooter className="flex justify-between">
                 {schedule.verificationStatus === "pending" && (
                   <Button onClick={handleVerify}>
-                    <Check className="mr-2 h-4 w-4" />
+                    <Check className="w-4 h-4 mr-2" />
                     Verifikasi Jadwal
                   </Button>
                 )}
@@ -200,7 +200,7 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
           <TabsContent value="committee">
             <Card>
               <CardHeader>
-                <CardTitle>Komite Penguji</CardTitle>
+                <CardTitle>Penguji</CardTitle>
                 <CardDescription>Daftar dosen penguji untuk ujian ini</CardDescription>
               </CardHeader>
               <CardContent>
@@ -224,7 +224,7 @@ export function ExamScheduleDetailsDialog({ schedule, open, onOpenChange }: Exam
                       </div>
                     ))
                   ) : (
-                    <div className="text-muted-foreground italic">Belum ada dosen penguji yang ditugaskan</div>
+                    <div className="italic text-muted-foreground">Belum ada dosen penguji yang ditugaskan</div>
                   )}
                 </div>
               </CardContent>

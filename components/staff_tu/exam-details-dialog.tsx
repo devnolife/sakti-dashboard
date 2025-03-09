@@ -132,7 +132,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800"
+            className="text-yellow-700 border-yellow-200 bg-yellow-50 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800"
           >
             Pendaftar
           </Badge>
@@ -141,7 +141,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
+            className="text-blue-700 border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
           >
             Menunggu
           </Badge>
@@ -150,7 +150,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
+            className="text-indigo-700 border-indigo-200 bg-indigo-50 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
           >
             Terjadwal
           </Badge>
@@ -159,7 +159,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
+            className="text-green-700 border-green-200 bg-green-50 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
           >
             Selesai
           </Badge>
@@ -177,7 +177,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800"
+            className="text-orange-700 border-orange-200 bg-orange-50 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800"
           >
             Tidak Lulus
           </Badge>
@@ -186,7 +186,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800"
+            className="text-red-700 border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800"
           >
             Dibatalkan
           </Badge>
@@ -202,7 +202,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
+            className="text-blue-700 border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
           >
             Ujian Proposal
           </Badge>
@@ -211,7 +211,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-800"
+            className="text-purple-700 border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-800"
           >
             Ujian Hasil
           </Badge>
@@ -220,7 +220,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
+            className="text-green-700 border-green-200 bg-green-50 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
           >
             Ujian Tutup
           </Badge>
@@ -235,7 +235,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-3xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle className="text-xl flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-xl">
               Detail Ujian
               <span className="inline-block">{getStatusBadge(exam.status)}</span>
               <span className="inline-block">{getExamTypeBadge(exam.type)}</span>
@@ -247,15 +247,15 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="details">Detail Ujian</TabsTrigger>
               <TabsTrigger value="advisors">Pembimbing</TabsTrigger>
-              <TabsTrigger value="committee">Komite Penguji</TabsTrigger>
+              <TabsTrigger value="committee">Penguji</TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
               {/* Student and Exam Info */}
-              <div className="bg-muted/30 rounded-lg p-4 border border-border">
+              <div className="p-4 border rounded-lg bg-muted/30 border-border">
                 {isEditing ? (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="studentName">Nama Mahasiswa</Label>
                         <Input
@@ -281,7 +281,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                         onChange={(e) => handleInputChange("title", e.target.value)}
                       />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="type">Tipe Ujian</Label>
                         <Select value={editedExam.type} onValueChange={handleTypeChange}>
@@ -313,7 +313,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                         </Select>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="date">Tanggal dan Waktu</Label>
                         <Input
@@ -335,32 +335,32 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                    <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                       <div>
                         <h3 className="text-lg font-semibold">{exam.studentName}</h3>
                         <p className="text-muted-foreground">{exam.studentId}</p>
                       </div>
                       <Button variant="outline" size="sm" className="self-start" onClick={() => setIsEditing(true)}>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
                     </div>
                     <h2 className="text-xl font-bold">{exam.title}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       {exam.date && exam.location ? (
                         <>
                           <div className="flex items-center">
-                            <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
+                            <Calendar className="w-5 h-5 mr-2 text-muted-foreground" />
                             <span>{formatExamDate(exam.date)}</span>
                           </div>
                           <div className="flex items-center">
-                            <MapPin className="h-5 w-5 mr-2 text-muted-foreground" />
+                            <MapPin className="w-5 h-5 mr-2 text-muted-foreground" />
                             <span>{exam.location}</span>
                           </div>
                         </>
                       ) : (
                         <div className="col-span-2">
-                          <p className="text-muted-foreground italic">Belum dijadwalkan</p>
+                          <p className="italic text-muted-foreground">Belum dijadwalkan</p>
                         </div>
                       )}
                     </div>
@@ -386,7 +386,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                         className="gap-1"
                         disabled={!!editedExam.advisor1}
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="w-4 h-4" />
                         Pembimbing 1
                       </Button>
                       <Button
@@ -399,7 +399,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                         className="gap-1"
                         disabled={!!editedExam.advisor2}
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="w-4 h-4" />
                         Pembimbing 2
                       </Button>
                     </div>
@@ -408,12 +408,12 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
 
                 <div className="space-y-4">
                   {/* Advisor 1 */}
-                  <div className="border border-border rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Pembimbing 1</h4>
+                  <div className="p-4 border rounded-lg border-border">
+                    <h4 className="mb-3 text-sm font-medium text-muted-foreground">Pembimbing 1</h4>
                     {editedExam.advisor1 ? (
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-12 w-12 border-2 border-primary/10">
+                          <Avatar className="w-12 h-12 border-2 border-primary/10">
                             <AvatarImage src={editedExam.advisor1.avatarUrl} alt={editedExam.advisor1.name} />
                             <AvatarFallback className="bg-primary/10 text-primary">
                               {editedExam.advisor1.name
@@ -434,23 +434,23 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                             className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
                             onClick={() => handleRemoveAdvisor("advisor1")}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="w-4 h-4" />
                             <span className="sr-only">Hapus</span>
                           </Button>
                         )}
                       </div>
                     ) : (
-                      <div className="text-muted-foreground italic">Belum ada pembimbing 1</div>
+                      <div className="italic text-muted-foreground">Belum ada pembimbing 1</div>
                     )}
                   </div>
 
                   {/* Advisor 2 */}
-                  <div className="border border-border rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Pembimbing 2</h4>
+                  <div className="p-4 border rounded-lg border-border">
+                    <h4 className="mb-3 text-sm font-medium text-muted-foreground">Pembimbing 2</h4>
                     {editedExam.advisor2 ? (
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-12 w-12 border-2 border-primary/10">
+                          <Avatar className="w-12 h-12 border-2 border-primary/10">
                             <AvatarImage src={editedExam.advisor2.avatarUrl} alt={editedExam.advisor2.name} />
                             <AvatarFallback className="bg-primary/10 text-primary">
                               {editedExam.advisor2.name
@@ -471,13 +471,13 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                             className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
                             onClick={() => handleRemoveAdvisor("advisor2")}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="w-4 h-4" />
                             <span className="sr-only">Hapus</span>
                           </Button>
                         )}
                       </div>
                     ) : (
-                      <div className="text-muted-foreground italic">Belum ada pembimbing 2</div>
+                      <div className="italic text-muted-foreground">Belum ada pembimbing 2</div>
                     )}
                   </div>
                 </div>
@@ -488,10 +488,10 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
               {/* Committee Members Section */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold">Anggota Komite Penguji</h3>
+                  <h3 className="text-lg font-semibold">Anggota Penguji</h3>
                   {isEditing && (
                     <Button variant="outline" size="sm" onClick={() => setShowCommitteeDialog(true)} className="gap-1">
-                      <UserPlus className="h-4 w-4" />
+                      <UserPlus className="w-4 h-4" />
                       Tambah Anggota
                     </Button>
                   )}
@@ -502,10 +502,10 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                     {editedExam.committee.map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center justify-between p-3 rounded-lg border border-border bg-card"
+                        className="flex items-center justify-between p-3 border rounded-lg border-border bg-card"
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 border border-border">
+                          <Avatar className="w-10 h-10 border border-border">
                             <AvatarImage src={member.avatarUrl} alt={member.name} />
                             <AvatarFallback className="bg-primary/10 text-primary">
                               {member.name
@@ -531,7 +531,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                             className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
                             onClick={() => handleRemoveCommitteeMember(member.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="w-4 h-4" />
                             <span className="sr-only">Hapus</span>
                           </Button>
                         )}
@@ -539,7 +539,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                     ))}
                   </div>
                 ) : (
-                  <div className="text-muted-foreground italic">Belum ada anggota komite penguji</div>
+                  <div className="italic text-muted-foreground">Belum ada anggota penguji</div>
                 )}
               </div>
             </TabsContent>
@@ -558,7 +558,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                   Batal
                 </Button>
                 <Button onClick={handleSaveChanges}>
-                  <Save className="mr-2 h-4 w-4" />
+                  <Save className="w-4 h-4 mr-2" />
                   Simpan Perubahan
                 </Button>
               </div>
@@ -568,7 +568,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                   Tutup
                 </Button>
                 <Button onClick={() => setIsEditing(true)}>
-                  <Edit className="mr-2 h-4 w-4" />
+                  <Edit className="w-4 h-4 mr-2" />
                   Edit
                 </Button>
               </div>

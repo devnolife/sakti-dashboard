@@ -1,5 +1,5 @@
 export type ExamType = "proposal" | "result"
-export type ExamStatus = "pending" | "scheduled" | "completed" | "passed" | "failed"
+export type ExamStatus = 'not-started' | 'in-progress' | 'passed' | 'failed';
 
 export interface CommitteeMember {
   name: string

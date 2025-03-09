@@ -587,7 +587,7 @@ export const ExamScheduleDashboard = () => {
               {selectedEvent.committee && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm font-medium">Komite Penguji</CardTitle>
+                    <CardTitle className="text-sm font-medium">Penguji</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     {selectedEvent.committee.map((member: any, index: number) => (

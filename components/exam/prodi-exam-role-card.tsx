@@ -25,31 +25,31 @@ export function ProdiExamRoleCard({ className }: ProdiExamRoleCardProps) {
       id: "approve-applications",
       title: "Persetujuan Aplikasi Ujian",
       description: "Meninjau dan menyetujui aplikasi ujian proposal, hasil, dan sidang mahasiswa",
-      icon: <FileCheck className="h-5 w-5 text-blue-600" />,
+      icon: <FileCheck className="w-5 h-5 text-blue-600" />,
     },
     {
       id: "assign-committee",
-      title: "Penunjukan Komite Penguji",
-      description: "Menentukan dan menugaskan dosen sebagai anggota komite penguji",
-      icon: <Users className="h-5 w-5 text-indigo-600" />,
+      title: "Penunjukan Penguji",
+      description: "Menentukan dan menugaskan dosen sebagai anggota penguji",
+      icon: <Users className="w-5 h-5 text-indigo-600" />,
     },
     {
       id: "quality-assurance",
       title: "Penjaminan Kualitas",
       description: "Memastikan standar akademik terpenuhi dalam proses ujian",
-      icon: <CheckCircle className="h-5 w-5 text-green-600" />,
+      icon: <CheckCircle className="w-5 h-5 text-green-600" />,
     },
     {
       id: "final-approval",
       title: "Persetujuan Akhir",
       description: "Memberikan persetujuan akhir untuk hasil ujian dan kelulusan",
-      icon: <ClipboardCheck className="h-5 w-5 text-purple-600" />,
+      icon: <ClipboardCheck className="w-5 h-5 text-purple-600" />,
     },
     {
       id: "supervision",
       title: "Pengawasan Proses",
       description: "Mengawasi keseluruhan proses ujian untuk memastikan kepatuhan terhadap peraturan",
-      icon: <UserCheck className="h-5 w-5 text-amber-600" />,
+      icon: <UserCheck className="w-5 h-5 text-amber-600" />,
     },
   ]
 
@@ -58,7 +58,7 @@ export function ProdiExamRoleCard({ className }: ProdiExamRoleCardProps) {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-blue-800">Kepala Program Studi</CardTitle>
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge variant="outline" className="text-blue-700 border-blue-200 bg-blue-50">
             Peran Akademik
           </Badge>
         </div>
@@ -73,7 +73,7 @@ export function ProdiExamRoleCard({ className }: ProdiExamRoleCardProps) {
                 {item.icon}
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors">{item.title}</h4>
+                <h4 className="font-medium text-gray-900 transition-colors group-hover:text-blue-700">{item.title}</h4>
                 <p className="text-sm text-gray-500">{item.description}</p>
               </div>
             </div>

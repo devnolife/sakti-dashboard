@@ -55,10 +55,9 @@ export function CorrespondenceFilters({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Search Field */}
-        <div className="relative">
-          <form onSubmit={handleSearch}>
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="relative flex-1 min-w-[200px]">
+          <form onSubmit={handleSearch} className="w-full">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -71,9 +70,7 @@ export function CorrespondenceFilters({
             </div>
           </form>
         </div>
-
-        {/* Status Filter */}
-        <div>
+        <div className="min-w-[150px]">
           <Label htmlFor="status-filter" className="text-sm font-medium mb-1.5 block">
             Status
           </Label>
@@ -93,7 +90,7 @@ export function CorrespondenceFilters({
         </div>
 
         {/* Date Filter */}
-        <div>
+        <div className="min-w-[150px]">
           <Label htmlFor="date-filter" className="text-sm font-medium mb-1.5 block">
             Tanggal
           </Label>
@@ -104,7 +101,7 @@ export function CorrespondenceFilters({
                 variant={"outline"}
                 className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <CalendarIcon className="w-4 h-4 mr-2" />
                 {date ? format(date, "PPP") : "Pilih tanggal"}
               </Button>
             </PopoverTrigger>
@@ -113,11 +110,9 @@ export function CorrespondenceFilters({
             </PopoverContent>
           </Popover>
         </div>
-      </div>
-
-      {/* Reset Filters Button */}
-      <div className="flex justify-end">
-        <Button variant="ghost" size="sm" onClick={handleResetFilters} className="h-8 gap-1 text-xs">
+        
+        {/* Reset Filters Button */}
+        <Button variant="ghost" size="sm" onClick={handleResetFilters} className="gap-1 ml-auto text-xs h-9">
           <X className="h-3.5 w-3.5" />
           Reset filter
         </Button>

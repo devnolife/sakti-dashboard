@@ -151,9 +151,9 @@ export function ExamSubmissionsDashboard() {
           {filteredSubmissions.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-10 text-center">
-                <Info className="h-10 w-10 text-muted-foreground/60" />
+                <Info className="w-10 h-10 text-muted-foreground/60" />
                 <h3 className="mt-4 text-lg font-medium">Tidak Ada Pengajuan</h3>
-                <p className="mt-2 text-sm text-muted-foreground max-w-md">
+                <p className="max-w-md mt-2 text-sm text-muted-foreground">
                   Anda belum memiliki pengajuan ujian dengan status ini. Klik tombol "Daftar Ujian Baru" untuk membuat
                   pengajuan baru.
                 </p>
@@ -174,29 +174,29 @@ export function ExamSubmissionsDashboard() {
 
                       <h3 className="text-lg font-medium">{submission.title}</h3>
 
-                      <div className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-3 mt-4 text-sm sm:grid-cols-2">
                         <div className="flex items-center text-muted-foreground">
-                          <Calendar className="mr-2 h-4 w-4" />
+                          <Calendar className="w-4 h-4 mr-2" />
                           <span>Diajukan: {new Date(submission.submittedDate).toLocaleDateString("id-ID")}</span>
                         </div>
 
                         {submission.scheduledDate && (
                           <div className="flex items-center text-muted-foreground">
-                            <Clock className="mr-2 h-4 w-4" />
+                            <Clock className="w-4 h-4 mr-2" />
                             <span>Dijadwalkan: {new Date(submission.scheduledDate).toLocaleDateString("id-ID")}</span>
                           </div>
                         )}
                       </div>
 
                       {submission.status === "rejected" && (
-                        <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/50 dark:text-red-300">
+                        <div className="p-3 mt-4 text-sm text-red-800 rounded-md bg-red-50 dark:bg-red-950/50 dark:text-red-300">
                           <p className="font-medium">Alasan Penolakan:</p>
                           <p>{submission.reason}</p>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 border-t bg-muted/50 p-4 sm:border-l sm:border-t-0">
+                    <div className="flex items-center justify-end gap-2 p-4 border-t bg-muted/50 sm:border-l sm:border-t-0">
                       <Button variant="outline" size="sm" onClick={() => handleViewDetails(submission)}>
                         Detail
                       </Button>
@@ -205,7 +205,7 @@ export function ExamSubmissionsDashboard() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
+                              <MoreHorizontal className="w-4 h-4" />
                               <span className="sr-only">More</span>
                             </Button>
                           </DropdownMenuTrigger>
@@ -217,7 +217,7 @@ export function ExamSubmissionsDashboard() {
                             >
                               {isCancelling ? (
                                 <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                   <span>Membatalkan...</span>
                                 </>
                               ) : (
@@ -258,22 +258,22 @@ export function ExamSubmissionsDashboard() {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium">Informasi Pengajuan</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2 pt-0 text-sm">
+                  <CardContent className="pt-0 space-y-2 text-sm">
                     <div className="flex items-center">
-                      <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                       <span>Diajukan: {new Date(selectedSubmission.submittedDate).toLocaleDateString("id-ID")}</span>
                     </div>
 
                     {selectedSubmission.scheduledDate && (
                       <>
                         <div className="flex items-center">
-                          <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                           <span>
                             Dijadwalkan: {new Date(selectedSubmission.scheduledDate).toLocaleDateString("id-ID")}
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
                           <span>Waktu: {selectedSubmission.scheduledTime}</span>
                         </div>
                       </>
@@ -281,7 +281,7 @@ export function ExamSubmissionsDashboard() {
 
                     {selectedSubmission.location && (
                       <div className="flex items-center">
-                        <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <FileText className="w-4 h-4 mr-2 text-muted-foreground" />
                         <span>Lokasi: {selectedSubmission.location}</span>
                       </div>
                     )}
@@ -294,20 +294,20 @@ export function ExamSubmissionsDashboard() {
                   </CardHeader>
                   <CardContent className="pt-0 text-sm">
                     {selectedSubmission.status === "rejected" ? (
-                      <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/50 dark:text-red-300">
+                      <div className="p-3 text-sm text-red-800 rounded-md bg-red-50 dark:bg-red-950/50 dark:text-red-300">
                         <p className="font-medium">Alasan Penolakan:</p>
                         <p>{selectedSubmission.reason}</p>
                       </div>
                     ) : selectedSubmission.status === "pending" ? (
-                      <div className="rounded-md bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+                      <div className="p-3 text-sm rounded-md bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
                         <p>{selectedSubmission.notes || "Pengajuan Anda sedang dalam proses review."}</p>
                       </div>
                     ) : selectedSubmission.status === "approved" ? (
-                      <div className="rounded-md bg-green-50 p-3 text-sm text-green-800 dark:bg-green-950/50 dark:text-green-300">
+                      <div className="p-3 text-sm text-green-800 rounded-md bg-green-50 dark:bg-green-950/50 dark:text-green-300">
                         <p>{selectedSubmission.notes || "Pengajuan Anda telah disetujui."}</p>
                       </div>
                     ) : (
-                      <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-800 dark:bg-blue-950/50 dark:text-blue-300">
+                      <div className="p-3 text-sm text-blue-800 rounded-md bg-blue-50 dark:bg-blue-950/50 dark:text-blue-300">
                         <p className="font-medium">Hasil Ujian:</p>
                         <p>
                           Nilai: {selectedSubmission.result?.score} ({selectedSubmission.result?.grade})
@@ -322,13 +322,13 @@ export function ExamSubmissionsDashboard() {
               {selectedSubmission.committee && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm font-medium">Komite Penguji</CardTitle>
+                    <CardTitle className="text-sm font-medium">Penguji</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     {selectedSubmission.committee.map((member: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between rounded-md border p-3">
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-md">
                         <div className="flex items-center">
-                          <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <User className="w-4 h-4 mr-2 text-muted-foreground" />
                           <span>{member.name}</span>
                         </div>
                         <Badge variant="outline">{member.role}</Badge>

@@ -10,6 +10,7 @@ import { Plus } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, Clock, FileText, X, Mail } from "lucide-react"
+import { LetterDetailView } from "@/components/correspondence/letter-detail-view"
 
 // Types
 import type { LetterRequest } from "@/types/correspondence"
@@ -28,7 +29,8 @@ const mockRequests: LetterRequest[] = [
     status: "completed",
     type: "active_student",
     attachments: [],
-    notes: "",
+    studentMajor: "Teknik Informatika",
+    approvalRole: "staff_tu",
   },
   {
     id: "2",
@@ -42,7 +44,8 @@ const mockRequests: LetterRequest[] = [
     status: "in-review",
     type: "research_permission",
     attachments: [],
-    notes: "",
+    studentMajor: "Teknik Elektro",
+    approvalRole: "prodi",
   },
   {
     id: "3",
@@ -54,9 +57,10 @@ const mockRequests: LetterRequest[] = [
     description: "Dibutuhkan untuk mengajukan cuti semester ganjil 2023/2024",
     requestDate: "2023-06-13T14:45:00Z",
     status: "submitted",
-    type: "leave_letter",
+    type: "leave_absence",
     attachments: [],
-    notes: "",
+    studentMajor: "Psikologi",
+    approvalRole: "staff_tu",
   },
   {
     id: "4",
@@ -68,9 +72,10 @@ const mockRequests: LetterRequest[] = [
     description: "Dibutuhkan untuk melamar magang di Kementerian Komunikasi dan Informatika",
     requestDate: "2023-06-12T09:20:00Z",
     status: "approved",
-    type: "recommendation",
+    type: "internship_recommendation",
     attachments: [],
-    notes: "",
+    studentMajor: "Ilmu Komunikasi",
+    approvalRole: "prodi",
   },
   {
     id: "5",
@@ -84,7 +89,9 @@ const mockRequests: LetterRequest[] = [
     status: "rejected",
     type: "graduation_letter",
     attachments: [],
-    notes: "Data tidak lengkap, mohon lengkapi transkrip nilai",
+    studentMajor: "Manajemen",
+    approvalRole: "staff_tu",
+    rejectedReason: "Data tidak lengkap, mohon lengkapi transkrip nilai",
   },
   {
     id: "6",
@@ -98,7 +105,10 @@ const mockRequests: LetterRequest[] = [
     status: "completed",
     type: "active_student",
     attachments: [],
-    notes: "",
+    studentMajor: "Akuntansi",
+    approvalRole: "staff_tu",
+    approvedDate: "2023-06-12T10:30:00Z",
+    completedDate: "2023-06-13T14:20:00Z",
   },
   {
     id: "7",
@@ -110,9 +120,10 @@ const mockRequests: LetterRequest[] = [
     description: "Dibutuhkan untuk melengkapi persyaratan beasiswa LPDP",
     requestDate: "2023-06-09T15:40:00Z",
     status: "in-review",
-    type: "recommendation",
+    type: "scholarship_recommendation",
     attachments: [],
-    notes: "",
+    studentMajor: "Teknik Sipil",
+    approvalRole: "staff_tu",
   },
   {
     id: "8",
@@ -124,9 +135,10 @@ const mockRequests: LetterRequest[] = [
     description: "Dibutuhkan untuk mengajukan transfer kredit ke universitas lain",
     requestDate: "2023-06-08T10:05:00Z",
     status: "submitted",
-    type: "transcript",
+    type: "transcript_request",
     attachments: [],
-    notes: "",
+    studentMajor: "Sastra Inggris",
+    approvalRole: "staff_tu",
   },
   {
     id: "9",
@@ -138,9 +150,11 @@ const mockRequests: LetterRequest[] = [
     description: "Dibutuhkan untuk izin tidak mengikuti ujian karena sakit",
     requestDate: "2023-06-07T08:50:00Z",
     status: "approved",
-    type: "leave_letter",
+    type: "leave_absence",
     attachments: [],
-    notes: "",
+    studentMajor: "Kedokteran",
+    approvalRole: "staff_tu",
+    approvedDate: "2023-06-09T11:25:00Z",
   },
   {
     id: "10",
@@ -154,7 +168,10 @@ const mockRequests: LetterRequest[] = [
     status: "completed",
     type: "active_student",
     attachments: [],
-    notes: "",
+    studentMajor: "Hubungan Internasional",
+    approvalRole: "staff_tu",
+    approvedDate: "2023-06-08T09:45:00Z",
+    completedDate: "2023-06-09T13:30:00Z",
   },
   {
     id: "11",
@@ -168,7 +185,8 @@ const mockRequests: LetterRequest[] = [
     status: "in-review",
     type: "graduation_letter",
     attachments: [],
-    notes: "",
+    studentMajor: "Ilmu Hukum",
+    approvalRole: "staff_tu",
   },
   {
     id: "12",
@@ -180,9 +198,10 @@ const mockRequests: LetterRequest[] = [
     description: "Dibutuhkan untuk mengajukan penelitian di laboratorium universitas lain",
     requestDate: "2023-06-04T09:45:00Z",
     status: "submitted",
-    type: "recommendation",
+    type: "research_permission",
     attachments: [],
-    notes: "",
+    studentMajor: "Kimia",
+    approvalRole: "prodi",
   },
 ]
 
@@ -196,6 +215,8 @@ export function CorrespondenceStaffDashboard() {
     status: "all",
     date: undefined as string | undefined,
   })
+  const [selectedLetter, setSelectedLetter] = useState<LetterRequest | null>(null)
+  const [viewMode, setViewMode] = useState<"list" | "detail">("list")
 
   // Simulate loading data
   useEffect(() => {
@@ -215,6 +236,8 @@ export function CorrespondenceStaffDashboard() {
     // Apply tab filter
     if (activeTab === "all") {
       // No filtering needed
+    } else if (activeTab === "sent") {
+      filtered = filtered.filter((r) => r.status === "completed")
     } else {
       filtered = filtered.filter((r) => r.status === activeTab)
     }
@@ -239,6 +262,7 @@ export function CorrespondenceStaffDashboard() {
   // Handle tab change
   const handleTabChange = (value: string) => {
     setActiveTab(value)
+    setViewMode("list") // Reset to list view when changing tabs
   }
 
   // Handle filter change
@@ -256,7 +280,11 @@ export function CorrespondenceStaffDashboard() {
       let filtered = [...requests]
 
       if (activeTab !== "all") {
-        filtered = filtered.filter((r) => r.status === activeTab)
+        if (activeTab === "sent") {
+          filtered = filtered.filter((r) => r.status === "completed")
+        } else {
+          filtered = filtered.filter((r) => r.status === activeTab)
+        }
       }
 
       if (filters.status && filters.status !== "all") {
@@ -279,7 +307,11 @@ export function CorrespondenceStaffDashboard() {
     let filtered = [...requests]
 
     if (activeTab !== "all") {
-      filtered = filtered.filter((r) => r.status === activeTab)
+      if (activeTab === "sent") {
+        filtered = filtered.filter((r) => r.status === "completed")
+      } else {
+        filtered = filtered.filter((r) => r.status === activeTab)
+      }
     }
 
     if (filters.status && filters.status !== "all") {
@@ -326,7 +358,11 @@ export function CorrespondenceStaffDashboard() {
     let filtered = [...updatedRequests]
 
     if (activeTab !== "all") {
-      filtered = filtered.filter((r) => r.status === activeTab)
+      if (activeTab === "sent") {
+        filtered = filtered.filter((r) => r.status === "completed")
+      } else {
+        filtered = filtered.filter((r) => r.status === activeTab)
+      }
     }
 
     if (filters.status && filters.status !== "all") {
@@ -344,14 +380,26 @@ export function CorrespondenceStaffDashboard() {
     setFilteredRequests(filtered)
   }
 
+  // Handle view letter detail
+  const handleViewLetterDetail = (letter: LetterRequest) => {
+    setSelectedLetter(letter)
+    setViewMode("detail")
+  }
+
+  // Handle back to list view
+  const handleBackToList = () => {
+    setViewMode("list")
+    setSelectedLetter(null)
+  }
+
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-10 w-32" />
+        <div className="flex items-center justify-between">
+          <Skeleton className="w-64 h-8" />
+          <Skeleton className="w-32 h-10" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Skeleton className="h-24" />
           <Skeleton className="h-24" />
           <Skeleton className="h-24" />
@@ -368,83 +416,88 @@ export function CorrespondenceStaffDashboard() {
   const rejectedCount = requests.filter((r) => r.status === "rejected").length
   const totalCount = requests.length
 
+  // If in detail view, show the letter detail component
+  if (viewMode === "detail" && selectedLetter) {
+    return <LetterDetailView letter={selectedLetter} onBack={handleBackToList} />
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold tracking-tight">Manajemen Korespondensi</h1>
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <h1 className="text-2xl font-bold tracking-tight"></h1>
         <Button onClick={() => setShowCreateDialog(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="w-4 h-4 mr-2" />
           Buat Surat
         </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Card className="bg-white dark:bg-card transition-all duration-200 hover:shadow-md">
+        <Card className="transition-all duration-200 bg-white dark:bg-card hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Permohonan</p>
-                <h3 className="text-2xl font-bold mt-1">{totalCount}</h3>
+                <h3 className="mt-1 text-2xl font-bold">{totalCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-primary/10">
-                <Mail className="h-5 w-5 text-primary" />
+              <div className="p-3 rounded-full bg-primary/10">
+                <Mail className="w-5 h-5 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-card transition-all duration-200 hover:shadow-md">
+        <Card className="transition-all duration-200 bg-white dark:bg-card hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Menunggu Persetujuan</p>
-                <h3 className="text-2xl font-bold mt-1">{pendingCount}</h3>
+                <h3 className="mt-1 text-2xl font-bold">{pendingCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-blue-100 dark:bg-blue-900/30">
-                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div className="p-3 bg-blue-100 rounded-full dark:bg-blue-900/30">
+                <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-card transition-all duration-200 hover:shadow-md">
+        <Card className="transition-all duration-200 bg-white dark:bg-card hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Disetujui</p>
-                <h3 className="text-2xl font-bold mt-1">{approvedCount}</h3>
+                <h3 className="mt-1 text-2xl font-bold">{approvedCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-amber-100 dark:bg-amber-900/30">
-                <CheckCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30">
+                <CheckCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-card transition-all duration-200 hover:shadow-md">
+        <Card className="transition-all duration-200 bg-white dark:bg-card hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Selesai</p>
-                <h3 className="text-2xl font-bold mt-1">{completedCount}</h3>
+                <h3 className="mt-1 text-2xl font-bold">{completedCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-green-100 dark:bg-green-900/30">
-                <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <div className="p-3 bg-green-100 rounded-full dark:bg-green-900/30">
+                <FileText className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-card transition-all duration-200 hover:shadow-md">
+        <Card className="transition-all duration-200 bg-white dark:bg-card hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Ditolak</p>
-                <h3 className="text-2xl font-bold mt-1">{rejectedCount}</h3>
+                <h3 className="mt-1 text-2xl font-bold">{rejectedCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-red-100 dark:bg-red-900/30">
-                <X className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <div className="p-3 bg-red-100 rounded-full dark:bg-red-900/30">
+                <X className="w-5 h-5 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </CardContent>
@@ -455,28 +508,57 @@ export function CorrespondenceStaffDashboard() {
       <CorrespondenceFilters filters={filters} onFilterChange={handleFilterChange} onSearch={handleSearch} />
 
       <Tabs defaultValue="all" onValueChange={handleTabChange}>
-        <TabsList className="grid grid-cols-5 mb-4">
+        <TabsList className="grid grid-cols-6 mb-4">
           <TabsTrigger value="all">Semua</TabsTrigger>
           <TabsTrigger value="submitted">Diajukan</TabsTrigger>
           <TabsTrigger value="in-review">Dalam Review</TabsTrigger>
           <TabsTrigger value="approved">Disetujui</TabsTrigger>
           <TabsTrigger value="completed">Selesai</TabsTrigger>
+          <TabsTrigger value="sent">Terkirim</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-0">
-          <CorrespondenceTable requests={filteredRequests} onStatusChange={handleStatusChange} />
+          <CorrespondenceTable
+            requests={filteredRequests}
+            onStatusChange={handleStatusChange}
+            onViewLetterDetail={handleViewLetterDetail}
+          />
         </TabsContent>
         <TabsContent value="submitted" className="mt-0">
-          <CorrespondenceTable requests={filteredRequests} onStatusChange={handleStatusChange} />
+          <CorrespondenceTable
+            requests={filteredRequests}
+            onStatusChange={handleStatusChange}
+            onViewLetterDetail={handleViewLetterDetail}
+          />
         </TabsContent>
         <TabsContent value="in-review" className="mt-0">
-          <CorrespondenceTable requests={filteredRequests} onStatusChange={handleStatusChange} />
+          <CorrespondenceTable
+            requests={filteredRequests}
+            onStatusChange={handleStatusChange}
+            onViewLetterDetail={handleViewLetterDetail}
+          />
         </TabsContent>
         <TabsContent value="approved" className="mt-0">
-          <CorrespondenceTable requests={filteredRequests} onStatusChange={handleStatusChange} />
+          <CorrespondenceTable
+            requests={filteredRequests}
+            onStatusChange={handleStatusChange}
+            onViewLetterDetail={handleViewLetterDetail}
+          />
         </TabsContent>
         <TabsContent value="completed" className="mt-0">
-          <CorrespondenceTable requests={filteredRequests} onStatusChange={handleStatusChange} />
+          <CorrespondenceTable
+            requests={filteredRequests}
+            onStatusChange={handleStatusChange}
+            onViewLetterDetail={handleViewLetterDetail}
+          />
+        </TabsContent>
+        <TabsContent value="sent" className="mt-0">
+          <CorrespondenceTable
+            requests={filteredRequests}
+            onStatusChange={handleStatusChange}
+            onViewLetterDetail={handleViewLetterDetail}
+            showViewDetailButton={true}
+          />
         </TabsContent>
       </Tabs>
 

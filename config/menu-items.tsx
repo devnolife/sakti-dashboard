@@ -257,54 +257,15 @@ export const staffTuMenuItems = [
   },
   {
     id: "correspondence",
-    title: "Layanan Surat",
+    title: "Pelayanan Surat",
     href: "/dashboard/staff_tu/correspondence",
-    icon: Mail,
-    badge: { text: "5", variant: "destructive" },
+    icon: Mail
   },
   {
     id: "exams",
     title: "Manajemen Ujian",
     href: "/dashboard/staff_tu/exams",
-    icon: GraduationCapIcon,
-    badge: { text: "10", variant: "destructive" },
-    children: [
-      {
-        id: "exam-dashboard",
-        title: "Dashboard Ujian",
-        href: "/dashboard/staff_tu/exams",
-      },
-      {
-        id: "exam-schedules",
-        title: "Jadwal Ujian",
-        href: "/dashboard/staff_tu/exams/schedules",
-        icon: CalendarClock,
-      },
-      {
-        id: "proposal-exams",
-        title: "Ujian Proposal",
-        href: "/dashboard/staff_tu/exams/proposal",
-        icon: ClipboardCheck,
-      },
-      {
-        id: "result-exams",
-        title: "Ujian Hasil",
-        href: "/dashboard/staff_tu/exams/result",
-        icon: Award,
-      },
-      {
-        id: "closed-exams",
-        title: "Ujian Tertutup",
-        href: "/dashboard/staff_tu/exams/closed",
-        icon: UserCheck,
-      },
-      {
-        id: "exam-committees",
-        title: "Komite Penguji",
-        href: "/dashboard/staff_tu/exams/committees",
-        icon: Users,
-      },
-    ],
+    icon: GraduationCapIcon
   },
   {
     id: "schedule-management",
@@ -374,7 +335,7 @@ export const prodiMenuItems = [
       },
       {
         id: "exam-committees",
-        title: "Komite Penguji",
+        title: "Penguji",
         href: "/dashboard/prodi/exams/committees",
       },
     ],
@@ -679,7 +640,7 @@ export const lecturerMenuItems = [
       },
       {
         id: "exam-committees",
-        title: "Komite Penguji",
+        title: "Penguji",
         href: "/dashboard/lecturer/exams/committees",
         badge: { text: "7", variant: "destructive" },
       },

@@ -192,17 +192,16 @@ export default function PengajuanPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "available":
-        return <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Available</Badge>
+        return <Badge className="text-green-500 bg-green-500/10 hover:bg-green-500/20">Available</Badge>
       case "limited":
         return <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">Limited</Badge>
       case "full":
-        return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20">Full</Badge>
+        return <Badge className="text-red-500 bg-red-500/10 hover:bg-red-500/20">Full</Badge>
       default:
         return null
     }
   }
 
-  // If team selector is shown, render it
   if (showTeamSelector && selectedLocation) {
     return (
       <TeamMemberSelector
@@ -214,7 +213,7 @@ export default function PengajuanPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="container w-full max-w-full px-0 space-y-6">
       {/* Progress Steps */}
       <div className="w-full">
         <div className="flex items-center justify-between mb-2">
@@ -229,11 +228,11 @@ export default function PengajuanPage() {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              <Building className="h-4 w-4" />
+              <Building className="w-4 h-4" />
             </div>
             <span className={currentStep === "location" ? "font-medium" : ""}>Select Location</span>
           </div>
-          <div className="h-px w-12 bg-muted md:w-24" />
+          <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center ${
@@ -242,11 +241,11 @@ export default function PengajuanPage() {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              <Users className="h-4 w-4" />
+              <Users className="w-4 h-4" />
             </div>
             <span className={currentStep === "team" ? "font-medium" : ""}>Form Team</span>
           </div>
-          <div className="h-px w-12 bg-muted md:w-24" />
+          <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center ${
@@ -255,18 +254,18 @@ export default function PengajuanPage() {
                   : "bg-muted text-muted-foreground"
               }`}
             >
-              <FileText className="h-4 w-4" />
+              <FileText className="w-4 h-4" />
             </div>
             <span className={currentStep === "verification" ? "font-medium" : ""}>Verify</span>
           </div>
-          <div className="h-px w-12 bg-muted md:w-24" />
+          <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center ${
                 currentStep === "success" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}
             >
-              <CheckCircle2 className="h-4 w-4" />
+              <CheckCircle2 className="w-4 h-4" />
             </div>
             <span className={currentStep === "success" ? "font-medium" : ""}>Complete</span>
           </div>
@@ -308,8 +307,8 @@ export default function PengajuanPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
-                        <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                          <Building className="h-5 w-5 text-primary" />
+                        <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 shrink-0">
+                          <Building className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
@@ -317,7 +316,7 @@ export default function PengajuanPage() {
                             {location.favorite && (
                               <Badge
                                 variant="outline"
-                                className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                className="text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
                               >
                                 Favorite
                               </Badge>
@@ -329,22 +328,22 @@ export default function PengajuanPage() {
                       <div className="flex items-center gap-2">{getStatusBadge(location.status)}</div>
                     </div>
 
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 gap-2 mt-3 md:grid-cols-3">
                       <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">
                           {location.city} • {location.distance?.toFixed(1)} km
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Briefcase className="h-4 w-4 text-muted-foreground" />
+                        <Briefcase className="w-4 h-4 text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">
                           {location.positions.slice(0, 2).join(", ")}
                           {location.positions.length > 2 && "..."}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="w-4 h-4 text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">
                           Quota: {location.remaining}/{location.quota} remaining
                         </span>
@@ -354,11 +353,11 @@ export default function PengajuanPage() {
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg">
-                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                    <Building className="h-6 w-6 text-muted-foreground" />
+                  <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-muted">
+                    <Building className="w-6 h-6 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-medium">No locations found</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or check back later</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or check back later</p>
                 </div>
               )}
             </div>
@@ -373,7 +372,7 @@ export default function PengajuanPage() {
               ) : (
                 <>
                   Continue to Team Selection
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               )}
             </Button>
@@ -391,29 +390,29 @@ export default function PengajuanPage() {
           <CardContent className="space-y-6">
             {/* Location Details */}
             <div>
-              <h3 className="text-lg font-medium mb-3">Selected Location</h3>
-              <div className="rounded-lg border p-4 bg-muted/10">
+              <h3 className="mb-3 text-lg font-medium">Selected Location</h3>
+              <div className="p-4 border rounded-lg bg-muted/10">
                 <div className="flex items-start gap-3">
-                  <div className="h-12 w-12 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                    <Building className="h-6 w-6 text-primary" />
+                  <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary/10 shrink-0">
+                    <Building className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-lg">{selectedLocation.name}</h3>
+                      <h3 className="text-lg font-medium">{selectedLocation.name}</h3>
                       {getStatusBadge(selectedLocation.status)}
                     </div>
                     <p className="text-sm">{selectedLocation.industry}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{selectedLocation.address}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{selectedLocation.address}</p>
 
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2 mt-3 md:grid-cols-2">
                       <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm text-muted-foreground">
                           {selectedLocation.city} • {selectedLocation.distance?.toFixed(1)} km
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm text-muted-foreground">
                           Quota: {selectedLocation.remaining}/{selectedLocation.quota} remaining
                         </span>
@@ -421,7 +420,7 @@ export default function PengajuanPage() {
                     </div>
 
                     <div className="mt-3">
-                      <h4 className="text-sm font-medium mb-1">Available Positions</h4>
+                      <h4 className="mb-1 text-sm font-medium">Available Positions</h4>
                       <div className="flex flex-wrap gap-1">
                         {selectedLocation.positions.map((position, index) => (
                           <Badge key={index} variant="outline" className="bg-primary/5">
@@ -439,15 +438,15 @@ export default function PengajuanPage() {
 
             {/* Team Members */}
             <div>
-              <h3 className="text-lg font-medium mb-3">Team Members ({selectedTeam.length})</h3>
+              <h3 className="mb-3 text-lg font-medium">Team Members ({selectedTeam.length})</h3>
               <div className="space-y-3">
                 {selectedTeam.map((member, index) => (
-                  <div key={member.id} className="rounded-lg border p-4 bg-muted/10">
+                  <div key={member.id} className="p-4 border rounded-lg bg-muted/10">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground text-sm font-medium">
+                      <div className="flex items-center justify-center w-8 h-8 text-sm font-medium rounded-full bg-primary text-primary-foreground">
                         {index + 1}
                       </div>
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="w-10 h-10">
                         <AvatarImage src={member.avatarUrl} alt={member.name} />
                         <AvatarFallback>{member.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
@@ -477,12 +476,12 @@ export default function PengajuanPage() {
             </div>
 
             {/* Application Notes */}
-            <div className="rounded-lg border p-4 bg-blue-500/5 border-blue-500/20">
+            <div className="p-4 border rounded-lg bg-blue-500/5 border-blue-500/20">
               <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 text-blue-500 mt-0.5" />
                 <div>
                   <h4 className="font-medium text-blue-700">Application Timeline</h4>
-                  <p className="text-sm text-blue-600 mt-1">
+                  <p className="mt-1 text-sm text-blue-600">
                     After submission, your application will be reviewed by the KKP coordinator and the internship
                     location. You will receive a notification once your application is approved or if additional
                     information is required.
@@ -493,12 +492,12 @@ export default function PengajuanPage() {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={goBack}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Team Selection
             </Button>
             <Button onClick={handleSubmitApplication}>
               Submit Application
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </CardFooter>
         </Card>
@@ -509,19 +508,19 @@ export default function PengajuanPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <CheckCircle2 className="w-5 h-5 text-green-500" />
               <span>Application Submitted</span>
             </CardTitle>
             <CardDescription>Your team has been successfully registered for the internship</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-              <h3 className="text-lg font-medium text-green-700 mb-2">Congratulations!</h3>
-              <p className="text-sm text-green-600 mb-4">
+            <div className="p-4 text-center border rounded-lg bg-green-500/10 border-green-500/20">
+              <h3 className="mb-2 text-lg font-medium text-green-700">Congratulations!</h3>
+              <p className="mb-4 text-sm text-green-600">
                 Your team of {selectedTeam.length} members has been successfully registered for an internship at{" "}
                 <strong>{selectedLocation.name}</strong>.
               </p>
-              <div className="flex justify-center gap-2 flex-wrap">
+              <div className="flex flex-wrap justify-center gap-2">
                 {selectedTeam.map((member) => (
                   <Badge key={member.id} variant="outline" className="bg-green-500/5 border-green-500/20">
                     {member.name} ({member.nim})
@@ -530,9 +529,9 @@ export default function PengajuanPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border p-4">
-              <h4 className="font-medium mb-2">Next Steps</h4>
-              <ol className="list-decimal list-inside space-y-2 text-sm">
+            <div className="p-4 border rounded-lg">
+              <h4 className="mb-2 font-medium">Next Steps</h4>
+              <ol className="space-y-2 text-sm list-decimal list-inside">
                 <li>Wait for confirmation from the internship location</li>
                 <li>Complete any remaining requirements</li>
                 <li>Attend the pre-internship orientation</li>
@@ -540,7 +539,7 @@ export default function PengajuanPage() {
               </ol>
             </div>
 
-            <div className="rounded-lg border p-4 bg-blue-500/5 border-blue-500/20">
+            <div className="p-4 border rounded-lg bg-blue-500/5 border-blue-500/20">
               <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 text-blue-500 mt-0.5" />
                 <div>
@@ -573,15 +572,15 @@ export default function PengajuanPage() {
           <div className="space-y-2 max-h-[300px] overflow-y-auto my-4">
             {selectedTeam.map((member, index) => (
               <div key={member.id} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                <div className="flex items-center justify-center h-6 w-6 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                <div className="flex items-center justify-center w-6 h-6 text-xs font-medium rounded-full bg-primary text-primary-foreground">
                   {index + 1}
                 </div>
-                <Avatar className="h-8 w-8">
+                <Avatar className="w-8 h-8">
                   <AvatarImage src={member.avatarUrl} alt={member.name} />
                   <AvatarFallback>{member.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-sm">{member.name}</p>
+                  <p className="text-sm font-medium">{member.name}</p>
                   <p className="text-xs text-muted-foreground">NIM: {member.nim}</p>
                 </div>
               </div>
@@ -598,7 +597,7 @@ export default function PengajuanPage() {
               Go Back
             </Button>
             <Button onClick={confirmApplication}>
-              <CheckCircle2 className="h-4 w-4 mr-1" />
+              <CheckCircle2 className="w-4 h-4 mr-1" />
               Confirm Submission
             </Button>
           </DialogFooter>

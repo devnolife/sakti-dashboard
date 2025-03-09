@@ -15,6 +15,8 @@ export interface LetterAttachment {
 }
 
 export interface LetterRequest {
+  [x: string]: string | undefined
+  notes: string | undefined
   id: string
   type: string
   title: string

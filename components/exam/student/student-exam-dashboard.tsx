@@ -180,47 +180,47 @@ export default function StudentExamDashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="bg-gradient-to-r from-primary-50 to-accent-50 p-6 rounded-xl border border-primary-100">
-        <h1 className="text-3xl font-bold tracking-tight text-primary-800">Academic Examination Portal</h1>
-        <p className="text-primary-600 mt-1">Track and manage your academic examination journey</p>
+      <div className="p-6 border bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl border-primary-100">
+        <h1 className="text-3xl font-bold tracking-tight text-primary-800">Portal Ujian Akademik</h1>
+        <p className="mt-1 text-primary-600">Pantau dan kelola perjalanan ujian akademik Anda</p>
       </div>
 
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 h-14 p-1 bg-muted/50 rounded-xl">
+        <TabsList className="grid w-full grid-cols-5 p-1 h-14 bg-muted/50 rounded-xl">
           <TabsTrigger
             value="overview"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 rounded-lg"
           >
-            <BarChart3 className="h-4 w-4" />
-            <span>Overview</span>
+            <BarChart3 className="w-4 h-4" />
+            <span>Ringkasan</span>
           </TabsTrigger>
           <TabsTrigger
             value="proposal"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 rounded-lg"
           >
-            <BookOpen className="h-4 w-4" />
+            <BookOpen className="w-4 h-4" />
             <span>Proposal</span>
           </TabsTrigger>
           <TabsTrigger
             value="result"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 rounded-lg"
           >
-            <GraduationCap className="h-4 w-4" />
-            <span>Result</span>
+            <GraduationCap className="w-4 h-4" />
+            <span>Hasil</span>
           </TabsTrigger>
           <TabsTrigger
             value="closing"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 rounded-lg"
           >
-            <Award className="h-4 w-4" />
-            <span>Closing</span>
+            <Award className="w-4 h-4" />
+            <span>Tertutup</span>
           </TabsTrigger>
           <TabsTrigger
             value="schedule"
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 rounded-lg"
           >
-            <Calendar className="h-4 w-4" />
-            <span>Schedule</span>
+            <Calendar className="w-4 h-4" />
+            <span>Jadwal</span>
           </TabsTrigger>
         </TabsList>
 
@@ -228,22 +228,22 @@ export default function StudentExamDashboard() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card className="bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200">
               <CardHeader className="pb-2">
-                <CardTitle className="text-primary-700 flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Overall Progress
+                <CardTitle className="flex items-center gap-2 text-primary-700">
+                  <BarChart3 className="w-5 h-5" />
+                  Progres Keseluruhan
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-primary-800">{overallProgress}%</div>
-                <p className="text-sm text-primary-600 mt-1">
-                  {completedSteps}/{totalSteps} requirements completed
+                <p className="mt-1 text-sm text-primary-600">
+                  {completedSteps}/{totalSteps} persyaratan selesai
                 </p>
               </CardContent>
             </Card>
 
             <ExamProgress
               title="Proposal Exam"
-              icon={<BookOpen className="h-5 w-5" />}
+              icon={<BookOpen className="w-5 h-5" />}
               progress={Math.round(
                 (proposalExam.requirements.filter((req) => req.completed).length / proposalExam.requirements.length) *
                   100,
@@ -255,7 +255,7 @@ export default function StudentExamDashboard() {
 
             <ExamProgress
               title="Result Exam"
-              icon={<GraduationCap className="h-5 w-5" />}
+              icon={<GraduationCap className="w-5 h-5" />}
               progress={Math.round(
                 (resultExam.requirements.filter((req) => req.completed).length / resultExam.requirements.length) * 100,
               )}
@@ -266,7 +266,7 @@ export default function StudentExamDashboard() {
 
             <ExamProgress
               title="Closing Exam"
-              icon={<Award className="h-5 w-5" />}
+              icon={<Award className="w-5 h-5" />}
               progress={Math.round(
                 (closingExam.requirements.filter((req) => req.completed).length / closingExam.requirements.length) *
                   100,
@@ -278,18 +278,18 @@ export default function StudentExamDashboard() {
           </div>
 
           <Card className="overflow-hidden border-muted">
-            <CardHeader className="bg-muted/30 pb-3">
-              <CardTitle className="text-lg font-medium">Upcoming Examinations</CardTitle>
-              <CardDescription>Your scheduled examination sessions</CardDescription>
+            <CardHeader className="pb-3 bg-muted/30">
+              <CardTitle className="text-lg font-medium">Ujian Mendatang</CardTitle>
+              <CardDescription>Sesi ujian yang telah dijadwalkan untuk Anda</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {proposalExam.scheduledDate || resultExam.scheduledDate || closingExam.scheduledDate ? (
                 <div className="divide-y">
                   {proposalExam.scheduledDate && (
-                    <div className="flex justify-between items-center p-4 hover:bg-muted/20 transition-colors">
+                    <div className="flex items-center justify-between p-4 transition-colors hover:bg-muted/20">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
-                          <BookOpen className="h-5 w-5" />
+                        <div className="flex items-center justify-center w-10 h-10 text-blue-600 bg-blue-100 rounded-full">
+                          <BookOpen className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-medium text-blue-800">Proposal Examination</h3>
@@ -298,17 +298,17 @@ export default function StudentExamDashboard() {
                           </p>
                         </div>
                       </div>
-                      <div className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
+                      <div className="px-3 py-1 text-sm text-blue-700 border border-blue-200 rounded-full bg-blue-50">
                         Scheduled
                       </div>
                     </div>
                   )}
 
                   {resultExam.scheduledDate && (
-                    <div className="flex justify-between items-center p-4 hover:bg-muted/20 transition-colors">
+                    <div className="flex items-center justify-between p-4 transition-colors hover:bg-muted/20">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
-                          <GraduationCap className="h-5 w-5" />
+                        <div className="flex items-center justify-center w-10 h-10 text-purple-600 bg-purple-100 rounded-full">
+                          <GraduationCap className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-medium text-purple-800">Result Examination</h3>
@@ -317,17 +317,17 @@ export default function StudentExamDashboard() {
                           </p>
                         </div>
                       </div>
-                      <div className="text-sm bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200">
+                      <div className="px-3 py-1 text-sm text-purple-700 border border-purple-200 rounded-full bg-purple-50">
                         Scheduled
                       </div>
                     </div>
                   )}
 
                   {closingExam.scheduledDate && (
-                    <div className="flex justify-between items-center p-4 hover:bg-muted/20 transition-colors">
+                    <div className="flex items-center justify-between p-4 transition-colors hover:bg-muted/20">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center">
-                          <Award className="h-5 w-5" />
+                        <div className="flex items-center justify-center w-10 h-10 text-teal-600 bg-teal-100 rounded-full">
+                          <Award className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-medium text-teal-800">Closing Examination</h3>
@@ -336,37 +336,37 @@ export default function StudentExamDashboard() {
                           </p>
                         </div>
                       </div>
-                      <div className="text-sm bg-teal-50 text-teal-700 px-3 py-1 rounded-full border border-teal-200">
+                      <div className="px-3 py-1 text-sm text-teal-700 border border-teal-200 rounded-full bg-teal-50">
                         Scheduled
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-3">
-                    <Calendar className="h-8 w-8 text-muted-foreground/60" />
+                <div className="py-12 text-center text-muted-foreground">
+                  <div className="flex items-center justify-center w-16 h-16 mx-auto mb-3 rounded-full bg-muted">
+                    <Calendar className="w-8 h-8 text-muted-foreground/60" />
                   </div>
-                  <p>No examinations scheduled yet</p>
-                  <p className="text-sm mt-1">Complete your requirements to schedule an examination</p>
+                  <p>Belum ada ujian yang dijadwalkan</p>
+                  <p className="mt-1 text-sm">Selesaikan persyaratan Anda untuk menjadwalkan ujian</p>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <Card className="border-muted">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-medium">Examination Timeline</CardTitle>
                 <CardDescription>Your academic examination journey</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4 relative mt-2">
+                <div className="relative mt-2 space-y-4">
                   <div className="absolute top-0 bottom-0 left-[19px] w-[2px] bg-muted-foreground/20"></div>
 
                   <div className="relative pl-10">
-                    <div className="absolute left-0 w-10 h-10 rounded-full bg-blue-100 border-4 border-background flex items-center justify-center z-10">
-                      <BookOpen className="h-5 w-5 text-blue-600" />
+                    <div className="absolute left-0 z-10 flex items-center justify-center w-10 h-10 bg-blue-100 border-4 rounded-full border-background">
+                      <BookOpen className="w-5 h-5 text-blue-600" />
                     </div>
                     <h3 className="font-medium">Proposal Examination</h3>
                     <p className="text-sm text-muted-foreground">Present your research proposal</p>
@@ -447,8 +447,8 @@ export default function StudentExamDashboard() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <BookOpen className="h-4 w-4 text-blue-600" />
+                      <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                        <BookOpen className="w-4 h-4 text-blue-600" />
                       </div>
                       <span className="font-medium">Proposal Requirements</span>
                     </div>
@@ -460,8 +460,8 @@ export default function StudentExamDashboard() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                        <GraduationCap className="h-4 w-4 text-purple-600" />
+                      <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                        <GraduationCap className="w-4 h-4 text-purple-600" />
                       </div>
                       <span className="font-medium">Result Requirements</span>
                     </div>
@@ -473,8 +473,8 @@ export default function StudentExamDashboard() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center">
-                        <Award className="h-4 w-4 text-teal-600" />
+                      <div className="flex items-center justify-center w-8 h-8 bg-teal-100 rounded-full">
+                        <Award className="w-4 h-4 text-teal-600" />
                       </div>
                       <span className="font-medium">Closing Requirements</span>
                     </div>
@@ -543,12 +543,12 @@ export default function StudentExamDashboard() {
                           <Badge variant="outline" className="mb-1 w-fit">
                             {exam.examType}
                           </Badge>
-                          <CardTitle className="line-clamp-1 text-base">{exam.title}</CardTitle>
+                          <CardTitle className="text-base line-clamp-1">{exam.title}</CardTitle>
                         </CardHeader>
                         <CardContent className="pb-4">
                           <div className="space-y-2 text-sm">
                             <div className="flex items-center">
-                              <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                              <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                               <span>
                                 {new Date(exam.date).toLocaleDateString("id-ID", {
                                   weekday: "long",
@@ -559,11 +559,11 @@ export default function StudentExamDashboard() {
                               </span>
                             </div>
                             <div className="flex items-center">
-                              <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                              <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
                               <span>{exam.time}</span>
                             </div>
                             <div className="flex items-center">
-                              <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
+                              <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
                               <span>{exam.location}</span>
                             </div>
                           </div>
@@ -571,7 +571,7 @@ export default function StudentExamDashboard() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="mt-4 w-full"
+                            className="w-full mt-4"
                             onClick={() => handleViewDetails(exam.id)}
                           >
                             Lihat Detail
@@ -594,7 +594,7 @@ export default function StudentExamDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {filteredExams.length === 0 ? (
-                    <div className="rounded-md border border-dashed p-6 text-center">
+                    <div className="p-6 text-center border border-dashed rounded-md">
                       <h3 className="text-lg font-medium">Tidak Ada Jadwal Ujian</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
                         Tidak ada jadwal ujian yang sesuai dengan filter yang dipilih.
@@ -604,7 +604,7 @@ export default function StudentExamDashboard() {
                     filteredExams.map((exam) => (
                       <div
                         key={exam.id}
-                        className="flex flex-col rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+                        className="flex flex-col p-4 border rounded-lg sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="mb-4 sm:mb-0">
                           <div className="flex items-center">
@@ -616,17 +616,17 @@ export default function StudentExamDashboard() {
                             )}
                           </div>
                           <h3 className="mt-1 text-base font-medium">{exam.title}</h3>
-                          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap mt-2 text-sm gap-x-4 gap-y-1 text-muted-foreground">
                             <div className="flex items-center">
-                              <Calendar className="mr-1 h-4 w-4" />
+                              <Calendar className="w-4 h-4 mr-1" />
                               <span>{new Date(exam.date).toLocaleDateString("id-ID")}</span>
                             </div>
                             <div className="flex items-center">
-                              <Clock className="mr-1 h-4 w-4" />
+                              <Clock className="w-4 h-4 mr-1" />
                               <span>{exam.time}</span>
                             </div>
                             <div className="flex items-center">
-                              <MapPin className="mr-1 h-4 w-4" />
+                              <MapPin className="w-4 h-4 mr-1" />
                               <span>{exam.location}</span>
                             </div>
                           </div>
@@ -664,9 +664,9 @@ export default function StudentExamDashboard() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">Informasi Jadwal</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 pt-0 text-sm">
+                <CardContent className="pt-0 space-y-2 text-sm">
                   <div className="flex items-center">
-                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span>
                       Tanggal:{" "}
                       {new Date(selectedExam.date).toLocaleDateString("id-ID", {
@@ -678,11 +678,11 @@ export default function StudentExamDashboard() {
                     </span>
                   </div>
                   <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span>Waktu: {selectedExam.time}</span>
                   </div>
                   <div className="flex items-center">
-                    <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span>Lokasi: {selectedExam.location}</span>
                   </div>
                 </CardContent>
@@ -690,13 +690,13 @@ export default function StudentExamDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Komite Penguji</CardTitle>
+                  <CardTitle className="text-sm font-medium">Penguji</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   {selectedExam.committee.map((member: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between rounded-md border p-3">
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-md">
                       <div className="flex items-center">
-                        <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <User className="w-4 h-4 mr-2 text-muted-foreground" />
                         <span>{member.name}</span>
                       </div>
                       <Badge variant="outline">{member.role}</Badge>
@@ -721,7 +721,7 @@ export default function StudentExamDashboard() {
                     </div>
                     <div className="mt-2">
                       <p className="font-medium">Feedback:</p>
-                      <p className="mt-1 rounded-md bg-muted p-3">{selectedExam.result.feedback}</p>
+                      <p className="p-3 mt-1 rounded-md bg-muted">{selectedExam.result.feedback}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -758,7 +758,7 @@ export default function StudentExamDashboard() {
                         )
                       }}
                     >
-                      <FileText className="mr-2 h-4 w-4" />
+                      <FileText className="w-4 h-4 mr-2" />
                       Lihat Persyaratan
                     </a>
                   </Button>
