@@ -277,8 +277,7 @@ export const staffTuMenuItems = [
     id: "kkp-management",
     title: "Manajemen KKP",
     href: "/dashboard/staff_tu/kkp",
-    icon: Briefcase,
-    badge: { text: "12", variant: "destructive" },
+    icon: Briefcase
   },
  
   {
@@ -326,7 +325,6 @@ export const prodiMenuItems = [
     title: "Manajemen Ujian",
     href: "/dashboard/prodi/exams",
     icon: GraduationCapIcon,
-    badge: { text: "8", variant: "destructive" },
     children: [
       {
         id: "exam-approval",

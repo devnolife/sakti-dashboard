@@ -1,3 +1,5 @@
+"use server"
+
 export type LetterStatus =
   | "submitted" // Just submitted, waiting for review
   | "in-review" // Being reviewed by staff/prodi/dekan

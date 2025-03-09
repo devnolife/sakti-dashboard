@@ -17,12 +17,12 @@ export default function ProdiCorrespondencePage() {
   }, [])
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container py-6 mx-auto">
       {isLoading ? (
         <div className="space-y-4">
           <Skeleton className="h-8 w-[250px]" />
           <Skeleton className="h-4 w-[350px]" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-3">
             <Skeleton className="h-[180px] rounded-lg" />
             <Skeleton className="h-[180px] rounded-lg" />
             <Skeleton className="h-[180px] rounded-lg" />

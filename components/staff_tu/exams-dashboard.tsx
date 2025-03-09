@@ -17,11 +17,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { format } from "date-fns"
-
-// Types
 import type { Exam } from "@/types/exam"
 
-// Mock data
 const mockExams: Exam[] = [
   {
     id: "1",
@@ -217,8 +214,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
     type: initialFilter,
     date: undefined as Date | undefined,
   })
-
-  // Simulate loading data
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setExams(mockExams)
@@ -228,17 +224,13 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
 
     return () => clearTimeout(timer)
   }, [])
-
-  // Filter exams based on active tab, search query, and filters
+  
   useEffect(() => {
     let filtered = [...exams]
-
-    // Apply tab filter
     if (activeTab !== "all") {
       filtered = filtered.filter((exam) => exam.status === activeTab)
     }
-
-    // Apply search query
+    
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
@@ -249,13 +241,9 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
           (exam.location && exam.location.toLowerCase().includes(query)),
       )
     }
-
-    // Apply type filter
     if (filters.type && filters.type !== "all") {
       filtered = filtered.filter((exam) => exam.type === filters.type)
     }
-
-    // Apply date filter
     if (filters.date) {
       const filterDate = filters.date.toDateString()
       filtered = filtered.filter((exam) => {
@@ -270,7 +258,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // Search is already applied via useEffect
+    
   }
 
   const handleViewDetails = (exam: Exam) => {
@@ -303,7 +291,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
     })
   }
 
-  // Stats
+  
   const applicantCount = exams.filter((exam) => exam.status === "applicant").length
   const pendingCount = exams.filter((exam) => exam.status === "pending").length
   const scheduledCount = exams.filter((exam) => exam.status === "scheduled").length
@@ -313,107 +301,106 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-10 w-32" />
+        <div className="flex items-center justify-between">
+          <Skeleton className="w-64 h-10" />
+          <Skeleton className="w-32 h-10" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />
         </div>
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-96 w-full" />
+        <Skeleton className="w-full h-12" />
+        <Skeleton className="w-full h-96" />
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Manajemen Ujian</h1>
-          <p className="text-muted-foreground mt-1">Kelola jadwal dan detail ujian mahasiswa</p>
+          <p className="mt-1 text-muted-foreground">Kelola jadwal dan detail ujian mahasiswa</p>
         </div>
         <Button
           onClick={() => setShowCreateDialog(true)}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          className="transition-all duration-300 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
         >
-          <PlusCircle className="mr-2 h-4 w-4" />
+          <PlusCircle className="w-4 h-4 mr-2" />
           Tambah Ujian
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-yellow-50 to-white dark:from-yellow-950/20 dark:to-background">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <Card className="overflow-hidden transition-all duration-300 border-none shadow-md hover:shadow-lg bg-gradient-to-br from-yellow-50 to-white dark:from-yellow-950/20 dark:to-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Pendaftar</p>
-                <h3 className="text-3xl font-bold mt-2 text-yellow-700 dark:text-yellow-400">{applicantCount}</h3>
+                <h3 className="mt-2 text-3xl font-bold text-yellow-700 dark:text-yellow-400">{applicantCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-yellow-100 dark:bg-yellow-900/30">
-                <FileText className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+              <div className="p-3 bg-yellow-100 rounded-full dark:bg-yellow-900/30">
+                <FileText className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-background">
+        <Card className="overflow-hidden transition-all duration-300 border-none shadow-md hover:shadow-lg bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Menunggu Persetujuan</p>
-                <h3 className="text-3xl font-bold mt-2 text-blue-700 dark:text-blue-400">{pendingCount}</h3>
+                <h3 className="mt-2 text-3xl font-bold text-blue-700 dark:text-blue-400">{pendingCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-blue-100 dark:bg-blue-900/30">
-                <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="p-3 bg-blue-100 rounded-full dark:bg-blue-900/30">
+                <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/20 dark:to-background">
+        <Card className="overflow-hidden transition-all duration-300 border-none shadow-md hover:shadow-lg bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/20 dark:to-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Terjadwal</p>
-                <h3 className="text-3xl font-bold mt-2 text-indigo-700 dark:text-indigo-400">{scheduledCount}</h3>
+                <h3 className="mt-2 text-3xl font-bold text-indigo-700 dark:text-indigo-400">{scheduledCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-indigo-100 dark:bg-indigo-900/30">
-                <Calendar className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+              <div className="p-3 bg-indigo-100 rounded-full dark:bg-indigo-900/30">
+                <Calendar className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-green-50 to-white dark:from-green-950/20 dark:to-background">
+        <Card className="overflow-hidden transition-all duration-300 border-none shadow-md hover:shadow-lg bg-gradient-to-br from-green-50 to-white dark:from-green-950/20 dark:to-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Selesai</p>
-                <h3 className="text-3xl font-bold mt-2 text-green-700 dark:text-green-400">{completedCount}</h3>
+                <h3 className="mt-2 text-3xl font-bold text-green-700 dark:text-green-400">{completedCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-green-100 dark:bg-green-900/30">
-                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="p-3 bg-green-100 rounded-full dark:bg-green-900/30">
+                <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-red-50 to-white dark:from-red-950/20 dark:to-background">
+        <Card className="overflow-hidden transition-all duration-300 border-none shadow-md hover:shadow-lg bg-gradient-to-br from-red-50 to-white dark:from-red-950/20 dark:to-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Dibatalkan</p>
-                <h3 className="text-3xl font-bold mt-2 text-red-700 dark:text-red-400">{cancelledCount}</h3>
+                <h3 className="mt-2 text-3xl font-bold text-red-700 dark:text-red-400">{cancelledCount}</h3>
               </div>
-              <div className="rounded-full p-3 bg-red-100 dark:bg-red-900/30">
-                <User className="h-6 w-6 text-red-600 dark:text-red-400" />
+              <div className="p-3 bg-red-100 rounded-full dark:bg-red-900/30">
+                <User className="w-6 h-6 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </CardContent>
@@ -422,16 +409,16 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
 
       {/* Filters */}
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Search Field */}
           <div className="relative">
             <form onSubmit={handleSearch}>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="Cari ujian..."
-                  className="pl-10 bg-white dark:bg-card border border-input shadow-sm focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
+                  className="pl-10 bg-white border shadow-sm dark:bg-card border-input focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -442,7 +429,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
           {/* Type Filter */}
           <div>
             <Select value={filters.type} onValueChange={(value) => handleFilterChange("type", value)}>
-              <SelectTrigger className="bg-white dark:bg-card border border-input shadow-sm focus:ring-2 focus:ring-offset-0 focus:ring-blue-500">
+              <SelectTrigger className="bg-white border shadow-sm dark:bg-card border-input focus:ring-2 focus:ring-offset-0 focus:ring-blue-500">
                 <SelectValue placeholder="Semua tipe ujian" />
               </SelectTrigger>
               <SelectContent>
@@ -460,9 +447,9 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-left font-normal bg-white dark:bg-card border border-input shadow-sm focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
+                  className="justify-start w-full font-normal text-left bg-white border shadow-sm dark:bg-card border-input focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="w-4 h-4 mr-2" />
                   {filters.date ? format(filters.date, "PPP") : "Pilih tanggal"}
                 </Button>
               </PopoverTrigger>
@@ -492,7 +479,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
       </div>
 
       {/* Tabs and Table */}
-      <div className="bg-white dark:bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="overflow-hidden bg-white border rounded-lg shadow-sm dark:bg-card border-border">
         <Tabs defaultValue={initialTab} onValueChange={setActiveTab} className="w-full">
           <div className="px-4 pt-4">
             <TabsList className="grid w-full grid-cols-5 mb-4 bg-muted/50">

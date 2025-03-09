@@ -1,5 +1,9 @@
 "use server"
-import type { LetterRequest, LetterStatus } from "@/types/correspondence"
+
+import { LetterRequest, LetterStatus } from "@/types/correspondence"
+
+// Define additionalInfo types for different letter types
+type AdditionalInfoType = Record<string, string | number>;
 
 // Define letter types with their properties
 export const LETTER_TYPES: Record<
@@ -257,7 +261,6 @@ export const LETTER_TYPES: Record<
   },
 }
 
-// Comprehensive mock data for letter requests
 const MOCK_LETTER_REQUESTS: LetterRequest[] = [
   // Active Student Letters
   {
@@ -273,7 +276,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentId: "std-001",
     studentName: "Ahmad Fauzi",
     studentNIM: "1901234567",
-    studentMajor: "Informatika",
+    studentMajor: "Teknik Informatika",
     approvalRole: "staff_tu",
     approvedBy: "Budi Santoso, S.Kom.",
     additionalInfo: {
@@ -292,6 +295,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-08-15T09:26:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-002",
@@ -317,6 +321,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-05T13:40:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-003",
@@ -347,9 +352,9 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-10T10:12:00Z",
       },
     ],
+    notes: undefined
   },
 
-  // Leave of Absence Letters
   {
     id: "letter-004",
     type: "leave_absence",
@@ -387,6 +392,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-07-20T11:27:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-005",
@@ -401,8 +407,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentNIM: "1701234571",
     studentMajor: "Teknik Elektro",
     approvalRole: "prodi",
-    rejectedReason:
-      "Alasan cuti untuk bekerja tidak dapat diterima karena mahasiswa masih dalam tahap penyelesaian tugas akhir. Disarankan untuk menyelesaikan studi terlebih dahulu.",
+    rejectedReason: "Alasan cuti untuk bekerja tidak dapat diterima karena mahasiswa masih dalam tahap penyelesaian tugas akhir. Disarankan untuk menyelesaikan studi terlebih dahulu.",
     additionalInfo: {
       startDate: "2023-09-01",
       endDate: "2024-02-28",
@@ -425,6 +430,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-08-05T09:17:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Loan Application Letters
@@ -471,6 +477,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-08-10T14:28:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-007",
@@ -512,6 +519,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-08T11:43:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Tuition Extension Letters
@@ -533,8 +541,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     additionalInfo: {
       currentDueDate: "2023-08-31",
       requestedDueDate: "2023-09-30",
-      reason:
-        "Menunggu pencairan dana beasiswa dari perusahaan tempat orang tua bekerja yang baru akan cair pada pertengahan September 2023",
+      reason: "Menunggu pencairan dana beasiswa dari perusahaan tempat orang tua bekerja yang baru akan cair pada pertengahan September 2023",
     },
     attachments: [
       {
@@ -548,6 +555,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-08-25T10:26:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-009",
@@ -565,8 +573,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     additionalInfo: {
       currentDueDate: "2023-09-15",
       requestedDueDate: "2023-10-15",
-      reason:
-        "Orang tua baru saja mengalami PHK dan sedang dalam proses mencari pekerjaan baru. Membutuhkan waktu tambahan untuk mengumpulkan biaya kuliah.",
+      reason: "Orang tua baru saja mengalami PHK dan sedang dalam proses mencari pekerjaan baru. Membutuhkan waktu tambahan untuk mengumpulkan biaya kuliah.",
     },
     attachments: [
       {
@@ -580,6 +587,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-12T15:16:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Internship Recommendation Letters
@@ -621,6 +629,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-07-15T09:42:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-011",
@@ -633,7 +642,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentId: "std-011",
     studentName: "Kevin Anggara",
     studentNIM: "1901234577",
-    studentMajor: "Informatika",
+    studentMajor: "Teknik Informatika",
     approvalRole: "prodi",
     additionalInfo: {
       companyName: "Gojek",
@@ -657,6 +666,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-01T13:12:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Scholarship Recommendation Letters
@@ -679,8 +689,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     additionalInfo: {
       scholarshipName: "Beasiswa LPDP",
       scholarshipProvider: "Kementerian Keuangan RI",
-      achievements:
-        "Juara 1 Debat Bahasa Inggris Tingkat Nasional 2022, Penulis Artikel Jurnal Internasional, Ketua BEM Fakultas 2021-2022",
+      achievements: "Juara 1 Debat Bahasa Inggris Tingkat Nasional 2022, Penulis Artikel Jurnal Internasional, Ketua BEM Fakultas 2021-2022",
     },
     attachments: [
       {
@@ -699,6 +708,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-06-10T10:27:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-013",
@@ -735,6 +745,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-07T11:17:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Transcript Request Letters
@@ -770,6 +781,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-08-20T14:11:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-015",
@@ -800,6 +812,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-09T09:26:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Research Permission Letters
@@ -835,6 +848,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-07-25T11:41:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-017",
@@ -850,8 +864,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentMajor: "Kedokteran",
     approvalRole: "prodi",
     additionalInfo: {
-      researchTitle:
-        "Efektivitas Terapi Kombinasi pada Pasien Diabetes Mellitus Tipe 2 dengan Komplikasi Kardiovaskular",
+      researchTitle: "Efektivitas Terapi Kombinasi pada Pasien Diabetes Mellitus Tipe 2 dengan Komplikasi Kardiovaskular",
       researchLocation: "RSUD Dr. Soetomo Surabaya",
       researchPeriod: "Oktober 2023 - Januari 2024",
     },
@@ -872,6 +885,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-11T10:17:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Graduation Confirmation Letters
@@ -913,6 +927,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-06-15T13:27:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-019",
@@ -949,6 +964,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-03T15:42:00Z",
       },
     ],
+    notes: undefined
   },
 
   // Additional recent submissions
@@ -986,6 +1002,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-14T08:27:00Z",
       },
     ],
+    notes: undefined
   },
   {
     id: "letter-021",
@@ -1022,35 +1039,27 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
         uploadDate: "2023-09-15T09:12:00Z",
       },
     ],
+    notes: undefined
   },
 ]
 
-// Function to get letter requests for approval
 export async function getLetterRequestsForApproval(role: string): Promise<LetterRequest[]> {
-  // In a real app, this would fetch from a database, filtering by role
   return MOCK_LETTER_REQUESTS.filter((req) => req.approvalRole === role)
 }
 
-// Function to get letter requests for a student
 export async function getStudentLetterRequests(studentId: string): Promise<LetterRequest[]> {
-  // In a real app, this would fetch from a database
-  // For now, we'll return mock data
   return MOCK_LETTER_REQUESTS.filter((req) => req.studentId === studentId)
 }
 
-// Function to get letter request by ID
 export async function getLetterRequestById(requestId: string): Promise<LetterRequest | null> {
-  // In a real app, this would fetch from a database
   const request = MOCK_LETTER_REQUESTS.find((req) => req.id === requestId)
   return request || null
 }
 
-// Function to submit a new letter request
 export async function submitLetterRequest(
   formData: FormData,
 ): Promise<{ success: boolean; message: string; requestId?: string }> {
-  // In a real app, this would save to a database
-  // For now, we'll just return a success response
+ 
   return {
     success: true,
     message: "Permohonan surat berhasil diajukan",
