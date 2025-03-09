@@ -1,4 +1,4 @@
-export type Role = "mahasiswa" | "staff_tu" | "prodi" | "dekan" | "admin" | "lecturer"
+export type Role = "mahasiswa" | "staff_tu" | "prodi" | "dekan" | "admin" | "lecturer | admin_laboratorium"
 
 export const roleConfigs = {
   mahasiswa: {
@@ -25,6 +25,10 @@ export const roleConfigs = {
     path: "/dashboard/lecturer",
     displayName: "Dosen",
   },
+  laboratory_admin: {
+    path :"/dashboard/laboratory_admin",
+    displayName: "Admin Laboratorium"
+  }
 }
 
 export const roleLabels = {
