@@ -31,11 +31,9 @@ export function ThesisTitlesDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Judul Skripsi</h2>
+        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Judul Skripsi</h2>
         <p className="text-muted-foreground">Lihat daftar judul skripsi yang telah diajukan dan disetujui.</p>
       </div>
-
-      <ThesisStatsCards />
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="relative w-full md:w-96">

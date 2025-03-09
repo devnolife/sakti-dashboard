@@ -49,7 +49,7 @@ const kkpRequests = [
     student: {
       id: "12345678",
       name: "Budi Santoso",
-      program: "Teknik Informatika",
+      program: "Informatika",
       semester: 7,
       email: "budi.santoso@example.com",
       phone: "081234567890",
@@ -121,7 +121,7 @@ const kkpRequests = [
     student: {
       id: "45678901",
       name: "Rudi Hartono",
-      program: "Teknik Informatika",
+      program: "Informatika",
       semester: 8,
       email: "rudi.hartono@example.com",
       phone: "084567890123",

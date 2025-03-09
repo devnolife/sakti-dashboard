@@ -23,13 +23,11 @@ export function TitleSubmissionForm({ onSubmit }: TitleSubmissionFormProps) {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Parse keywords from comma-separated string
     const keywords = keywordsInput
       .split(",")
       .map((keyword) => keyword.trim())
       .filter((keyword) => keyword.length > 0)
 
-    // Simulate network delay
     setTimeout(() => {
       onSubmit(title, keywords, abstract)
       setIsSubmitting(false)
@@ -67,10 +65,10 @@ export function TitleSubmissionForm({ onSubmit }: TitleSubmissionFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="abstract">Abstrak Singkat</Label>
+            <Label htmlFor="abstract">Penjelasan Singkat</Label>
             <Textarea
               id="abstract"
-              placeholder="Tuliskan abstrak singkat tentang penelitian yang Anda usulkan"
+              placeholder="Tuliskan secara singkat tentang penelitian yang Anda usulkan"
               value={abstract}
               onChange={(e) => setAbstract(e.target.value)}
               rows={5}

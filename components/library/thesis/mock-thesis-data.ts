@@ -27,7 +27,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-001",
       name: "Budi Santoso",
       nim: "12345678",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-001",
@@ -48,7 +48,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-002",
       name: "Siti Rahma",
       nim: "23456789",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-002",
@@ -69,7 +69,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-003",
       name: "Rudi Hartono",
       nim: "34567890",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-003",
@@ -90,7 +90,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-004",
       name: "Diana Putri",
       nim: "45678901",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-004",
@@ -111,7 +111,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-005",
       name: "Andi Firmansyah",
       nim: "56789012",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-005",
@@ -132,7 +132,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-006",
       name: "Faisal Rahman",
       nim: "67890123",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-006",
@@ -153,7 +153,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-007",
       name: "Nadia Putri",
       nim: "78901234",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-007",
@@ -174,7 +174,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-008",
       name: "Rizki Pratama",
       nim: "89012345",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-008",
@@ -195,7 +195,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-009",
       name: "Dian Permata",
       nim: "90123456",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-009",
@@ -216,7 +216,7 @@ export const mockThesisTitles: ThesisTitle[] = [
       id: "std-010",
       name: "Arif Wicaksono",
       nim: "01234567",
-      program: "Teknik Informatika",
+      program: "Informatika",
     },
     supervisor: {
       id: "sup-010",

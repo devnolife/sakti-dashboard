@@ -42,7 +42,7 @@ const studentRequests = [
       id: "12345678",
       name: "Andi Saputra",
       avatar: "/placeholder.svg?height=40&width=40",
-      program: "Teknik Informatika",
+      program: "Informatika",
       semester: 7,
     },
     location: {
@@ -74,7 +74,7 @@ const studentRequests = [
       id: "23456789",
       name: "Rina Dewi",
       avatar: "/placeholder.svg?height=40&width=40",
-      program: "Teknik Informatika",
+      program: "Informatika",
       semester: 7,
     },
     location: {

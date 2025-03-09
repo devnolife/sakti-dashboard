@@ -50,7 +50,7 @@ export function LeaveForm({ onSubmit }: LeaveFormProps) {
     const studentData = {
       name: "Ahmad Fauzi",
       nim: "1901234567",
-      major: "Teknik Informatika",
+      major: "Informatika",
       faculty: "Teknik",
       semester: "5",
     }

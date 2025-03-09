@@ -2,8 +2,6 @@
 
 import { CardFooter } from "@/components/ui/card"
 
-import { Checkbox } from "@/components/ui/checkbox"
-
 import { useState } from "react"
 import {
   format,
@@ -34,11 +32,10 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
-// Mock data for academic events
+
 const academicEvents = [
   {
     id: "event-1",
@@ -159,19 +156,19 @@ const academicEvents = [
   },
 ]
 
-// Event type to icon mapping
+
 const eventTypeIcons = {
-  exam: <GraduationCap className="h-4 w-4" />,
-  class: <BookOpen className="h-4 w-4" />,
-  lab: <FileText className="h-4 w-4" />,
-  consultation: <User className="h-4 w-4" />,
-  seminar: <Users className="h-4 w-4" />,
-  workshop: <FileText className="h-4 w-4" />,
-  deadline: <Clock className="h-4 w-4" />,
-  organization: <Users className="h-4 w-4" />,
+  exam: <GraduationCap className="w-4 h-4" />,
+  class: <BookOpen className="w-4 h-4" />,
+  lab: <FileText className="w-4 h-4" />,
+  consultation: <User className="w-4 h-4" />,
+  seminar: <Users className="w-4 h-4" />,
+  workshop: <FileText className="w-4 h-4" />,
+  deadline: <Clock className="w-4 h-4" />,
+  organization: <Users className="w-4 h-4" />,
 }
 
-// Event type to color mapping
+
 const eventTypeColors = {
   exam: "bg-red-100 text-red-800 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800/30",
   class: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800/30",
@@ -187,13 +184,12 @@ const eventTypeColors = {
     "bg-green-100 text-green-800 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800/30",
 }
 
-// Exam type to icon mapping
 const examTypeIcons = {
-  proposal: <BookOpen className="h-5 w-5" />,
-  result: <FileText className="h-5 w-5" />,
-  closing: <Award className="h-5 w-5" />,
-  midterm: <FileText className="h-5 w-5" />,
-  final: <GraduationCap className="h-5 w-5" />,
+  proposal: <BookOpen className="w-5 h-5" />,
+  result: <FileText className="w-5 h-5" />,
+  closing: <Award className="w-5 h-5" />,
+  midterm: <FileText className="w-5 h-5" />,
+  final: <GraduationCap className="w-5 h-5" />,
 }
 
 export const ExamScheduleDashboard = () => {
@@ -205,7 +201,7 @@ export const ExamScheduleDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedFilters, setSelectedFilters] = useState<string[]>(["all"])
 
-  // Filter events based on search query and filters
+  
   const filteredEvents = academicEvents.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -217,7 +213,7 @@ export const ExamScheduleDashboard = () => {
     return matchesSearch && matchesFilter
   })
 
-  // Get events for the selected date
+  
   const getEventsForDate = (date: Date) => {
     return filteredEvents.filter((event) => {
       const eventDate = parseISO(event.date)
@@ -225,7 +221,7 @@ export const ExamScheduleDashboard = () => {
     })
   }
 
-  // Get events for the current month
+  
   const getEventsForMonth = () => {
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(currentDate)
@@ -239,7 +235,7 @@ export const ExamScheduleDashboard = () => {
     })
   }
 
-  // Handle month navigation
+  
   const handlePreviousMonth = () => {
     setCurrentDate(subMonths(currentDate, 1))
   }
@@ -248,13 +244,13 @@ export const ExamScheduleDashboard = () => {
     setCurrentDate(addMonths(currentDate, 1))
   }
 
-  // Handle event selection
+  
   const handleEventClick = (event: any) => {
     setSelectedEvent(event)
     setIsDialogOpen(true)
   }
 
-  // Handle filter changes
+  
   const handleFilterChange = (type: string) => {
     if (type === "all") {
       setSelectedFilters(["all"])
@@ -272,7 +268,7 @@ export const ExamScheduleDashboard = () => {
     }
   }
 
-  // Generate calendar days
+  
   const calendarDays = () => {
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(currentDate)
@@ -293,7 +289,7 @@ export const ExamScheduleDashboard = () => {
           )}
           onClick={() => setSelectedDate(day)}
         >
-          <div className="sticky top-0 bg-inherit z-10 flex justify-between items-center pb-1">
+          <div className="sticky top-0 z-10 flex items-center justify-between pb-1 bg-inherit">
             <span className={cn("text-sm font-medium", isToday ? "text-primary" : "")}>{format(day, "d")}</span>
             {dayEvents.length > 0 && (
               <Badge variant="outline" className="text-xs">
@@ -321,7 +317,7 @@ export const ExamScheduleDashboard = () => {
               </div>
             ))}
             {dayEvents.length > 3 && (
-              <div className="text-xs text-muted-foreground text-center">+{dayEvents.length - 3} more</div>
+              <div className="text-xs text-center text-muted-foreground">+{dayEvents.length - 3} more</div>
             )}
           </div>
         </div>
@@ -338,19 +334,19 @@ export const ExamScheduleDashboard = () => {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handlePreviousMonth}>
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="w-4 h-4" />
           </Button>
           <h2 className="text-lg font-semibold min-w-[140px] text-center">
             {format(currentDate, "MMMM yyyy", { locale: id })}
           </h2>
           <Button variant="outline" size="sm" onClick={handleNextMonth}>
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="md:col-span-1 space-y-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="space-y-6 md:col-span-1">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle>Kalender</CardTitle>
@@ -358,7 +354,7 @@ export const ExamScheduleDashboard = () => {
             </CardHeader>
             <CardContent className="p-0">
               <div className="p-3">
-                <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2">
+                <div className="grid grid-cols-7 gap-1 mb-2 text-xs text-center">
                   <div className="text-muted-foreground">Min</div>
                   <div className="text-muted-foreground">Sen</div>
                   <div className="text-muted-foreground">Sel</div>
@@ -397,132 +393,14 @@ export const ExamScheduleDashboard = () => {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="border-t p-3">
+            <CardFooter className="p-3 border-t">
               <Button variant="outline" size="sm" className="w-full" onClick={() => setSelectedDate(new Date())}>
                 Hari Ini
               </Button>
             </CardFooter>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center justify-between">
-                <span>Filter</span>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setSelectedFilters(["all"])}>
-                  <ListFilter className="h-4 w-4" />
-                  <span className="sr-only">Reset filters</span>
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-all"
-                    checked={selectedFilters.includes("all")}
-                    onCheckedChange={() => setSelectedFilters(["all"])}
-                  />
-                  <label
-                    htmlFor="filter-all"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Semua Kegiatan
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-exam"
-                    checked={selectedFilters.includes("exam")}
-                    onCheckedChange={() => handleFilterChange("exam")}
-                  />
-                  <label
-                    htmlFor="filter-exam"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Ujian
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-class"
-                    checked={selectedFilters.includes("class")}
-                    onCheckedChange={() => handleFilterChange("class")}
-                  />
-                  <label
-                    htmlFor="filter-class"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Kuliah
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-lab"
-                    checked={selectedFilters.includes("lab")}
-                    onCheckedChange={() => handleFilterChange("lab")}
-                  />
-                  <label
-                    htmlFor="filter-lab"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Praktikum
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-consultation"
-                    checked={selectedFilters.includes("consultation")}
-                    onCheckedChange={() => handleFilterChange("consultation")}
-                  />
-                  <label
-                    htmlFor="filter-consultation"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Bimbingan
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-seminar"
-                    checked={selectedFilters.includes("seminar")}
-                    onCheckedChange={() => handleFilterChange("seminar")}
-                  />
-                  <label
-                    htmlFor="filter-seminar"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Seminar
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="filter-deadline"
-                    checked={selectedFilters.includes("deadline")}
-                    onCheckedChange={() => handleFilterChange("deadline")}
-                  />
-                  <label
-                    htmlFor="filter-deadline"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Deadline
-                  </label>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="border-t pt-3">
-              <div className="relative w-full">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Cari jadwal..."
-                  className="pl-8"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </CardFooter>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200 dark:from-primary-950/50 dark:to-primary-900/50 dark:border-primary-800/30">
+          <Card className="">
             <CardHeader>
               <CardTitle className="text-primary-800 dark:text-primary-300">Jadwal Terdekat</CardTitle>
             </CardHeader>
@@ -556,19 +434,19 @@ export const ExamScheduleDashboard = () => {
                         {eventTypeIcons[event.type as keyof typeof eventTypeIcons]}
                       </div>
                       <div>
-                        <h4 className="font-medium text-sm line-clamp-1">{event.title}</h4>
+                        <h4 className="text-sm font-medium line-clamp-1">{event.title}</h4>
                         <p className="text-xs text-muted-foreground">
                           {format(parseISO(event.date), "EEEE, d MMMM yyyy", { locale: id })}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center text-xs text-muted-foreground">
-                      <Clock className="mr-1 h-3 w-3" />
+                      <Clock className="w-3 h-3 mr-1" />
                       <span>{format(parseISO(event.date), "HH:mm", { locale: id })}</span>
                       {event.location && (
                         <>
                           <span className="mx-1">•</span>
-                          <MapPin className="mr-1 h-3 w-3" />
+                          <MapPin className="w-3 h-3 mr-1" />
                           <span className="truncate">{event.location}</span>
                         </>
                       )}
@@ -576,8 +454,8 @@ export const ExamScheduleDashboard = () => {
                   </div>
                 ))}
               {filteredEvents.filter((event) => new Date(event.date) >= new Date()).length === 0 && (
-                <div className="text-center py-6 text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-3 text-primary-300" />
+                <div className="py-6 text-center text-muted-foreground">
+                  <Calendar className="w-12 h-12 mx-auto mb-3 text-primary-300" />
                   <p>Tidak ada jadwal terdekat</p>
                 </div>
               )}
@@ -591,7 +469,7 @@ export const ExamScheduleDashboard = () => {
         </div>
         <div className="md:col-span-3">
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2">
+          <div className="grid grid-cols-7 gap-1 mb-2 text-xs text-center">
             <div className="text-muted-foreground">Min</div>
             <div className="text-muted-foreground">Sen</div>
             <div className="text-muted-foreground">Sel</div>
@@ -666,13 +544,13 @@ export const ExamScheduleDashboard = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">Informasi Jadwal</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 pt-0 text-sm">
+                <CardContent className="pt-0 space-y-2 text-sm">
                   <div className="flex items-center">
-                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span>Tanggal: {format(parseISO(selectedEvent.date), "EEEE, d MMMM yyyy", { locale: id })}</span>
                   </div>
                   <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span>
                       Waktu: {format(parseISO(selectedEvent.date), "HH:mm", { locale: id })}
                       {selectedEvent.endDate && (
@@ -682,13 +560,13 @@ export const ExamScheduleDashboard = () => {
                   </div>
                   {selectedEvent.location && (
                     <div className="flex items-center">
-                      <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
                       <span>Lokasi: {selectedEvent.location}</span>
                     </div>
                   )}
                   {selectedEvent.lecturer && (
                     <div className="flex items-center">
-                      <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <User className="w-4 h-4 mr-2 text-muted-foreground" />
                       <span>Dosen: {selectedEvent.lecturer}</span>
                     </div>
                   )}
@@ -713,9 +591,9 @@ export const ExamScheduleDashboard = () => {
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     {selectedEvent.committee.map((member: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between rounded-md border p-3">
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-md">
                         <div className="flex items-center">
-                          <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <User className="w-4 h-4 mr-2 text-muted-foreground" />
                           <span>{member.name}</span>
                         </div>
                         <Badge variant="outline">{member.role}</Badge>

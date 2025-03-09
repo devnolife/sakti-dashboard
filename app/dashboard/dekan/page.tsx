@@ -100,7 +100,7 @@ export default function DekanPage() {
                   <div className="divide-y">
                     <div className="flex items-center justify-between p-4">
                       <div>
-                        <p className="font-medium">Teknik Informatika</p>
+                        <p className="font-medium">Informatika</p>
                         <p className="text-sm text-muted-foreground">Dr. Ahmad Fauzi</p>
                       </div>
                       <div className="flex items-center gap-2">

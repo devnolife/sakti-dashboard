@@ -273,7 +273,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentId: "std-001",
     studentName: "Ahmad Fauzi",
     studentNIM: "1901234567",
-    studentMajor: "Teknik Informatika",
+    studentMajor: "Informatika",
     approvalRole: "staff_tu",
     approvedBy: "Budi Santoso, S.Kom.",
     additionalInfo: {
@@ -633,7 +633,7 @@ const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentId: "std-011",
     studentName: "Kevin Anggara",
     studentNIM: "1901234577",
-    studentMajor: "Teknik Informatika",
+    studentMajor: "Informatika",
     approvalRole: "prodi",
     additionalInfo: {
       companyName: "Gojek",

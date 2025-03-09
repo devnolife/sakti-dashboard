@@ -14,7 +14,7 @@ const examSchedulesData = [
   {
     id: "exam-001",
     title: "Ujian Proposal Skripsi",
-    department: "Teknik Informatika",
+    department: "Informatika",
     date: "2023-10-20",
     time: "09:00 - 12:00",
     location: "Ruang Sidang A",

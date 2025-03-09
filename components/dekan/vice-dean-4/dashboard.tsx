@@ -38,7 +38,7 @@ export function ViceDean4Dashboard() {
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false)
 
   const departments = [
-    "Teknik Informatika",
+    "Informatika",
     "Sistem Informasi",
     "Teknik Komputer",
     "Teknik Elektro",

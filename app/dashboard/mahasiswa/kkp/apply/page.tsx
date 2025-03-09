@@ -34,7 +34,7 @@ export default function KkpApplicationPage() {
     // Student information (in a real app, this would be pre-filled from the user's profile)
     studentName: "Ahmad Fauzi",
     studentNim: "1234567890",
-    studentMajor: "Teknik Informatika",
+    studentMajor: "Informatika",
     studentSemester: 5,
     studentEmail: "ahmad.fauzi@example.com",
     studentPhone: "081234567890",
