@@ -5,6 +5,10 @@ export default function LaboratoryAdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <>{children}</>
+  return (
+    <div className="flex-1 pt-14">
+      <div className="container p-4 mx-auto md:p-6">{children}</div>
+    </div>
+  )
 }
 
