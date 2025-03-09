@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "@/components/ui/use-toast"
 
-// Sample data for lab registration history
 const registrationHistory = [
   {
     id: "reg-1",
@@ -173,7 +172,7 @@ export function RegistrationHistoryTab() {
                   <div
                     className={`overflow-hidden border rounded-lg shadow-sm bg-gradient-to-br ${getColorGradient(registration.color || "default")} mb-4`}
                   >
-                    <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center justify-between p-4">
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium">{registration.labTitle}</h3>
@@ -190,7 +189,7 @@ export function RegistrationHistoryTab() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0"
+                          className="w-8 h-8 p-0"
                           onClick={() => handleToggle(registration.id)}
                           aria-expanded={expandedItems.includes(registration.id)}
                           aria-controls={`content-${registration.id}`}
@@ -207,9 +206,9 @@ export function RegistrationHistoryTab() {
                       <>
                         <Separator className="bg-white/20 dark:bg-gray-800/50" />
                         <div id={`content-${registration.id}`} className="p-4 space-y-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
-                              <h4 className="text-sm font-medium mb-2">Payment Details</h4>
+                              <h4 className="mb-2 text-sm font-medium">Payment Details</h4>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
                                   <span className="text-muted-foreground">Amount:</span>
@@ -243,7 +242,7 @@ export function RegistrationHistoryTab() {
                             </div>
 
                             <div>
-                              <h4 className="text-sm font-medium mb-2">Status Information</h4>
+                              <h4 className="mb-2 text-sm font-medium">Status Information</h4>
                               <div className="space-y-1 text-sm">
                                 <div className="flex justify-between">
                                   <span className="text-muted-foreground">Semester:</span>
@@ -252,14 +251,14 @@ export function RegistrationHistoryTab() {
 
                                 {registration.status === "active" && (
                                   <div className="flex items-center text-green-600 dark:text-green-400">
-                                    <CheckCircle2 className="h-4 w-4 mr-1" />
+                                    <CheckCircle2 className="w-4 h-4 mr-1" />
                                     <span>Currently active</span>
                                   </div>
                                 )}
 
                                 {registration.status === "completed" && (
                                   <div className="flex items-center text-green-600 dark:text-green-400">
-                                    <CheckCircle2 className="h-4 w-4 mr-1" />
+                                    <CheckCircle2 className="w-4 h-4 mr-1" />
                                     <span>Completed on {registration.completionDate}</span>
                                   </div>
                                 )}
@@ -267,7 +266,7 @@ export function RegistrationHistoryTab() {
                                 {registration.status === "cancelled" && (
                                   <>
                                     <div className="flex items-center text-red-600 dark:text-red-400">
-                                      <XCircle className="h-4 w-4 mr-1" />
+                                      <XCircle className="w-4 h-4 mr-1" />
                                       <span>Cancelled on {registration.cancellationDate}</span>
                                     </div>
                                     {registration.cancellationReason && (
@@ -297,7 +296,7 @@ export function RegistrationHistoryTab() {
 
                                 {registration.status === "pending" && (
                                   <div className="flex items-center text-yellow-600 dark:text-yellow-400">
-                                    <AlertCircle className="h-4 w-4 mr-1" />
+                                    <AlertCircle className="w-4 h-4 mr-1" />
                                     <span>Pending payment</span>
                                   </div>
                                 )}
@@ -316,7 +315,7 @@ export function RegistrationHistoryTab() {
                                   })
                                 }}
                               >
-                                <CreditCard className="h-4 w-4 mr-2 transition-transform group-hover:scale-110" />
+                                <CreditCard className="w-4 h-4 mr-2 transition-transform group-hover:scale-110" />
                                 Complete Payment
                               </Button>
                             )}
@@ -332,7 +331,7 @@ export function RegistrationHistoryTab() {
                                   })
                                 }}
                               >
-                                <Receipt className="h-4 w-4 mr-2" />
+                                <Receipt className="w-4 h-4 mr-2" />
                                 View Receipt
                               </Button>
                             )}
