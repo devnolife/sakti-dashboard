@@ -17,7 +17,7 @@ export interface LetterAttachment {
 }
 
 export interface LetterRequest {
-  [x: string]: string | undefined
+  [x: string]: string | undefined | Record<string, any> | LetterAttachment[] | LetterStatus | ApprovalRole
   notes: string | undefined
   id: string
   type: string
