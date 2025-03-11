@@ -17,8 +17,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { format } from "date-fns"
+
+// Types
 import type { Exam } from "@/types/exam"
 
+// Mock data
 const mockExams: Exam[] = [
   {
     id: "1",
@@ -32,7 +35,7 @@ const mockExams: Exam[] = [
     advisor1: {
       id: "a1",
       name: "Dr. Budi Santoso",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     committee: [
@@ -40,14 +43,14 @@ const mockExams: Exam[] = [
         id: "c1",
         name: "Dr. Citra Dewi",
         role: "Ketua",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
       {
         id: "c2",
         name: "Dr. Dian Purnama",
         role: "Penguji 1",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
     ],
@@ -64,13 +67,13 @@ const mockExams: Exam[] = [
     advisor1: {
       id: "a2",
       name: "Dr. Eko Prasetyo",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     advisor2: {
       id: "a3",
       name: "Dr. Fitri Handayani",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     committee: [
@@ -78,22 +81,67 @@ const mockExams: Exam[] = [
         id: "c3",
         name: "Dr. Fitri Handayani",
         role: "Ketua",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
       {
         id: "c4",
         name: "Dr. Gunawan Wibisono",
         role: "Penguji 1",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
       {
         id: "c5",
         name: "Dr. Hani Fujianti",
         role: "Penguji 2",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
+      },
+    ],
+    documents: [
+      {
+        id: "doc-1",
+        name: "Bukti Pembayaran Ujian",
+        type: "payment_proof",
+        status: "verified",
+        uploadDate: "2023-05-15T08:30:00Z",
+        verificationDate: "2023-05-16T10:15:00Z",
+        fileUrl: "/placeholder.svg?height=400&width=300",
+        fileSize: 1250000,
+        isSystemGenerated: false,
+      },
+      {
+        id: "doc-2",
+        name: "Transkrip Nilai",
+        type: "transcript",
+        status: "verified",
+        uploadDate: "2023-05-14T09:45:00Z",
+        verificationDate: "2023-05-16T10:20:00Z",
+        fileUrl: "/placeholder.svg?height=400&width=300",
+        fileSize: 980000,
+        isSystemGenerated: true,
+      },
+      {
+        id: "doc-3",
+        name: "Dokumen Proposal",
+        type: "proposal",
+        status: "unverified",
+        uploadDate: "2023-05-16T14:20:00Z",
+        fileUrl: "/placeholder.svg?height=400&width=300",
+        fileSize: 3500000,
+        isSystemGenerated: false,
+      },
+      {
+        id: "doc-4",
+        name: "Persetujuan Pembimbing",
+        type: "supervisor_approval",
+        status: "rejected",
+        uploadDate: "2023-05-13T11:10:00Z",
+        fileUrl: "/placeholder.svg?height=400&width=300",
+        fileSize: 450000,
+        notes: "Tanda tangan pembimbing tidak jelas. Mohon upload ulang dengan tanda tangan yang lebih jelas.",
+        isSystemGenerated: false,
       },
     ],
   },
@@ -109,7 +157,7 @@ const mockExams: Exam[] = [
     advisor1: {
       id: "a3",
       name: "Dr. Irfan Hakim",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     committee: [],
@@ -126,13 +174,13 @@ const mockExams: Exam[] = [
     advisor1: {
       id: "a4",
       name: "Dr. Joko Widodo",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     advisor2: {
       id: "a5",
       name: "Dr. Kartika Sari",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     committee: [
@@ -140,14 +188,14 @@ const mockExams: Exam[] = [
         id: "c6",
         name: "Dr. Kartika Sari",
         role: "Ketua",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
       {
         id: "c7",
         name: "Dr. Lukman Hakim",
         role: "Penguji 1",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
     ],
@@ -164,7 +212,7 @@ const mockExams: Exam[] = [
     advisor1: {
       id: "a5",
       name: "Dr. Maya Nabila",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     committee: [
@@ -172,7 +220,7 @@ const mockExams: Exam[] = [
         id: "c8",
         name: "Dr. Nugroho Santoso",
         role: "Ketua",
-        department: "Informatika",
+        department: "Teknik Informatika",
         avatarUrl: "/placeholder.svg?height=40&width=40",
       },
     ],
@@ -189,7 +237,7 @@ const mockExams: Exam[] = [
     advisor1: {
       id: "a6",
       name: "Dr. Olivia Putri",
-      department: "Informatika",
+      department: "Teknik Informatika",
       avatarUrl: "/placeholder.svg?height=40&width=40",
     },
     committee: [],
@@ -214,7 +262,8 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
     type: initialFilter,
     date: undefined as Date | undefined,
   })
-  
+
+  // Simulate loading data
   useEffect(() => {
     const timer = setTimeout(() => {
       setExams(mockExams)
@@ -224,13 +273,17 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
 
     return () => clearTimeout(timer)
   }, [])
-  
+
+  // Filter exams based on active tab, search query, and filters
   useEffect(() => {
     let filtered = [...exams]
+
+    // Apply tab filter
     if (activeTab !== "all") {
       filtered = filtered.filter((exam) => exam.status === activeTab)
     }
-    
+
+    // Apply search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
@@ -241,9 +294,13 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
           (exam.location && exam.location.toLowerCase().includes(query)),
       )
     }
+
+    // Apply type filter
     if (filters.type && filters.type !== "all") {
       filtered = filtered.filter((exam) => exam.type === filters.type)
     }
+
+    // Apply date filter
     if (filters.date) {
       const filterDate = filters.date.toDateString()
       filtered = filtered.filter((exam) => {
@@ -258,7 +315,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    
+    // Search is already applied via useEffect
   }
 
   const handleViewDetails = (exam: Exam) => {
@@ -291,7 +348,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
     })
   }
 
-  
+  // Stats
   const applicantCount = exams.filter((exam) => exam.status === "applicant").length
   const pendingCount = exams.filter((exam) => exam.status === "pending").length
   const scheduledCount = exams.filter((exam) => exam.status === "scheduled").length
@@ -320,6 +377,7 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Manajemen Ujian</h1>

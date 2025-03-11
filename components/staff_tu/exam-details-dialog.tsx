@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { format } from "date-fns"
-import { Calendar, MapPin, UserPlus, Edit, Save, Trash2, Plus } from "lucide-react"
+import { Calendar, MapPin, UserPlus, Edit, Save, Trash2, Plus, FileX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CommitteeMemberDialog } from "./committee-member-dialog"
 import { toast } from "@/components/ui/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DocumentViewer } from "@/components/exam/document-viewer"
 
 import type { Exam, CommitteeMember, Advisor } from "@/types/exam"
 
@@ -244,10 +245,11 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
           </DialogHeader>
 
           <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsList className="grid w-full grid-cols-4 mb-4">
               <TabsTrigger value="details">Detail Ujian</TabsTrigger>
               <TabsTrigger value="advisors">Pembimbing</TabsTrigger>
-              <TabsTrigger value="committee">Penguji</TabsTrigger>
+              <TabsTrigger value="committee">Komite Penguji</TabsTrigger>
+              <TabsTrigger value="documents">Dokumen</TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
@@ -488,7 +490,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
               {/* Committee Members Section */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold">Anggota Penguji</h3>
+                  <h3 className="text-lg font-semibold">Anggota Komite Penguji</h3>
                   {isEditing && (
                     <Button variant="outline" size="sm" onClick={() => setShowCommitteeDialog(true)} className="gap-1">
                       <UserPlus className="w-4 h-4" />
@@ -539,7 +541,41 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                     ))}
                   </div>
                 ) : (
-                  <div className="italic text-muted-foreground">Belum ada anggota penguji</div>
+                  <div className="italic text-muted-foreground">Belum ada anggota komite penguji</div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="documents" className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+              {/* Documents Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold">Dokumen Mahasiswa</h3>
+                  {isEditing && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        toast({
+                          title: "Fitur dalam pengembangan",
+                          description: "Fitur upload dokumen akan segera tersedia.",
+                        })
+                      }
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Tambah Dokumen
+                    </Button>
+                  )}
+                </div>
+
+                {editedExam.documents && editedExam.documents.length > 0 ? (
+                  <DocumentViewer documents={editedExam.documents} />
+                ) : (
+                  <div className="p-8 text-center border border-dashed rounded-lg">
+                    <FileX className="w-12 h-12 mx-auto text-muted-foreground" />
+                    <h3 className="mt-4 text-lg font-medium">Tidak ada dokumen</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">Mahasiswa belum mengunggah dokumen apapun.</p>
+                  </div>
                 )}
               </div>
             </TabsContent>
@@ -601,25 +637,25 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         existingMembers={[
           ...(editedExam.advisor1
             ? [
-                {
-                  id: editedExam.advisor1.id,
-                  name: editedExam.advisor1.name,
-                  department: editedExam.advisor1.department,
-                  avatarUrl: editedExam.advisor1.avatarUrl,
-                  role: "Pembimbing 1",
-                },
-              ]
+              {
+                id: editedExam.advisor1.id,
+                name: editedExam.advisor1.name,
+                department: editedExam.advisor1.department,
+                avatarUrl: editedExam.advisor1.avatarUrl,
+                role: "Pembimbing 1",
+              },
+            ]
             : []),
           ...(editedExam.advisor2
             ? [
-                {
-                  id: editedExam.advisor2.id,
-                  name: editedExam.advisor2.name,
-                  department: editedExam.advisor2.department,
-                  avatarUrl: editedExam.advisor2.avatarUrl,
-                  role: "Pembimbing 2",
-                },
-              ]
+              {
+                id: editedExam.advisor2.id,
+                name: editedExam.advisor2.name,
+                department: editedExam.advisor2.department,
+                avatarUrl: editedExam.advisor2.avatarUrl,
+                role: "Pembimbing 2",
+              },
+            ]
             : []),
         ]}
         title={`Pilih ${advisorType === "advisor1" ? "Pembimbing 1" : "Pembimbing 2"}`}

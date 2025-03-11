@@ -308,28 +308,28 @@ export default function KkpProdiDashboard() {
         )
       case "approved":
         return (
-          <Badge className="bg-green-500/10 text-green-500">
+          <Badge className="text-green-500 bg-green-500/10">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
             Approved
           </Badge>
         )
       case "rejected":
         return (
-          <Badge className="bg-red-500/10 text-red-500">
+          <Badge className="text-red-500 bg-red-500/10">
             <XCircle className="h-3.5 w-3.5 mr-1" />
             Rejected
           </Badge>
         )
       case "in-progress":
         return (
-          <Badge className="bg-blue-500/10 text-blue-500">
+          <Badge className="text-blue-500 bg-blue-500/10">
             <PlayCircle className="h-3.5 w-3.5 mr-1" />
             In Progress
           </Badge>
         )
       case "completed":
         return (
-          <Badge className="bg-purple-500/10 text-purple-500">
+          <Badge className="text-purple-500 bg-purple-500/10">
             <CheckCircle className="h-3.5 w-3.5 mr-1" />
             Completed
           </Badge>
@@ -351,14 +351,14 @@ export default function KkpProdiDashboard() {
         )
       case "verified":
         return (
-          <Badge className="bg-green-500/10 text-green-500">
+          <Badge className="text-green-500 bg-green-500/10">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
             Verified
           </Badge>
         )
       case "rejected":
         return (
-          <Badge className="bg-red-500/10 text-red-500">
+          <Badge className="text-red-500 bg-red-500/10">
             <XCircle className="h-3.5 w-3.5 mr-1" />
             Rejected
           </Badge>
@@ -388,7 +388,7 @@ export default function KkpProdiDashboard() {
             <TableRow>
               <TableCell colSpan={7} className="h-24 text-center">
                 <div className="flex flex-col items-center justify-center">
-                  <RotateCcw className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
+                  <RotateCcw className="w-8 h-8 mb-2 text-muted-foreground animate-spin" />
                   <p className="text-muted-foreground">Loading applications...</p>
                 </div>
               </TableCell>
@@ -397,7 +397,7 @@ export default function KkpProdiDashboard() {
             <TableRow>
               <TableCell colSpan={7} className="h-24 text-center">
                 <div className="flex flex-col items-center justify-center">
-                  <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                  <AlertCircle className="w-8 h-8 mb-2 text-muted-foreground" />
                   <p className="text-muted-foreground">No applications found</p>
                 </div>
               </TableCell>
@@ -413,10 +413,10 @@ export default function KkpProdiDashboard() {
                       <img
                         src={application.student.avatar || "/placeholder.svg"}
                         alt={application.student.name}
-                        className="h-6 w-6 rounded-full"
+                        className="w-6 h-6 rounded-full"
                       />
                     ) : (
-                      <User className="h-6 w-6 text-muted-foreground" />
+                      <User className="w-6 h-6 text-muted-foreground" />
                     )}
                     <div>
                       <p className="text-sm font-medium">{application.student.name}</p>
@@ -430,10 +430,10 @@ export default function KkpProdiDashboard() {
                       <img
                         src={application.company.logo || "/placeholder.svg"}
                         alt={application.company.name}
-                        className="h-6 w-6 rounded-full"
+                        className="w-6 h-6 rounded-full"
                       />
                     ) : (
-                      <Building className="h-6 w-6 text-muted-foreground" />
+                      <Building className="w-6 h-6 text-muted-foreground" />
                     )}
                     <span>{application.company.name}</span>
                   </div>
@@ -448,7 +448,7 @@ export default function KkpProdiDashboard() {
                 <TableCell>{getStatusBadge(application.status)}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" onClick={() => handleViewDetails(application.id)}>
-                    <Eye className="h-4 w-4 mr-1" />
+                    <Eye className="w-4 h-4 mr-1" />
                     Details
                   </Button>
                 </TableCell>
@@ -464,14 +464,14 @@ export default function KkpProdiDashboard() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
             KKP Application Approval
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Review and approve KKP applications from students</p>
+        <p className="mt-2 text-muted-foreground">Review and approve KKP applications from students</p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center">
+      <div className="flex flex-col items-center gap-4 md:flex-row">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -483,7 +483,7 @@ export default function KkpProdiDashboard() {
           />
         </div>
         <Button variant="outline" className="w-full md:w-auto">
-          <Filter className="h-4 w-4 mr-2" />
+          <Filter className="w-4 h-4 mr-2" />
           Filter
         </Button>
       </div>
@@ -494,7 +494,7 @@ export default function KkpProdiDashboard() {
         onValueChange={(value) => setActiveTab(value as KkpStatus | "all")}
         className="w-full"
       >
-        <TabsList className="grid grid-cols-6 w-full md:w-auto">
+        <TabsList className="grid w-full grid-cols-6 md:w-auto">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="approved">Approved</TabsTrigger>
@@ -510,7 +510,7 @@ export default function KkpProdiDashboard() {
               <CardDescription>Review and approve KKP applications from students</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">{renderApplicationTable()}</div>
+              <div className="border rounded-md">{renderApplicationTable()}</div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -522,7 +522,7 @@ export default function KkpProdiDashboard() {
               <CardDescription>Review pending KKP applications from students</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">{renderApplicationTable()}</div>
+              <div className="border rounded-md">{renderApplicationTable()}</div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -534,7 +534,7 @@ export default function KkpProdiDashboard() {
               <CardDescription>View approved KKP applications</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">{renderApplicationTable()}</div>
+              <div className="border rounded-md">{renderApplicationTable()}</div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -546,7 +546,7 @@ export default function KkpProdiDashboard() {
               <CardDescription>View rejected KKP applications</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">{renderApplicationTable()}</div>
+              <div className="border rounded-md">{renderApplicationTable()}</div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -558,7 +558,7 @@ export default function KkpProdiDashboard() {
               <CardDescription>View KKP applications that are currently in progress</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">{renderApplicationTable()}</div>
+              <div className="border rounded-md">{renderApplicationTable()}</div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -570,7 +570,7 @@ export default function KkpProdiDashboard() {
               <CardDescription>View completed KKP applications</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">{renderApplicationTable()}</div>
+              <div className="border rounded-md">{renderApplicationTable()}</div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -582,18 +582,18 @@ export default function KkpProdiDashboard() {
           <DialogContent className="max-w-4xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary" />
+                <Briefcase className="w-5 h-5 text-primary" />
                 {selectedApplication.title}
               </DialogTitle>
               <DialogDescription>
                 {selectedApplication.applicationNumber} • {selectedApplication.company.name}
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {/* Left Column - Student Information */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Student Information</h3>
+                  <h3 className="mb-2 text-lg font-semibold">Student Information</h3>
                   <Card>
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3 mb-3">
@@ -601,10 +601,10 @@ export default function KkpProdiDashboard() {
                           <img
                             src={selectedApplication.student.avatar || "/placeholder.svg"}
                             alt={selectedApplication.student.name}
-                            className="h-12 w-12 rounded-full"
+                            className="w-12 h-12 rounded-full"
                           />
                         ) : (
-                          <User className="h-12 w-12 text-muted-foreground" />
+                          <User className="w-12 h-12 text-muted-foreground" />
                         )}
                         <div>
                           <p className="font-medium">{selectedApplication.student.name}</p>
@@ -635,13 +635,13 @@ export default function KkpProdiDashboard() {
 
                 {selectedApplication.groupMembers && selectedApplication.groupMembers.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Group Members</h3>
+                    <h3 className="mb-2 text-lg font-semibold">Group Members</h3>
                     <Card>
                       <CardContent className="p-4">
                         <div className="space-y-3">
                           {selectedApplication.groupMembers.map((member) => (
                             <div key={member.id} className="flex items-center gap-2">
-                              <User className="h-6 w-6 text-muted-foreground" />
+                              <User className="w-6 h-6 text-muted-foreground" />
                               <div>
                                 <p className="text-sm font-medium">{member.name}</p>
                                 <p className="text-xs text-muted-foreground">{member.nim}</p>
@@ -656,11 +656,11 @@ export default function KkpProdiDashboard() {
 
                 {selectedApplication.supervisor && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Supervisor</h3>
+                    <h3 className="mb-2 text-lg font-semibold">Supervisor</h3>
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <User className="h-6 w-6 text-muted-foreground" />
+                          <User className="w-6 h-6 text-muted-foreground" />
                           <div>
                             <p className="text-sm font-medium">{selectedApplication.supervisor.name}</p>
                             <p className="text-xs text-muted-foreground">{selectedApplication.supervisor.nip}</p>
@@ -691,7 +691,7 @@ export default function KkpProdiDashboard() {
               {/* Middle Column - Company and Application Details */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Company Information</h3>
+                  <h3 className="mb-2 text-lg font-semibold">Company Information</h3>
                   <Card>
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3 mb-3">
@@ -699,10 +699,10 @@ export default function KkpProdiDashboard() {
                           <img
                             src={selectedApplication.company.logo || "/placeholder.svg"}
                             alt={selectedApplication.company.name}
-                            className="h-12 w-12 rounded-full"
+                            className="w-12 h-12 rounded-full"
                           />
                         ) : (
-                          <Building className="h-12 w-12 text-muted-foreground" />
+                          <Building className="w-12 h-12 text-muted-foreground" />
                         )}
                         <div>
                           <p className="font-medium">{selectedApplication.company.name}</p>
@@ -749,12 +749,12 @@ export default function KkpProdiDashboard() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Application Details</h3>
+                  <h3 className="mb-2 text-lg font-semibold">Application Details</h3>
                   <Card>
                     <CardContent className="p-4">
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm text-muted-foreground mb-1">Description:</p>
+                          <p className="mb-1 text-sm text-muted-foreground">Description:</p>
                           <p className="text-sm">{selectedApplication.description}</p>
                         </div>
                         <div className="flex justify-between">
@@ -787,13 +787,13 @@ export default function KkpProdiDashboard() {
                             })}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">Status:</span>
                           <span>{getStatusBadge(selectedApplication.status)}</span>
                         </div>
                         {selectedApplication.approvedBy && selectedApplication.approvedDate && (
                           <div className="pt-2 border-t">
-                            <p className="text-sm text-muted-foreground mb-1">Approved by:</p>
+                            <p className="mb-1 text-sm text-muted-foreground">Approved by:</p>
                             <p className="text-sm font-medium">{selectedApplication.approvedBy}</p>
                             <p className="text-xs text-muted-foreground">
                               {new Date(selectedApplication.approvedDate).toLocaleDateString("en-US", {
@@ -806,7 +806,7 @@ export default function KkpProdiDashboard() {
                         )}
                         {selectedApplication.rejectedBy && selectedApplication.rejectedDate && (
                           <div className="pt-2 border-t">
-                            <p className="text-sm text-muted-foreground mb-1">Rejected by:</p>
+                            <p className="mb-1 text-sm text-muted-foreground">Rejected by:</p>
                             <p className="text-sm font-medium">{selectedApplication.rejectedBy}</p>
                             <p className="text-xs text-muted-foreground">
                               {new Date(selectedApplication.rejectedDate).toLocaleDateString("en-US", {
@@ -819,7 +819,7 @@ export default function KkpProdiDashboard() {
                         )}
                         {selectedApplication.rejectionReason && (
                           <div className="pt-2">
-                            <p className="text-sm text-muted-foreground mb-1">Rejection Reason:</p>
+                            <p className="mb-1 text-sm text-muted-foreground">Rejection Reason:</p>
                             <p className="text-sm text-red-500">{selectedApplication.rejectionReason}</p>
                           </div>
                         )}
@@ -831,14 +831,14 @@ export default function KkpProdiDashboard() {
 
               {/* Right Column - Documents */}
               <div>
-                <h3 className="text-lg font-semibold mb-2">Documents</h3>
+                <h3 className="mb-2 text-lg font-semibold">Documents</h3>
                 <Card>
                   <CardContent className="p-4">
                     <div className="space-y-3">
                       {selectedApplication.documents.map((document) => (
                         <div key={document.id} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-muted-foreground" />
+                            <FileText className="w-5 h-5 text-muted-foreground" />
                             <div>
                               <p className="text-sm font-medium">{document.name}</p>
                               <p className="text-xs text-muted-foreground">
@@ -853,11 +853,11 @@ export default function KkpProdiDashboard() {
                           <div className="flex items-center gap-2">
                             {getDocumentStatusBadge(document.status)}
                             <Button variant="ghost" size="sm" onClick={() => handleViewDocument(document)}>
-                              <Eye className="h-4 w-4" />
+                              <Eye className="w-4 h-4" />
                             </Button>
                             <Button variant="ghost" size="sm" asChild>
                               <a href={document.url} target="_blank" rel="noopener noreferrer">
-                                <Download className="h-4 w-4" />
+                                <Download className="w-4 h-4" />
                               </a>
                             </Button>
                           </div>
@@ -865,7 +865,7 @@ export default function KkpProdiDashboard() {
                       ))}
                       {selectedApplication.documents.length === 0 && (
                         <div className="flex flex-col items-center justify-center py-4">
-                          <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                          <AlertCircle className="w-8 h-8 mb-2 text-muted-foreground" />
                           <p className="text-muted-foreground">No documents found</p>
                         </div>
                       )}
@@ -878,18 +878,18 @@ export default function KkpProdiDashboard() {
               {selectedApplication.status === "pending" && (
                 <>
                   <Button variant="outline" onClick={() => setShowRejectionDialog(true)}>
-                    <ThumbsDown className="h-4 w-4 mr-2" />
+                    <ThumbsDown className="w-4 h-4 mr-2" />
                     Reject
                   </Button>
                   <Button onClick={() => setShowApprovalDialog(true)}>
-                    <ThumbsUp className="h-4 w-4 mr-2" />
+                    <ThumbsUp className="w-4 h-4 mr-2" />
                     Approve
                   </Button>
                 </>
               )}
               {selectedApplication.status === "approved" && !selectedApplication.supervisor && (
                 <Button onClick={() => setShowAssignSupervisorDialog(true)}>
-                  <User className="h-4 w-4 mr-2" />
+                  <User className="w-4 h-4 mr-2" />
                   Assign Supervisor
                 </Button>
               )}
@@ -907,7 +907,7 @@ export default function KkpProdiDashboard() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <FileCheck className="h-5 w-5 text-primary" />
+                <FileCheck className="w-5 h-5 text-primary" />
                 {selectedDocument.name}
               </DialogTitle>
               <DialogDescription>
@@ -920,7 +920,7 @@ export default function KkpProdiDashboard() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Status:</span>
                 {getDocumentStatusBadge(selectedDocument.status)}
               </div>
@@ -933,7 +933,7 @@ export default function KkpProdiDashboard() {
               <div className="flex justify-center">
                 <Button variant="outline" asChild className="w-full">
                   <a href={selectedDocument.url} target="_blank" rel="noopener noreferrer">
-                    <FileText className="h-4 w-4 mr-2" />
+                    <FileText className="w-4 h-4 mr-2" />
                     View Document
                   </a>
                 </Button>
@@ -954,16 +954,16 @@ export default function KkpProdiDashboard() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <ThumbsUp className="h-5 w-5 text-primary" />
+                <ThumbsUp className="w-5 h-5 text-primary" />
                 Approve Application
               </DialogTitle>
               <DialogDescription>Are you sure you want to approve this KKP application?</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="rounded-md bg-green-50 p-4">
+              <div className="p-4 rounded-md bg-green-50">
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-green-400" />
+                    <CheckCircle2 className="w-5 h-5 text-green-400" />
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-green-800">Approval Confirmation</h3>
@@ -995,7 +995,7 @@ export default function KkpProdiDashboard() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <ThumbsDown className="h-5 w-5 text-primary" />
+                <ThumbsDown className="w-5 h-5 text-primary" />
                 Reject Application
               </DialogTitle>
               <DialogDescription>Please provide a reason for rejecting this KKP application.</DialogDescription>
@@ -1013,10 +1013,10 @@ export default function KkpProdiDashboard() {
                   className="min-h-[100px]"
                 />
               </div>
-              <div className="rounded-md bg-red-50 p-4">
+              <div className="p-4 rounded-md bg-red-50">
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <XCircle className="h-5 w-5 text-red-400" />
+                    <XCircle className="w-5 h-5 text-red-400" />
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-red-800">Rejection Confirmation</h3>
@@ -1049,7 +1049,7 @@ export default function KkpProdiDashboard() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-primary" />
+                <User className="w-5 h-5 text-primary" />
                 Assign Supervisor
               </DialogTitle>
               <DialogDescription>Assign a supervisor for this KKP application.</DialogDescription>
@@ -1072,10 +1072,10 @@ export default function KkpProdiDashboard() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="rounded-md bg-blue-50 p-4">
+              <div className="p-4 rounded-md bg-blue-50">
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <User className="h-5 w-5 text-blue-400" />
+                    <User className="w-5 h-5 text-blue-400" />
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-blue-800">Supervisor Assignment</h3>

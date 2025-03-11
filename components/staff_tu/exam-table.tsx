@@ -21,7 +21,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800"
+            className="text-yellow-700 border-yellow-200 bg-yellow-50 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800"
           >
             Pendaftar
           </Badge>
@@ -30,7 +30,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
+            className="text-blue-700 border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
           >
             Menunggu
           </Badge>
@@ -39,7 +39,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
+            className="text-indigo-700 border-indigo-200 bg-indigo-50 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-800"
           >
             Terjadwal
           </Badge>
@@ -48,7 +48,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
+            className="text-green-700 border-green-200 bg-green-50 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
           >
             Selesai
           </Badge>
@@ -66,7 +66,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800"
+            className="text-orange-700 border-orange-200 bg-orange-50 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800"
           >
             Tidak Lulus
           </Badge>
@@ -75,7 +75,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800"
+            className="text-red-700 border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800"
           >
             Dibatalkan
           </Badge>
@@ -91,7 +91,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
+            className="text-blue-700 border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
           >
             Ujian Proposal
           </Badge>
@@ -100,7 +100,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-800"
+            className="text-purple-700 border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-800"
           >
             Ujian Hasil
           </Badge>
@@ -109,7 +109,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
+            className="text-green-700 border-green-200 bg-green-50 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800"
           >
             Ujian Tutup
           </Badge>
@@ -132,11 +132,11 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
   if (exams.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="rounded-full bg-muted p-3 mb-4">
-          <Calendar className="h-6 w-6 text-muted-foreground" />
+        <div className="p-3 mb-4 rounded-full bg-muted">
+          <Calendar className="w-6 h-6 text-muted-foreground" />
         </div>
         <h3 className="text-lg font-semibold">Tidak ada ujian</h3>
-        <p className="text-muted-foreground mt-1">Belum ada ujian yang sesuai dengan filter.</p>
+        <p className="mt-1 text-muted-foreground">Belum ada ujian yang sesuai dengan filter.</p>
       </div>
     )
   }
@@ -156,11 +156,11 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
         </TableHeader>
         <TableBody>
           {exams.map((exam) => (
-            <TableRow key={exam.id} className="group hover:bg-muted/30 transition-colors duration-200">
+            <TableRow key={exam.id} className="transition-colors duration-200 group hover:bg-muted/30">
               <TableCell className="font-medium">
                 <div>
                   <p className="font-semibold text-foreground">{exam.studentName}</p>
-                  <p className="text-xs text-muted-foreground mb-1">{exam.studentId}</p>
+                  <p className="mb-1 text-xs text-muted-foreground">{exam.studentId}</p>
                   <p className="text-sm">{exam.title}</p>
                 </div>
               </TableCell>
@@ -169,7 +169,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
                 <div className="space-y-2">
                   {exam.advisor1 && (
                     <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8 border border-border">
+                      <Avatar className="w-8 h-8 border border-border">
                         <AvatarImage src={exam.advisor1.avatarUrl} alt={exam.advisor1.name} />
                         <AvatarFallback className="text-xs bg-primary/10 text-primary">
                           {exam.advisor1.name
@@ -186,7 +186,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
                   )}
                   {exam.advisor2 && (
                     <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8 border border-border">
+                      <Avatar className="w-8 h-8 border border-border">
                         <AvatarImage src={exam.advisor2.avatarUrl} alt={exam.advisor2.name} />
                         <AvatarFallback className="text-xs bg-primary/10 text-primary">
                           {exam.advisor2.name
@@ -217,7 +217,7 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
                       </div>
                     </>
                   ) : (
-                    <span className="text-sm text-muted-foreground italic">Belum dijadwalkan</span>
+                    <span className="text-sm italic text-muted-foreground">Belum dijadwalkan</span>
                   )}
                 </div>
               </TableCell>
@@ -230,9 +230,9 @@ export function ExamTable({ exams, onViewDetails }: ExamTableProps) {
                         variant="ghost"
                         size="icon"
                         onClick={() => onViewDetails(exam)}
-                        className="opacity-70 group-hover:opacity-100 transition-opacity"
+                        className="transition-opacity opacity-70 group-hover:opacity-100"
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="w-4 h-4" />
                         <span className="sr-only">Lihat Detail</span>
                       </Button>
                     </TooltipTrigger>

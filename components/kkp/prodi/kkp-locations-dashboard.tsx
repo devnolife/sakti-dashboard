@@ -118,15 +118,15 @@ export default function KkpLocationsDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Lokasi KKP</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Dashboard Kuliah Kerja Profesi</span>
           </h2>
-          <p className="text-muted-foreground mt-2">Kelola lokasi dan aktivitas Kerja Praktik (KKP) mahasiswa</p>
+          <p className="mt-2 text-muted-foreground">Kelola kegiatan dan aktivitas Kerja Praktik (KKP) mahasiswa</p>
         </div>
 
-        <div className="flex gap-2 w-full md:w-auto">
+        <div className="flex w-full gap-2 md:w-auto">
           <div className="relative w-full md:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -142,14 +142,14 @@ export default function KkpLocationsDashboard() {
             Refresh
           </Button>
           <Button onClick={() => setShowAddLocationDialog(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="w-4 h-4 mr-2" />
             Tambah Lokasi
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-5 w-full">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="locations">Lokasi</TabsTrigger>
           <TabsTrigger value="teams">Tim</TabsTrigger>
@@ -159,13 +159,13 @@ export default function KkpLocationsDashboard() {
 
         <TabsContent value="overview" className="space-y-6">
           {/* Bento Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {/* Stats Cards Row */}
             <Card className="overflow-hidden gradient-border card-hover">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Lokasi Pending</CardTitle>
-                <div className="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center">
-                  <Clock className="h-4 w-4 text-amber-500" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/10">
+                  <Clock className="w-4 h-4 text-amber-500" />
                 </div>
               </CardHeader>
               <CardContent>
@@ -177,10 +177,10 @@ export default function KkpLocationsDashboard() {
             </Card>
 
             <Card className="overflow-hidden gradient-border card-hover">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Lokasi Aktif</CardTitle>
-                <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <Building className="h-4 w-4 text-green-500" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/10">
+                  <Building className="w-4 h-4 text-green-500" />
                 </div>
               </CardHeader>
               <CardContent>
@@ -192,10 +192,10 @@ export default function KkpLocationsDashboard() {
             </Card>
 
             <Card className="overflow-hidden gradient-border card-hover">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-medium">Tim KKP Aktif</CardTitle>
-                <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Users className="h-4 w-4 text-blue-500" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/10">
+                  <Users className="w-4 h-4 text-blue-500" />
                 </div>
               </CardHeader>
               <CardContent>
@@ -208,7 +208,7 @@ export default function KkpLocationsDashboard() {
           </div>
 
           {/* Second Row - Larger Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* Recent Locations Card */}
             <Card className="overflow-hidden gradient-border card-hover md:row-span-2">
               <CardHeader>
@@ -217,9 +217,9 @@ export default function KkpLocationsDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {mockKkpLocations.slice(0, 5).map((location) => (
-                  <div key={location.id} className="flex items-start gap-4 rounded-xl border p-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Building className="h-5 w-5 text-primary" />
+                  <div key={location.id} className="flex items-start gap-4 p-3 border rounded-xl">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <Building className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <div className="flex items-center justify-between">
@@ -230,12 +230,12 @@ export default function KkpLocationsDashboard() {
                             Pending
                           </Badge>
                         ) : location.status === "approved" ? (
-                          <Badge className="bg-green-500/10 text-green-500">
+                          <Badge className="text-green-500 bg-green-500/10">
                             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
                             Approved
                           </Badge>
                         ) : (
-                          <Badge className="bg-red-500/10 text-red-500">
+                          <Badge className="text-red-500 bg-red-500/10">
                             <XCircle className="h-3.5 w-3.5 mr-1" />
                             Rejected
                           </Badge>
@@ -247,7 +247,7 @@ export default function KkpLocationsDashboard() {
                           {location.city}, {location.province}
                         </p>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="mt-1 text-xs text-muted-foreground">
                         Diajukan oleh {location.submittedBy.name} pada{" "}
                         {new Date(location.submissionDate).toLocaleDateString("id-ID", {
                           day: "numeric",
@@ -262,7 +262,7 @@ export default function KkpLocationsDashboard() {
               <CardFooter>
                 <Button variant="outline" className="w-full" onClick={() => setActiveTab("locations")}>
                   Lihat Semua Lokasi
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </CardFooter>
             </Card>
@@ -276,8 +276,8 @@ export default function KkpLocationsDashboard() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                      <RotateCcw className="h-4 w-4 text-blue-500" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/10">
+                      <RotateCcw className="w-4 h-4 text-blue-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">Sedang KKP</p>
@@ -288,8 +288,8 @@ export default function KkpLocationsDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/10">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">Selesai KKP</p>
@@ -300,8 +300,8 @@ export default function KkpLocationsDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center">
-                      <Clock className="h-4 w-4 text-amber-500" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/10">
+                      <Clock className="w-4 h-4 text-amber-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">Menunggu Persetujuan</p>
@@ -314,7 +314,7 @@ export default function KkpLocationsDashboard() {
               <CardFooter>
                 <Button variant="outline" className="w-full" onClick={() => setActiveTab("students")}>
                   Lihat Status Mahasiswa
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </CardFooter>
             </Card>
@@ -327,11 +327,11 @@ export default function KkpLocationsDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {mockKkpTeams.slice(0, 3).map((team) => (
-                  <div key={team.id} className="flex items-start gap-4 rounded-xl border p-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                      <Users className="h-5 w-5 text-blue-500" />
+                  <div key={team.id} className="flex items-start gap-4 p-3 border rounded-xl">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10 shrink-0">
+                      <Users className="w-5 h-5 text-blue-500" />
                     </div>
-                    <div className="grid gap-1 flex-1">
+                    <div className="grid flex-1 gap-1">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">{team.name}</p>
                         {team.status === "pending" ? (
@@ -340,12 +340,12 @@ export default function KkpLocationsDashboard() {
                             Pending
                           </Badge>
                         ) : team.status === "approved" ? (
-                          <Badge className="bg-green-500/10 text-green-500">
+                          <Badge className="text-green-500 bg-green-500/10">
                             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
                             Approved
                           </Badge>
                         ) : (
-                          <Badge className="bg-red-500/10 text-red-500">
+                          <Badge className="text-red-500 bg-red-500/10">
                             <XCircle className="h-3.5 w-3.5 mr-1" />
                             Rejected
                           </Badge>
@@ -368,7 +368,7 @@ export default function KkpLocationsDashboard() {
               <CardFooter>
                 <Button variant="outline" className="w-full" onClick={() => setActiveTab("teams")}>
                   Lihat Semua Tim
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </CardFooter>
             </Card>
@@ -429,13 +429,13 @@ export default function KkpLocationsDashboard() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Building className="h-5 w-5 text-primary" />
+              <Building className="w-5 h-5 text-primary" />
               Tambah Lokasi KKP Baru
             </DialogTitle>
             <DialogDescription>Tambahkan lokasi KKP baru yang dapat dipilih oleh mahasiswa</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAddLocation}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+            <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-right">
                   Nama Lokasi <span className="text-red-500">*</span>
@@ -454,7 +454,7 @@ export default function KkpLocationsDashboard() {
                 </Label>
                 <select
                   id="type"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex w-full h-10 px-3 py-2 text-sm border rounded-md border-input bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={newLocation.type}
                   onChange={(e) => setNewLocation({ ...newLocation, type: e.target.value })}
                   required
