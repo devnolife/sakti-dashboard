@@ -26,7 +26,7 @@ export default function KkpLayout({ children }: { children: ReactNode }) {
             data-state={pathname === "/dashboard/mahasiswa/kkp/requirements" ? "active" : "inactive"}
           >
             <FileCheck className="w-4 h-4 mr-2" />
-            Requirements
+            Persyaratan
           </Link>
           <Link
             href="/dashboard/mahasiswa/kkp/locations"
@@ -34,7 +34,7 @@ export default function KkpLayout({ children }: { children: ReactNode }) {
             data-state={pathname === "/dashboard/mahasiswa/kkp/locations" ? "active" : "inactive"}
           >
             <MapPin className="w-4 h-4 mr-2" />
-            Locations
+            Lokasi
           </Link>
           <Link
             href="/dashboard/mahasiswa/kkp/pengajuan"

@@ -87,35 +87,35 @@ export default function StudentKkpDashboardPage() {
         return (
           <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Pending Review
+            Menunggu Peninjauan
           </Badge>
         )
       case "approved":
         return (
           <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-            Approved
+            Disetujui
           </Badge>
         )
       case "rejected":
         return (
           <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
             <XCircle className="h-3.5 w-3.5 mr-1" />
-            Rejected
+            Ditolak
           </Badge>
         )
       case "in-progress":
         return (
           <Badge variant="outline" className="text-blue-500 border-blue-200 bg-blue-500/10">
             <PlayCircle className="h-3.5 w-3.5 mr-1" />
-            In Progress
+            Sedang Berlangsung
           </Badge>
         )
       case "completed":
         return (
           <Badge variant="outline" className="text-purple-500 border-purple-200 bg-purple-500/10">
             <CheckCircle className="h-3.5 w-3.5 mr-1" />
-            Completed
+            Selesai
           </Badge>
         )
       default:
@@ -135,21 +135,21 @@ export default function StudentKkpDashboardPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-              KKP Dashboard
+              DashboardKKP
             </span>
           </h1>
           <p className="mt-1 text-muted-foreground">
-            Manage your Kuliah Kerja Praktik (Field Work Practice) applications and progress
+            Kelola aplikasi dan progres Kuliah Kerja Praktik Anda
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => router.push("/dashboard/mahasiswa/kkp/requirements")}>
             <FileCheck className="w-4 h-4 mr-2" />
-            View Requirements
+            Lihat Persyaratan
           </Button>
           <Button onClick={() => router.push("/dashboard/mahasiswa/kkp/apply")}>
             <Plus className="w-4 h-4 mr-2" />
-            Apply for KKP
+            Ajukan KKP
           </Button>
         </div>
       </div>
@@ -163,8 +163,8 @@ export default function StudentKkpDashboardPage() {
                 <FileText className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-bold">Current Application</h2>
-                <p className="text-sm text-muted-foreground">Your active KKP application status and progress</p>
+                <h2 className="text-xl font-bold">Pengajuan Saat Ini</h2>
+                <p className="text-sm text-muted-foreground">Status dan progres aplikasi KKP Anda yang aktif</p>
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function StudentKkpDashboardPage() {
                       <div className="p-2 transition-colors bg-white rounded-full shadow-sm group-hover:bg-primary/10">
                         <FileText className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="font-medium">Application ID</span>
+                      <span className="font-medium">ID Pengajuan</span>
                     </div>
                     <div className="px-3 py-1 text-sm font-medium bg-white rounded-full shadow-sm">KKP-2023-0042</div>
                   </div>
@@ -189,7 +189,7 @@ export default function StudentKkpDashboardPage() {
                       <div className="p-2 transition-colors bg-white rounded-full shadow-sm group-hover:bg-primary/10">
                         <MapPin className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="font-medium">Location</span>
+                      <span className="font-medium">Lokasi</span>
                     </div>
                     <div className="px-3 py-1 text-sm font-medium bg-white rounded-full shadow-sm">
                       PT Teknologi Maju Indonesia
@@ -203,7 +203,7 @@ export default function StudentKkpDashboardPage() {
                       <div className="p-2 transition-colors bg-white rounded-full shadow-sm group-hover:bg-primary/10">
                         <Users className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="font-medium">Group Members</span>
+                      <span className="font-medium">Anggota Kelompok</span>
                     </div>
                     <div className="flex -space-x-2">
                       <div className="flex items-center justify-center w-8 h-8 text-xs font-medium border-2 border-white rounded-full bg-secondary/20">
@@ -229,7 +229,7 @@ export default function StudentKkpDashboardPage() {
                     </div>
                     <Badge className="px-3 py-1 text-yellow-800 bg-yellow-100 border-yellow-200 hover:bg-yellow-200">
                       <Clock className="h-3.5 w-3.5 mr-1" />
-                      Pending Approval
+                      Menunggu Persetujuan
                     </Badge>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export default function StudentKkpDashboardPage() {
                 <div className="pt-2">
                   <Link href="/dashboard/mahasiswa/kkp/application">
                     <Button className="w-full transition-all shadow-md bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary hover:shadow-lg">
-                      View Application Details
+                      Lihat Detail Pengajuan
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>
@@ -246,9 +246,9 @@ export default function StudentKkpDashboardPage() {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-muted-foreground">APPLICATION PROGRESS</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">PROGRES PENGAJUAN</h3>
                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                    2 of 4 Steps
+                    2 dari 4 Langkah
                   </Badge>
                 </div>
 
@@ -263,14 +263,14 @@ export default function StudentKkpDashboardPage() {
                       </div>
                       <div className="w-full p-3 rounded-lg shadow-sm bg-green-50">
                         <div className="flex items-center justify-between">
-                          <p className="font-medium">Application Submitted</p>
+                          <p className="font-medium">Pengajuan Diajukan</p>
                           <Badge variant="outline" className="text-green-700 border-green-200 bg-green-50">
-                            Completed
+                            Selesai
                           </Badge>
                         </div>
                         <div className="flex items-center mt-1 text-xs text-green-700">
                           <Calendar className="w-3 h-3 mr-1" />
-                          <p>Oct 15, 2023</p>
+                          <p>15 Oktober 2023</p>
                         </div>
                       </div>
                     </div>
@@ -286,14 +286,14 @@ export default function StudentKkpDashboardPage() {
                       </div>
                       <div className="w-full p-3 rounded-lg shadow-sm bg-green-50">
                         <div className="flex items-center justify-between">
-                          <p className="font-medium">Document Verification</p>
+                          <p className="font-medium">Verifikasi Dokumen</p>
                           <Badge variant="outline" className="text-green-700 border-green-200 bg-green-50">
-                            Completed
+                            Selesai
                           </Badge>
                         </div>
                         <div className="flex items-center mt-1 text-xs text-green-700">
                           <Calendar className="w-3 h-3 mr-1" />
-                          <p>Oct 18, 2023</p>
+                          <p>18 Oktober 2023</p>
                         </div>
                       </div>
                     </div>
@@ -302,21 +302,21 @@ export default function StudentKkpDashboardPage() {
                   <div className="relative">
                     <div className="flex items-start space-x-3">
                       <div className="relative">
-                        <div className="z-10 flex items-center justify-center w-8 h-8 text-yellow-600 bg-yellow-100 border border-yellow-200 rounded-full shadow-sm animate-pulse">
+                        <div className="z-10 flex items-center justify-center w-8 h-8 text-yellow-600 bg-yellow-100 border border-yellow-200 rounded-full shadow-sm">
                           <Clock className="w-4 h-4" />
                         </div>
-                        <div className="absolute top-8 bottom-0 left-1/2 w-0.5 -translate-x-1/2 bg-gradient-to-b from-yellow-300 to-gray-200 h-full"></div>
+                        <div className="absolute top-8 bottom-0 left-1/2 w-0.5 -translate-x-1/2 bg-gradient-to-b from-yellow-300 to-gray-300 h-full"></div>
                       </div>
                       <div className="w-full p-3 rounded-lg shadow-sm bg-yellow-50">
                         <div className="flex items-center justify-between">
-                          <p className="font-medium">Supervisor Assignment</p>
+                          <p className="font-medium">Persetujuan Pembimbing</p>
                           <Badge variant="outline" className="text-yellow-700 border-yellow-200 bg-yellow-50">
-                            In Progress
+                            Dalam Proses
                           </Badge>
                         </div>
                         <div className="flex items-center mt-1 text-xs text-yellow-700">
                           <Clock className="w-3 h-3 mr-1" />
-                          <p>Estimated: Oct 25, 2023</p>
+                          <p>Menunggu</p>
                         </div>
                       </div>
                     </div>
@@ -331,14 +331,14 @@ export default function StudentKkpDashboardPage() {
                       </div>
                       <div className="w-full p-3 rounded-lg shadow-sm bg-gray-50">
                         <div className="flex items-center justify-between">
-                          <p className="font-medium text-gray-500">Final Approval</p>
+                          <p className="font-medium">Penempatan Akhir</p>
                           <Badge variant="outline" className="text-gray-500 border-gray-200 bg-gray-50">
-                            Pending
+                            Belum Dimulai
                           </Badge>
                         </div>
                         <div className="flex items-center mt-1 text-xs text-gray-500">
-                          <Clock className="w-3 h-3 mr-1" />
-                          <p>Estimated: Oct 31, 2023</p>
+                          <Calendar className="w-3 h-3 mr-1" />
+                          <p>Jadwal: November 2023</p>
                         </div>
                       </div>
                     </div>
@@ -766,6 +766,59 @@ export default function StudentKkpDashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Quick Access Links */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Card className="border shadow-md md:col-span-3">
+          <CardHeader className="pb-3">
+            <CardTitle>Akses Cepat</CardTitle>
+            <CardDescription>Tautan langsung ke fitur KKP utama dan sumber daya</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+              <Button variant="outline" className="justify-start h-auto p-4" onClick={() => router.push("/dashboard/mahasiswa/kkp/locations")}>
+                <div className="flex flex-col items-start gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Lokasi KKP</p>
+                    <p className="text-xs text-muted-foreground">Jelajahi lokasi tempat KKP yang tersedia</p>
+                  </div>
+                </div>
+              </Button>
+
+              <Button variant="outline" className="justify-start h-auto p-4" onClick={() => router.push("/dashboard/mahasiswa/kkp/documents")}>
+                <div className="flex flex-col items-start gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Dokumen</p>
+                    <p className="text-xs text-muted-foreground">Akses dan kelola semua dokumen KKP Anda</p>
+                  </div>
+                </div>
+              </Button>
+
+              <Button variant="outline" className="justify-start h-auto p-4" onClick={() => router.push("/dashboard/mahasiswa/kkp/supervisors")}>
+                <div className="flex flex-col items-start gap-2">
+                  <UserCheck className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Pembimbing</p>
+                    <p className="text-xs text-muted-foreground">Lihat informasi dosen pembimbing KKP</p>
+                  </div>
+                </div>
+              </Button>
+
+              <Button variant="outline" className="justify-start h-auto p-4" onClick={() => router.push("/dashboard/mahasiswa/kkp/info")}>
+                <div className="flex flex-col items-start gap-2">
+                  <Info className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Panduan KKP</p>
+                    <p className="text-xs text-muted-foreground">Baca panduan resmi tentang proses KKP</p>
+                  </div>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

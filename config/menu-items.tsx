@@ -60,7 +60,6 @@ export const mahasiswaMenuItems = [
         id: "control-card",
         title: "Kartu Kontrol",
         href: "/dashboard/mahasiswa/academic/control-card",
-        badge: { text: "New", variant: "outline" },
       },
     ],
   },
@@ -90,7 +89,6 @@ export const mahasiswaMenuItems = [
         id: "title-submission",
         title: "Pengajuan Judul",
         href: "/dashboard/mahasiswa/library/title-submission",
-        badge: { text: "New", variant: "outline" },
       },
     ],
   },
@@ -99,21 +97,18 @@ export const mahasiswaMenuItems = [
     title: "Laboratorium",
     href: "/dashboard/mahasiswa/laboratory",
     icon: Briefcase,
-    badge: { text: "New", variant: "outline" },
   },
   {
     id: "correspondence",
     title: "Layanan Surat",
     href: "/dashboard/mahasiswa/correspondence",
     icon: Mail,
-    badge: { text: "New", variant: "outline" },
   },
   {
     id: "exams",
     title: "Ujian",
     href: "/dashboard/mahasiswa/exams",
     icon: GraduationCapIcon,
-    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "exams-dashboard",
@@ -124,7 +119,6 @@ export const mahasiswaMenuItems = [
         id: "exams-register",
         title: "Daftar Ujian",
         href: "/dashboard/mahasiswa/exams/register",
-        badge: { text: "New", variant: "outline" },
       },
       {
         id: "exams-submissions",
@@ -138,7 +132,6 @@ export const mahasiswaMenuItems = [
     title: "Pembayaran",
     href: "/dashboard/mahasiswa/payment",
     icon: CreditCard,
-    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "payment-dashboard",
@@ -162,7 +155,6 @@ export const mahasiswaMenuItems = [
     title: "KKP",
     href: "/dashboard/mahasiswa/kkp",
     icon: Briefcase,
-    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "kkp-dashboard",
@@ -191,7 +183,6 @@ export const mahasiswaMenuItems = [
     title: "KKP Plus",
     href: "/dashboard/mahasiswa/kkp/plus",
     icon: Award,
-    badge: { text: "New", variant: "outline" },
     children: [
       {
         id: "kkp-plus-overview",

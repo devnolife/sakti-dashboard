@@ -30,11 +30,11 @@ export default function DashboardOverview() {
     <div className="space-y-8">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Selamat Datang di Dasbor {roleLabels[role]}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+            Selamat Datang di Dashboard {roleLabels[role]}
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">
+        <p className="mt-2 text-muted-foreground">
           Berikut adalah ringkasan informasi utama dan aktivitas terbaru Anda.
         </p>
       </div>
@@ -42,10 +42,10 @@ export default function DashboardOverview() {
       {role === "mahasiswa" && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Mata Kuliah Saat Ini</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <BookOpen className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
@@ -63,16 +63,16 @@ export default function DashboardOverview() {
           </Card>
 
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Persyaratan Magang</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-secondary/10 flex items-center justify-center">
-                <ClipboardCheck className="h-4 w-4 text-secondary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/10">
+                <ClipboardCheck className="w-4 h-4 text-secondary" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">70%</div>
               <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
                 <span className="text-xs text-green-500">7 dari 10 persyaratan selesai</span>
               </div>
               <div className="flex justify-end mt-2">
@@ -84,10 +84,10 @@ export default function DashboardOverview() {
           </Card>
 
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Lokasi Magang</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
-                <Building className="h-4 w-4 text-accent" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10">
+                <Building className="w-4 h-4 text-accent" />
               </div>
             </CardHeader>
             <CardContent>
@@ -107,10 +107,10 @@ export default function DashboardOverview() {
           </Card>
 
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Pengajuan Lokasi</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <FileSearch className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <FileSearch className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
@@ -135,25 +135,25 @@ export default function DashboardOverview() {
       {role === "admin" && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Pendaftaran Mahasiswa</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <GraduationCap className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <GraduationCap className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">1.245</div>
               <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
                 <span className="text-xs text-green-500">+5% dari semester lalu</span>
               </div>
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Mata Kuliah Aktif</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-secondary/10 flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-secondary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/10">
+                <BookOpen className="w-4 h-4 text-secondary" />
               </div>
             </CardHeader>
             <CardContent>
@@ -170,10 +170,10 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Permintaan Tertunda</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-accent" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10">
+                <Calendar className="w-4 h-4 text-accent" />
               </div>
             </CardHeader>
             <CardContent>
@@ -192,10 +192,10 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Anggota Fakultas</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <Users className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
@@ -217,10 +217,10 @@ export default function DashboardOverview() {
       {role === "kepala_jurusan" && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Staf Jurusan</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <Users className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
@@ -239,16 +239,16 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Mata Kuliah Jurusan</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-secondary/10 flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-secondary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/10">
+                <BookOpen className="w-4 h-4 text-secondary" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">32</div>
               <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
                 <span className="text-xs text-green-500">+2 dari semester lalu</span>
               </div>
               <div className="flex justify-end mt-2">
@@ -259,10 +259,10 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Pengajuan Lokasi</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
-                <Building className="h-4 w-4 text-accent" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10">
+                <Building className="w-4 h-4 text-accent" />
               </div>
             </CardHeader>
             <CardContent>
@@ -281,16 +281,16 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Pendaftaran Mahasiswa</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <GraduationCap className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <GraduationCap className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">342</div>
               <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
                 <span className="text-xs text-green-500">+8% dari tahun lalu</span>
               </div>
               <div className="flex justify-end mt-2">
@@ -306,10 +306,10 @@ export default function DashboardOverview() {
       {role === "dekan" && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Total Fakultas</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <Users className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
@@ -326,16 +326,16 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Total Mahasiswa</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-secondary/10 flex items-center justify-center">
-                <GraduationCap className="h-4 w-4 text-secondary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/10">
+                <GraduationCap className="w-4 h-4 text-secondary" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">5.280</div>
               <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
                 <span className="text-xs text-green-500">+12% dari tahun lalu</span>
               </div>
               <div className="flex justify-end mt-2">
@@ -346,10 +346,10 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Anggaran Tahunan</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
-                <BarChart className="h-4 w-4 text-accent" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10">
+                <BarChart className="w-4 h-4 text-accent" />
               </div>
             </CardHeader>
             <CardContent>
@@ -368,16 +368,16 @@ export default function DashboardOverview() {
             </CardContent>
           </Card>
           <Card className="overflow-hidden gradient-border card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Hibah Penelitian</CardTitle>
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Award className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <Award className="w-4 h-4 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">Rp8,2M</div>
               <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
                 <span className="text-xs text-green-500">+15% dari tahun lalu</span>
               </div>
               <div className="flex justify-end mt-2">
@@ -394,7 +394,7 @@ export default function DashboardOverview() {
         <Card className="col-span-1 overflow-hidden gradient-border card-hover blue-gradient-bg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-primary" />
+              <Zap className="w-5 h-5 text-primary" />
               <span>Notifikasi Terbaru</span>
             </CardTitle>
             <CardDescription>Pembaruan dan pemberitahuan terbaru Anda</CardDescription>
@@ -403,9 +403,9 @@ export default function DashboardOverview() {
             <div className="space-y-4">
               {role === "mahasiswa" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <BookOpen className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <BookOpen className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Tugas Jatuh Tempo: Makalah Penelitian</p>
@@ -417,9 +417,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-                      <Award className="h-5 w-5 text-green-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10 shrink-0">
+                      <Award className="w-5 h-5 text-green-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Persyaratan Disetujui: Sertifikat Bahasa Inggris</p>
@@ -436,9 +436,9 @@ export default function DashboardOverview() {
 
               {role === "admin" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Calendar className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <Calendar className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Periode Pendaftaran Mata Kuliah Baru</p>
@@ -450,9 +450,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
-                      <Building className="h-5 w-5 text-red-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-500/10 shrink-0">
+                      <Building className="w-5 h-5 text-red-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Pengajuan Lokasi Magang Baru</p>
@@ -469,9 +469,9 @@ export default function DashboardOverview() {
 
               {role === "kepala_jurusan" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <BarChart className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <BarChart className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Rapat Tinjauan Anggaran</p>
@@ -481,9 +481,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                      <Building className="h-5 w-5 text-amber-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 shrink-0">
+                      <Building className="w-5 h-5 text-amber-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Pengajuan Lokasi Magang Baru</p>
@@ -500,9 +500,9 @@ export default function DashboardOverview() {
 
               {role === "dekan" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Users className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <Users className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Rapat Dewan Pengawas</p>
@@ -514,9 +514,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-                      <Award className="h-5 w-5 text-green-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10 shrink-0">
+                      <Award className="w-5 h-5 text-green-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Peluang Hibah Penelitian Baru</p>
@@ -537,7 +537,7 @@ export default function DashboardOverview() {
         <Card className="col-span-1 overflow-hidden gradient-border card-hover blue-gradient-bg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-secondary" />
+              <Calendar className="w-5 h-5 text-secondary" />
               <span>Acara Mendatang</span>
             </CardTitle>
             <CardDescription>Jadwal Anda untuk beberapa hari ke depan</CardDescription>
@@ -546,9 +546,9 @@ export default function DashboardOverview() {
             <div className="space-y-4">
               {role === "mahasiswa" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
-                      <BookOpen className="h-5 w-5 text-red-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-500/10 shrink-0">
+                      <BookOpen className="w-5 h-5 text-red-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Ujian Tengah Semester Fisika</p>
@@ -558,9 +558,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                      <Building className="h-5 w-5 text-blue-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10 shrink-0">
+                      <Building className="w-5 h-5 text-blue-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Batas Akhir Pengajuan Lokasi Magang</p>
@@ -575,9 +575,9 @@ export default function DashboardOverview() {
 
               {role === "admin" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Users className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <Users className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Rapat Staf</p>
@@ -587,9 +587,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-                      <Building className="h-5 w-5 text-green-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10 shrink-0">
+                      <Building className="w-5 h-5 text-green-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Review Lokasi Magang</p>
@@ -604,9 +604,9 @@ export default function DashboardOverview() {
 
               {role === "kepala_jurusan" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Users className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <Users className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Rapat Fakultas</p>
@@ -616,9 +616,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                      <Building className="h-5 w-5 text-amber-500" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 shrink-0">
+                      <Building className="w-5 h-5 text-amber-500" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Review Pengajuan Lokasi Magang</p>
@@ -633,9 +633,9 @@ export default function DashboardOverview() {
 
               {role === "dekan" && (
                 <>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Users className="h-5 w-5 text-primary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
+                      <Users className="w-5 h-5 text-primary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Rapat Pimpinan Eksekutif</p>
@@ -647,9 +647,9 @@ export default function DashboardOverview() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 rounded-xl border border-primary/20 p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="h-10 w-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
-                      <BarChart className="h-5 w-5 text-secondary" />
+                  <div className="flex items-start gap-4 p-4 border rounded-xl border-primary/20 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 shrink-0">
+                      <BarChart className="w-5 h-5 text-secondary" />
                     </div>
                     <div className="grid gap-1">
                       <p className="text-sm font-medium">Tinjauan Triwulanan Kepala Jurusan</p>
