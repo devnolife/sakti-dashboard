@@ -323,6 +323,11 @@ export const prodiMenuItems = [
         href: "/dashboard/prodi/exams/approval",
       },
       {
+        id: "exam-requirements",
+        title: "Persyaratan Ujian",
+        href: "/dashboard/prodi/exams/requirements",
+      },
+      {
         id: "exam-committees",
         title: "Penguji",
         href: "/dashboard/prodi/exams/committees",

@@ -3,6 +3,7 @@
 import { ProdiExamRoleCard } from "./prodi-exam-role-card"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
 
 export default function ProdiExamSection() {
   return (
@@ -27,7 +28,7 @@ export default function ProdiExamSection() {
                   <CardDescription>Daftar aplikasi ujian yang memerlukan persetujuan Anda</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-center text-muted-foreground py-8">
+                  <p className="py-8 text-center text-muted-foreground">
                     Tidak ada aplikasi ujian yang menunggu persetujuan saat ini
                   </p>
                 </CardContent>
@@ -40,7 +41,7 @@ export default function ProdiExamSection() {
                   <CardDescription>Daftar ujian yang telah dijadwalkan</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-center text-muted-foreground py-8">
+                  <p className="py-8 text-center text-muted-foreground">
                     Tidak ada ujian yang terjadwal untuk periode ini
                   </p>
                 </CardContent>
@@ -53,7 +54,7 @@ export default function ProdiExamSection() {
                   <CardDescription>Daftar ujian yang telah selesai</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-center text-muted-foreground py-8">
+                  <p className="py-8 text-center text-muted-foreground">
                     Tidak ada ujian yang telah selesai untuk periode ini
                   </p>
                 </CardContent>
@@ -62,9 +63,30 @@ export default function ProdiExamSection() {
           </Tabs>
         </div>
 
-        {/* The ProdiExamRoleCard component is placed here */}
-        <div>
+        <div className="space-y-6">
           <ProdiExamRoleCard />
+
+          <Card className="overflow-hidden gradient-border card-hover">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Persyaratan Ujian</CardTitle>
+              <Badge variant="outline" className="text-blue-500 bg-blue-500/10">
+                Baru
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="mt-2 text-sm">
+                <p>Kelola persyaratan untuk ujian proposal, hasil, dan sidang mahasiswa</p>
+                <div className="mt-3">
+                  <a
+                    href="/dashboard/prodi/exams/requirements"
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    Lihat Persyaratan Ujian →
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
