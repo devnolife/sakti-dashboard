@@ -88,8 +88,8 @@ export const mockStudentExamData: StudentExamData = {
       },
       {
         id: "res-req-5",
-        title: "Passed Proposal Exam",
-        description: "Must have passed the proposal examination",
+        title: "Passed Ujian Proposal",
+        description: "Must have passed the Ujian Proposalination",
         completed: false,
       },
     ],
@@ -119,8 +119,8 @@ export const mockStudentExamData: StudentExamData = {
       },
       {
         id: "close-req-4",
-        title: "Passed Result Exam",
-        description: "Must have passed the result examination",
+        title: "Passed Ujian hasil",
+        description: "Must have passed the Ujian hasilination",
         completed: false,
       },
     ],

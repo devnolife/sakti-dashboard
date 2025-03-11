@@ -33,7 +33,7 @@ export const mockExams: Exam[] = [
     documents: [
       {
         id: "doc-1",
-        name: "Payment Receipt - Proposal Exam",
+        name: "Payment Receipt - Ujian Proposal",
         type: "payment_proof",
         status: "verified",
         uploadDate: "2025-03-01T10:30:00.000Z",

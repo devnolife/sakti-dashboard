@@ -63,7 +63,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
     switch (examType) {
       case "proposal":
         return {
-          title: "Proposal Examination Submission",
+          title: "Ujian Proposalination Submission",
           description: "Submit your research proposal for review",
           icon: <BookOpen className="h-5 w-5 text-blue-600" />,
           color: "text-blue-800",
@@ -74,7 +74,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
         }
       case "result":
         return {
-          title: "Result Examination Submission",
+          title: "Ujian hasilination Submission",
           description: "Submit your research results for review",
           icon: <GraduationCap className="h-5 w-5 text-purple-600" />,
           color: "text-purple-800",
@@ -85,7 +85,7 @@ export function ExamSubmissionForm({ examType, onClose, requirements }: ExamSubm
         }
       case "closing":
         return {
-          title: "Closing Examination Submission",
+          title: "Ujian Tutupination Submission",
           description: "Submit your final thesis for review",
           icon: <Award className="h-5 w-5 text-teal-600" />,
           color: "text-teal-800",

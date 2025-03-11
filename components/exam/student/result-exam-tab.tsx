@@ -39,9 +39,9 @@ export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) 
             <Lock className="h-5 w-5 text-amber-700" />
           </div>
           <div>
-            <h3 className="font-medium text-amber-900">Proposal Exam Required</h3>
+            <h3 className="font-medium text-amber-900">Ujian Proposal Required</h3>
             <p className="text-sm text-amber-800">
-              You must pass your proposal examination before proceeding with the result exam.
+              You must pass your Ujian Proposalination before proceeding with the Ujian hasil.
             </p>
           </div>
         </div>
@@ -54,14 +54,14 @@ export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) 
               <div className="flex items-center justify-between">
                 <CardTitle className="text-purple-800 flex items-center gap-2">
                   <GraduationCap className="h-5 w-5 text-purple-600" />
-                  Result Examination Requirements
+                  Ujian hasilination Requirements
                 </CardTitle>
                 <div className="text-sm font-medium text-purple-700 bg-white/80 px-3 py-1 rounded-full border border-purple-300">
                   {updatedRequirements.filter((r) => r.completed).length}/{updatedRequirements.length} Completed
                 </div>
               </div>
               <CardDescription className="text-purple-700">
-                Complete all requirements before submitting your result exam
+                Complete all requirements before submitting your Ujian hasil
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -114,16 +114,16 @@ export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) 
                   onClick={() => setShowSubmissionForm(true)}
                   className="w-full bg-purple-600 hover:bg-purple-700"
                 >
-                  Submit Result Exam
+                  Submit Ujian hasil
                 </Button>
               ) : (
                 <Button disabled className="w-full">
                   {!proposalPassed
-                    ? "Pass Proposal Exam First"
+                    ? "Pass Ujian Proposal First"
                     : !allRequirementsCompleted
                       ? "Complete All Requirements First"
                       : examData.submissionDate
-                        ? "Result Exam Already Submitted"
+                        ? "Ujian hasil Already Submitted"
                         : "Cannot Submit at This Time"}
                 </Button>
               )}
@@ -138,7 +138,7 @@ export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) 
                 <Calendar className="h-5 w-5 text-purple-600" />
                 Examination Status
               </CardTitle>
-              <CardDescription className="text-purple-700">Current status of your result exam</CardDescription>
+              <CardDescription className="text-purple-700">Current status of your Ujian hasil</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-4">
@@ -146,7 +146,7 @@ export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) 
                   <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                     <GraduationCap className="h-8 w-8 text-purple-600" />
                   </div>
-                  <h3 className="font-medium text-lg text-purple-800">Result Examination</h3>
+                  <h3 className="font-medium text-lg text-purple-800">Ujian hasilination</h3>
                   <div className="mt-2">
                     {!proposalPassed && (
                       <div className="text-gray-600 bg-gray-50 px-3 py-1 rounded-full border border-gray-200 text-sm font-medium">
@@ -212,9 +212,9 @@ export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) 
           <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100 pb-3 border-b border-purple-200">
             <CardTitle className="text-purple-800 flex items-center gap-2">
               <FileText className="h-5 w-5 text-purple-600" />
-              Submitted Result Exam
+              Submitted Ujian hasil
             </CardTitle>
-            <CardDescription className="text-purple-700">Your result examination submission details</CardDescription>
+            <CardDescription className="text-purple-700">Your Ujian hasilination submission details</CardDescription>
           </CardHeader>
           <CardContent className="p-4">
             <div className="grid md:grid-cols-2 gap-6">

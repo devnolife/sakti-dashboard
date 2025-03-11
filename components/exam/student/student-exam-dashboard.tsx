@@ -242,7 +242,7 @@ export default function StudentExamDashboard() {
             </Card>
 
             <ExamProgress
-              title="Proposal Exam"
+              title="Ujian Proposal"
               icon={<BookOpen className="w-5 h-5" />}
               progress={Math.round(
                 (proposalExam.requirements.filter((req) => req.completed).length / proposalExam.requirements.length) *
@@ -254,7 +254,7 @@ export default function StudentExamDashboard() {
             />
 
             <ExamProgress
-              title="Result Exam"
+              title="Ujian hasil"
               icon={<GraduationCap className="w-5 h-5" />}
               progress={Math.round(
                 (resultExam.requirements.filter((req) => req.completed).length / resultExam.requirements.length) * 100,
@@ -265,7 +265,7 @@ export default function StudentExamDashboard() {
             />
 
             <ExamProgress
-              title="Closing Exam"
+              title="Ujian Tutup"
               icon={<Award className="w-5 h-5" />}
               progress={Math.round(
                 (closingExam.requirements.filter((req) => req.completed).length / closingExam.requirements.length) *
@@ -292,7 +292,7 @@ export default function StudentExamDashboard() {
                           <BookOpen className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-blue-800">Proposal Examination</h3>
+                          <h3 className="font-medium text-blue-800">Ujian Proposalination</h3>
                           <p className="text-sm text-muted-foreground">
                             {new Date(proposalExam.scheduledDate).toLocaleString()}
                           </p>
@@ -311,7 +311,7 @@ export default function StudentExamDashboard() {
                           <GraduationCap className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-purple-800">Result Examination</h3>
+                          <h3 className="font-medium text-purple-800">Ujian hasilination</h3>
                           <p className="text-sm text-muted-foreground">
                             {new Date(resultExam.scheduledDate).toLocaleString()}
                           </p>
@@ -330,7 +330,7 @@ export default function StudentExamDashboard() {
                           <Award className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="font-medium text-teal-800">Closing Examination</h3>
+                          <h3 className="font-medium text-teal-800">Ujian Tutupination</h3>
                           <p className="text-sm text-muted-foreground">
                             {new Date(closingExam.scheduledDate).toLocaleString()}
                           </p>
@@ -357,8 +357,8 @@ export default function StudentExamDashboard() {
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="border-muted">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-medium">Examination Timeline</CardTitle>
-                <CardDescription>Your academic examination journey</CardDescription>
+                <CardTitle className="text-lg font-medium">Linimasa Ujian</CardTitle>
+                <CardDescription>Perjalanan ujian akademik Anda</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="relative mt-2 space-y-4">
@@ -368,12 +368,12 @@ export default function StudentExamDashboard() {
                     <div className="absolute left-0 z-10 flex items-center justify-center w-10 h-10 bg-blue-100 border-4 rounded-full border-background">
                       <BookOpen className="w-5 h-5 text-blue-600" />
                     </div>
-                    <h3 className="font-medium">Proposal Examination</h3>
-                    <p className="text-sm text-muted-foreground">Present your research proposal</p>
+                    <h3 className="font-medium">Ujian Proposal</h3>
+                    <p className="text-sm text-muted-foreground">Paparkan proposal penelitian Anda</p>
                     <div
                       className={`text-sm mt-1 ${proposalExam.status === "passed" ? "text-green-600" : "text-blue-600"}`}
                     >
-                      {proposalExam.status === "passed" ? "Completed" : "In Progress"}
+                      {proposalExam.status === "passed" ? "Selesai" : "Sedang Berlangsung"}
                     </div>
                   </div>
 
@@ -388,21 +388,21 @@ export default function StudentExamDashboard() {
                     <h3
                       className={`font-medium ${resultExam.status === "not-started" ? "text-muted-foreground/60" : ""}`}
                     >
-                      Result Examination
+                      Ujian Hasil
                     </h3>
                     <p
                       className={`text-sm ${resultExam.status === "not-started" ? "text-muted-foreground/60" : "text-muted-foreground"}`}
                     >
-                      Present your research findings
+                      Paparkan hasil penelitian Anda
                     </p>
                     <div
                       className={`text-sm mt-1 ${resultExam.status === "not-started" ? "text-muted-foreground/60" : "text-purple-600"}`}
                     >
                       {resultExam.status === "not-started"
-                        ? "Not Started"
+                        ? "Belum Dimulai"
                         : resultExam.status === "passed"
-                          ? "Completed"
-                          : "In Progress"}
+                          ? "Selesai"
+                          : "Sedang Berlangsung"}
                     </div>
                   </div>
 
@@ -417,21 +417,21 @@ export default function StudentExamDashboard() {
                     <h3
                       className={`font-medium ${closingExam.status === "not-started" ? "text-muted-foreground/60" : ""}`}
                     >
-                      Closing Examination
+                      Ujian Tertutup
                     </h3>
                     <p
                       className={`text-sm ${closingExam.status === "not-started" ? "text-muted-foreground/60" : "text-muted-foreground"}`}
                     >
-                      Final thesis defense
+                      Sidang akhir
                     </p>
                     <div
                       className={`text-sm mt-1 ${closingExam.status === "not-started" ? "text-muted-foreground/60" : "text-teal-600"}`}
                     >
                       {closingExam.status === "not-started"
-                        ? "Not Started"
+                        ? "Belum Dimulai"
                         : closingExam.status === "passed"
-                          ? "Completed"
-                          : "In Progress"}
+                          ? "Selesai"
+                          : "Sedang Berlangsung"}
                     </div>
                   </div>
                 </div>
@@ -440,8 +440,8 @@ export default function StudentExamDashboard() {
 
             <Card className="border-muted">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-medium">Requirements Overview</CardTitle>
-                <CardDescription>Track your examination requirements</CardDescription>
+                <CardTitle className="text-lg font-medium">Ikhtisar Persyaratan</CardTitle>
+                <CardDescription>Pantau persyaratan ujian Anda</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -450,7 +450,7 @@ export default function StudentExamDashboard() {
                       <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
                         <BookOpen className="w-4 h-4 text-blue-600" />
                       </div>
-                      <span className="font-medium">Proposal Requirements</span>
+                      <span className="font-medium">Persyaratan Ujian Proposal</span>
                     </div>
                     <div className="text-sm">
                       {proposalExam.requirements.filter((r) => r.completed).length}/{proposalExam.requirements.length}{" "}
@@ -463,7 +463,7 @@ export default function StudentExamDashboard() {
                       <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
                         <GraduationCap className="w-4 h-4 text-purple-600" />
                       </div>
-                      <span className="font-medium">Result Requirements</span>
+                      <span className="font-medium">Persyaratan Ujian Hasil</span>
                     </div>
                     <div className="text-sm">
                       {resultExam.requirements.filter((r) => r.completed).length}/{resultExam.requirements.length}{" "}
@@ -476,7 +476,7 @@ export default function StudentExamDashboard() {
                       <div className="flex items-center justify-center w-8 h-8 bg-teal-100 rounded-full">
                         <Award className="w-4 h-4 text-teal-600" />
                       </div>
-                      <span className="font-medium">Closing Requirements</span>
+                      <span className="font-medium">Persyaratan Ujian Tutup</span>
                     </div>
                     <div className="text-sm">
                       {closingExam.requirements.filter((r) => r.completed).length}/{closingExam.requirements.length}{" "}

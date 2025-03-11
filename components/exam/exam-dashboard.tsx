@@ -89,7 +89,7 @@ export default function ExamDashboard({ defaultTab = "proposal" }: ExamDashboard
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Exam Management</h1>
-        <p className="text-muted-foreground">Manage student proposal and result examinations</p>
+        <p className="text-muted-foreground">Manage student proposal and Ujian hasilinations</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -98,8 +98,8 @@ export default function ExamDashboard({ defaultTab = "proposal" }: ExamDashboard
 
       <Tabs defaultValue={defaultTab} value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4 mb-4">
-          <TabsTrigger value="proposal">Proposal Exams ({proposalExams.length})</TabsTrigger>
-          <TabsTrigger value="result">Result Exams ({resultExams.length})</TabsTrigger>
+          <TabsTrigger value="proposal">Ujian Proposals ({proposalExams.length})</TabsTrigger>
+          <TabsTrigger value="result">Ujian hasils ({resultExams.length})</TabsTrigger>
           <TabsTrigger value="closed">Closed Exams ({closedExams.length})</TabsTrigger>
           <TabsTrigger value="schedule">Exam Schedule</TabsTrigger>
         </TabsList>

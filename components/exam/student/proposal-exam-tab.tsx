@@ -27,7 +27,7 @@ export function ProposalExamTab({ examData }: ProposalExamTabProps) {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-blue-800 flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-blue-600" />
-                  Proposal Examination Requirements
+                  Ujian Proposalination Requirements
                 </CardTitle>
                 <div className="text-sm font-medium text-blue-700 bg-white/80 px-3 py-1 rounded-full border border-blue-300">
                   {examData.requirements.filter((r) => r.completed).length}/{examData.requirements.length} Completed
@@ -66,7 +66,7 @@ export function ProposalExamTab({ examData }: ProposalExamTabProps) {
             <CardFooter className="bg-blue-50/50 p-4 border-t border-blue-200">
               {canSubmit ? (
                 <Button onClick={() => setShowSubmissionForm(true)} className="w-full bg-blue-600 hover:bg-blue-700">
-                  Submit Proposal Exam
+                  Submit Ujian Proposal
                 </Button>
               ) : (
                 <Button disabled className="w-full">
@@ -88,7 +88,7 @@ export function ProposalExamTab({ examData }: ProposalExamTabProps) {
                 <Calendar className="h-5 w-5 text-blue-600" />
                 Examination Status
               </CardTitle>
-              <CardDescription className="text-blue-700">Current status of your proposal exam</CardDescription>
+              <CardDescription className="text-blue-700">Current status of your Ujian Proposal</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-4">
@@ -96,7 +96,7 @@ export function ProposalExamTab({ examData }: ProposalExamTabProps) {
                   <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                     <BookOpen className="h-8 w-8 text-blue-600" />
                   </div>
-                  <h3 className="font-medium text-lg text-blue-800">Proposal Examination</h3>
+                  <h3 className="font-medium text-lg text-blue-800">Ujian Proposalination</h3>
                   <div className="mt-2">
                     {examData.status === "pending" && !examData.submissionDate && (
                       <div className="text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-sm font-medium">
@@ -158,7 +158,7 @@ export function ProposalExamTab({ examData }: ProposalExamTabProps) {
               <FileText className="h-5 w-5 text-blue-600" />
               Submitted Proposal
             </CardTitle>
-            <CardDescription className="text-blue-700">Your proposal examination submission details</CardDescription>
+            <CardDescription className="text-blue-700">Your Ujian Proposalination submission details</CardDescription>
           </CardHeader>
           <CardContent className="p-4">
             <div className="grid md:grid-cols-2 gap-6">
