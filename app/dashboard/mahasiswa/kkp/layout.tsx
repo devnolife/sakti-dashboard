@@ -9,7 +9,7 @@ export default function KkpLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-14">
       <div className="flex pb-2 overflow-auto scrollbar-hide">
         <div className="flex space-x-2">
           <Link
