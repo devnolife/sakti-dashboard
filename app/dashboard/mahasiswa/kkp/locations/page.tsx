@@ -17,6 +17,18 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Building, Search, MapPin, Users, Briefcase, Plus, X, UserPlus } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+
+// SubLocation interface
+interface SubLocation {
+  id: string
+  name: string
+  address: string
+  contactPerson: string
+  contactEmail: string
+  contactPhone: string
+}
 
 // Location interface
 interface Location {
@@ -31,6 +43,7 @@ interface Location {
   status: "available" | "limited" | "full"
   distance?: number // in km
   favorite?: boolean
+  subLocations: SubLocation[]
 }
 
 export default function LocationsPage() {
@@ -48,6 +61,7 @@ export default function LocationsPage() {
       status: "available",
       distance: 3.2,
       favorite: true,
+      subLocations: [],
     },
     {
       id: "loc-002",
@@ -60,6 +74,7 @@ export default function LocationsPage() {
       remaining: 2,
       status: "limited",
       distance: 5.7,
+      subLocations: [],
     },
     {
       id: "loc-003",
@@ -72,6 +87,7 @@ export default function LocationsPage() {
       remaining: 0,
       status: "full",
       distance: 120.3,
+      subLocations: [],
     },
     {
       id: "loc-004",
@@ -84,6 +100,7 @@ export default function LocationsPage() {
       remaining: 8,
       status: "available",
       distance: 4.8,
+      subLocations: [],
     },
   ])
 
@@ -104,7 +121,11 @@ export default function LocationsPage() {
     quota: 0,
     remaining: 0,
     status: "available",
+    subLocations: [],
   })
+
+  // State for sub-locations
+  const [newSubLocations, setNewSubLocations] = useState<Partial<SubLocation>[]>([])
 
   // Get unique industries and cities for filters
   const industries = Array.from(new Set(locations.map((loc) => loc.industry)))
@@ -158,6 +179,14 @@ export default function LocationsPage() {
       remaining: newLocation.remaining || 0,
       status: (newLocation.status as "available" | "limited" | "full") || "available",
       distance: Math.random() * 10, // Random distance for demo
+      subLocations: newSubLocations.map((subLoc, index) => ({
+        id: `subloc-${id}-${index + 1}`,
+        name: subLoc.name || "",
+        address: subLoc.address || "",
+        contactPerson: subLoc.contactPerson || "",
+        contactEmail: subLoc.contactEmail || "",
+        contactPhone: subLoc.contactPhone || "",
+      })),
     }
 
     setLocations([...locations, newLoc])
@@ -170,8 +199,28 @@ export default function LocationsPage() {
       quota: 0,
       remaining: 0,
       status: "available",
+      subLocations: [],
     })
+    setNewSubLocations([])
     setShowAddDialog(false)
+  }
+
+  // Handle adding a new sub-location field
+  const handleAddSubLocationField = () => {
+    setNewSubLocations([...newSubLocations, {}])
+  }
+
+  // Handle updating a sub-location field
+  const handleUpdateSubLocation = (index: number, field: keyof SubLocation, value: string) => {
+    const updatedSubLocations = [...newSubLocations]
+    updatedSubLocations[index] = { ...updatedSubLocations[index], [field]: value }
+    setNewSubLocations(updatedSubLocations)
+  }
+
+  // Handle removing a sub-location field
+  const handleRemoveSubLocationField = (index: number) => {
+    const updatedSubLocations = newSubLocations.filter((_, i) => i !== index)
+    setNewSubLocations(updatedSubLocations)
   }
 
   // Handle toggling favorite status
@@ -191,11 +240,11 @@ export default function LocationsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "available":
-        return <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Available</Badge>
+        return <Badge className="text-green-500 bg-green-500/10 hover:bg-green-500/20">Available</Badge>
       case "limited":
         return <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">Limited</Badge>
       case "full":
-        return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20">Full</Badge>
+        return <Badge className="text-red-500 bg-red-500/10 hover:bg-red-500/20">Full</Badge>
       default:
         return null
     }
@@ -205,14 +254,15 @@ export default function LocationsPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
             Internship Locations
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Browse, manage, and apply to internship locations</p>
+        <p className="mt-2 text-muted-foreground">Browse, manage, and apply to internship locations</p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+      {/* Search and Filters */}
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div className="relative w-full md:w-64">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -223,7 +273,7 @@ export default function LocationsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+        <div className="flex flex-wrap w-full gap-2 md:w-auto">
           <Select value={industryFilter} onValueChange={setIndustryFilter}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Industry" />
@@ -278,7 +328,7 @@ export default function LocationsPage() {
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="w-4 h-4 mr-2" />
                 Add Location
               </Button>
             </DialogTrigger>
@@ -290,9 +340,7 @@ export default function LocationsPage() {
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium">
-                      Company/Institution Name
-                    </label>
+                    <Label htmlFor="name">Company/Institution Name</Label>
                     <Input
                       id="name"
                       value={newLocation.name}
@@ -301,9 +349,7 @@ export default function LocationsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="industry" className="text-sm font-medium">
-                      Industry
-                    </label>
+                    <Label htmlFor="industry">Industry</Label>
                     <Input
                       id="industry"
                       value={newLocation.industry}
@@ -313,10 +359,8 @@ export default function LocationsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="address" className="text-sm font-medium">
-                    Address
-                  </label>
-                  <Input
+                  <Label htmlFor="address">Address</Label>
+                  <Textarea
                     id="address"
                     value={newLocation.address}
                     onChange={(e) => setNewLocation({ ...newLocation, address: e.target.value })}
@@ -325,9 +369,7 @@ export default function LocationsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="city" className="text-sm font-medium">
-                      City
-                    </label>
+                    <Label htmlFor="city">City</Label>
                     <Input
                       id="city"
                       value={newLocation.city}
@@ -336,9 +378,7 @@ export default function LocationsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="positions" className="text-sm font-medium">
-                      Positions (comma separated)
-                    </label>
+                    <Label htmlFor="positions">Positions (comma separated)</Label>
                     <Input
                       id="positions"
                       value={newLocation.positions?.join(", ")}
@@ -357,9 +397,7 @@ export default function LocationsPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="quota" className="text-sm font-medium">
-                      Total Quota
-                    </label>
+                    <Label htmlFor="quota">Total Quota</Label>
                     <Input
                       id="quota"
                       type="number"
@@ -374,9 +412,7 @@ export default function LocationsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="remaining" className="text-sm font-medium">
-                      Remaining Slots
-                    </label>
+                    <Label htmlFor="remaining">Remaining Slots</Label>
                     <Input
                       id="remaining"
                       type="number"
@@ -391,9 +427,7 @@ export default function LocationsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="status" className="text-sm font-medium">
-                      Status
-                    </label>
+                    <Label htmlFor="status">Status</Label>
                     <Select
                       value={newLocation.status}
                       onValueChange={(value) =>
@@ -414,6 +448,58 @@ export default function LocationsPage() {
                     </Select>
                   </div>
                 </div>
+
+                {/* Sub-locations section */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium">Sub-locations</h4>
+                    <Button onClick={handleAddSubLocationField} variant="outline" size="sm">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Sub-location
+                    </Button>
+                  </div>
+                  {newSubLocations.map((subLoc, index) => (
+                    <div key={index} className="p-4 space-y-2 border rounded-md">
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-sm font-medium">Sub-location {index + 1}</h5>
+                        <Button onClick={() => handleRemoveSubLocationField(index)} variant="ghost" size="sm">
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input
+                          placeholder="Sub-location Name"
+                          value={subLoc.name || ""}
+                          onChange={(e) => handleUpdateSubLocation(index, "name", e.target.value)}
+                        />
+                        <Input
+                          placeholder="Sub-location Address"
+                          value={subLoc.address || ""}
+                          onChange={(e) => handleUpdateSubLocation(index, "address", e.target.value)}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input
+                          placeholder="Contact Person"
+                          value={subLoc.contactPerson || ""}
+                          onChange={(e) => handleUpdateSubLocation(index, "contactPerson", e.target.value)}
+                        />
+                        <Input
+                          placeholder="Contact Email"
+                          type="email"
+                          value={subLoc.contactEmail || ""}
+                          onChange={(e) => handleUpdateSubLocation(index, "contactEmail", e.target.value)}
+                        />
+                        <Input
+                          placeholder="Contact Phone"
+                          type="tel"
+                          value={subLoc.contactPhone || ""}
+                          onChange={(e) => handleUpdateSubLocation(index, "contactPhone", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAddDialog(false)}>
@@ -426,6 +512,7 @@ export default function LocationsPage() {
         </div>
       </div>
 
+      {/* Locations List */}
       <div className="space-y-4">
         {filteredLocations.length > 0 ? (
           filteredLocations.map((location) => (
@@ -440,14 +527,14 @@ export default function LocationsPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                    <Building className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 shrink-0">
+                    <Building className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-medium">{location.name}</h3>
                       {location.favorite && (
-                        <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                        <Badge variant="outline" className="text-yellow-500 bg-yellow-500/10 border-yellow-500/20">
                           Favorite
                         </Badge>
                       )}
@@ -458,29 +545,43 @@ export default function LocationsPage() {
                 <div className="flex items-center gap-2">{getStatusBadge(location.status)}</div>
               </div>
 
-              <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 gap-2 mt-3 md:grid-cols-3">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
                     {location.city} • {location.distance?.toFixed(1)} km
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <Briefcase className="w-4 h-4 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
                     {location.positions.slice(0, 2).join(", ")}
                     {location.positions.length > 2 && "..."}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <Users className="w-4 h-4 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
                     Quota: {location.remaining}/{location.quota} remaining
                   </span>
                 </div>
               </div>
 
-              <div className="mt-3 flex justify-end gap-2">
+              {/* Display sub-locations if any */}
+              {location.subLocations.length > 0 && (
+                <div className="mt-3">
+                  <h4 className="mb-2 text-sm font-medium">Sub-locations:</h4>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                    {location.subLocations.map((subLoc) => (
+                      <div key={subLoc.id} className="text-xs text-muted-foreground">
+                        {subLoc.name} - {subLoc.address}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 mt-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -499,36 +600,37 @@ export default function LocationsPage() {
                     removeLocation(location.id)
                   }}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           ))
         ) : (
           <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg">
-            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Building className="h-6 w-6 text-muted-foreground" />
+            <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-muted">
+              <Building className="w-6 h-6 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-medium">No locations found</h3>
-            <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or add a new location</p>
+            <p className="mt-1 text-sm text-muted-foreground">Try adjusting your filters or add a new location</p>
             <Button className="mt-4" onClick={() => setShowAddDialog(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2" />
               Add Location
             </Button>
           </div>
         )}
       </div>
 
+      {/* Selected Location Details */}
       {selectedLocation && (
-        <Card className="overflow-hidden gradient-border mt-4">
+        <Card className="mt-4 overflow-hidden gradient-border">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5 text-primary" />
+                <Building className="w-5 h-5 text-primary" />
                 <span>{selectedLocation.name}</span>
               </CardTitle>
               <Button variant="ghost" size="sm" onClick={() => setSelectedLocation(null)}>
-                <X className="h-4 w-4" />
+                <X className="w-4 h-4" />
               </Button>
             </div>
             <CardDescription>
@@ -538,7 +640,7 @@ export default function LocationsPage() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <MapPin className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm">{selectedLocation.address}</span>
               </div>
               {getStatusBadge(selectedLocation.status)}
@@ -558,7 +660,7 @@ export default function LocationsPage() {
             <div className="space-y-2">
               <h4 className="text-sm font-medium">Availability</h4>
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <Users className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm">
                   {selectedLocation.remaining} of {selectedLocation.quota} positions available
                 </span>
@@ -571,6 +673,26 @@ export default function LocationsPage() {
               </div>
             </div>
 
+            {/* Display sub-locations */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Sub-locations</h4>
+              {selectedLocation.subLocations.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedLocation.subLocations.map((subLoc) => (
+                    <div key={subLoc.id} className="p-2 border rounded-md">
+                      <p className="font-medium">{subLoc.name}</p>
+                      <p className="text-sm text-muted-foreground">{subLoc.address}</p>
+                      <p className="text-sm">Contact: {subLoc.contactPerson}</p>
+                      <p className="text-sm">Email: {subLoc.contactEmail}</p>
+                      <p className="text-sm">Phone: {subLoc.contactPhone}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No sub-locations available for this location.</p>
+              )}
+            </div>
+
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => toggleFavorite(selectedLocation.id)}>
                 {selectedLocation.favorite ? "Remove from Favorites" : "Add to Favorites"}
@@ -580,7 +702,7 @@ export default function LocationsPage() {
                   "No Positions Available"
                 ) : (
                   <>
-                    <UserPlus className="h-4 w-4 mr-2" />
+                    <UserPlus className="w-4 h-4 mr-2" />
                     Form Team & Apply
                   </>
                 )}

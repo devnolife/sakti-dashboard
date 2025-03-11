@@ -18,7 +18,7 @@ import {
   Clock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { Location } from "@/components/location-manager"
+import type { LocationType } from "@/components/location-manager"
 import TeamMemberSelector from "@/components/team-member-selector"
 import {
   Dialog,
@@ -30,6 +30,17 @@ import {
 } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
+
+// SubLocation interface
+interface SubLocation {
+  id: string
+  name: string
+  address: string
+  contactPerson: string
+  contactEmail: string
+  contactPhone: string
+}
 
 // Student interface
 interface Student {
@@ -49,14 +60,24 @@ export default function PengajuanPage() {
   const [currentStep, setCurrentStep] = useState<"location" | "team" | "verification" | "success">("location")
 
   // State for selected location and team members
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null)
   const [selectedTeam, setSelectedTeam] = useState<Student[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [showTeamSelector, setShowTeamSelector] = useState(false)
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
 
+  const [selectedSubLocation, setSelectedSubLocation] = useState<SubLocation | null>(null)
+  const [showAddSubLocationDialog, setShowAddSubLocationDialog] = useState(false)
+  const [newSubLocation, setNewSubLocation] = useState<Partial<SubLocation>>({
+    name: "",
+    address: "",
+    contactPerson: "",
+    contactEmail: "",
+    contactPhone: "",
+  })
+
   // Sample data for available locations
-  const [locations, setLocations] = useState<Location[]>([
+  const [locations, setLocations] = useState<LocationType[]>([
     {
       id: "loc-001",
       name: "PT Teknologi Maju",
@@ -69,6 +90,16 @@ export default function PengajuanPage() {
       status: "available",
       distance: 3.2,
       favorite: true,
+      subLocations: [
+        {
+          id: "subloc-001",
+          name: "IT Department",
+          address: "Floor 5, PT Teknologi Maju Building",
+          contactPerson: "John Doe",
+          contactEmail: "john.doe@teknologimaju.com",
+          contactPhone: "081234567890",
+        },
+      ],
     },
     {
       id: "loc-002",
@@ -81,6 +112,7 @@ export default function PengajuanPage() {
       remaining: 2,
       status: "limited",
       distance: 5.7,
+      subLocations: [],
     },
     {
       id: "loc-003",
@@ -93,6 +125,7 @@ export default function PengajuanPage() {
       remaining: 0,
       status: "full",
       distance: 120.3,
+      subLocations: [],
     },
     {
       id: "loc-004",
@@ -105,6 +138,7 @@ export default function PengajuanPage() {
       remaining: 8,
       status: "available",
       distance: 4.8,
+      subLocations: [],
     },
   ])
 
@@ -119,7 +153,7 @@ export default function PengajuanPage() {
   })
 
   // Handle selecting a location
-  const handleSelectLocation = (location: Location) => {
+  const handleSelectLocation = (location: LocationType) => {
     setSelectedLocation(location)
   }
 
@@ -202,6 +236,51 @@ export default function PengajuanPage() {
     }
   }
 
+  // Handle adding a new sub-location
+  const handleAddSubLocation = () => {
+    if (selectedLocation) {
+      const subLocationId = `subloc-${String(selectedLocation.subLocations.length + 1).padStart(3, "0")}`
+      const newSubLoc: SubLocation = {
+        id: subLocationId,
+        name: newSubLocation.name || "",
+        address: newSubLocation.address || "",
+        contactPerson: newSubLocation.contactPerson || "",
+        contactEmail: newSubLocation.contactEmail || "",
+        contactPhone: newSubLocation.contactPhone || "",
+      }
+
+      setLocations(
+        locations.map((loc) =>
+          loc.id === selectedLocation.id ? { ...loc, subLocations: [...loc.subLocations, newSubLoc] } : loc,
+        ),
+      )
+
+      setNewSubLocation({
+        name: "",
+        address: "",
+        contactPerson: "",
+        contactEmail: "",
+        contactPhone: "",
+      })
+      setShowAddSubLocationDialog(false)
+    }
+  }
+
+  // Handle removing a sub-location
+  const removeSubLocation = (locationId: string, subLocationId: string) => {
+    setLocations(
+      locations.map((loc) =>
+        loc.id === locationId
+          ? { ...loc, subLocations: loc.subLocations.filter((subloc) => subloc.id !== subLocationId) }
+          : loc,
+      ),
+    )
+    if (selectedSubLocation?.id === subLocationId) {
+      setSelectedSubLocation(null)
+    }
+  }
+
+  // If team selector is shown, render it
   if (showTeamSelector && selectedLocation) {
     return (
       <TeamMemberSelector
@@ -213,20 +292,19 @@ export default function PengajuanPage() {
   }
 
   return (
-    <div className="container w-full max-w-full px-0 space-y-6">
+    <div className="space-y-6">
       {/* Progress Steps */}
       <div className="w-full">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div
-              className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                currentStep === "location" ||
-                currentStep === "team" ||
-                currentStep === "verification" ||
-                currentStep === "success"
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "location" ||
+                  currentStep === "team" ||
+                  currentStep === "verification" ||
+                  currentStep === "success"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground"
-              }`}
+                }`}
             >
               <Building className="w-4 h-4" />
             </div>
@@ -235,11 +313,10 @@ export default function PengajuanPage() {
           <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
-              className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                currentStep === "team" || currentStep === "verification" || currentStep === "success"
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "team" || currentStep === "verification" || currentStep === "success"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground"
-              }`}
+                }`}
             >
               <Users className="w-4 h-4" />
             </div>
@@ -248,11 +325,10 @@ export default function PengajuanPage() {
           <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
-              className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                currentStep === "verification" || currentStep === "success"
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "verification" || currentStep === "success"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground"
-              }`}
+                }`}
             >
               <FileText className="w-4 h-4" />
             </div>
@@ -261,9 +337,8 @@ export default function PengajuanPage() {
           <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
-              className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                currentStep === "success" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-              }`}
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "success" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                }`}
             >
               <CheckCircle2 className="w-4 h-4" />
             </div>
@@ -349,6 +424,20 @@ export default function PengajuanPage() {
                         </span>
                       </div>
                     </div>
+
+                    {/* Sub-locations */}
+                    {location.subLocations.length > 0 && (
+                      <div className="mt-3">
+                        <h4 className="mb-2 text-sm font-medium">Sub-locations:</h4>
+                        <div className="space-y-2">
+                          {location.subLocations.map((subLoc) => (
+                            <div key={subLoc.id} className="text-xs text-muted-foreground">
+                              {subLoc.name} - {subLoc.address}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
@@ -429,6 +518,21 @@ export default function PengajuanPage() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Sub-locations */}
+                    {selectedLocation.subLocations.length > 0 && (
+                      <div className="mt-3">
+                        <h4 className="mb-1 text-sm font-medium">Sub-locations</h4>
+                        <div className="space-y-2">
+                          {selectedLocation.subLocations.map((subLoc) => (
+                            <div key={subLoc.id} className="text-sm">
+                              <p className="font-medium">{subLoc.name}</p>
+                              <p className="text-muted-foreground">{subLoc.address}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -599,6 +703,80 @@ export default function PengajuanPage() {
             <Button onClick={confirmApplication}>
               <CheckCircle2 className="w-4 h-4 mr-1" />
               Confirm Submission
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Sub-location Dialog */}
+      <Dialog open={showAddSubLocationDialog} onOpenChange={setShowAddSubLocationDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Sub-location</DialogTitle>
+            <DialogDescription>Enter the details of the new sub-location or sub-agency.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid items-center grid-cols-4 gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={newSubLocation.name}
+                onChange={(e) => setNewSubLocation({ ...newSubLocation, name: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid items-center grid-cols-4 gap-4">
+              <Label htmlFor="address" className="text-right">
+                Address
+              </Label>
+              <Input
+                id="address"
+                value={newSubLocation.address}
+                onChange={(e) => setNewSubLocation({ ...newSubLocation, address: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid items-center grid-cols-4 gap-4">
+              <Label htmlFor="contactPerson" className="text-right">
+                Contact Person
+              </Label>
+              <Input
+                id="contactPerson"
+                value={newSubLocation.contactPerson}
+                onChange={(e) => setNewSubLocation({ ...newSubLocation, contactPerson: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid items-center grid-cols-4 gap-4">
+              <Label htmlFor="contactEmail" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="contactEmail"
+                type="email"
+                value={newSubLocation.contactEmail}
+                onChange={(e) => setNewSubLocation({ ...newSubLocation, contactEmail: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid items-center grid-cols-4 gap-4">
+              <Label htmlFor="contactPhone" className="text-right">
+                Phone
+              </Label>
+              <Input
+                id="contactPhone"
+                type="tel"
+                value={newSubLocation.contactPhone}
+                onChange={(e) => setNewSubLocation({ ...newSubLocation, contactPhone: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" onClick={handleAddSubLocation}>
+              Add Sub-location
             </Button>
           </DialogFooter>
         </DialogContent>
