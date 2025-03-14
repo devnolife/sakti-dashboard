@@ -562,7 +562,10 @@ export function CorrespondenceStaffDashboard() {
         </TabsContent>
       </Tabs>
 
-      <LetterCreationDialog open={showCreateDialog} onClose={() => setShowCreateDialog(false)} />
+      <LetterCreationDialog 
+        open={showCreateDialog} 
+        onOpenChange={(open) => setShowCreateDialog(open)} 
+      />
     </div>
   )
 }

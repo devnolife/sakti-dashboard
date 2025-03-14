@@ -120,11 +120,7 @@ export const mahasiswaMenuItems = [
         title: "Daftar Ujian",
         href: "/dashboard/mahasiswa/exams/register",
       },
-      {
-        id: "exams-submissions",
-        title: "Pengajuan Saya",
-        href: "/dashboard/mahasiswa/exams/submissions",
-      },
+     
     ],
   },
   {
