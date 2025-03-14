@@ -33,7 +33,7 @@ export const mockStudentExamData: StudentExamData = {
     requirements: [
       {
         id: "prop-req-1",
-        title: "Research Proposal Document",
+        title: "Sertifikat Penyelesaian KKP",
         description: "Submit a comprehensive research proposal document (min. 10 pages)",
         completed: true,
       },
