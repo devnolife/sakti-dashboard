@@ -244,31 +244,37 @@ export function AvailableLabsTab() {
               <div className="relative flex-1 group">
                 <div className="absolute inset-0 p-1 -m-1 transition-opacity rounded-md opacity-0 bg-gradient-to-r from-primary-100/20 to-accent-100/20 dark:from-primary-900/20 dark:to-accent-900/20 group-focus-within:opacity-100"></div>
                 <Search
-                  className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${isSearching ? "text-primary" : "text-muted-foreground"} transition-colors`}
+                  className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 z-10 ${isSearching ? "text-primary" : "text-muted-foreground"} transition-colors`}
                 />
                 <Input
                   placeholder="Cari laboratorium berdasarkan nama, deskripsi, instruktur, atau tag..."
-                  className="pl-10 pr-16 transition-all bg-white border-muted dark:bg-gray-950 focus-visible:ring-primary/20 focus-visible:border-primary/30"
+                  className="relative z-0 pl-10 pr-16 transition-all bg-white border-muted dark:bg-gray-950 focus-visible:ring-primary/20 focus-visible:border-primary/30"
                   value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    setSearchText(newValue);
+                    // Option to update search query in real-time (remove if you only want to search on Enter/button click)
+                    // setSearchQuery(newValue);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      setSearchQuery(searchText)
+                      setSearchQuery(searchText);
                     }
                   }}
                   onFocus={() => setIsSearching(true)}
                   onBlur={() => setIsSearching(false)}
                 />
-                <div className="absolute flex items-center gap-1 -translate-y-1/2 right-2 top-1/2">
+                <div className="absolute z-10 flex items-center gap-1 -translate-y-1/2 right-2 top-1/2">
                   {searchText && (
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 text-muted-foreground hover:text-foreground"
                       onClick={() => {
-                        setSearchText("")
-                        setSearchQuery("")
+                        setSearchText("");
+                        setSearchQuery("");
                       }}
+                      type="button"
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -278,6 +284,7 @@ export function AvailableLabsTab() {
                     size="icon"
                     className="h-7 w-7 text-muted-foreground hover:text-primary"
                     onClick={() => setSearchQuery(searchText)}
+                    type="button"
                   >
                     <Search className="w-4 h-4" />
                   </Button>
@@ -367,7 +374,7 @@ export function AvailableLabsTab() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr"
           >
             {filteredLabs.map((lab, index) => (
               <motion.div
@@ -375,8 +382,11 @@ export function AvailableLabsTab() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="h-full"
               >
-                <LabCard lab={lab} onRegister={() => handleRegister(lab)} />
+                <div className="flex flex-col h-full">
+                  <LabCard lab={lab} onRegister={() => handleRegister(lab)} />
+                </div>
               </motion.div>
             ))}
           </motion.div>

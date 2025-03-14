@@ -88,7 +88,7 @@ export function LabCard({ lab, onRegister }: LabCardProps) {
   }
 
   return (
-    <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+    <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="h-full">
       <Card
         className={`overflow-hidden border-none shadow-md bg-gradient-to-br ${getColorGradient()} h-full flex flex-col transition-all duration-300`}
         onMouseEnter={() => setIsHovered(true)}
@@ -102,7 +102,7 @@ export function LabCard({ lab, onRegister }: LabCardProps) {
           </div>
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-xl leading-tight">{lab.title}</CardTitle>
+              <CardTitle className="text-xl leading-tight h-14 flex items-start">{lab.title}</CardTitle>
               <CardDescription className="mt-2">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-10 w-10 border-2 border-white dark:border-gray-800 shadow-sm">
@@ -120,11 +120,11 @@ export function LabCard({ lab, onRegister }: LabCardProps) {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pb-2 flex-grow">
+        <CardContent className="pb-2 flex-grow flex flex-col justify-between">
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground line-clamp-2">{lab.description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2 h-10">{lab.description}</p>
 
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 min-h-[28px]">
               {lab.tags.slice(0, 3).map((tag, index) => (
                 <Badge
                   key={index}

@@ -38,7 +38,7 @@ export default function LaboratoryPage() {
               className="flex items-center justify-center py-3 space-x-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-md transition-all"
             >
               <BookOpenIcon className="w-4 h-4" />
-              <span>Lab Gue</span>
+              <span>Lab Terdaftar</span>
             </TabsTrigger>
             <TabsTrigger
               value="completed"
