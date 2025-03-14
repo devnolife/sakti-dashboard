@@ -16,7 +16,7 @@ export const MOCK_LETTER_REQUESTS: LetterRequest[] = [
     studentId: "std-001",
     studentName: "Ahmad Fauzi",
     studentNIM: "1901234567",
-    studentMajor: "Teknik Informatika",
+    studentMajor: "Informatika",
     approvalRole: "staff_tu",
     approvedBy: "Budi Santoso, S.Kom.",
     additionalInfo: {

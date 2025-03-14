@@ -248,7 +248,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
             <TabsList className="grid w-full grid-cols-4 mb-4">
               <TabsTrigger value="details">Detail Ujian</TabsTrigger>
               <TabsTrigger value="advisors">Pembimbing</TabsTrigger>
-              <TabsTrigger value="committee">Komite Penguji</TabsTrigger>
+              <TabsTrigger value="committee">Dosen Penguji</TabsTrigger>
               <TabsTrigger value="documents">Dokumen</TabsTrigger>
             </TabsList>
 
@@ -490,7 +490,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
               {/* Committee Members Section */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold">Anggota Komite Penguji</h3>
+                  <h3 className="text-lg font-semibold">Dosen Penguji</h3>
                   {isEditing && (
                     <Button variant="outline" size="sm" onClick={() => setShowCommitteeDialog(true)} className="gap-1">
                       <UserPlus className="w-4 h-4" />
@@ -541,7 +541,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
                     ))}
                   </div>
                 ) : (
-                  <div className="italic text-muted-foreground">Belum ada anggota komite penguji</div>
+                  <div className="italic text-muted-foreground">Belum ada dosen penguji</div>
                 )}
               </div>
             </TabsContent>

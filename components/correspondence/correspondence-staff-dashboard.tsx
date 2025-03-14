@@ -29,7 +29,7 @@ const mockRequests: LetterRequest[] = [
     status: "completed",
     type: "active_student",
     attachments: [],
-    studentMajor: "Teknik Informatika",
+    studentMajor: "Informatika",
     approvalRole: "staff_tu",
   },
   {

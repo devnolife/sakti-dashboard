@@ -196,18 +196,18 @@ export function CommitteeMemberDialog({
         <div className="space-y-4">
           {/* Search */}
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
             <Input
               placeholder="Cari dosen..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white dark:bg-card border border-input shadow-sm focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
+              className="pl-10 bg-white border shadow-sm dark:bg-card border-input focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
             />
           </form>
 
           {/* Department Tabs */}
           <Tabs defaultValue="all" onValueChange={setActiveTab}>
-            <TabsList className="bg-muted/50 p-1 h-auto flex flex-wrap">
+            <TabsList className="flex flex-wrap h-auto p-1 bg-muted/50">
               <TabsTrigger
                 value="all"
                 className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-8 px-3"
@@ -227,7 +227,7 @@ export function CommitteeMemberDialog({
           </Tabs>
 
           {/* Lecturers List */}
-          <div className="border rounded-lg overflow-hidden bg-white dark:bg-card">
+          <div className="overflow-hidden bg-white border rounded-lg dark:bg-card">
             <ScrollArea className="h-[300px]">
               <div className="p-1">
                 {filteredLecturers.length > 0 ? (
@@ -240,7 +240,7 @@ export function CommitteeMemberDialog({
                       onClick={() => setSelectedLecturer(lecturer.id)}
                     >
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border border-border">
+                        <Avatar className="w-10 h-10 border border-border">
                           <AvatarImage src={lecturer.avatarUrl} alt={lecturer.name} />
                           <AvatarFallback className="bg-primary/10 text-primary">
                             {lecturer.name
@@ -255,19 +255,19 @@ export function CommitteeMemberDialog({
                         </div>
                       </div>
                       {selectedLecturer === lecturer.id && (
-                        <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-                          <Check className="h-3 w-3" />
+                        <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground">
+                          <Check className="w-3 h-3" />
                         </div>
                       )}
                     </div>
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <div className="rounded-full bg-muted p-3 mb-4">
-                      <X className="h-6 w-6 text-muted-foreground" />
+                    <div className="p-3 mb-4 rounded-full bg-muted">
+                      <X className="w-6 h-6 text-muted-foreground" />
                     </div>
                     <h3 className="text-lg font-semibold">Tidak ada dosen</h3>
-                    <p className="text-muted-foreground mt-1">Tidak ada dosen yang sesuai dengan pencarian.</p>
+                    <p className="mt-1 text-muted-foreground">Tidak ada dosen yang sesuai dengan pencarian.</p>
                   </div>
                 )}
               </div>
@@ -276,9 +276,9 @@ export function CommitteeMemberDialog({
 
           {/* Role Selection */}
           {selectedLecturer && (
-            <div className="space-y-2 p-4 rounded-lg border border-border bg-muted/30">
+            <div className="p-4 space-y-2 border rounded-lg border-border bg-muted/30">
               <Label htmlFor="role" className="text-sm font-medium">
-                Peran dalam Komite
+                Peran dalam Ujian
               </Label>
               <RadioGroup
                 id="role"
@@ -290,6 +290,12 @@ export function CommitteeMemberDialog({
                   <RadioGroupItem value="Ketua" id="ketua" />
                   <Label htmlFor="ketua" className="cursor-pointer">
                     Ketua
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Sekretaris" id="sekretaris" />
+                  <Label htmlFor="sekretaris" className="cursor-pointer">
+                    Sekretaris
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
