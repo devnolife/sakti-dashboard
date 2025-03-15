@@ -28,7 +28,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            Dashboard Staff Umum
+            Dashboard Administrasi Umum
           </span>
         </h2>
         <p className="mt-2 text-muted-foreground">Kelola urusan mahasiswa non-reguler dan korespondensi pimpinan.</p>
@@ -49,7 +49,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
               <GraduationCap className="w-3 h-3 mr-1 text-green-500" />
               <span className="text-xs text-green-500">+12% dari semester lalu</span>
             </div>
-            <Link href="/dashboard/staff_umum/non-regular-students/records">
+            <Link href="/dashboard/admin_umum/non-regular-students/records">
               <Button variant="ghost" size="sm" className="justify-between w-full mt-3">
                 <span className="text-xs">Lihat Data</span>
                 <ArrowRight className="w-4 h-4" />
@@ -71,7 +71,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
               <Clock className="w-3 h-3 mr-1 text-amber-500" />
               <span className="text-xs text-amber-500">Perlu diproses segera</span>
             </div>
-            <Link href="/dashboard/staff_umum/non-regular-students/payments">
+            <Link href="/dashboard/admin_umum/non-regular-students/payments">
               <Button variant="ghost" size="sm" className="justify-between w-full mt-3">
                 <span className="text-xs">Proses Pembayaran</span>
                 <ArrowRight className="w-4 h-4" />
@@ -92,7 +92,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
             <div className="flex items-center mt-1">
               <span className="text-xs text-muted-foreground">Menunggu persetujuan</span>
             </div>
-            <Link href="/dashboard/staff_umum/correspondence/drafts">
+            <Link href="/dashboard/admin_umum/correspondence/drafts">
               <Button variant="ghost" size="sm" className="justify-between w-full mt-3">
                 <span className="text-xs">Kelola Draft</span>
                 <ArrowRight className="w-4 h-4" />
@@ -113,7 +113,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
             <div className="flex items-center mt-1">
               <span className="text-xs text-muted-foreground">Perlu ditindaklanjuti</span>
             </div>
-            <Link href="/dashboard/staff_umum/non-regular-students/academic">
+            <Link href="/dashboard/admin_umum/non-regular-students/academic">
               <Button variant="ghost" size="sm" className="justify-between w-full mt-3">
                 <span className="text-xs">Kelola Akademik</span>
                 <ArrowRight className="w-4 h-4" />
@@ -134,7 +134,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
             <div className="flex items-center mt-1">
               <span className="text-xs text-muted-foreground">Perlu disiapkan</span>
             </div>
-            <Link href="/dashboard/staff_umum/correspondence/leadership">
+            <Link href="/dashboard/admin_umum/correspondence/leadership">
               <Button variant="ghost" size="sm" className="justify-between w-full mt-3">
                 <span className="text-xs">Kelola Surat</span>
                 <ArrowRight className="w-4 h-4" />
@@ -155,7 +155,7 @@ export default function StaffUmumDashboard({ activeSection }: StaffUmumDashboard
             <div className="flex items-center mt-1">
               <span className="text-xs text-muted-foreground">Laporan bulanan</span>
             </div>
-            <Link href="/dashboard/staff_umum/reports">
+            <Link href="/dashboard/admim_umum/reports">
               <Button variant="ghost" size="sm" className="justify-between w-full mt-3">
                 <span className="text-xs">Lihat Laporan</span>
                 <ArrowRight className="w-4 h-4" />

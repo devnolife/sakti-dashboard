@@ -5,11 +5,11 @@ import RoleMobileMenu from "@/components/role/role-mobile-menu"
 export default function StaffUmumLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
-      <RoleSidebar role="staff_umum" />
+      <RoleSidebar role="admin_umum" />
       <div className="flex-1 pt-14">
-        <div className="container mx-auto p-4 md:p-6">{children}</div>
+        <div className="container p-4 mx-auto md:p-6">{children}</div>
       </div>
-      <RoleMobileMenu role="staff_umum" />
+      <RoleMobileMenu role="admin_umum" />
     </div>
   )
 }

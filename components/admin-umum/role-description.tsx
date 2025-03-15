@@ -6,8 +6,8 @@ export default function StaffUmumRoleDescription() {
   return (
     <Card className="border-none shadow-md">
       <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5">
-        <CardTitle className="text-2xl">Deskripsi Peran Staff Umum</CardTitle>
-        <CardDescription>Tanggung jawab dan lingkup tugas Staff Umum dalam struktur organisasi</CardDescription>
+        <CardTitle className="text-2xl">Deskripsi Peran Administrasi Umum</CardTitle>
+        <CardDescription>Tanggung jawab dan lingkup tugas Administrasi Umum dalam struktur organisasi</CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
         <Tabs defaultValue="overview" className="space-y-4">
@@ -20,7 +20,7 @@ export default function StaffUmumRoleDescription() {
           <TabsContent value="overview" className="space-y-4">
             <div className="prose max-w-none dark:prose-invert">
               <p>
-                <strong>Staff Umum</strong> adalah peran penting dalam struktur organisasi yang bertanggung jawab untuk
+                <strong>Administrasi Umum</strong> adalah peran penting dalam struktur organisasi yang bertanggung jawab untuk
                 mengelola dua area utama:
               </p>
               <ol>
@@ -34,16 +34,16 @@ export default function StaffUmumRoleDescription() {
               </ol>
               <p>
                 Peran ini membutuhkan kemampuan administratif yang baik, pemahaman tentang prosedur akademik, dan
-                keterampilan komunikasi tertulis yang efektif. Staff Umum bekerja sama dengan berbagai departemen dan
+                keterampilan komunikasi tertulis yang efektif. Administrasi Umum bekerja sama dengan berbagai departemen dan
                 pimpinan untuk memastikan kelancaran operasional dan komunikasi dalam institusi.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
               <Card className="border border-primary/20 bg-primary/5">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" />
+                    <Users className="w-5 h-5 text-primary" />
                     <CardTitle className="text-lg">Mahasiswa Non-Reguler</CardTitle>
                   </div>
                 </CardHeader>
@@ -68,7 +68,7 @@ export default function StaffUmumRoleDescription() {
               <Card className="border border-secondary/20 bg-secondary/5">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-secondary" />
+                    <Mail className="w-5 h-5 text-secondary" />
                     <CardTitle className="text-lg">Korespondensi</CardTitle>
                   </div>
                 </CardHeader>
@@ -96,7 +96,7 @@ export default function StaffUmumRoleDescription() {
             <div className="prose max-w-none dark:prose-invert">
               <h3>Pengelolaan Urusan Mahasiswa Non-Reguler</h3>
               <p>
-                Staff Umum bertanggung jawab untuk mengelola berbagai aspek yang berkaitan dengan mahasiswa non-reguler,
+                Administrasi Umumbertanggung jawab untuk mengelola berbagai aspek yang berkaitan dengan mahasiswa non-reguler,
                 termasuk program kelas karyawan, program ekstensi, dan program khusus lainnya. Tanggung jawab ini
                 mencakup:
               </p>
@@ -106,7 +106,7 @@ export default function StaffUmumRoleDescription() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Receipt className="h-5 w-5 text-primary" />
+                    <Receipt className="w-5 h-5 text-primary" />
                     <CardTitle className="text-lg">Pemrosesan Pembayaran</CardTitle>
                   </div>
                 </CardHeader>
@@ -137,7 +137,7 @@ export default function StaffUmumRoleDescription() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-secondary" />
+                    <GraduationCap className="w-5 h-5 text-secondary" />
                     <CardTitle className="text-lg">Urusan Akademik</CardTitle>
                   </div>
                 </CardHeader>
@@ -168,7 +168,7 @@ export default function StaffUmumRoleDescription() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <UserCog className="h-5 w-5 text-accent" />
+                    <UserCog className="w-5 h-5 text-accent" />
                     <CardTitle className="text-lg">Administrasi Mahasiswa</CardTitle>
                   </div>
                 </CardHeader>
@@ -202,7 +202,7 @@ export default function StaffUmumRoleDescription() {
             <div className="prose max-w-none dark:prose-invert">
               <h3>Penyusunan Korespondensi Resmi</h3>
               <p>
-                Staff Umum bertanggung jawab untuk menyusun berbagai jenis korespondensi resmi, terutama yang ditujukan
+                Administrasi Umum bertanggung jawab untuk menyusun berbagai jenis korespondensi resmi, terutama yang ditujukan
                 kepada pimpinan institusi. Tanggung jawab ini mencakup:
               </p>
             </div>
@@ -211,7 +211,7 @@ export default function StaffUmumRoleDescription() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Pencil className="h-5 w-5 text-primary" />
+                    <Pencil className="w-5 h-5 text-primary" />
                     <CardTitle className="text-lg">Penyusunan Draft Surat</CardTitle>
                   </div>
                 </CardHeader>
@@ -242,7 +242,7 @@ export default function StaffUmumRoleDescription() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Building className="h-5 w-5 text-secondary" />
+                    <Building className="w-5 h-5 text-secondary" />
                     <CardTitle className="text-lg">Korespondensi dengan Pimpinan</CardTitle>
                   </div>
                 </CardHeader>
@@ -273,7 +273,7 @@ export default function StaffUmumRoleDescription() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-accent" />
+                    <FileText className="w-5 h-5 text-accent" />
                     <CardTitle className="text-lg">Pengelolaan Arsip Surat</CardTitle>
                   </div>
                 </CardHeader>

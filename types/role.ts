@@ -8,7 +8,7 @@ export type Role =
   | "staff_kkp"
   | "laboratory_admin"
   | "reading_room_admin"
-  | "staff_umum"
+  | "admin_umum"
   | "admin_keuangan"
 
 export interface RoleConfig {
@@ -76,8 +76,8 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: "text-teal-500",
     bgColor: "bg-teal-100",
   },
-  staff_umum: {
-    displayName: "Staff Umum",
+  admin_umum: {
+    displayName: "Administrasi Umum",
     description: "General staff role with access to basic administrative functions.",
     icon: "users",
     color: "text-pink-500",
@@ -102,7 +102,7 @@ export const roleLabels = {
   kepala_jurusan: "Kepala Jurusan",
   laboratory_admin: "Admin Laboratorium",
   reading_room_admin: "Admin Ruang Baca",
-  staff_umum: "Staff Umum",
+  admin_umum: "Staff Umum",
 }
 
 export function getRolePath(role: Role) {

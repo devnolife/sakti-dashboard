@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -30,6 +32,16 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  Calendar,
+  CreditCard,
+  Bookmark,
+  FileText,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  Loader2,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -39,6 +51,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const mockPayments = [
   {
@@ -173,6 +188,48 @@ const formatDate = (dateString: string | null) => {
   }).format(date)
 }
 
+// Helper function to get initials from name
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+}
+
+// Program colors for visual distinction
+const programColors: Record<string, string> = {
+  Informatics: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  Architecture: "bg-purple-50 text-purple-700 border-purple-100",
+  Electrical: "bg-amber-50 text-amber-700 border-amber-100",
+  "Urban Planning": "bg-blue-50 text-blue-700 border-blue-100",
+  Watering: "bg-orange-50 text-orange-700 border-orange-100",
+}
+
+// Status colors and icons
+const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
+  paid: {
+    color: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    icon: <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />,
+  },
+  partial: {
+    color: "bg-blue-50 text-blue-700 border-blue-100",
+    icon: <Loader2 className="w-3.5 h-3.5 mr-1.5" />,
+  },
+  unpaid: {
+    color: "bg-slate-50 text-slate-700 border-slate-100",
+    icon: <Clock className="w-3.5 h-3.5 mr-1.5" />,
+  },
+  scholarship: {
+    color: "bg-purple-50 text-purple-700 border-purple-100",
+    icon: <Bookmark className="w-3.5 h-3.5 mr-1.5" />,
+  },
+  overdue: {
+    color: "bg-rose-50 text-rose-700 border-rose-100",
+    icon: <AlertCircle className="w-3.5 h-3.5 mr-1.5" />,
+  },
+}
+
 export function PaymentListManager() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProgram, setSelectedProgram] = useState("all")
@@ -182,6 +239,9 @@ export function PaymentListManager() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [currentPayment, setCurrentPayment] = useState<any>(null)
+  const [activeTab, setActiveTab] = useState("all")
+  const [sortField, setSortField] = useState<string | null>(null)
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
   // Filter payments based on search and filters
   const filteredPayments = mockPayments.filter((payment) => {
@@ -193,9 +253,39 @@ export function PaymentListManager() {
     const matchesProgram = selectedProgram === "all" || payment.program === selectedProgram
     const matchesStatus = selectedStatus === "all" || payment.status === selectedStatus
     const matchesSemester = payment.semester === selectedSemester
+    const matchesTab = activeTab === "all" || payment.status === activeTab
 
-    return matchesSearch && matchesProgram && matchesStatus && matchesSemester
+    return matchesSearch && matchesProgram && matchesStatus && matchesSemester && matchesTab
   })
+
+  // Sort payments
+  const sortedPayments = [...filteredPayments].sort((a, b) => {
+    if (!sortField) return 0
+
+    const aValue = a[sortField as keyof typeof a]
+    const bValue = b[sortField as keyof typeof b]
+
+    if (aValue === bValue) return 0
+
+    const direction = sortDirection === "asc" ? 1 : -1
+
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      return aValue.localeCompare(bValue) * direction
+    }
+
+    if (aValue < bValue) return -1 * direction
+    return 1 * direction
+  })
+
+  // Handle sort
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+    } else {
+      setSortField(field)
+      setSortDirection("asc")
+    }
+  }
 
   // Handle select all checkbox
   const handleSelectAll = () => {
@@ -221,27 +311,88 @@ export function PaymentListManager() {
     setIsEditDialogOpen(true)
   }
 
-  // Render status badge
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case "paid":
-        return <Badge className="bg-green-500">Paid</Badge>
-      case "partial":
-        return <Badge className="bg-blue-500">Partial</Badge>
-      case "unpaid":
-        return <Badge variant="outline">Unpaid</Badge>
-      case "scholarship":
-        return <Badge className="bg-purple-500">Scholarship</Badge>
-      case "overdue":
-        return <Badge className="bg-red-500">Overdue</Badge>
-      default:
-        return <Badge variant="outline">{status}</Badge>
-    }
-  }
+  // Get counts by status
+  const statusCounts = mockPayments.reduce(
+    (acc, payment) => {
+      acc[payment.status] = (acc[payment.status] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>,
+  )
+
+  // Calculate total amount
+  const totalAmount = mockPayments.reduce((sum, payment) => sum + payment.amount, 0)
+  const paidAmount = mockPayments
+    .filter((p) => p.status === "paid" || p.status === "partial" || p.status === "scholarship")
+    .reduce((sum, payment) => sum + payment.amount, 0)
+  const pendingAmount = totalAmount - paidAmount
 
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="overflow-hidden border-none shadow-sm bg-gradient-to-br from-blue-50 to-white">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-blue-800">Total Payments</CardTitle>
+            <div className="p-2 text-blue-600 bg-blue-100 rounded-full">
+              <CreditCard className="w-4 h-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-900">{formatCurrency(totalAmount)}</div>
+            <div className="flex items-center mt-1 text-xs">
+              <div className="text-muted-foreground">Across {mockPayments.length} students</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden border-none shadow-sm bg-gradient-to-br from-emerald-50 to-white">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-emerald-800">Paid Amount</CardTitle>
+            <div className="p-2 rounded-full bg-emerald-100 text-emerald-600">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-emerald-900">{formatCurrency(paidAmount)}</div>
+            <div className="flex items-center mt-1 text-xs">
+              <div className="text-muted-foreground">{Math.round((paidAmount / totalAmount) * 100)}% of total</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden border-none shadow-sm bg-gradient-to-br from-amber-50 to-white">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-amber-800">Pending Amount</CardTitle>
+            <div className="p-2 rounded-full bg-amber-100 text-amber-600">
+              <Clock className="w-4 h-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-amber-900">{formatCurrency(pendingAmount)}</div>
+            <div className="flex items-center mt-1 text-xs">
+              <div className="text-muted-foreground">{Math.round((pendingAmount / totalAmount) * 100)}% of total</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden border-none shadow-sm bg-gradient-to-br from-rose-50 to-white">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-rose-800">Overdue Payments</CardTitle>
+            <div className="p-2 rounded-full bg-rose-100 text-rose-600">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-rose-900">{statusCounts.overdue || 0}</div>
+            <div className="flex items-center mt-1 text-xs">
+              <div className="text-muted-foreground">Requires immediate attention</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
         <CardHeader className="pb-3">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
@@ -249,13 +400,13 @@ export function PaymentListManager() {
               <CardDescription>Manage student payments across all study programs</CardDescription>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button onClick={() => setIsCreateDialogOpen(true)}>
+              <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Payment
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" className="bg-white border-slate-200">
                     <Filter className="w-4 h-4 mr-2" />
                     Actions
                   </Button>
@@ -264,15 +415,15 @@ export function PaymentListManager() {
                   <DropdownMenuLabel>Batch Actions</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem disabled={selectedPayments.length === 0}>
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    <CheckCircle2 className="w-4 h-4 mr-2 text-emerald-500" />
                     Mark as Paid
                   </DropdownMenuItem>
                   <DropdownMenuItem disabled={selectedPayments.length === 0}>
-                    <XCircle className="w-4 h-4 mr-2" />
+                    <XCircle className="w-4 h-4 mr-2 text-slate-500" />
                     Mark as Unpaid
                   </DropdownMenuItem>
                   <DropdownMenuItem disabled={selectedPayments.length === 0}>
-                    <AlertCircle className="w-4 h-4 mr-2" />
+                    <AlertCircle className="w-4 h-4 mr-2 text-rose-500" />
                     Mark as Overdue
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -293,17 +444,17 @@ export function PaymentListManager() {
           <div className="space-y-4">
             <div className="flex flex-col gap-4 md:flex-row">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search by student name, ID, or payment ID..."
-                  className="pl-8"
+                  className="bg-white pl-9 border-slate-200"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <Select value={selectedProgram} onValueChange={setSelectedProgram}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border-slate-200">
                     <SelectValue placeholder="Program" />
                   </SelectTrigger>
                   <SelectContent>
@@ -316,7 +467,7 @@ export function PaymentListManager() {
                   </SelectContent>
                 </Select>
                 <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border-slate-200">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -329,7 +480,7 @@ export function PaymentListManager() {
                   </SelectContent>
                 </Select>
                 <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border-slate-200">
                     <SelectValue placeholder="Semester" />
                   </SelectTrigger>
                   <SelectContent>
@@ -342,96 +493,315 @@ export function PaymentListManager() {
               </div>
             </div>
 
-            <div className="border rounded-md">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[50px]">
-                      <Checkbox
-                        checked={selectedPayments.length === filteredPayments.length && filteredPayments.length > 0}
-                        onCheckedChange={handleSelectAll}
-                        aria-label="Select all"
-                      />
-                    </TableHead>
-                    <TableHead className="w-[100px]">Payment ID</TableHead>
-                    <TableHead className="w-[100px]">Student ID</TableHead>
-                    <TableHead>Student Name</TableHead>
-                    <TableHead>Program</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Payment Date</TableHead>
-                    <TableHead className="w-[80px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPayments.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={10} className="h-24 text-center">
-                        No payments found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredPayments.map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>
+            <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="bg-slate-100 p-0.5 mb-4">
+                <TabsTrigger
+                  value="all"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  All
+                  <Badge variant="outline" className="ml-2 bg-white">
+                    {mockPayments.length}
+                  </Badge>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="paid"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  Paid
+                  <Badge variant="outline" className="ml-2 bg-emerald-50 text-emerald-700 border-emerald-100">
+                    {statusCounts.paid || 0}
+                  </Badge>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="partial"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  Partial
+                  <Badge variant="outline" className="ml-2 text-blue-700 border-blue-100 bg-blue-50">
+                    {statusCounts.partial || 0}
+                  </Badge>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="unpaid"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  Unpaid
+                  <Badge variant="outline" className="ml-2 bg-slate-50 text-slate-700 border-slate-100">
+                    {statusCounts.unpaid || 0}
+                  </Badge>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="scholarship"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  Scholarship
+                  <Badge variant="outline" className="ml-2 text-purple-700 border-purple-100 bg-purple-50">
+                    {statusCounts.scholarship || 0}
+                  </Badge>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="overdue"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  Overdue
+                  <Badge variant="outline" className="ml-2 bg-rose-50 text-rose-700 border-rose-100">
+                    {statusCounts.overdue || 0}
+                  </Badge>
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value={activeTab} className="mt-0">
+                <div className="overflow-hidden bg-white border rounded-lg border-slate-200">
+                  <Table>
+                    <TableHeader className="bg-slate-50">
+                      <TableRow className="hover:bg-slate-100/50">
+                        <TableHead className="w-[50px]">
                           <Checkbox
-                            checked={selectedPayments.includes(payment.id)}
-                            onCheckedChange={() => handleSelectPayment(payment.id)}
-                            aria-label={`Select payment ${payment.id}`}
+                            checked={selectedPayments.length === filteredPayments.length && filteredPayments.length > 0}
+                            onCheckedChange={handleSelectAll}
+                            aria-label="Select all"
                           />
-                        </TableCell>
-                        <TableCell className="font-medium">{payment.id}</TableCell>
-                        <TableCell>{payment.studentId}</TableCell>
-                        <TableCell>{payment.studentName}</TableCell>
-                        <TableCell>{payment.program}</TableCell>
-                        <TableCell>{formatCurrency(payment.amount)}</TableCell>
-                        <TableCell>{renderStatusBadge(payment.status)}</TableCell>
-                        <TableCell>{formatDate(payment.dueDate)}</TableCell>
-                        <TableCell>{formatDate(payment.paymentDate)}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="w-4 h-4" />
-                                <span className="sr-only">Actions</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditPayment(payment)}>
-                                <Edit className="w-4 h-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Eye className="w-4 h-4 mr-2" />
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-red-600">
-                                <Trash className="w-4 h-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+                        </TableHead>
+                        <TableHead className="w-[100px]">
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("id")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Payment ID
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("studentName")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Student
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("program")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Program
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("amount")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Amount
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("status")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Status
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("dueDate")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Due Date
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleSort("paymentDate")}
+                            className="flex items-center p-0 font-medium"
+                          >
+                            Payment Date
+                            <ArrowUpDown className="w-4 h-4 ml-2 text-slate-400" />
+                          </Button>
+                        </TableHead>
+                        <TableHead className="w-[80px] text-right">Actions</TableHead>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                    </TableHeader>
+                    <TableBody>
+                      {sortedPayments.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={9} className="h-24 text-center">
+                            <div className="flex flex-col items-center justify-center text-slate-500">
+                              <FileText className="w-8 h-8 mb-2 text-slate-400" />
+                              <p>No payments found matching your filters.</p>
+                              <Button
+                                variant="link"
+                                onClick={() => {
+                                  setSearchTerm("")
+                                  setSelectedProgram("all")
+                                  setSelectedStatus("all")
+                                  setActiveTab("all")
+                                }}
+                              >
+                                Clear all filters
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        sortedPayments.map((payment) => (
+                          <TableRow key={payment.id} className="group hover:bg-slate-50">
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedPayments.includes(payment.id)}
+                                onCheckedChange={() => handleSelectPayment(payment.id)}
+                                aria-label={`Select payment ${payment.id}`}
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium text-slate-900">{payment.id}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Avatar className="w-8 h-8 border border-slate-200">
+                                  <AvatarFallback className="bg-slate-100 text-slate-700">
+                                    {getInitials(payment.studentName)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="font-medium text-slate-900">{payment.studentName}</div>
+                                  <div className="text-xs text-slate-500">{payment.studentId}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className={`${programColors[payment.program]} font-normal`}>
+                                {payment.program}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium text-slate-900">
+                              {formatCurrency(payment.amount)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className={`${statusConfig[payment.status].color} font-normal flex items-center`}
+                              >
+                                {statusConfig[payment.status].icon}
+                                {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center text-slate-700">
+                                <Calendar className="h-3.5 w-3.5 mr-1.5 text-slate-400" />
+                                {formatDate(payment.dueDate)}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {payment.paymentDate ? (
+                                <div className="flex items-center text-slate-700">
+                                  <DollarSign className="h-3.5 w-3.5 mr-1.5 text-slate-400" />
+                                  {formatDate(payment.paymentDate)}
+                                </div>
+                              ) : (
+                                <span className="text-slate-400">-</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <TooltipProvider>
+                                <div className="flex justify-end gap-1 transition-opacity opacity-80 group-hover:opacity-100">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="w-8 h-8 rounded-full"
+                                        onClick={() => {
+                                          // View details action
+                                        }}
+                                      >
+                                        <Eye className="w-4 h-4 text-slate-600" />
+                                        <span className="sr-only">View details</span>
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>View details</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="w-8 h-8 rounded-full"
+                                        onClick={() => handleEditPayment(payment)}
+                                      >
+                                        <Edit className="w-4 h-4 text-slate-600" />
+                                        <span className="sr-only">Edit payment</span>
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Edit payment</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
+                                        <MoreHorizontal className="w-4 h-4 text-slate-600" />
+                                        <span className="sr-only">More options</span>
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-[180px]">
+                                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                      <DropdownMenuItem onClick={() => handleEditPayment(payment)}>
+                                        <Edit className="w-4 h-4 mr-2" />
+                                        Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Eye className="w-4 h-4 mr-2" />
+                                        View Details
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem className="text-rose-600">
+                                        <Trash className="w-4 h-4 mr-2" />
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </TooltipProvider>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </CardContent>
-        <CardFooter className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Showing {filteredPayments.length} of {mockPayments.length} payments
+        <CardFooter className="flex items-center justify-between px-6 border-t bg-slate-50/50">
+          <div className="text-sm text-slate-600">
+            Showing {sortedPayments.length} of {mockPayments.length} payments
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" size="sm" disabled className="bg-white border-slate-200">
+              <ChevronLeft className="w-4 h-4 mr-1" />
               Previous
             </Button>
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" size="sm" disabled className="bg-white border-slate-200">
               Next
+              <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
         </CardFooter>
@@ -526,7 +896,9 @@ export function PaymentListManager() {
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => setIsCreateDialogOpen(false)}>Create Payment</Button>
+            <Button onClick={() => setIsCreateDialogOpen(false)} className="bg-blue-600 hover:bg-blue-700">
+              Create Payment
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -621,7 +993,9 @@ export function PaymentListManager() {
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setIsEditDialogOpen(false)}>Update Payment</Button>
+              <Button onClick={() => setIsEditDialogOpen(false)} className="bg-blue-600 hover:bg-blue-700">
+                Update Payment
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

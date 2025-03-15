@@ -544,12 +544,6 @@ export const readingRoomAdminMenuItems = [
     icon: Users,
   },
   {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
-  {
     id: "settings",
     title: "Pengaturan",
     href: "/dashboard/reading_room_admin/settings",
@@ -645,12 +639,6 @@ export const adminUmumMenuItems = [
         href: "/dashboard/admin_umum/reports/correspondence",
       },
     ],
-  },
-  {
-    id: "notifications",
-    title: "Notifikasi",
-    href: "/dashboard/notifications",
-    icon: Bell,
   },
   {
     id: "settings",
@@ -938,13 +926,6 @@ export const financeAdminMenuItems = [
     ],
   },
   {
-    id: "notifications",
-    title: "Notifications",
-    href: "/dashboard/notifications",
-    icon: Bell,
-    badge: { text: "8", variant: "destructive" },
-  },
-  {
     id: "settings",
     title: "Settings",
     href: "/dashboard/admin_keuangan/settings",
@@ -961,7 +942,7 @@ export const menuItems: Record<Role, typeof adminMenuItems> = {
   prodi: prodiMenuItems,
   staff_tu: staffTuMenuItems,
   laboratory_admin: laboratoryAdminMenuItems,
-  staff_umum: adminUmumMenuItems,
+  admin_umum: adminUmumMenuItems,
   reading_room_admin: readingRoomAdminMenuItems,
   admin_keuangan: financeAdminMenuItems,
 }
