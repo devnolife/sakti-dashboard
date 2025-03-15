@@ -23,10 +23,11 @@ import {
   PieChart,
   TrendingDown,
   FileSpreadsheet,
+  BookMarked,
+  ScrollText,
 } from "lucide-react"
 import type { Role } from "@/types/role"
 
-// Menu items for students (mahasiswa)
 export const mahasiswaMenuItems = [
   {
     id: "dashboard",
@@ -428,6 +429,133 @@ export const dekanMenuItems = [
     icon: Settings,
   },
 ]
+export const readingRoomAdminMenuItems = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/reading_room_admin",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "book-management",
+    title: "Manajemen Buku",
+    href: "/dashboard/reading_room_admin/books",
+    icon: BookOpen,
+    children: [
+      {
+        id: "book-list",
+        title: "Daftar Buku",
+        href: "/dashboard/reading_room_admin/books/list",
+      },
+      {
+        id: "add-book",
+        title: "Tambah Buku",
+        href: "/dashboard/reading_room_admin/books/add",
+        badge: { text: "New", variant: "outline" },
+      },
+      {
+        id: "book-categories",
+        title: "Kategori Buku",
+        href: "/dashboard/reading_room_admin/books/categories",
+      },
+    ],
+  },
+  {
+    id: "borrowing",
+    title: "Peminjaman",
+    href: "/dashboard/reading_room_admin/borrowing",
+    icon: BookMarked,
+    children: [
+      {
+        id: "active-borrowing",
+        title: "Peminjaman Aktif",
+        href: "/dashboard/reading_room_admin/borrowing/active",
+        badge: { text: "12", variant: "destructive" },
+      },
+      {
+        id: "new-borrowing",
+        title: "Peminjaman Baru",
+        href: "/dashboard/reading_room_admin/borrowing/new",
+      },
+      {
+        id: "return-books",
+        title: "Pengembalian Buku",
+        href: "/dashboard/reading_room_admin/borrowing/returns",
+      },
+      {
+        id: "borrowing-history",
+        title: "Riwayat Peminjaman",
+        href: "/dashboard/reading_room_admin/borrowing/history",
+      },
+    ],
+  },
+  {
+    id: "thesis",
+    title: "Skripsi",
+    href: "/dashboard/reading_room_admin/thesis",
+    icon: ScrollText,
+    children: [
+      {
+        id: "thesis-titles",
+        title: "Judul Skripsi",
+        href: "/dashboard/reading_room_admin/thesis/titles",
+      },
+      {
+        id: "title-submissions",
+        title: "Pengajuan Judul",
+        href: "/dashboard/reading_room_admin/thesis/submissions",
+        badge: { text: "8", variant: "destructive" },
+      },
+      {
+        id: "thesis-archive",
+        title: "Arsip Skripsi",
+        href: "/dashboard/reading_room_admin/thesis/archive",
+      },
+    ],
+  },
+  {
+    id: "reports",
+    title: "Laporan",
+    href: "/dashboard/reading_room_admin/reports",
+    icon: FileText,
+    children: [
+      {
+        id: "borrowing-reports",
+        title: "Laporan Peminjaman",
+        href: "/dashboard/reading_room_admin/reports/borrowing",
+      },
+      {
+        id: "popular-books",
+        title: "Buku Populer",
+        href: "/dashboard/reading_room_admin/reports/popular",
+      },
+      {
+        id: "overdue-reports",
+        title: "Laporan Keterlambatan",
+        href: "/dashboard/reading_room_admin/reports/overdue",
+        badge: { text: "5", variant: "destructive" },
+      },
+    ],
+  },
+  {
+    id: "users",
+    title: "Pengguna",
+    href: "/dashboard/reading_room_admin/users",
+    icon: Users,
+  },
+  {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
+  {
+    id: "settings",
+    title: "Pengaturan",
+    href: "/dashboard/reading_room_admin/settings",
+    icon: Settings,
+  },
+]
 
 // Menu items for KKP staff
 export const adminUmumMenuItems = [
@@ -727,6 +855,98 @@ export const laboratoryAdminMenuItems = [
   },
 ]
 
+export const financeAdminMenuItems = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/admin_keuangan",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "payments",
+    title: "Payments",
+    href: "/dashboard/admin_keuangan/payments",
+    icon: CreditCard,
+    children: [
+      {
+        id: "payment-list",
+        title: "Payment List",
+        href: "/dashboard/admin_keuangan/payments",
+      },
+      {
+        id: "payment-verification",
+        title: "Payment Verification",
+        href: "/dashboard/admin_keuangan/payments/verification",
+        badge: { text: "15", variant: "destructive" },
+      },
+      {
+        id: "payment-history",
+        title: "Payment History",
+        href: "/dashboard/admin_keuangan/payments/history",
+      },
+    ],
+  },
+  {
+    id: "reports",
+    title: "Financial Reports",
+    href: "/dashboard/admin_keuangan/reports",
+    icon: FileText,
+    children: [
+      {
+        id: "income-reports",
+        title: "Income Reports",
+        href: "/dashboard/admin_keuangan/reports/income",
+      },
+      {
+        id: "expense-reports",
+        title: "Expense Reports",
+        href: "/dashboard/admin_keuangan/reports/expenses",
+      },
+      {
+        id: "student-payment-reports",
+        title: "Student Payment Reports",
+        href: "/dashboard/admin_keuangan/reports/students",
+      },
+    ],
+  },
+  {
+    id: "budget",
+    title: "Budget Management",
+    href: "/dashboard/admin_keuangan/budget",
+    icon: Wallet,
+    children: [
+      {
+        id: "budget-allocation",
+        title: "Budget Allocation",
+        href: "/dashboard/admin_keuangan/budget/allocation",
+      },
+      {
+        id: "budget-tracking",
+        title: "Budget Tracking",
+        href: "/dashboard/admin_keuangan/budget/tracking",
+      },
+      {
+        id: "budget-planning",
+        title: "Budget Planning",
+        href: "/dashboard/admin_keuangan/budget/planning",
+      },
+    ],
+  },
+  {
+    id: "notifications",
+    title: "Notifications",
+    href: "/dashboard/notifications",
+    icon: Bell,
+    badge: { text: "8", variant: "destructive" },
+  },
+  {
+    id: "settings",
+    title: "Settings",
+    href: "/dashboard/admin_keuangan/settings",
+    icon: Settings,
+  },
+]
+
 
 export const menuItems: Record<Role, typeof adminMenuItems> = {
   admin: adminMenuItems,
@@ -737,6 +957,8 @@ export const menuItems: Record<Role, typeof adminMenuItems> = {
   staff_tu: staffTuMenuItems,
   laboratory_admin: laboratoryAdminMenuItems,
   staff_umum: adminUmumMenuItems,
+  reading_room_admin: readingRoomAdminMenuItems,
+  admin_keuangan: financeAdminMenuItems,
 }
 
 export const dekanItems = [

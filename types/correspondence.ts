@@ -1,5 +1,3 @@
-"use server"
-
 export type LetterStatus =
   | "submitted" // Just submitted, waiting for review
   | "in-review" // Being reviewed by staff/prodi/dekan
@@ -17,8 +15,6 @@ export interface LetterAttachment {
 }
 
 export interface LetterRequest {
-  [x: string]: string | undefined | Record<string, any> | LetterAttachment[] | LetterStatus | ApprovalRole
-  notes: string | undefined
   id: string
   type: string
   title: string

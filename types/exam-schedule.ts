@@ -12,9 +12,5 @@ export interface ExamSchedule {
   startTime: string // HH:MM format
   endTime: string // HH:MM format
   classroom: Classroom
-  studentName: string
-  studentNIM: string
-  instructorName: string
-  examinerName: string
 }
 

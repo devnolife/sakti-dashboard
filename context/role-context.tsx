@@ -14,6 +14,7 @@ export type Role =
   | "lecturer"
   | "kepala_jurusan"
   | "laboratory_admin"
+  | "lecturer"
 
 // Configuration for each role
 export const roleConfigs = {
