@@ -25,6 +25,7 @@ import {
   FileSpreadsheet,
   BookMarked,
   ScrollText,
+  PanelsTopLeft,
 } from "lucide-react"
 import type { Role } from "@/types/role"
 
@@ -124,6 +125,12 @@ export const mahasiswaMenuItems = [
       },
      
     ],
+  },
+  {
+    id: "exams",
+    title: "Ujian Komfren Aik",
+    href: "/dashboard/mahasiswa/exams-aik",
+    icon: PanelsTopLeft,
   },
   {
     id: "payment",
