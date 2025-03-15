@@ -6,7 +6,7 @@ export default function StaffTULayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <RoleSidebar role="staff_tu" />
-      <div className="flex-1 pt-14">
+      <div className="flex-1 pt-16">
         <div className="pt-4 pl-3">{children}</div>
       </div>
       <RoleMobileMenu role="staff_tu" />
