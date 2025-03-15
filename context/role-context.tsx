@@ -38,10 +38,6 @@ export const roleConfigs = {
     path: "/dashboard/admin",
     displayName: "Admin",
   },
-  staff_kkp: {
-    path: "/dashboard/staff_kkp",
-    displayName: "Staff KKP",
-  },
   lecturer: {
     path: "/dashboard/lecturer",
     displayName: "Dosen",
@@ -63,7 +59,6 @@ export const roleLabels: Record<Role, string> = {
   prodi: "Kepala Program Studi",
   dekan: "Dekan",
   admin: "Admin",
-  staff_kkp: "Staff KKP",
   lecturer: "Dosen",
   kepala_jurusan: "Kepala Jurusan",
   laboratory_admin: "Admin Laboratorium",

@@ -42,7 +42,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     bgColor: "bg-purple-100",
   },
   staff_tu: {
-    displayName: "Staff TU",
+    displayName: "Administrasi Prodi",
     description: "Administrative staff role with access to student records and administrative functions.",
     icon: "clipboard",
     color: "text-orange-500",
@@ -62,22 +62,15 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: "text-gray-500",
     bgColor: "bg-gray-100",
   },
-  staff_kkp: {
-    displayName: "Staff KKP",
-    description: "KKP staff role with access to internship and practical work management.",
-    icon: "briefcase",
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-100",
-  },
   laboratory_admin: {
-    displayName: "Laboratory Admin",
+    displayName: "Admin Laboratorium",
     description: "Laboratory administrator role with access to lab management and scheduling.",
     icon: "flask",
     color: "text-indigo-500",
     bgColor: "bg-indigo-100",
   },
   reading_room_admin: {
-    displayName: "Reading Room Admin",
+    displayName: "Admin Ruang Baca",
     description: "Library administrator role with access to book management and borrowing records.",
     icon: "book",
     color: "text-teal-500",
@@ -91,7 +84,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     bgColor: "bg-pink-100",
   },
   admin_keuangan: {
-    displayName: "Admin Keuangan",
+    displayName: "Administrasi Keuangan",
     description: "Finance administrator role with access to payment management and financial records.",
     icon: "dollar-sign",
     color: "text-emerald-500",
@@ -101,11 +94,10 @@ export const roleConfigs: Record<Role, RoleConfig> = {
 
 export const roleLabels = {
   mahasiswa: "Mahasiswa",
-  staff_tu: "Staff TU",
+  staff_tu: "Administasi Prodi",
   prodi: "Kepala Program Studi",
   dekan: "Dekan",
   admin: "Admin",
-  staff_kkp: "Staff KKP",
   lecturer: "Dosen",
   kepala_jurusan: "Kepala Jurusan",
   laboratory_admin: "Admin Laboratorium",

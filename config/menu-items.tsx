@@ -893,6 +893,11 @@ export const financeAdminMenuItems = [
     icon: FileText,
     children: [
       {
+        id: "financial-reports",
+        title: "Dashboard",
+        href: "/dashboard/admin_keuangan/reports",
+      },
+      {
         id: "income-reports",
         title: "Income Reports",
         href: "/dashboard/admin_keuangan/reports/income",

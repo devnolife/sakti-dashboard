@@ -1,5 +1,7 @@
 "use client"
 
+import { CardFooter } from "@/components/ui/card"
+
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,13 +17,21 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Building, Search, MapPin, Users, Briefcase, Plus, X, Check, UserPlus } from "lucide-react"
+import { Building, Search, MapPin, Users, Briefcase, Plus, X, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import TeamMemberSelector from "./team-member-selector"
 
 // Location interface
-export interface Location {
+export interface SubLocation {
+  id: string
+  name: string
+  address: string
+  contactPerson: string
+  contactEmail: string
+  contactPhone: string
+}
+
+export interface LocationType {
   id: string
   name: string
   address: string
@@ -33,6 +43,7 @@ export interface Location {
   status: "available" | "limited" | "full"
   distance?: number // in km
   favorite?: boolean
+  subLocations: SubLocation[]
 }
 
 // Student interface
@@ -54,7 +65,7 @@ interface LocationManagerProps {
 
 export default function LocationManager({ userId }: LocationManagerProps) {
   // State for locations
-  const [locations, setLocations] = useState<Location[]>([
+  const [locations, setLocations] = useState<LocationType[]>([
     {
       id: "loc-001",
       name: "PT Teknologi Maju",
@@ -67,6 +78,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
       status: "available",
       distance: 3.2,
       favorite: true,
+      subLocations: [],
     },
     {
       id: "loc-002",
@@ -79,6 +91,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
       remaining: 2,
       status: "limited",
       distance: 5.7,
+      subLocations: [],
     },
     {
       id: "loc-003",
@@ -91,6 +104,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
       remaining: 0,
       status: "full",
       distance: 120.3,
+      subLocations: [],
     },
     {
       id: "loc-004",
@@ -103,6 +117,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
       remaining: 8,
       status: "available",
       distance: 4.8,
+      subLocations: [],
     },
   ])
 
@@ -112,9 +127,9 @@ export default function LocationManager({ userId }: LocationManagerProps) {
   const [cityFilter, setCityFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("name")
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
-  const [newLocation, setNewLocation] = useState<Partial<Location>>({
+  const [newLocation, setNewLocation] = useState<Partial<LocationType>>({
     name: "",
     address: "",
     city: "",
@@ -123,6 +138,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
     quota: 0,
     remaining: 0,
     status: "available",
+    subLocations: [],
   })
 
   // State for team selection
@@ -171,7 +187,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
   // Handle adding a new location
   const handleAddLocation = () => {
     const id = `loc-${String(locations.length + 1).padStart(3, "0")}`
-    const newLoc: Location = {
+    const newLoc: LocationType = {
       id,
       name: newLocation.name || "",
       address: newLocation.address || "",
@@ -182,6 +198,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
       remaining: newLocation.remaining || 0,
       status: (newLocation.status as "available" | "limited" | "full") || "available",
       distance: Math.random() * 10, // Random distance for demo
+      subLocations: [],
     }
 
     setLocations([...locations, newLoc])
@@ -194,6 +211,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
       quota: 0,
       remaining: 0,
       status: "available",
+      subLocations: [],
     })
     setShowAddDialog(false)
   }
@@ -209,32 +227,6 @@ export default function LocationManager({ userId }: LocationManagerProps) {
     if (selectedLocation?.id === id) {
       setSelectedLocation(null)
     }
-  }
-
-  // Handle drag and drop reordering
-  const handleDragEnd = (result: any) => {
-    if (!result.destination) return
-
-    const items = Array.from(filteredLocations)
-    const [reorderedItem] = items.splice(result.source.index, 1)
-    items.splice(result.destination.index, 0, reorderedItem)
-
-    // Update the main locations array while preserving non-filtered items
-    const updatedLocations = [...locations]
-    filteredLocations.forEach((loc, index) => {
-      const originalIndex = updatedLocations.findIndex((l) => l.id === loc.id)
-      if (originalIndex !== -1) {
-        updatedLocations.splice(originalIndex, 1)
-      }
-    })
-
-    // Insert the reordered items
-    items.forEach((item, index) => {
-      const insertIndex = Math.min(index, updatedLocations.length)
-      updatedLocations.splice(insertIndex, 0, item)
-    })
-
-    setLocations(updatedLocations)
   }
 
   // Handle team selection completion
@@ -284,18 +276,12 @@ export default function LocationManager({ userId }: LocationManagerProps) {
   }
 
   // If team selector is shown, render it instead of the location list
-  if (showTeamSelector && selectedLocation) {
-    return (
-      <TeamMemberSelector
-        selectedLocation={selectedLocation}
-        onComplete={handleTeamSelectionComplete}
-        onCancel={cancelTeamSelection}
-      />
-    )
+  if (showTeamSelector) {
+    return <TeamMemberSelector onComplete={handleTeamSelectionComplete} onCancel={cancelTeamSelection} />
   }
 
   // If application is submitted, show success message
-  if (applicationSubmitted && selectedLocation) {
+  if (applicationSubmitted) {
     return (
       <Card className="w-full">
         <CardHeader>
@@ -310,7 +296,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
             <h3 className="text-lg font-medium text-green-700 mb-2">Congratulations!</h3>
             <p className="text-sm text-green-600 mb-4">
               Your team of {selectedTeam.length} members has been successfully registered for an internship at{" "}
-              <strong>{selectedLocation.name}</strong>.
+              <strong>{selectedLocation?.name}</strong>.
             </p>
             <div className="flex justify-center gap-2 flex-wrap">
               {selectedTeam.map((member) => (
@@ -332,15 +318,7 @@ export default function LocationManager({ userId }: LocationManagerProps) {
           </div>
 
           <div className="flex justify-end">
-            <Button
-              onClick={() => {
-                setApplicationSubmitted(false)
-                setSelectedLocation(null)
-                setSelectedTeam([])
-              }}
-            >
-              Return to Locations
-            </Button>
+            <Button onClick={() => setApplicationSubmitted(false)}>Return to Locations</Button>
           </div>
         </CardContent>
       </Card>
@@ -564,119 +542,97 @@ export default function LocationManager({ userId }: LocationManagerProps) {
         </div>
       </div>
 
-      {/* Locations List with Drag and Drop */}
-      <div className="space-y-4">
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="locations">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
-                {filteredLocations.length > 0 ? (
-                  filteredLocations.map((location, index) => (
-                    <Draggable key={location.id} draggableId={location.id} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={cn(
-                            "rounded-lg border p-4 hover:bg-muted/30 transition-colors",
-                            selectedLocation?.id === location.id && "border-primary bg-primary/5",
-                            location.status === "full" && "opacity-70",
-                          )}
-                          onClick={() => setSelectedLocation(selectedLocation?.id === location.id ? null : location)}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start gap-3">
-                              <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                                <Building className="h-5 w-5 text-primary" />
-                              </div>
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h3 className="font-medium">{location.name}</h3>
-                                  {location.favorite && (
-                                    <Badge
-                                      variant="outline"
-                                      className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                                    >
-                                      Favorite
-                                    </Badge>
-                                  )}
-                                </div>
-                                <p className="text-sm text-muted-foreground">{location.industry}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">{getStatusBadge(location.status)}</div>
-                          </div>
-
-                          <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-xs text-muted-foreground">
-                                {location.city} • {location.distance?.toFixed(1)} km
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Briefcase className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-xs text-muted-foreground">
-                                {location.positions.slice(0, 2).join(", ")}
-                                {location.positions.length > 2 && "..."}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-xs text-muted-foreground">
-                                Quota: {location.remaining}/{location.quota} remaining
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="mt-3 flex justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                toggleFavorite(location.id)
-                              }}
-                            >
-                              {location.favorite ? "Remove Favorite" : "Add to Favorites"}
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                removeLocation(location.id)
-                              }}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg">
-                    <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                      <Building className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-lg font-medium">No locations found</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Try adjusting your filters or add a new location
-                    </p>
-                    <Button className="mt-4" onClick={() => setShowAddDialog(true)}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Location
-                    </Button>
+      {/* Locations List */}
+      <div className="space-y-3">
+        {filteredLocations.length > 0 ? (
+          filteredLocations.map((location) => (
+            <div
+              key={location.id}
+              className={cn(
+                "rounded-lg border p-4 hover:bg-muted/30 transition-colors cursor-pointer",
+                selectedLocation?.id === location.id && "border-primary bg-primary/5",
+                location.status === "full" && "opacity-70",
+              )}
+              onClick={() => setSelectedLocation(selectedLocation?.id === location.id ? null : location)}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                    <Building className="h-5 w-5 text-primary" />
                   </div>
-                )}
-                {provided.placeholder}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium">{location.name}</h3>
+                      {location.favorite && (
+                        <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                          Favorite
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{location.industry}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">{getStatusBadge(location.status)}</div>
               </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+
+              <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">{location.city}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    {location.positions.slice(0, 2).join(", ")}
+                    {location.positions.length > 2 && "..."}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    Quota: {location.remaining}/{location.quota} remaining
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-3 flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    toggleFavorite(location.id)
+                  }}
+                >
+                  {location.favorite ? "Remove Favorite" : "Add to Favorites"}
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeLocation(location.id)
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg">
+            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
+              <Building className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium">No locations found</h3>
+            <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or add a new location</p>
+            <Button className="mt-4" onClick={() => setShowAddDialog(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Location
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Selected Location Details (inline) */}
@@ -706,7 +662,12 @@ export default function LocationManager({ userId }: LocationManagerProps) {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-sm font-medium">Available Positions</h4>
+              <h4 className="text-sm font-medium">Deskripsi</h4>
+              <p className="text-sm text-muted-foreground">{selectedLocation.description}</p>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Posisi Magang</h4>
               <div className="flex flex-wrap gap-2">
                 {selectedLocation.positions.map((position, index) => (
                   <Badge key={index} variant="outline" className="bg-primary/10">
@@ -717,40 +678,46 @@ export default function LocationManager({ userId }: LocationManagerProps) {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-sm font-medium">Availability</h4>
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">
-                  {selectedLocation.remaining} of {selectedLocation.quota} positions available
-                </span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2.5">
-                <div
-                  className="bg-primary h-2.5 rounded-full"
-                  style={{ width: `${(selectedLocation.remaining / selectedLocation.quota) * 100}%` }}
-                ></div>
-              </div>
+              <h4 className="text-sm font-medium">Kuota</h4>
+              <p className="text-sm text-muted-foreground">
+                {selectedLocation.remaining} dari {selectedLocation.quota} posisi tersisa
+              </p>
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => toggleFavorite(selectedLocation.id)}>
-                {selectedLocation.favorite ? "Remove from Favorites" : "Add to Favorites"}
-              </Button>
-              <Button onClick={startApplication} disabled={selectedLocation.status === "full"}>
-                {selectedLocation.status === "full" ? (
-                  "No Positions Available"
-                ) : (
-                  <>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Form Team & Apply
-                  </>
-                )}
-              </Button>
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Kontak</h4>
+              <div className="rounded-md bg-muted p-3">
+                <p className="text-sm font-medium">{selectedLocation.contactPerson}</p>
+                <p className="text-xs text-muted-foreground">{selectedLocation.contactPosition}</p>
+                <div className="mt-2 text-xs">
+                  <p>Email: {selectedLocation.contactEmail}</p>
+                  <p>Telepon: {selectedLocation.contactPhone}</p>
+                </div>
+              </div>
             </div>
           </CardContent>
+          <CardFooter className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => toggleFavorite(selectedLocation.id)}>
+              {selectedLocation.favorite ? "Remove from Favorites" : "Add to Favorites"}
+            </Button>
+            <Button onClick={startApplication} disabled={selectedLocation.status === "full"}>
+              {selectedLocation.status === "full" ? (
+                "No Positions Available"
+              ) : (
+                <>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Form Team & Apply
+                </>
+              )}
+            </Button>
+          </CardFooter>
         </Card>
       )}
     </div>
   )
 }
+
+export type Location = LocationType
+
+\"\
 

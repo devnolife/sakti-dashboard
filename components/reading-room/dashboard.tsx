@@ -47,20 +47,20 @@ export function ReadingRoomDashboard() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard Ruang Baca</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Selamat datang di dashboard Admin Ruang Baca. Kelola buku, peminjaman, dan skripsi dari sini.
           </p>
         </div>
-        <div className="flex gap-2 self-end sm:self-auto">
-          <Button variant="outline" size="sm" className="h-9 gap-1" onClick={handleRefresh} disabled={isRefreshing}>
+        <div className="flex self-end gap-2 sm:self-auto">
+          <Button variant="outline" size="sm" className="gap-1 h-9" onClick={handleRefresh} disabled={isRefreshing}>
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
             <span>{isRefreshing ? "Memperbarui..." : "Perbarui Data"}</span>
           </Button>
-          <Button variant="outline" size="sm" className="h-9 gap-1" onClick={handleExportData}>
-            <Download className="h-4 w-4" />
+          <Button variant="outline" size="sm" className="gap-1 h-9" onClick={handleExportData}>
+            <Download className="w-4 h-4" />
             <span>Ekspor Data</span>
           </Button>
         </div>
@@ -70,9 +70,9 @@ export function ReadingRoomDashboard() {
         <BookStatsCard />
         <BorrowingStatsCard />
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Pengajuan Judul Baru</CardTitle>
-            <ScrollText className="h-4 w-4 text-muted-foreground" />
+            <ScrollText className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">8</div>
@@ -80,9 +80,9 @@ export function ReadingRoomDashboard() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Keterlambatan</CardTitle>
-            <AlertCircle className="h-4 w-4 text-destructive" />
+            <AlertCircle className="w-4 h-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5</div>
@@ -92,24 +92,24 @@ export function ReadingRoomDashboard() {
       </div>
 
       <Tabs defaultValue="borrowings" className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-auto">
-          <TabsTrigger value="borrowings" className="flex gap-1 items-center">
-            <BookMarked className="h-4 w-4" />
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 md:w-auto">
+          <TabsTrigger value="borrowings" className="flex items-center gap-1">
+            <BookMarked className="w-4 h-4" />
             <span className="hidden sm:inline">Peminjaman</span>
             <span className="sm:hidden">Pinjam</span>
           </TabsTrigger>
-          <TabsTrigger value="overdue" className="flex gap-1 items-center">
-            <AlertCircle className="h-4 w-4" />
+          <TabsTrigger value="overdue" className="flex items-center gap-1">
+            <AlertCircle className="w-4 h-4" />
             <span className="hidden sm:inline">Keterlambatan</span>
             <span className="sm:hidden">Terlambat</span>
           </TabsTrigger>
-          <TabsTrigger value="popular" className="flex gap-1 items-center">
-            <BookOpen className="h-4 w-4" />
+          <TabsTrigger value="popular" className="flex items-center gap-1">
+            <BookOpen className="w-4 h-4" />
             <span className="hidden sm:inline">Buku Populer</span>
             <span className="sm:hidden">Populer</span>
           </TabsTrigger>
-          <TabsTrigger value="submissions" className="flex gap-1 items-center">
-            <ScrollText className="h-4 w-4" />
+          <TabsTrigger value="submissions" className="flex items-center gap-1">
+            <ScrollText className="w-4 h-4" />
             <span className="hidden sm:inline">Pengajuan Judul</span>
             <span className="sm:hidden">Judul</span>
           </TabsTrigger>

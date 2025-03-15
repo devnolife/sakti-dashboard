@@ -3,7 +3,7 @@ import { ThesisTitlesManagement } from "@/components/reading-room/thesis/thesis-
 import { ThesisTitlesPageSkeleton } from "@/components/reading-room/thesis/thesis-titles-page-skeleton"
 
 export const metadata = {
-  title: "Thesis Titles Management | Reading Room Admin",
+  title: "Thesis Titles Management | Admin Ruang Baca",
   description: "Manage and review thesis titles submitted by students",
 }
 
