@@ -68,13 +68,13 @@ export default function BudgetPage() {
           <h2 className="text-2xl font-bold tracking-tight">Budget Management</h2>
           <p className="text-muted-foreground">Manage and allocate budgets across departments and programs</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="w-4 h-4 mr-2" />
             New Budget
           </Button>
           <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="w-4 h-4 mr-2" />
             Export Budget Data
           </Button>
         </div>
@@ -82,9 +82,9 @@ export default function BudgetPage() {
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <Wallet className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Rp 4.43B</div>
@@ -92,9 +92,9 @@ export default function BudgetPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Spent</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
+            <PieChart className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Rp 2.75B</div>
@@ -102,9 +102,9 @@ export default function BudgetPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Remaining</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Rp 1.68B</div>
@@ -112,9 +112,9 @@ export default function BudgetPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Departments</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            <AlertTriangle className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5</div>
@@ -176,7 +176,7 @@ export default function BudgetPage() {
             <TabsContent value="overview">
               <div className="h-[300px] w-full flex items-center justify-center border border-dashed rounded-md">
                 <div className="text-center">
-                  <PieChart className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <PieChart className="w-12 h-12 mx-auto text-muted-foreground" />
                   <h3 className="mt-4 text-lg font-medium">Budget Overview</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     Comprehensive overview of budget allocation and spending
@@ -188,7 +188,7 @@ export default function BudgetPage() {
             <TabsContent value="allocation">
               <div className="h-[300px] w-full flex items-center justify-center border border-dashed rounded-md">
                 <div className="text-center">
-                  <Wallet className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <Wallet className="w-12 h-12 mx-auto text-muted-foreground" />
                   <h3 className="mt-4 text-lg font-medium">Budget Allocation</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     Detailed breakdown of budget allocation across departments
@@ -200,7 +200,7 @@ export default function BudgetPage() {
             <TabsContent value="expenses">
               <div className="h-[300px] w-full flex items-center justify-center border border-dashed rounded-md">
                 <div className="text-center">
-                  <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <TrendingUp className="w-12 h-12 mx-auto text-muted-foreground" />
                   <h3 className="mt-4 text-lg font-medium">Expense Tracking</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     Track and monitor expenses against allocated budgets
@@ -212,7 +212,7 @@ export default function BudgetPage() {
             <TabsContent value="planning">
               <div className="h-[300px] w-full flex items-center justify-center border border-dashed rounded-md">
                 <div className="text-center">
-                  <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <AlertTriangle className="w-12 h-12 mx-auto text-muted-foreground" />
                   <h3 className="mt-4 text-lg font-medium">Budget Planning</h3>
                   <p className="mt-2 text-sm text-muted-foreground">Plan and forecast future budget allocations</p>
                 </div>
