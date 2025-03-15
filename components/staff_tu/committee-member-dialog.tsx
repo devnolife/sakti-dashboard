@@ -121,6 +121,8 @@ interface CommitteeMemberDialogProps {
   onOpenChange: (open: boolean) => void
   onAddMember: (member: CommitteeMember) => void
   existingMembers: CommitteeMember[]
+  title?: string
+  description?: string
 }
 
 export function CommitteeMemberDialog({
@@ -128,6 +130,8 @@ export function CommitteeMemberDialog({
   onOpenChange,
   onAddMember,
   existingMembers,
+  title = "Tambah Anggota Komite",
+  description = "Pilih dosen untuk ditugaskan pada ujian ini",
 }: CommitteeMemberDialogProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedLecturer, setSelectedLecturer] = useState<string | null>(null)
@@ -167,10 +171,15 @@ export function CommitteeMemberDialog({
     if (selectedLecturer) {
       const lecturer = mockLecturers.find((l) => l.id === selectedLecturer)
       if (lecturer) {
+        // Set role based on the dialog title if it includes "Pembimbing"
+        const defaultRole = title.includes("Pembimbing") ? 
+          title.includes("Pembimbing 1") ? "Pembimbing 1" : "Pembimbing 2" : 
+          selectedRole
+          
         const newMember: CommitteeMember = {
           id: lecturer.id,
           name: lecturer.name,
-          role: selectedRole,
+          role: defaultRole,
           department: lecturer.department,
           avatarUrl: lecturer.avatarUrl,
         }
@@ -189,8 +198,8 @@ export function CommitteeMemberDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl">Tambah Anggota Komite</DialogTitle>
-          <DialogDescription>Pilih dosen untuk ditambahkan sebagai anggota komite ujian</DialogDescription>
+          <DialogTitle className="text-xl">{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -274,49 +283,81 @@ export function CommitteeMemberDialog({
             </ScrollArea>
           </div>
 
-          {/* Role Selection */}
+          {/* Selected Lecturer Details */}
           {selectedLecturer && (
-            <div className="p-4 space-y-2 border rounded-lg border-border bg-muted/30">
-              <Label htmlFor="role" className="text-sm font-medium">
-                Peran dalam Ujian
-              </Label>
-              <RadioGroup
-                id="role"
-                value={selectedRole}
-                onValueChange={setSelectedRole}
-                className="flex flex-wrap gap-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Ketua" id="ketua" />
-                  <Label htmlFor="ketua" className="cursor-pointer">
-                    Ketua
-                  </Label>
+            <div className="p-4 space-y-4 border rounded-lg border-border">
+              <div className="flex items-center gap-3">
+                <Avatar className="w-12 h-12 border-2 border-primary/10">
+                  <AvatarImage
+                    src={mockLecturers.find((l) => l.id === selectedLecturer)?.avatarUrl}
+                    alt={mockLecturers.find((l) => l.id === selectedLecturer)?.name}
+                  />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {mockLecturers
+                      .find((l) => l.id === selectedLecturer)
+                      ?.name.split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">
+                    {mockLecturers.find((l) => l.id === selectedLecturer)?.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {mockLecturers.find((l) => l.id === selectedLecturer)?.department}
+                  </p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Sekretaris" id="sekretaris" />
-                  <Label htmlFor="sekretaris" className="cursor-pointer">
-                    Sekretaris
-                  </Label>
+              </div>
+
+              {!title.includes("Pembimbing") && (
+                <div className="space-y-2">
+                  <Label htmlFor="role">Peran dalam Ujian</Label>
+                  <RadioGroup
+                    id="role"
+                    value={selectedRole}
+                    onValueChange={setSelectedRole}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Ketua" id="ketua" />
+                      <Label htmlFor="ketua" className="cursor-pointer">
+                        Ketua
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Anggota" id="anggota" />
+                      <Label htmlFor="anggota" className="cursor-pointer">
+                        Anggota
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Sekretaris" id="sekretaris" />
+                      <Label htmlFor="sekretaris" className="cursor-pointer">
+                        Sekretaris
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Penguji 1" id="penguji1" />
+                      <Label htmlFor="penguji1" className="cursor-pointer">
+                        Penguji 1
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Penguji 2" id="penguji2" />
+                      <Label htmlFor="penguji2" className="cursor-pointer">
+                        Penguji 2
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Penguji 3" id="penguji3" />
+                      <Label htmlFor="penguji3" className="cursor-pointer">
+                        Penguji 3
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Penguji 1" id="penguji1" />
-                  <Label htmlFor="penguji1" className="cursor-pointer">
-                    Penguji 1
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Penguji 2" id="penguji2" />
-                  <Label htmlFor="penguji2" className="cursor-pointer">
-                    Penguji 2
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Penguji 3" id="penguji3" />
-                  <Label htmlFor="penguji3" className="cursor-pointer">
-                    Penguji 3
-                  </Label>
-                </div>
-              </RadioGroup>
+              )}
             </div>
           )}
         </div>

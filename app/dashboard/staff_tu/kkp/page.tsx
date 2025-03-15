@@ -307,36 +307,36 @@ export default function StaffKkpManagementPage() {
     switch (status) {
       case "pending":
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200 font-medium">
-            <Clock className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="font-medium bg-amber-500/10 text-amber-500 border-amber-200">
+            <Clock className="w-3 h-3 mr-1" />
             Pending
           </Badge>
         )
       case "approved":
         return (
-          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200 font-medium">
-            <CheckCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="font-medium text-green-500 border-green-200 bg-green-500/10">
+            <CheckCircle className="w-3 h-3 mr-1" />
             Approved
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200 font-medium">
-            <XCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="font-medium text-red-500 border-red-200 bg-red-500/10">
+            <XCircle className="w-3 h-3 mr-1" />
             Rejected
           </Badge>
         )
       case "in-progress":
         return (
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200 font-medium">
-            <AlertCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="font-medium text-blue-500 border-blue-200 bg-blue-500/10">
+            <AlertCircle className="w-3 h-3 mr-1" />
             In Progress
           </Badge>
         )
       case "completed":
         return (
-          <Badge variant="outline" className="bg-purple-500/10 text-purple-500 border-purple-200 font-medium">
-            <CheckCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="font-medium text-purple-500 border-purple-200 bg-purple-500/10">
+            <CheckCircle className="w-3 h-3 mr-1" />
             Completed
           </Badge>
         )
@@ -357,14 +357,14 @@ export default function StaffKkpManagementPage() {
         )
       case "verified":
         return (
-          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
+          <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
             <CheckCircle className="h-3.5 w-3.5 mr-1" />
             Verified
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
+          <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
             <XCircle className="h-3.5 w-3.5 mr-1" />
             Rejected
           </Badge>
@@ -392,11 +392,11 @@ export default function StaffKkpManagementPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
             Manajemen KKP
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Kelola dan proses permintaan Kuliah Kerja Praktik (KKP) mahasiswa</p>
+        <p className="mt-2 text-muted-foreground">Kelola dan proses permintaan Kuliah Kerja Praktik (KKP) mahasiswa</p>
       </div>
 
       {/* Stats Cards */}
@@ -404,7 +404,7 @@ export default function StaffKkpManagementPage() {
         <Card className="overflow-hidden gradient-border">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Permintaan</CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+            <ClipboardList className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{applications.length}</div>
@@ -414,7 +414,7 @@ export default function StaffKkpManagementPage() {
         <Card className="overflow-hidden gradient-border">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Pending</CardTitle>
-            <Clock className="h-4 w-4 text-amber-500" />
+            <Clock className="w-4 h-4 text-amber-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{applications.filter((app) => app.status === "pending").length}</div>
@@ -424,7 +424,7 @@ export default function StaffKkpManagementPage() {
         <Card className="overflow-hidden gradient-border">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Disetujui</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="w-4 h-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{applications.filter((app) => app.status === "approved").length}</div>
@@ -434,7 +434,7 @@ export default function StaffKkpManagementPage() {
         <Card className="overflow-hidden gradient-border">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Ditolak</CardTitle>
-            <XCircle className="h-4 w-4 text-red-500" />
+            <XCircle className="w-4 h-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{applications.filter((app) => app.status === "rejected").length}</div>
@@ -447,24 +447,24 @@ export default function StaffKkpManagementPage() {
       <Card className="overflow-hidden gradient-border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" />
+            <FileText className="w-5 h-5 text-primary" />
             <span>Permintaan KKP Mahasiswa</span>
           </CardTitle>
           <CardDescription>Tinjau dan proses permintaan KKP mahasiswa</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+          <div className="flex flex-col items-center justify-between gap-1 mb-6 md:flex-row">
             <div className="relative w-full md:w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Cari berdasarkan nama atau NIM..."
+                placeholder="Pencarian"
                 className="w-full pl-8 rounded-full border-primary/20 focus-visible:ring-primary"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex gap-2 w-full md:w-auto">
+            <div className="flex w-full gap-2 md:w-auto">
               <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as KkpStatus | "all")}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter Status" />
@@ -482,40 +482,40 @@ export default function StaffKkpManagementPage() {
           </div>
 
           {/* Applications Table */}
-          <div className="rounded-lg border overflow-hidden">
+          <div className="overflow-hidden border rounded-lg">
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow>
                   <TableHead onClick={() => handleSort("submissionDate")} className="cursor-pointer w-[140px]">
                     <div className="flex items-center">
-                      <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                       Tanggal
-                      <ArrowUpDown className="ml-1 h-3 w-3 text-muted-foreground" />
+                      <ArrowUpDown className="w-3 h-3 ml-1 text-muted-foreground" />
                     </div>
                   </TableHead>
                   <TableHead className="w-[180px]">
                     <div className="flex items-center">
-                      <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <User className="w-4 h-4 mr-2 text-muted-foreground" />
                       Mahasiswa
                     </div>
                   </TableHead>
                   <TableHead onClick={() => handleSort("title")} className="cursor-pointer">
                     <div className="flex items-center">
-                      <BookOpen className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <BookOpen className="w-4 h-4 mr-2 text-muted-foreground" />
                       Judul KKP
-                      <ArrowUpDown className="ml-1 h-3 w-3 text-muted-foreground" />
+                      <ArrowUpDown className="w-3 h-3 ml-1 text-muted-foreground" />
                     </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex items-center">
-                      <Building className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Building className="w-4 h-4 mr-2 text-muted-foreground" />
                       Perusahaan
                     </div>
                   </TableHead>
                   <TableHead onClick={() => handleSort("status")} className="cursor-pointer">
                     <div className="flex items-center">
                       Status
-                      <ArrowUpDown className="ml-1 h-3 w-3 text-muted-foreground" />
+                      <ArrowUpDown className="w-3 h-3 ml-1 text-muted-foreground" />
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
@@ -526,7 +526,7 @@ export default function StaffKkpManagementPage() {
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center">
-                        <RotateCcw className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
+                        <RotateCcw className="w-8 h-8 mb-2 text-muted-foreground animate-spin" />
                         <p className="text-muted-foreground">Loading applications...</p>
                       </div>
                     </TableCell>
@@ -535,14 +535,14 @@ export default function StaffKkpManagementPage() {
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center">
-                        <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                        <AlertCircle className="w-8 h-8 mb-2 text-muted-foreground" />
                         <p className="text-muted-foreground">Tidak ada permintaan ditemukan</p>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   paginatedApplications.map((application) => (
-                    <TableRow key={application.id} className="hover:bg-muted/50 transition-colors">
+                    <TableRow key={application.id} className="transition-colors hover:bg-muted/50">
                       <TableCell className="font-medium">
                         {new Date(application.submissionDate).toLocaleDateString("id-ID", {
                           day: "numeric",
@@ -552,20 +552,20 @@ export default function StaffKkpManagementPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Avatar className="h-8 w-8 border border-primary/10">
-                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          <Avatar className="w-8 h-8 border border-primary/10">
+                            <AvatarFallback className="text-xs bg-primary/10 text-primary">
                               {getInitials(application.student.name)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{application.student.name}</div>
+                            <div className="text-sm font-medium">{application.student.name}</div>
                             <div className="text-xs text-muted-foreground">{application.student.nim}</div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{application.title}</div>
-                        <div className="text-xs text-muted-foreground hidden sm:block">
+                        <div className="hidden text-xs text-muted-foreground sm:block">
                           {application.description && application.description.length > 60
                             ? `${application.description.substring(0, 60)}...`
                             : application.description}
@@ -577,10 +577,10 @@ export default function StaffKkpManagementPage() {
                             <img
                               src={application.company.logo || "/placeholder.svg"}
                               alt={application.company.name}
-                              className="h-6 w-6 rounded-full"
+                              className="w-6 h-6 rounded-full"
                             />
                           ) : (
-                            <Building className="h-6 w-6 text-muted-foreground" />
+                            <Building className="w-6 h-6 text-muted-foreground" />
                           )}
                           <span>{application.company.name}</span>
                         </div>
@@ -589,8 +589,8 @@ export default function StaffKkpManagementPage() {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
+                            <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+                              <MoreHorizontal className="w-4 h-4" />
                               <span className="sr-only">Menu</span>
                             </Button>
                           </DropdownMenuTrigger>
@@ -599,7 +599,7 @@ export default function StaffKkpManagementPage() {
                               onClick={() => handleViewDetails(application.id)}
                               className="cursor-pointer"
                             >
-                              <Eye className="mr-2 h-4 w-4" />
+                              <Eye className="w-4 h-4 mr-2" />
                               Lihat Detail
                             </DropdownMenuItem>
                             {application.status === "pending" && (
@@ -609,7 +609,7 @@ export default function StaffKkpManagementPage() {
                                   onClick={() => handleUpdateStatus(application.id, "approved")}
                                   className="cursor-pointer"
                                 >
-                                  <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                                   Setujui
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -619,14 +619,14 @@ export default function StaffKkpManagementPage() {
                                   }}
                                   className="cursor-pointer"
                                 >
-                                  <XCircle className="mr-2 h-4 w-4 text-red-500" />
+                                  <XCircle className="w-4 h-4 mr-2 text-red-500" />
                                   Tolak
                                 </DropdownMenuItem>
                               </>
                             )}
                             {application.status === "approved" && (
                               <DropdownMenuItem className="cursor-pointer">
-                                <Download className="mr-2 h-4 w-4" />
+                                <Download className="w-4 h-4 mr-2" />
                                 Unduh Surat
                               </DropdownMenuItem>
                             )}
@@ -642,7 +642,7 @@ export default function StaffKkpManagementPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-4 border-t mt-4">
+            <div className="flex items-center justify-between px-4 py-4 mt-4 border-t">
               <div className="text-sm text-muted-foreground">
                 Menampilkan {(currentPage - 1) * itemsPerPage + 1} -{" "}
                 {Math.min(currentPage * itemsPerPage, filteredApplications.length)} dari {filteredApplications.length}{" "}
@@ -654,9 +654,9 @@ export default function StaffKkpManagementPage() {
                   size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="h-8 w-8 p-0"
+                  className="w-8 h-8 p-0"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="w-4 h-4" />
                   <span className="sr-only">Previous Page</span>
                 </Button>
                 <div className="text-sm font-medium">
@@ -667,9 +667,9 @@ export default function StaffKkpManagementPage() {
                   size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="h-8 w-8 p-0"
+                  className="w-8 h-8 p-0"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="w-4 h-4" />
                   <span className="sr-only">Next Page</span>
                 </Button>
               </div>
@@ -685,7 +685,7 @@ export default function StaffKkpManagementPage() {
             <DialogHeader className="space-y-2">
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <div className="flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-primary" />
+                  <GraduationCap className="w-5 h-5 text-primary" />
                   <span className="font-bold">{selectedApplication.title}</span>
                 </div>
               </DialogTitle>
@@ -705,26 +705,26 @@ export default function StaffKkpManagementPage() {
               </div>
             </DialogHeader>
 
-            <div className="mt-2 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 mt-2 lg:grid-cols-3">
               {/* Left Column - Student Information */}
               <div className="space-y-4">
-                <div className="bg-muted/30 rounded-lg p-4 border border-border">
-                  <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
-                    <User className="h-4 w-4 text-primary" />
+                <div className="p-4 border rounded-lg bg-muted/30 border-border">
+                  <h3 className="flex items-center gap-2 pb-2 mb-3 font-semibold border-b text-md">
+                    <User className="w-4 h-4 text-primary" />
                     Informasi Mahasiswa
                   </h3>
                   <div className="flex items-center gap-3 mb-4">
-                    <Avatar className="h-14 w-14 border-2 border-primary/10">
+                    <Avatar className="border-2 h-14 w-14 border-primary/10">
                       <AvatarFallback className="bg-primary/10 text-primary">
                         {getInitials(selectedApplication.student.name)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold text-lg">{selectedApplication.student.name}</p>
+                      <p className="text-lg font-semibold">{selectedApplication.student.name}</p>
                       <p className="text-sm font-medium text-primary">{selectedApplication.student.nim}</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-y-2 text-sm">
+                  <div className="grid grid-cols-2 text-sm gap-y-2">
                     <div className="text-muted-foreground">Program Studi</div>
                     <div className="font-medium text-right">{selectedApplication.student.major}</div>
 
@@ -740,16 +740,16 @@ export default function StaffKkpManagementPage() {
                 </div>
 
                 {selectedApplication.groupMembers && selectedApplication.groupMembers.length > 0 && (
-                  <div className="bg-muted/30 rounded-lg p-4 border border-border">
-                    <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
-                      <UserPlus className="h-4 w-4 text-primary" />
+                  <div className="p-4 border rounded-lg bg-muted/30 border-border">
+                    <h3 className="flex items-center gap-2 pb-2 mb-3 font-semibold border-b text-md">
+                      <UserPlus className="w-4 h-4 text-primary" />
                       Anggota Kelompok
                     </h3>
                     <div className="space-y-3">
                       {selectedApplication.groupMembers.map((member) => (
                         <div key={member.id} className="flex items-center gap-2 p-2 rounded-md bg-background">
-                          <Avatar className="h-8 w-8 border border-primary/10">
-                            <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          <Avatar className="w-8 h-8 border border-primary/10">
+                            <AvatarFallback className="text-xs bg-primary/10 text-primary">
                               {getInitials(member.name)}
                             </AvatarFallback>
                           </Avatar>
@@ -764,14 +764,14 @@ export default function StaffKkpManagementPage() {
                 )}
 
                 {selectedApplication.supervisor && (
-                  <div className="bg-muted/30 rounded-lg p-4 border border-border">
-                    <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
-                      <GraduationCap className="h-4 w-4 text-primary" />
+                  <div className="p-4 border rounded-lg bg-muted/30 border-border">
+                    <h3 className="flex items-center gap-2 pb-2 mb-3 font-semibold border-b text-md">
+                      <GraduationCap className="w-4 h-4 text-primary" />
                       Pembimbing
                     </h3>
                     <div className="flex items-center gap-3 mb-3">
-                      <Avatar className="h-10 w-10 border border-primary/10">
-                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                      <Avatar className="w-10 h-10 border border-primary/10">
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
                           {getInitials(selectedApplication.supervisor.name)}
                         </AvatarFallback>
                       </Avatar>
@@ -780,7 +780,7 @@ export default function StaffKkpManagementPage() {
                         <p className="text-xs text-muted-foreground">{selectedApplication.supervisor.nip}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-y-2 text-sm">
+                    <div className="grid grid-cols-2 text-sm gap-y-2">
                       <div className="text-muted-foreground">Departemen</div>
                       <div className="font-medium text-right">{selectedApplication.supervisor.department}</div>
 
@@ -800,53 +800,53 @@ export default function StaffKkpManagementPage() {
 
               {/* Middle Column - Company and Application Details */}
               <div className="space-y-4">
-                <div className="bg-muted/30 rounded-lg p-4 border border-border">
-                  <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
-                    <Building className="h-4 w-4 text-primary" />
+                <div className="p-4 border rounded-lg bg-muted/30 border-border">
+                  <h3 className="flex items-center gap-2 pb-2 mb-3 font-semibold border-b text-md">
+                    <Building className="w-4 h-4 text-primary" />
                     Informasi Perusahaan
                   </h3>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center border-2 border-primary/10">
+                    <div className="flex items-center justify-center border-2 rounded-full h-14 w-14 bg-muted border-primary/10">
                       {selectedApplication.company.logo ? (
                         <img
                           src={selectedApplication.company.logo || "/placeholder.svg"}
                           alt={selectedApplication.company.name}
-                          className="h-12 w-12 rounded-full object-cover"
+                          className="object-cover w-12 h-12 rounded-full"
                         />
                       ) : (
-                        <Building className="h-8 w-8 text-primary" />
+                        <Building className="w-8 h-8 text-primary" />
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-lg">{selectedApplication.company.name}</p>
+                      <p className="text-lg font-semibold">{selectedApplication.company.name}</p>
                       <p className="text-sm text-primary">{selectedApplication.company.industry}</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 gap-y-2 text-sm">
+                  <div className="grid grid-cols-1 text-sm gap-y-2">
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="text-muted-foreground col-span-1">Alamat</div>
-                      <div className="font-medium col-span-2">{selectedApplication.company.address}</div>
+                      <div className="col-span-1 text-muted-foreground">Alamat</div>
+                      <div className="col-span-2 font-medium">{selectedApplication.company.address}</div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="text-muted-foreground col-span-1">Kota</div>
-                      <div className="font-medium col-span-2">{selectedApplication.company.city}</div>
+                      <div className="col-span-1 text-muted-foreground">Kota</div>
+                      <div className="col-span-2 font-medium">{selectedApplication.company.city}</div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="text-muted-foreground col-span-1">Kontak Person</div>
-                      <div className="font-medium col-span-2">{selectedApplication.company.contactPerson}</div>
+                      <div className="col-span-1 text-muted-foreground">Kontak Person</div>
+                      <div className="col-span-2 font-medium">{selectedApplication.company.contactPerson}</div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="text-muted-foreground col-span-1">Telepon Kontak</div>
-                      <div className="font-medium col-span-2">{selectedApplication.company.contactPhone}</div>
+                      <div className="col-span-1 text-muted-foreground">Telepon Kontak</div>
+                      <div className="col-span-2 font-medium">{selectedApplication.company.contactPhone}</div>
                     </div>
 
                     {selectedApplication.company.website && (
                       <div className="grid grid-cols-3 gap-1">
-                        <div className="text-muted-foreground col-span-1">Website</div>
-                        <div className="font-medium col-span-2">
+                        <div className="col-span-1 text-muted-foreground">Website</div>
+                        <div className="col-span-2 font-medium">
                           <a
                             href={
                               selectedApplication.company.website.startsWith("http")
@@ -855,10 +855,10 @@ export default function StaffKkpManagementPage() {
                             }
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:underline flex items-center gap-1"
+                            className="flex items-center gap-1 text-primary hover:underline"
                           >
                             {selectedApplication.company.website}
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className="w-3 h-3" />
                           </a>
                         </div>
                       </div>
@@ -866,18 +866,18 @@ export default function StaffKkpManagementPage() {
                   </div>
                 </div>
 
-                <div className="bg-muted/30 rounded-lg p-4 border border-border">
-                  <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
-                    <ClipboardList className="h-4 w-4 text-primary" />
+                <div className="p-4 border rounded-lg bg-muted/30 border-border">
+                  <h3 className="flex items-center gap-2 pb-2 mb-3 font-semibold border-b text-md">
+                    <ClipboardList className="w-4 h-4 text-primary" />
                     Detail Aplikasi
                   </h3>
                   <div className="space-y-3">
                     <div className="text-sm">
-                      <div className="text-muted-foreground mb-1">Deskripsi:</div>
-                      <p className="bg-background p-2 rounded-md">{selectedApplication.description}</p>
+                      <div className="mb-1 text-muted-foreground">Deskripsi:</div>
+                      <p className="p-2 rounded-md bg-background">{selectedApplication.description}</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-y-3 text-sm mt-3">
+                    <div className="grid grid-cols-2 mt-3 text-sm gap-y-3">
                       <div className="text-muted-foreground">Tanggal Mulai</div>
                       <div className="font-medium text-right">
                         {new Date(selectedApplication.startDate).toLocaleDateString("id-ID", {
@@ -909,14 +909,14 @@ export default function StaffKkpManagementPage() {
 
                     {((selectedApplication.approvedBy && selectedApplication.approvedDate) ||
                       (selectedApplication.rejectedBy && selectedApplication.rejectedDate)) && (
-                      <div className="mt-3 pt-3 border-t border-border">
+                      <div className="pt-3 mt-3 border-t border-border">
                         {selectedApplication.approvedBy && selectedApplication.approvedDate && (
-                          <div className="flex justify-between items-center text-sm rounded-md bg-green-50 dark:bg-green-950/20 p-2 mb-2">
+                          <div className="flex items-center justify-between p-2 mb-2 text-sm rounded-md bg-green-50 dark:bg-green-950/20">
                             <div>
-                              <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
+                              <Badge variant="outline" className="text-green-700 bg-green-100 border-green-200">
                                 Disetujui oleh
                               </Badge>
-                              <p className="font-medium mt-1">{selectedApplication.approvedBy}</p>
+                              <p className="mt-1 font-medium">{selectedApplication.approvedBy}</p>
                             </div>
                             <div className="text-right text-muted-foreground">
                               {new Date(selectedApplication.approvedDate).toLocaleDateString("id-ID", {
@@ -929,12 +929,12 @@ export default function StaffKkpManagementPage() {
                         )}
 
                         {selectedApplication.rejectedBy && selectedApplication.rejectedDate && (
-                          <div className="flex justify-between items-center text-sm rounded-md bg-red-50 dark:bg-red-950/20 p-2">
+                          <div className="flex items-center justify-between p-2 text-sm rounded-md bg-red-50 dark:bg-red-950/20">
                             <div>
-                              <Badge variant="outline" className="bg-red-100 text-red-700 border-red-200">
+                              <Badge variant="outline" className="text-red-700 bg-red-100 border-red-200">
                                 Ditolak oleh
                               </Badge>
-                              <p className="font-medium mt-1">{selectedApplication.rejectedBy}</p>
+                              <p className="mt-1 font-medium">{selectedApplication.rejectedBy}</p>
                             </div>
                             <div className="text-right text-muted-foreground">
                               {new Date(selectedApplication.rejectedDate).toLocaleDateString("id-ID", {
@@ -950,8 +950,8 @@ export default function StaffKkpManagementPage() {
 
                     {selectedApplication.rejectionReason && (
                       <div className="mt-2 text-sm">
-                        <p className="text-muted-foreground mb-1">Alasan Penolakan:</p>
-                        <p className="bg-red-50 dark:bg-red-950/20 p-2 rounded-md text-red-700 dark:text-red-400">
+                        <p className="mb-1 text-muted-foreground">Alasan Penolakan:</p>
+                        <p className="p-2 text-red-700 rounded-md bg-red-50 dark:bg-red-950/20 dark:text-red-400">
                           {selectedApplication.rejectionReason}
                         </p>
                       </div>
@@ -961,9 +961,9 @@ export default function StaffKkpManagementPage() {
               </div>
 
               {/* Right Column - Documents */}
-              <div className="bg-muted/30 rounded-lg p-4 border border-border h-fit">
-                <h3 className="text-md font-semibold flex items-center gap-2 mb-3 pb-2 border-b">
-                  <FileText className="h-4 w-4 text-primary" />
+              <div className="p-4 border rounded-lg bg-muted/30 border-border h-fit">
+                <h3 className="flex items-center gap-2 pb-2 mb-3 font-semibold border-b text-md">
+                  <FileText className="w-4 h-4 text-primary" />
                   Dokumen
                 </h3>
 
@@ -972,19 +972,19 @@ export default function StaffKkpManagementPage() {
                     {selectedApplication.documents.map((document) => (
                       <div
                         key={document.id}
-                        className="p-3 rounded-lg border border-border hover:bg-background transition-colors"
+                        className="p-3 transition-colors border rounded-lg border-border hover:bg-background"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <div className="p-1.5 bg-primary/10 rounded-md">
-                              <FileText className="h-4 w-4 text-primary" />
+                              <FileText className="w-4 h-4 text-primary" />
                             </div>
-                            <span className="font-medium text-sm">{document.name}</span>
+                            <span className="text-sm font-medium">{document.name}</span>
                           </div>
                           {getDocumentStatusBadge(document.status)}
                         </div>
 
-                        <div className="text-xs text-muted-foreground mb-2">
+                        <div className="mb-2 text-xs text-muted-foreground">
                           Diunggah pada{" "}
                           {new Date(document.uploadDate).toLocaleDateString("id-ID", {
                             day: "numeric",
@@ -994,7 +994,7 @@ export default function StaffKkpManagementPage() {
                         </div>
 
                         {document.notes && (
-                          <div className="bg-muted p-2 rounded-md mb-2 text-xs">
+                          <div className="p-2 mb-2 text-xs rounded-md bg-muted">
                             <span className="font-medium">Catatan:</span> {document.notes}
                           </div>
                         )}
@@ -1020,15 +1020,15 @@ export default function StaffKkpManagementPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-6 text-center bg-background rounded-lg">
-                    <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
+                  <div className="flex flex-col items-center justify-center py-6 text-center rounded-lg bg-background">
+                    <AlertCircle className="w-8 h-8 mb-2 text-muted-foreground" />
                     <p className="text-muted-foreground">Tidak ada dokumen ditemukan</p>
                   </div>
                 )}
               </div>
             </div>
 
-            <DialogFooter className="gap-2 mt-4 pt-4 border-t">
+            <DialogFooter className="gap-2 pt-4 mt-4 border-t">
               <Button variant="outline" onClick={() => setShowDetailsDialog(false)}>
                 Tutup
               </Button>
@@ -1041,7 +1041,7 @@ export default function StaffKkpManagementPage() {
                       setShowRejectionDialog(true)
                     }}
                   >
-                    <XCircle className="h-4 w-4 mr-2" />
+                    <XCircle className="w-4 h-4 mr-2" />
                     Tolak Permintaan
                   </Button>
                   <Button
@@ -1051,14 +1051,14 @@ export default function StaffKkpManagementPage() {
                       handleUpdateStatus(selectedApplication.id, "approved")
                     }}
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-2" />
                     Setujui Permintaan
                   </Button>
                 </>
               )}
               {selectedApplication.status === "approved" && (
                 <Button variant="outline">
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="w-4 h-4 mr-2" />
                   Unduh Surat
                 </Button>
               )}
@@ -1073,13 +1073,13 @@ export default function StaffKkpManagementPage() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <FileCheck className="h-5 w-5 text-primary" />
+                <FileCheck className="w-5 h-5 text-primary" />
                 Verifikasi Dokumen
               </DialogTitle>
               <DialogDescription>{selectedDocument.name}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Status Saat Ini:</span>
                 {getDocumentStatusBadge(selectedDocument.status)}
               </div>
@@ -1116,7 +1116,7 @@ export default function StaffKkpManagementPage() {
               <div className="flex justify-center">
                 <Button variant="outline" asChild className="w-full">
                   <a href={selectedDocument.url} target="_blank" rel="noopener noreferrer">
-                    <FileText className="h-4 w-4 mr-2" />
+                    <FileText className="w-4 h-4 mr-2" />
                     Lihat Dokumen
                   </a>
                 </Button>
@@ -1137,7 +1137,7 @@ export default function StaffKkpManagementPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <XCircle className="h-5 w-5 text-red-500" />
+              <XCircle className="w-5 h-5 text-red-500" />
               Tolak Permintaan KKP
             </DialogTitle>
             <DialogDescription>
@@ -1169,12 +1169,12 @@ export default function StaffKkpManagementPage() {
             >
               {isProcessing ? (
                 <>
-                  <RotateCcw className="h-4 w-4 mr-2 animate-spin" />
+                  <RotateCcw className="w-4 h-4 mr-2 animate-spin" />
                   Memproses...
                 </>
               ) : (
                 <>
-                  <XCircle className="h-4 w-4 mr-2" />
+                  <XCircle className="w-4 h-4 mr-2" />
                   Tolak Permintaan
                 </>
               )}

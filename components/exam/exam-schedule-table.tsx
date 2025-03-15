@@ -43,24 +43,26 @@ export function ExamScheduleTable({ schedules, onEdit, onDelete }: ExamScheduleT
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Course</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Judul Skripsi</TableHead>
+              <TableHead>Mahasiswa</TableHead>
+              <TableHead>Tanggal</TableHead>
+              <TableHead>Waktu</TableHead>
+              <TableHead>Lokasi</TableHead>
+              <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {schedules.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No schedules found.
+                <TableCell colSpan={6} className="h-24 text-center">
+                  Belum ada jadwal ujian.
                 </TableCell>
               </TableRow>
             ) : (
               schedules.map((schedule) => (
                 <TableRow key={schedule.id}>
                   <TableCell className="font-medium">{schedule.courseName}</TableCell>
+                  <TableCell>{schedule.studentName || "-"} {schedule.studentNIM ? `(${schedule.studentNIM})` : ""}</TableCell>
                   <TableCell>{format(new Date(schedule.date), "dd MMM yyyy")}</TableCell>
                   <TableCell>{formatTimeRange(schedule.startTime, schedule.endTime)}</TableCell>
                   <TableCell>
@@ -88,14 +90,14 @@ export function ExamScheduleTable({ schedules, onEdit, onDelete }: ExamScheduleT
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Yakin ingin menghapus?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete this exam schedule. This action cannot be undone.
+              Jadwal ujian ini akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

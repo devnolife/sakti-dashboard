@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 export default function StaffCorrespondencePage() {
   return (
-    <div className="space-y-6">
+    <div className="pt-4 space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
             Manajemen Layanan Surat
           </h2>
           <p className="text-muted-foreground">Kelola semua permohonan surat dari mahasiswa</p>

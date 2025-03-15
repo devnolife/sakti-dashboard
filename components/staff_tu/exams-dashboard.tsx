@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { format } from "date-fns"
+import Link from "next/link"
 
 // Types
 import type { Exam } from "@/types/exam"
@@ -383,13 +384,24 @@ export function ExamsDashboard({ initialFilter = "all", initialTab = "all" }: Ex
           <h1 className="text-2xl font-bold tracking-tight">Manajemen Ujian</h1>
           <p className="mt-1 text-muted-foreground">Kelola jadwal dan detail ujian mahasiswa</p>
         </div>
-        <Button
-          onClick={() => setShowCreateDialog(true)}
-          className="transition-all duration-300 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
-        >
-          <PlusCircle className="w-4 h-4 mr-2" />
-          Tambah Ujian
-        </Button>
+        <div className="flex space-x-3">
+          <Link href="/dashboard/staff_tu/exams/schedules">
+            <Button 
+              variant="outline"
+              className="transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Lihat Jadwal
+            </Button>
+          </Link>
+          <Button
+            onClick={() => setShowCreateDialog(true)}
+            className="transition-all duration-300 shadow-md bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
+          >
+            <PlusCircle className="w-4 h-4 mr-2" />
+            Tambah Ujian
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}

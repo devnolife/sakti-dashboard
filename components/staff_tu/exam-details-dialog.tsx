@@ -618,6 +618,8 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
         onOpenChange={setShowCommitteeDialog}
         onAddMember={handleAddCommitteeMember}
         existingMembers={editedExam.committee || []}
+        title="Tambah Dosen Penguji"
+        description="Pilih dosen untuk ditambahkan sebagai penguji pada ujian ini"
       />
 
       {/* We would need to create an AdvisorDialog component similar to CommitteeMemberDialog */}
@@ -659,6 +661,7 @@ export function ExamDetailsDialog({ exam, open, onOpenChange, onExamUpdate }: Ex
             : []),
         ]}
         title={`Pilih ${advisorType === "advisor1" ? "Pembimbing 1" : "Pembimbing 2"}`}
+        description={`Pilih dosen untuk ditugaskan sebagai ${advisorType === "advisor1" ? "Pembimbing 1" : "Pembimbing 2"} pada ujian ini`}
       />
     </>
   )

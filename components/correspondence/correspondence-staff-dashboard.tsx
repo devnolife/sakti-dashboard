@@ -12,10 +12,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, Clock, FileText, X, Mail } from "lucide-react"
 import { LetterDetailView } from "@/components/correspondence/letter-detail-view"
 
-// Types
 import type { LetterRequest } from "@/types/correspondence"
 
-// Mock data
 const mockRequests: LetterRequest[] = [
   {
     id: "1",
@@ -218,7 +216,6 @@ export function CorrespondenceStaffDashboard() {
   const [selectedLetter, setSelectedLetter] = useState<LetterRequest | null>(null)
   const [viewMode, setViewMode] = useState<"list" | "detail">("list")
 
-  // Simulate loading data
   useEffect(() => {
     const timer = setTimeout(() => {
       setRequests(mockRequests)
@@ -229,25 +226,23 @@ export function CorrespondenceStaffDashboard() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Filter requests based on active tab and filters
   useEffect(() => {
     let filtered = [...requests]
 
-    // Apply tab filter
     if (activeTab === "all") {
-      // No filtering needed
+      
     } else if (activeTab === "sent") {
       filtered = filtered.filter((r) => r.status === "completed")
     } else {
       filtered = filtered.filter((r) => r.status === activeTab)
     }
 
-    // Apply status filter if not "all"
+    
     if (filters.status && filters.status !== "all") {
       filtered = filtered.filter((r) => r.status === filters.status)
     }
 
-    // Apply date filter if present
+    
     if (filters.date) {
       const filterDate = new Date(filters.date).toDateString()
       filtered = filtered.filter((r) => {
@@ -259,13 +254,13 @@ export function CorrespondenceStaffDashboard() {
     setFilteredRequests(filtered)
   }, [activeTab, filters, requests])
 
-  // Handle tab change
+  
   const handleTabChange = (value: string) => {
     setActiveTab(value)
-    setViewMode("list") // Reset to list view when changing tabs
+    setViewMode("list") 
   }
 
-  // Handle filter change
+  
   const handleFilterChange = (key: string, value: string | undefined) => {
     setFilters((prev) => ({
       ...prev,
@@ -273,10 +268,10 @@ export function CorrespondenceStaffDashboard() {
     }))
   }
 
-  // Handle search
+  
   const handleSearch = (query: string) => {
     if (!query) {
-      // Reset to current filters
+      
       let filtered = [...requests]
 
       if (activeTab !== "all") {
@@ -303,7 +298,7 @@ export function CorrespondenceStaffDashboard() {
       return
     }
 
-    // Apply search on top of current filters
+    
     let filtered = [...requests]
 
     if (activeTab !== "all") {
@@ -326,7 +321,7 @@ export function CorrespondenceStaffDashboard() {
       })
     }
 
-    // Apply search query
+    
     filtered = filtered.filter(
       (r) =>
         r.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -339,7 +334,7 @@ export function CorrespondenceStaffDashboard() {
     setFilteredRequests(filtered)
   }
 
-  // Handle status change
+  
   const handleStatusChange = (requestId: string, status: string, notes?: string) => {
     const updatedRequests = requests.map((request) => {
       if (request.id === requestId) {
@@ -354,7 +349,7 @@ export function CorrespondenceStaffDashboard() {
 
     setRequests(updatedRequests)
 
-    // Update filtered requests based on current filters
+    
     let filtered = [...updatedRequests]
 
     if (activeTab !== "all") {
@@ -380,13 +375,13 @@ export function CorrespondenceStaffDashboard() {
     setFilteredRequests(filtered)
   }
 
-  // Handle view letter detail
+  
   const handleViewLetterDetail = (letter: LetterRequest) => {
     setSelectedLetter(letter)
     setViewMode("detail")
   }
 
-  // Handle back to list view
+  
   const handleBackToList = () => {
     setViewMode("list")
     setSelectedLetter(null)
@@ -409,14 +404,14 @@ export function CorrespondenceStaffDashboard() {
     )
   }
 
-  // Stats
+  
   const pendingCount = requests.filter((r) => r.status === "submitted" || r.status === "in-review").length
   const approvedCount = requests.filter((r) => r.status === "approved").length
   const completedCount = requests.filter((r) => r.status === "completed").length
   const rejectedCount = requests.filter((r) => r.status === "rejected").length
   const totalCount = requests.length
 
-  // If in detail view, show the letter detail component
+  
   if (viewMode === "detail" && selectedLetter) {
     return <LetterDetailView letter={selectedLetter} onBack={handleBackToList} />
   }
@@ -504,7 +499,6 @@ export function CorrespondenceStaffDashboard() {
         </Card>
       </div>
 
-      {/* Filters */}
       <CorrespondenceFilters filters={filters} onFilterChange={handleFilterChange} onSearch={handleSearch} />
 
       <Tabs defaultValue="all" onValueChange={handleTabChange}>

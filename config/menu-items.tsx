@@ -252,7 +252,19 @@ export const staffTuMenuItems = [
     id: "exams",
     title: "Manajemen Ujian",
     href: "/dashboard/staff_tu/exams",
-    icon: GraduationCapIcon
+    icon: GraduationCapIcon,
+    children: [
+      {
+        id: "exams-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/staff_tu/exams",
+      },
+      {
+        id: "exams-schedules",
+        title: "Penjadwalan Ujian",
+        href: "/dashboard/staff_tu/exams/schedules",
+      },
+    ],
   },
   {
     id: "schedule-management",

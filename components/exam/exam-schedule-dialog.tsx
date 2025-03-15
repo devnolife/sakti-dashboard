@@ -26,6 +26,10 @@ interface ExamScheduleDialogProps {
 
 export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: ExamScheduleDialogProps) {
   const [courseName, setCourseName] = useState("")
+  const [studentName, setStudentName] = useState("")
+  const [studentNIM, setStudentNIM] = useState("")
+  const [instructorName, setInstructorName] = useState("")
+  const [examinerName, setExaminerName] = useState("")
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [startTime, setStartTime] = useState("08:00")
   const [endTime, setEndTime] = useState("10:00")
@@ -41,6 +45,10 @@ export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: Exa
   useEffect(() => {
     if (open && schedule) {
       setCourseName(schedule.courseName)
+      setStudentName(schedule.studentName || "")
+      setStudentNIM(schedule.studentNIM || "")
+      setInstructorName(schedule.instructorName || "")
+      setExaminerName(schedule.examinerName || "")
       setDate(new Date(schedule.date))
       setStartTime(schedule.startTime)
       setEndTime(schedule.endTime)
@@ -48,6 +56,10 @@ export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: Exa
       setSelectedClassroom(schedule.classroom.id)
     } else if (open && !schedule) {
       setCourseName("")
+      setStudentName("")
+      setStudentNIM("")
+      setInstructorName("")
+      setExaminerName("")
       setDate(new Date())
       setStartTime("08:00")
       setEndTime("10:00")
@@ -69,41 +81,53 @@ export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: Exa
   const handleSave = () => {
     // Validate form
     if (!courseName) {
-      setFormError("Course name is required")
+      setFormError("Judul skripsi diperlukan")
+      return
+    }
+    if (!studentName) {
+      setFormError("Nama mahasiswa diperlukan")
+      return
+    }
+    if (!studentNIM) {
+      setFormError("NIM mahasiswa diperlukan")
       return
     }
     if (!date) {
-      setFormError("Date is required")
+      setFormError("Tanggal diperlukan")
       return
     }
     if (!startTime) {
-      setFormError("Start time is required")
+      setFormError("Waktu mulai diperlukan")
       return
     }
     if (!endTime) {
-      setFormError("End time is required")
+      setFormError("Waktu selesai diperlukan")
       return
     }
     if (!selectedClassroom) {
-      setFormError("Classroom is required")
+      setFormError("Ruangan diperlukan")
       return
     }
 
     // Check if end time is after start time
     if (startTime >= endTime) {
-      setFormError("End time must be after start time")
+      setFormError("Waktu selesai harus setelah waktu mulai")
       return
     }
 
     const classroom = mockClassrooms.find((c) => c.id === selectedClassroom)
     if (!classroom) {
-      setFormError("Invalid classroom selected")
+      setFormError("Ruangan tidak valid")
       return
     }
 
     const newSchedule: ExamSchedule = {
       id: schedule?.id || "",
       courseName,
+      studentName,
+      studentNIM,
+      instructorName,
+      examinerName,
       date: date.toISOString(),
       startTime,
       endTime,
@@ -118,41 +142,84 @@ export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: Exa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{schedule ? "Edit Exam Schedule" : "Add Exam Schedule"}</DialogTitle>
-          <DialogDescription>Enter the details for the exam schedule.</DialogDescription>
+          <DialogTitle>{schedule ? "Edit Jadwal Ujian" : "Tambah Jadwal Ujian"}</DialogTitle>
+          <DialogDescription>Masukkan detail untuk jadwal ujian skripsi.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="courseName">Course Name</Label>
+            <Label htmlFor="courseName">Judul Skripsi</Label>
             <Input
               id="courseName"
               value={courseName}
               onChange={(e) => setCourseName(e.target.value)}
-              placeholder="e.g. Computer Science 101"
+              placeholder="Contoh: Analisis Performa Algoritma Machine Learning"
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="date">Exam Date</Label>
-            <DatePicker date={date} setDate={setDate} />
+            <Label htmlFor="studentName">Nama Mahasiswa</Label>
+            <Input
+              id="studentName"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="Nama lengkap mahasiswa"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="studentNIM">NIM Mahasiswa</Label>
+            <Input
+              id="studentNIM"
+              value={studentNIM}
+              onChange={(e) => setStudentNIM(e.target.value)}
+              placeholder="Nomor Induk Mahasiswa"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="instructorName">Nama Pembimbing</Label>
+            <Input
+              id="instructorName"
+              value={instructorName}
+              onChange={(e) => setInstructorName(e.target.value)}
+              placeholder="Nama pembimbing utama"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="examinerName">Nama Penguji</Label>
+            <Input
+              id="examinerName"
+              value={examinerName}
+              onChange={(e) => setExaminerName(e.target.value)}
+              placeholder="Nama penguji utama"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="date">Tanggal Ujian</Label>
+            <div className="relative">
+              <Input
+                id="date"
+                type="date"
+                value={date ? date.toISOString().split('T')[0] : ''}
+                onChange={(e) => setDate(e.target.value ? new Date(e.target.value) : undefined)}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="startTime">Start Time</Label>
+              <Label htmlFor="startTime">Waktu Mulai</Label>
               <Input id="startTime" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="endTime">End Time</Label>
+              <Label htmlFor="endTime">Waktu Selesai</Label>
               <Input id="endTime" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="building">Building</Label>
+            <Label htmlFor="building">Gedung</Label>
             <Select value={selectedBuilding} onValueChange={setSelectedBuilding}>
               <SelectTrigger id="building">
-                <SelectValue placeholder="Select building" />
+                <SelectValue placeholder="Pilih gedung" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-buildings">All Buildings</SelectItem>
+                <SelectItem value="all-buildings">Semua Gedung</SelectItem>
                 {buildings
                   .filter((b) => b !== "all-buildings")
                   .map((building) => (
@@ -164,10 +231,10 @@ export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: Exa
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="classroom">Classroom</Label>
+            <Label htmlFor="classroom">Ruangan</Label>
             <Select value={selectedClassroom} onValueChange={setSelectedClassroom}>
               <SelectTrigger id="classroom">
-                <SelectValue placeholder="Select classroom" />
+                <SelectValue placeholder="Pilih ruangan" />
               </SelectTrigger>
               <SelectContent>
                 {availableClassrooms.map((classroom) => (
@@ -182,9 +249,9 @@ export function ExamScheduleDialog({ open, onOpenChange, onSave, schedule }: Exa
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            Batal
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave}>Simpan</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

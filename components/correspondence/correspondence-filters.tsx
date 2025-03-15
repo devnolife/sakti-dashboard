@@ -71,9 +71,7 @@ export function CorrespondenceFilters({
           </form>
         </div>
         <div className="min-w-[150px]">
-          <Label htmlFor="status-filter" className="text-sm font-medium mb-1.5 block">
-            Status
-          </Label>
+         
           <Select value={filters.status || "all"} onValueChange={handleStatusChange}>
             <SelectTrigger id="status-filter">
               <SelectValue placeholder="Semua status" />
@@ -89,29 +87,32 @@ export function CorrespondenceFilters({
           </Select>
         </div>
 
-        {/* Date Filter */}
         <div className="min-w-[150px]">
-          <Label htmlFor="date-filter" className="text-sm font-medium mb-1.5 block">
-            Tanggal
-          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 id="date-filter"
                 variant={"outline"}
-                className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
+                className={cn("w-[240px] pl-3 text-left font-normal", !date && "text-muted-foreground")}
               >
-                <CalendarIcon className="w-4 h-4 mr-2" />
-                {date ? format(date, "PPP") : "Pilih tanggal"}
+                {date ? format(date, "PPP") : <span>Pilih tanggal</span>}
+                <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar mode="single" selected={date} onSelect={handleDateSelect} initialFocus />
+            <PopoverContent className="w-auto p-2" align="start">
+              <Calendar 
+                mode="single" 
+                selected={date} 
+                onSelect={handleDateSelect} 
+                disabled={(date) => 
+                  date > new Date() || date < new Date("1900-01-01")
+                }
+               
+              />
             </PopoverContent>
           </Popover>
         </div>
         
-        {/* Reset Filters Button */}
         <Button variant="ghost" size="sm" onClick={handleResetFilters} className="gap-1 ml-auto text-xs h-9">
           <X className="h-3.5 w-3.5" />
           Reset filter
