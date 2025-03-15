@@ -241,7 +241,7 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground">Disetujui Oleh</h4>
-                    <p className="text-base">{letter.approvedBy || "Admin Staff TU"}</p>
+                    <p className="text-base">{letter.approvedBy || "Admin Admin Prodi"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground">Tujuan</h4>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Penguji | Staff TU Dashboard",
+  title: "Penguji | Admin Prodi ",
   description: "Manage exam committees for the university",
 }
 

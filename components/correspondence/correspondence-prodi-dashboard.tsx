@@ -723,7 +723,7 @@ export function CorrespondenceProdiDashboard() {
                 Setujui Permohonan Surat
               </DialogTitle>
               <DialogDescription>
-                Anda akan menyetujui permohonan surat ini. Permohonan yang disetujui akan diteruskan ke Staff TU untuk
+                Anda akan menyetujui permohonan surat ini. Permohonan yang disetujui akan diteruskan ke Admin Prodi untuk
                 diproses lebih lanjut.
               </DialogDescription>
             </DialogHeader>

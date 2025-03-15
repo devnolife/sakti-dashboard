@@ -33,13 +33,12 @@ export const roleConfigs = {
 
 export const roleLabels = {
   mahasiswa: "Mahasiswa",
-  staff_tu: "Staff TU",
+  staff_tu: "Admin Prodi",
   prodi: "Kepala Program Studi",
   dekan: "Dekan",
   admin: "Admin",
   staff_kkp: "Staff KKP",
   lecturer: "Dosen",
-  kepala_jurusan: "Kepala Jurusan",
 }
 
 export function getRolePath(role: Role) {

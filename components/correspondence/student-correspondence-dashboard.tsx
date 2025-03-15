@@ -391,7 +391,7 @@ export function StudentCorrespondenceDashboard() {
                 </p>
                 <p className="flex items-center text-muted-foreground">
                   <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Disetujui oleh: Staff TU
+                  Disetujui oleh: Admin Prodi
                 </p>
               </div>
               <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => openLetterDialog("active")}>
@@ -437,7 +437,7 @@ export function StudentCorrespondenceDashboard() {
                 </p>
                 <p className="flex items-center text-muted-foreground">
                   <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Disetujui oleh: Staff TU
+                  Disetujui oleh: Admin Prodi
                 </p>
               </div>
               <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => openLetterDialog("payment")}>

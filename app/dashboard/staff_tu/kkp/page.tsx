@@ -218,7 +218,7 @@ export default function StaffKkpManagementPage() {
         id,
         status,
         "staff-001", // Mock user ID
-        "Staff TU", // Mock user name
+        "Admin Prodi", // Mock user name
         status === "rejected" ? rejectionReason : undefined,
       )
 

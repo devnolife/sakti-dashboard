@@ -23,7 +23,7 @@ export const roleConfigs = {
   },
   staff_tu: {
     path: "/dashboard/staff_tu",
-    displayName: "Staff TU",
+    displayName: "Admin Prodi",
   },
   prodi: {
     path: "/dashboard/prodi",
@@ -58,7 +58,7 @@ export const roleConfigs = {
 // Labels for role selection
 export const roleLabels: Record<Role, string> = {
   mahasiswa: "Mahasiswa",
-  staff_tu: "Staff TU",
+  staff_tu: "Admin Prodi",
   prodi: "Kepala Program Studi",
   dekan: "Dekan",
   admin: "Admin",

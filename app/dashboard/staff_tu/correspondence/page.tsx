@@ -4,8 +4,8 @@ import { CorrespondenceStaffDashboard } from "@/components/correspondence/corres
 import { SkeletonCorrespondenceDashboard } from "@/components/correspondence/skeleton-correspondence-dashboard"
 
 export const metadata: Metadata = {
-  title: "Manajemen Layanan Surat | Staff TU",
-  description: "Sistem manajemen layanan surat untuk Staff TU",
+  title: "Manajemen Layanan Surat | Admin Prodi",
+  description: "Sistem manajemen layanan surat untuk Administrasi Program Studi",
 }
 
 export default function StaffCorrespondencePage() {
