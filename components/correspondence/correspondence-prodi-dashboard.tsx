@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { useToast } from "@/components/ui/use-toast"
 import {
   Search,
   Clock,
@@ -33,49 +34,10 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const fakeData = [
-  {
-    id: "letter-005",
-    type: "leave_absence",
-    title: "Surat Cuti Kuliah",
-    purpose: "Cuti Kerja",
-    description: "Permohonan cuti kuliah selama satu semester untuk bekerja di perusahaan multinasional",
-    status: "rejected",
-    requestDate: "2023-08-05T09:20:00Z",
-    studentId: "std-005",
-    studentName: "Eko Prasetyo",
-    studentNIM: "1701234571",
-    studentMajor: "Teknik Elektro",
-    approvalRole: "prodi",
-    rejectedReason: "Alasan cuti untuk bekerja tidak dapat diterima karena mahasiswa masih dalam tahap penyelesaian tugas akhir. Disarankan untuk menyelesaikan studi terlebih dahulu.",
-    additionalInfo: {
-      startDate: "2023-09-01",
-      endDate: "2024-02-28",
-      reason: "Mendapatkan tawaran magang berbayar di PT. Global Technology selama 6 bulan",
-    },
-    attachments: [
-      {
-        id: "att-009",
-        name: "Bukti_Pembayaran_SPP.pdf",
-        uploadDate: "2023-08-05T09:15:00Z",
-      },
-      {
-        id: "att-010",
-        name: "Transkrip_Nilai.pdf",
-        uploadDate: "2023-08-05T09:16:00Z",
-      },
-      {
-        id: "att-011",
-        name: "Surat_Tawaran_Kerja.pdf",
-        uploadDate: "2023-08-05T09:17:00Z",
-      },
-    ],
-    notes: undefined
-  },
-]
 export function CorrespondenceProdiDashboard() {
+  const { toast } = useToast()
   const [activeTab, setActiveTab] = useState<LetterStatus | "all">("all")
-  const [requests, setRequests] = useState<LetterRequest[]>([]) 
+  const [requests, setRequests] = useState<LetterRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<LetterRequest[]>([])
   const [selectedRequest, setSelectedRequest] = useState<LetterRequest | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
@@ -87,6 +49,7 @@ export function CorrespondenceProdiDashboard() {
   const [rejectionReason, setRejectionReason] = useState("")
   const [letterTypes, setLetterTypes] = useState<string[]>([])
 
+  // Fetch letter requests on component mount
   useEffect(() => {
     const fetchRequests = async () => {
       try {
@@ -94,40 +57,42 @@ export function CorrespondenceProdiDashboard() {
         setRequests(data)
         setFilteredRequests(data)
 
+        // Extract unique letter types
         const types = Array.from(new Set(data.map((req) => req.type)))
         setLetterTypes(types)
 
         setIsLoading(false)
       } catch (error) {
         console.error("Error fetching letter requests:", error)
-        
-        // Use fakeData as fallback when data fetching fails
-        setRequests(fakeData)
-        setFilteredRequests(fakeData)
-        
-        const types = Array.from(new Set(fakeData.map((req) => req.type)))
-        setLetterTypes(types)
-      
+        toast({
+          title: "Error",
+          description: "Failed to fetch letter requests",
+          variant: "destructive",
+        })
         setIsLoading(false)
       }
     }
 
     fetchRequests()
-  }, [])
+  }, [toast])
 
+  // Filter requests based on active tab, search query, and type filter
   useEffect(() => {
     let filtered = requests
 
+    // Filter by status
     if (activeTab !== "all") {
       filtered = filtered.filter((r) => r.status === activeTab)
     }
 
+    // Apply type filter if not "all"
     if (typeFilter !== "all") {
       filtered = filtered.filter((r) => r.type === typeFilter)
     }
 
+    // Apply search query
     if (searchQuery) {
-      const query = searchQuery.toLowerCase() 
+      const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
         (r) =>
           r.studentName.toLowerCase().includes(query) ||
@@ -146,6 +111,7 @@ export function CorrespondenceProdiDashboard() {
     setShowDetailsDialog(true)
   }
 
+  // Handle approving a request
   const handleApproveRequest = async () => {
     if (!selectedRequest) return
 
@@ -158,11 +124,12 @@ export function CorrespondenceProdiDashboard() {
       )
 
       if (result.success) {
-        // toast({
-        //   title: "Success",
-        //   description: result.message,
-        // })
+        toast({
+          title: "Success",
+          description: result.message,
+        })
 
+        // Update the request in state
         const updatedRequests = requests.map((req) =>
           req.id === selectedRequest.id
             ? {
@@ -184,42 +151,23 @@ export function CorrespondenceProdiDashboard() {
 
         setShowApprovalDialog(false)
       } else {
-        // toast({
-        //   title: "Error",
-        //   description: result.message,
-        //   variant: "destructive",
-        // })
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error approving request:", error)
-      // Fallback: Update UI state directly when server action fails
-      const updatedRequests = requests.map((req) =>
-        req.id === selectedRequest.id
-          ? {
-              ...req,
-              status: "approved",
-              approvedBy: "Dr. Bambang Suprapto, M.T.",
-              approvedDate: new Date().toISOString(),
-            }
-          : req
-      )
-
-      setRequests(updatedRequests)
-      setSelectedRequest({
-        ...selectedRequest,
-        status: "approved",
-        approvedBy: "Dr. Bambang Suprapto, M.T.",
-        approvedDate: new Date().toISOString(),
+      toast({
+        title: "Error",
+        description: "Failed to approve request",
+        variant: "destructive",
       })
-
-      setShowApprovalDialog(false)
-      // toast({
-      //   title: "Notice",
-      //   description: "Server action failed, but request was marked as approved locally",
-      // })
     }
   }
 
+  // Handle rejecting a request
   const handleRejectRequest = async () => {
     if (!selectedRequest || !rejectionReason.trim()) return
 
@@ -232,10 +180,10 @@ export function CorrespondenceProdiDashboard() {
       )
 
       if (result.success) {
-        // toast({
-        //   title: "Success",
-        //   description: result.message,
-        // })
+        toast({
+          title: "Success",
+          description: result.message,
+        })
 
         // Update the request in state
         const updatedRequests = requests.map((req) =>
@@ -258,41 +206,23 @@ export function CorrespondenceProdiDashboard() {
         setShowRejectionDialog(false)
         setRejectionReason("")
       } else {
-        // toast({
-        //   title: "Error",
-        //   description: result.message,
-        //   variant: "destructive",
-        // })
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error rejecting request:", error)
-      // Fallback: Update UI state directly when server action fails
-      const updatedRequests = requests.map((req) =>
-        req.id === selectedRequest.id
-          ? {
-              ...req,
-              status: "rejected",
-              rejectedReason: rejectionReason,
-            }
-          : req
-      )
-
-      setRequests(updatedRequests)
-      setSelectedRequest({
-        ...selectedRequest,
-        status: "rejected",
-        rejectedReason: rejectionReason,
+      toast({
+        title: "Error",
+        description: "Failed to reject request",
+        variant: "destructive",
       })
-
-      setShowRejectionDialog(false)
-      setRejectionReason("")
-      // toast({
-      //   title: "Notice",
-      //   description: "Server action failed, but request was marked as rejected locally",
-      // })
     }
   }
 
+  // Get status badge
   const getStatusBadge = (status: LetterStatus) => {
     switch (status) {
       case "submitted":
@@ -723,7 +653,7 @@ export function CorrespondenceProdiDashboard() {
                 Setujui Permohonan Surat
               </DialogTitle>
               <DialogDescription>
-                Anda akan menyetujui permohonan surat ini. Permohonan yang disetujui akan diteruskan ke Admin Prodi untuk
+                Anda akan menyetujui permohonan surat ini. Permohonan yang disetujui akan diteruskan ke Staff TU untuk
                 diproses lebih lanjut.
               </DialogDescription>
             </DialogHeader>

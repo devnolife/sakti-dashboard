@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { FileCheck, ArrowLeft, Printer, Download, CheckCircle, X } from "lucide-react"
+import { FileCheck, ArrowLeft, Printer, Download, CheckCircle } from "lucide-react"
 import { LetterPreview } from "./letter-preview"
 import { useRouter } from "next/navigation"
 import { CorrespondenceFormTabs } from "./correspondence-form-tabs"
@@ -55,15 +55,9 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
     setStep("form")
   }
 
-  const handleClose = (open: boolean) => {
-    onOpenChange(open)
-    if (!open) {
-      router.refresh()
-    }
-  }
-
-  const handleCloseButtonClick = () => {
-    handleClose(false)
+  const handleClose = () => {
+    onOpenChange(false)
+    router.refresh()
   }
 
   const handleDownload = () => {
@@ -72,12 +66,8 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-          <X className="w-4 h-4" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{step === "form" ? "Buat Surat" : "Pratinjau Surat"}</DialogTitle>
           <DialogDescription>
@@ -97,19 +87,19 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
           <div className="space-y-6">
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
                 </div>
                 <h3 className="text-xl font-medium text-center">Surat Berhasil Dibuat!</h3>
-                <p className="max-w-md text-center text-muted-foreground">
+                <p className="text-center text-muted-foreground max-w-md">
                   Surat Anda telah berhasil dibuat dan disimpan. Anda dapat mengunduh atau mencetak surat ini.
                 </p>
                 <div className="flex gap-3 mt-4">
-                  <Button variant="outline" onClick={handleCloseButtonClick}>
+                  <Button variant="outline" onClick={handleClose}>
                     Kembali ke Daftar
                   </Button>
                   <Button onClick={handleDownload}>
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="mr-2 h-4 w-4" />
                     Unduh Surat
                   </Button>
                 </div>
@@ -120,23 +110,23 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
 
                 <div className="flex justify-between">
                   <Button variant="outline" onClick={handleBackToForm}>
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Kembali
                   </Button>
                   <div className="flex gap-2">
                     <Button variant="outline">
-                      <Printer className="w-4 h-4 mr-2" />
+                      <Printer className="mr-2 h-4 w-4" />
                       Cetak
                     </Button>
                     <Button onClick={handleGenerateLetter} disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>
-                          <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
+                          <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
                           Memproses...
                         </>
                       ) : (
                         <>
-                          <FileCheck className="w-4 h-4 mr-2" />
+                          <FileCheck className="mr-2 h-4 w-4" />
                           Buat Surat
                         </>
                       )}

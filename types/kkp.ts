@@ -22,6 +22,8 @@ export interface KkpDocument {
 }
 
 export interface Student {
+  [x: string]: ReactNode
+  [x: string]: any
   id: string
   name: string
   nim: string

@@ -92,36 +92,36 @@ export function StudentCorrespondenceDashboard() {
     switch (status) {
       case "submitted":
         return (
-          <Badge variant="outline" className="font-medium text-blue-500 border-blue-200 bg-blue-500/10">
-            <Clock className="w-3 h-3 mr-1" />
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200 font-medium">
+            <Clock className="mr-1 h-3 w-3" />
             Diajukan
           </Badge>
         )
       case "in-review":
         return (
-          <Badge variant="outline" className="font-medium bg-amber-500/10 text-amber-500 border-amber-200">
-            <AlertCircle className="w-3 h-3 mr-1" />
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200 font-medium">
+            <AlertCircle className="mr-1 h-3 w-3" />
             Dalam Review
           </Badge>
         )
       case "approved":
         return (
-          <Badge variant="outline" className="font-medium text-green-500 border-green-200 bg-green-500/10">
-            <CheckCircle className="w-3 h-3 mr-1" />
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200 font-medium">
+            <CheckCircle className="mr-1 h-3 w-3" />
             Disetujui
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="font-medium text-red-500 border-red-200 bg-red-500/10">
-            <XCircle className="w-3 h-3 mr-1" />
+          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200 font-medium">
+            <XCircle className="mr-1 h-3 w-3" />
             Ditolak
           </Badge>
         )
       case "completed":
         return (
-          <Badge variant="outline" className="font-medium text-green-500 border-green-200 bg-green-500/10">
-            <CheckCircle className="w-3 h-3 mr-1" />
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200 font-medium">
+            <CheckCircle className="mr-1 h-3 w-3" />
             Selesai
           </Badge>
         )
@@ -141,31 +141,31 @@ export function StudentCorrespondenceDashboard() {
           {[1, 2, 3].map((i) => (
             <Card key={i} className="overflow-hidden border-none shadow-md">
               <CardHeader className="pb-2">
-                <Skeleton className="w-32 h-6" />
-                <Skeleton className="w-48 h-4" />
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-48" />
               </CardHeader>
               <CardContent>
-                <Skeleton className="w-16 h-8" />
+                <Skeleton className="h-8 w-16" />
               </CardContent>
             </Card>
           ))}
         </div>
 
         <Card className="border-none shadow-md">
-          <CardHeader className="pb-3 border-b">
+          <CardHeader className="border-b pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <Skeleton className="w-32 h-6" />
-                <Skeleton className="w-48 h-4" />
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-48" />
               </div>
-              <Skeleton className="w-10 h-10 rounded-full" />
+              <Skeleton className="h-10 w-10 rounded-full" />
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <Skeleton className="w-full h-10 mb-6" />
+            <Skeleton className="h-10 w-full mb-6" />
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="w-full h-24" />
+                <Skeleton key={i} className="h-24 w-full" />
               ))}
             </div>
           </CardContent>
@@ -176,7 +176,7 @@ export function StudentCorrespondenceDashboard() {
 
   return (
     <>
-      <div className="flex flex-col items-start justify-between gap-4 mb-6 md:flex-row md:items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Layanan Surat</h1>
           <p className="text-muted-foreground">Ajukan dan pantau status permohonan surat Anda</p>
@@ -187,18 +187,18 @@ export function StudentCorrespondenceDashboard() {
             onClick={() => openLetterDialog("active")}
             className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             Buat Surat Baru
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 mb-6 md:grid-cols-3">
-        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">
+      <div className="grid gap-4 md:grid-cols-3 mb-6">
+        <Card className="overflow-hidden border-none bg-gradient-to-br from-blue-50 to-blue-100 shadow-md transition-all hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-blue-100 rounded-full dark:bg-blue-800/50">
-                <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-800/50">
+                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Permohonan Aktif</CardTitle>
@@ -211,11 +211,11 @@ export function StudentCorrespondenceDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-green-50 to-green-100 hover:shadow-lg dark:from-green-950/40 dark:to-green-900/40">
+        <Card className="overflow-hidden border-none bg-gradient-to-br from-green-50 to-green-100 shadow-md transition-all hover:shadow-lg dark:from-green-950/40 dark:to-green-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-green-100 rounded-full dark:bg-green-800/50">
-                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <div className="rounded-full bg-green-100 p-2 dark:bg-green-800/50">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Permohonan Selesai</CardTitle>
@@ -228,11 +228,11 @@ export function StudentCorrespondenceDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-red-50 to-red-100 hover:shadow-lg dark:from-red-950/40 dark:to-red-900/40">
+        <Card className="overflow-hidden border-none bg-gradient-to-br from-red-50 to-red-100 shadow-md transition-all hover:shadow-lg dark:from-red-950/40 dark:to-red-900/40">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-red-100 rounded-full dark:bg-red-800/50">
-                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <div className="rounded-full bg-red-100 p-2 dark:bg-red-800/50">
+                <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
                 <CardTitle className="text-lg">Permohonan Ditolak</CardTitle>
@@ -246,16 +246,16 @@ export function StudentCorrespondenceDashboard() {
         </Card>
       </div>
 
-      <Card className="mb-6 border-none shadow-md">
-        <CardHeader className="pb-3 border-b">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+      <Card className="border-none shadow-md mb-6">
+        <CardHeader className="border-b pb-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <CardTitle>Permohonan Surat</CardTitle>
               <CardDescription>Daftar permohonan surat Anda</CardDescription>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
-                <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari permohonan..."
                   className="pl-9 w-full sm:w-[250px] rounded-full"
@@ -281,7 +281,7 @@ export function StudentCorrespondenceDashboard() {
         </CardHeader>
         <CardContent className="pt-6">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4 sm:w-auto">
+            <TabsList className="grid grid-cols-4 w-full sm:w-auto">
               <TabsTrigger value="all">Semua</TabsTrigger>
               <TabsTrigger value="active">Aktif</TabsTrigger>
               <TabsTrigger value="completed">Selesai</TabsTrigger>
@@ -293,31 +293,31 @@ export function StudentCorrespondenceDashboard() {
                 filteredRequests.map((request) => (
                   <div
                     key={request.id}
-                    className="flex items-start gap-4 p-4 transition-all border shadow-sm rounded-xl border-border/50 bg-card hover:shadow-md"
+                    className="flex items-start gap-4 rounded-xl border border-border/50 bg-card p-4 shadow-sm transition-all hover:shadow-md"
                   >
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 shrink-0">
-                      <FileText className="w-5 h-5 text-primary" />
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <FileText className="h-5 w-5 text-primary" />
                     </div>
-                    <div className="grid flex-1 gap-1">
+                    <div className="grid gap-1 flex-1">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">{request.title}</p>
                         {getStatusBadge(request.status)}
                       </div>
                       <p className="text-xs text-muted-foreground">{request.purpose}</p>
-                      <div className="flex flex-wrap mt-1 gap-x-4 gap-y-1">
-                        <p className="flex items-center text-xs text-muted-foreground">
-                          <Calendar className="w-3 h-3 mr-1 text-muted-foreground" />
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                        <p className="text-xs text-muted-foreground flex items-center">
+                          <Calendar className="h-3 w-3 mr-1 text-muted-foreground" />
                           Diajukan pada {formatDate(request.requestDate)}
                         </p>
                         {request.approvedDate && (
-                          <p className="flex items-center text-xs text-muted-foreground">
-                            <CheckCircle className="w-3 h-3 mr-1 text-green-500" />
+                          <p className="text-xs text-muted-foreground flex items-center">
+                            <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
                             Disetujui pada {formatDate(request.approvedDate)}
                           </p>
                         )}
                         {request.completedDate && (
-                          <p className="flex items-center text-xs text-muted-foreground">
-                            <FileText className="w-3 h-3 mr-1 text-blue-500" />
+                          <p className="text-xs text-muted-foreground flex items-center">
+                            <FileText className="h-3 w-3 mr-1 text-blue-500" />
                             Selesai pada {formatDate(request.completedDate)}
                           </p>
                         )}
@@ -329,7 +329,7 @@ export function StudentCorrespondenceDashboard() {
                           onClick={() => handleViewDetails(request)}
                           className="rounded-full hover:bg-primary/10 hover:text-primary"
                         >
-                          <Eye className="w-4 h-4 mr-2" />
+                          <Eye className="mr-2 h-4 w-4" />
                           Lihat Detail
                         </Button>
                       </div>
@@ -337,12 +337,12 @@ export function StudentCorrespondenceDashboard() {
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-8 text-center">
-                  <div className="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-full bg-muted">
-                    <FileText className="w-6 h-6 text-muted-foreground" />
+                <div className="text-center py-8 px-4">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
+                    <FileText className="h-6 w-6 text-muted-foreground" />
                   </div>
-                  <h3 className="mb-1 text-lg font-medium">Tidak ada permohonan surat</h3>
-                  <p className="mb-4 text-muted-foreground">
+                  <h3 className="text-lg font-medium mb-1">Tidak ada permohonan surat</h3>
+                  <p className="text-muted-foreground mb-4">
                     {activeTab === "all"
                       ? "Anda belum mengajukan permohonan surat apapun."
                       : activeTab === "active"
@@ -352,7 +352,7 @@ export function StudentCorrespondenceDashboard() {
                           : "Anda tidak memiliki permohonan surat yang ditolak."}
                   </p>
                   <Button onClick={() => openLetterDialog("active")}>
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="mr-2 h-4 w-4" />
                     Buat Permohonan Baru
                   </Button>
                 </div>
@@ -362,11 +362,11 @@ export function StudentCorrespondenceDashboard() {
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden border-none shadow-md">
+      <Card className="border-none shadow-md overflow-hidden">
         <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-secondary/5">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-primary/10">
-              <FileText className="w-5 h-5 text-primary" />
+            <div className="rounded-full bg-primary/10 p-2">
+              <FileText className="h-5 w-5 text-primary" />
             </div>
             <div>
               <CardTitle>Panduan Layanan Surat</CardTitle>
@@ -376,94 +376,94 @@ export function StudentCorrespondenceDashboard() {
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="p-4 transition-all border rounded-lg hover:shadow-md">
-              <h3 className="flex items-center mb-2 text-lg font-medium">
-                <FileText className="w-5 h-5 mr-2 text-primary" />
+            <div className="rounded-lg border p-4 transition-all hover:shadow-md">
+              <h3 className="text-lg font-medium mb-2 flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-primary" />
                 Surat Keterangan Aktif
               </h3>
-              <p className="mb-3 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-3">
                 Surat yang menyatakan bahwa mahasiswa terdaftar dan aktif mengikuti perkuliahan.
               </p>
               <div className="text-sm">
-                <p className="flex items-center mb-1 text-muted-foreground">
-                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                <p className="flex items-center text-muted-foreground mb-1">
+                  <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
                   Estimasi: 3 hari kerja
                 </p>
                 <p className="flex items-center text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Disetujui oleh: Admin Prodi
+                  <CheckCircle className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Disetujui oleh: Staff TU
                 </p>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => openLetterDialog("active")}>
+              <Button variant="outline" size="sm" className="mt-3 w-full" onClick={() => openLetterDialog("active")}>
                 Ajukan Surat
               </Button>
             </div>
 
-            <div className="p-4 transition-all border rounded-lg hover:shadow-md">
-              <h3 className="flex items-center mb-2 text-lg font-medium">
-                <FileText className="w-5 h-5 mr-2 text-primary" />
+            <div className="rounded-lg border p-4 transition-all hover:shadow-md">
+              <h3 className="text-lg font-medium mb-2 flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-primary" />
                 Surat Cuti Akademik
               </h3>
-              <p className="mb-3 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-3">
                 Surat permohonan untuk mengambil cuti dari perkuliahan.
               </p>
               <div className="text-sm">
-                <p className="flex items-center mb-1 text-muted-foreground">
-                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                <p className="flex items-center text-muted-foreground mb-1">
+                  <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
                   Estimasi: 7 hari kerja
                 </p>
                 <p className="flex items-center text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <CheckCircle className="h-4 w-4 mr-2 text-muted-foreground" />
                   Disetujui oleh: Prodi
                 </p>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => openLetterDialog("leave")}>
+              <Button variant="outline" size="sm" className="mt-3 w-full" onClick={() => openLetterDialog("leave")}>
                 Ajukan Surat
               </Button>
             </div>
 
-            <div className="p-4 transition-all border rounded-lg hover:shadow-md">
-              <h3 className="flex items-center mb-2 text-lg font-medium">
-                <FileText className="w-5 h-5 mr-2 text-primary" />
+            <div className="rounded-lg border p-4 transition-all hover:shadow-md">
+              <h3 className="text-lg font-medium mb-2 flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-primary" />
                 Surat Keterangan Pembayaran
               </h3>
-              <p className="mb-3 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-3">
                 Surat yang menyatakan bahwa mahasiswa telah melakukan pembayaran.
               </p>
               <div className="text-sm">
-                <p className="flex items-center mb-1 text-muted-foreground">
-                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                <p className="flex items-center text-muted-foreground mb-1">
+                  <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
                   Estimasi: 3 hari kerja
                 </p>
                 <p className="flex items-center text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                  Disetujui oleh: Admin Prodi
+                  <CheckCircle className="h-4 w-4 mr-2 text-muted-foreground" />
+                  Disetujui oleh: Staff TU
                 </p>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => openLetterDialog("payment")}>
+              <Button variant="outline" size="sm" className="mt-3 w-full" onClick={() => openLetterDialog("payment")}>
                 Ajukan Surat
               </Button>
             </div>
 
-            <div className="p-4 transition-all border rounded-lg hover:shadow-md">
-              <h3 className="flex items-center mb-2 text-lg font-medium">
-                <FileText className="w-5 h-5 mr-2 text-primary" />
+            <div className="rounded-lg border p-4 transition-all hover:shadow-md">
+              <h3 className="text-lg font-medium mb-2 flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-primary" />
                 Surat Lainnya
               </h3>
-              <p className="mb-3 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-3">
                 Permohonan surat untuk keperluan lain yang tidak tercantum.
               </p>
               <div className="text-sm">
-                <p className="flex items-center mb-1 text-muted-foreground">
-                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
+                <p className="flex items-center text-muted-foreground mb-1">
+                  <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
                   Estimasi: 5-7 hari kerja
                 </p>
                 <p className="flex items-center text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <CheckCircle className="h-4 w-4 mr-2 text-muted-foreground" />
                   Disetujui oleh: Bervariasi
                 </p>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3" onClick={() => openLetterDialog("custom")}>
+              <Button variant="outline" size="sm" className="mt-3 w-full" onClick={() => openLetterDialog("custom")}>
                 Ajukan Surat
               </Button>
             </div>

@@ -110,8 +110,9 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
               <p>Fakultas: Ilmu Komputer</p>
             </div>
             
-            <p>Telah diberikan izin cuti kuliah pada Semester ${letter.additionalInfo?.semester || "Ganjil"} Tahun Akademik 2023/2024 terhitung mulai tanggal ${letter.additionalInfo?.startDate || "1 September 2023"
-          } sampai dengan ${letter.additionalInfo?.endDate || "28 Februari 2024"}.</p>
+            <p>Telah diberikan izin cuti kuliah pada Semester ${letter.additionalInfo?.semester || "Ganjil"} Tahun Akademik 2023/2024 terhitung mulai tanggal ${
+              letter.additionalInfo?.startDate || "1 September 2023"
+            } sampai dengan ${letter.additionalInfo?.endDate || "28 Februari 2024"}.</p>
             
             <p>Alasan cuti: ${letter.additionalInfo?.reason || letter.description}</p>
             
@@ -169,35 +170,35 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={onBack} className="gap-2">
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="h-4 w-4" />
           Kembali ke Daftar Surat
         </Button>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => window.print()} className="gap-2">
-            <Printer className="w-4 h-4" />
+            <Printer className="h-4 w-4" />
             Cetak
           </Button>
           <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
+            <Download className="h-4 w-4" />
             Unduh PDF
           </Button>
           <Button variant="outline" className="gap-2">
-            <Share2 className="w-4 h-4" />
+            <Share2 className="h-4 w-4" />
             Bagikan
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <h3 className="text-2xl font-bold tracking-tight">{letter.title}</h3>
               <p className="text-sm text-muted-foreground">
                 Dibuat pada {formatDate(letter.completedDate || letter.approvedDate || letter.requestDate)}
               </p>
             </div>
-            <Badge variant="outline" className="px-3 py-1 text-green-500 border-green-200 rounded-full bg-green-500/10">
+            <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200 px-3 py-1 rounded-full">
               Terkirim
             </Badge>
           </CardHeader>
@@ -210,13 +211,13 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
               <TabsContent value="preview" className="mt-4">
                 <div className="border rounded-lg p-6 min-h-[60vh] bg-white shadow-sm">
                   <div
-                    className="prose-sm prose max-w-none dark:prose-invert"
+                    className="prose prose-sm max-w-none dark:prose-invert"
                     dangerouslySetInnerHTML={{ __html: getLetterContent() }}
                   />
                 </div>
               </TabsContent>
               <TabsContent value="metadata" className="mt-4">
-                <div className="p-6 space-y-4 border rounded-lg">
+                <div className="border rounded-lg p-6 space-y-4">
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground">Nomor Surat</h4>
                     <p className="text-base">
@@ -241,7 +242,7 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground">Disetujui Oleh</h4>
-                    <p className="text-base">{letter.approvedBy || "Admin Admin Prodi"}</p>
+                    <p className="text-base">{letter.approvedBy || "Admin Staff TU"}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-muted-foreground">Tujuan</h4>
@@ -251,7 +252,7 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
               </TabsContent>
             </Tabs>
           </CardContent>
-          <CardFooter className="pt-4 border-t">
+          <CardFooter className="border-t pt-4">
             <p className="text-xs text-muted-foreground">
               Surat ini telah ditandatangani secara digital dan sah menurut ketentuan yang berlaku.
             </p>
@@ -292,7 +293,7 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
                 <ul className="space-y-2">
                   {letter.attachments.map((attachment) => (
                     <li key={attachment.id} className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-muted-foreground" />
+                      <FileText className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{attachment.name}</span>
                     </li>
                   ))}
@@ -308,7 +309,7 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
               <h3 className="text-lg font-medium">Riwayat Surat</h3>
             </CardHeader>
             <CardContent>
-              <div className="relative pl-6 space-y-4 border-l border-primary/30">
+              <div className="relative pl-6 border-l border-primary/30 space-y-4">
                 <div>
                   <div className="absolute w-3 h-3 bg-background border-2 border-primary rounded-full -left-[6.5px]"></div>
                   <div className="pl-4">

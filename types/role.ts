@@ -1,4 +1,12 @@
-export type Role = "mahasiswa" | "staff_tu" | "prodi" | "dekan" | "admin" | "lecturer | admin_laboratorium"
+export type Role = 
+  |"mahasiswa" 
+  | "staff_tu" 
+  | "prodi" 
+  | "dekan" 
+  | "admin" 
+  | "lecturer" 
+  | "admin_laboratorium"
+  | "admin_umum"
 
 export const roleConfigs = {
   mahasiswa: {
@@ -7,7 +15,7 @@ export const roleConfigs = {
   },
   staff_tu: {
     path: "/dashboard/staff_tu",
-    displayName: "Prodi TU",
+    displayName: "Administrasi Prodi",
   },
   prodi: {
     path: "/dashboard/prodi",
@@ -28,17 +36,22 @@ export const roleConfigs = {
   laboratory_admin: {
     path :"/dashboard/laboratory_admin",
     displayName: "Admin Laboratorium"
-  }
+  },
+  admin_umum: {
+     path :"/dashboard/admin_umum",
+     displayName: "Administrasi Umum"
+  },
 }
 
 export const roleLabels = {
   mahasiswa: "Mahasiswa",
   staff_tu: "Admin Prodi",
-  prodi: "Kepala Program Studi",
+  prodi: "Ketua Program Studi",
   dekan: "Dekan",
   admin: "Admin",
-  staff_kkp: "Staff KKP",
   lecturer: "Dosen",
+  laboratory_admin: "Admin Laboratorium",
+  admin_umum: "Admin Umum"
 }
 
 export function getRolePath(role: Role) {

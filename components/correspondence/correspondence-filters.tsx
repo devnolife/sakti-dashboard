@@ -55,9 +55,10 @@ export function CorrespondenceFilters({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="relative flex-1 min-w-[200px]">
-          <form onSubmit={handleSearch} className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Search Field */}
+        <div className="relative">
+          <form onSubmit={handleSearch}>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -70,8 +71,12 @@ export function CorrespondenceFilters({
             </div>
           </form>
         </div>
-        <div className="min-w-[150px]">
-         
+
+        {/* Status Filter */}
+        <div>
+          <Label htmlFor="status-filter" className="text-sm font-medium mb-1.5 block">
+            Status
+          </Label>
           <Select value={filters.status || "all"} onValueChange={handleStatusChange}>
             <SelectTrigger id="status-filter">
               <SelectValue placeholder="Semua status" />
@@ -87,33 +92,32 @@ export function CorrespondenceFilters({
           </Select>
         </div>
 
-        <div className="min-w-[150px]">
+        {/* Date Filter */}
+        <div>
+          <Label htmlFor="date-filter" className="text-sm font-medium mb-1.5 block">
+            Tanggal
+          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 id="date-filter"
                 variant={"outline"}
-                className={cn("w-[240px] pl-3 text-left font-normal", !date && "text-muted-foreground")}
+                className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
               >
-                {date ? format(date, "PPP") : <span>Pilih tanggal</span>}
-                <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? format(date, "PPP") : "Pilih tanggal"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-2" align="start">
-              <Calendar 
-                mode="single" 
-                selected={date} 
-                onSelect={handleDateSelect} 
-                disabled={(date) => 
-                  date > new Date() || date < new Date("1900-01-01")
-                }
-               
-              />
+            <PopoverContent className="w-auto p-0">
+              <Calendar mode="single" selected={date} onSelect={handleDateSelect} initialFocus />
             </PopoverContent>
           </Popover>
         </div>
-        
-        <Button variant="ghost" size="sm" onClick={handleResetFilters} className="gap-1 ml-auto text-xs h-9">
+      </div>
+
+      {/* Reset Filters Button */}
+      <div className="flex justify-end">
+        <Button variant="ghost" size="sm" onClick={handleResetFilters} className="h-8 gap-1 text-xs">
           <X className="h-3.5 w-3.5" />
           Reset filter
         </Button>

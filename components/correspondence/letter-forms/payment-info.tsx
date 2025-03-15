@@ -14,7 +14,7 @@ export function PaymentInfo({ onSubmit }: PaymentInfoProps) {
   const paymentData = {
     studentName: "Ahmad Fauzi",
     studentNIM: "1901234567",
-    studentMajor: "Informatika",
+    studentMajor: "Teknik Informatika",
     faculty: "Teknik",
     semester: "5",
     academicYear: "2023/2024",

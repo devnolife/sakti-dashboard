@@ -745,8 +745,8 @@ export default function KkpApplicationDetailPage() {
                     variant="outline"
                     className="ml-2 text-purple-600 border-purple-200 bg-purple-500/10 dark:text-purple-400 dark:border-purple-800"
                   >
-                    {application.requirements
-                      ? `${application.requirements.filter((req) => req.completed).length}/${application.requirements.length}`
+                    {application?.requirements
+                      ? `${application?.requirements.filter((req) => req.completed).length}/${application.requirements.length}`
                       : "0/0"}
                   </Badge>
                 </CardTitle>

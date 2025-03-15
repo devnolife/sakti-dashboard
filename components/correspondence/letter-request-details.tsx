@@ -57,7 +57,7 @@ export function LetterRequestDetails({
     switch (status) {
       case "submitted":
         return (
-          <Badge variant="outline" className="text-blue-500 border-blue-200 bg-blue-500/10">
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200">
             Diajukan
           </Badge>
         )
@@ -69,19 +69,19 @@ export function LetterRequestDetails({
         )
       case "approved":
         return (
-          <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
             Disetujui
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
+          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
             Ditolak
           </Badge>
         )
       case "completed":
         return (
-          <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
             Selesai
           </Badge>
         )
@@ -93,17 +93,17 @@ export function LetterRequestDetails({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "submitted":
-        return <Clock className="w-5 h-5 text-blue-500" />
+        return <Clock className="h-5 w-5 text-blue-500" />
       case "in-review":
-        return <AlertCircle className="w-5 h-5 text-amber-500" />
+        return <AlertCircle className="h-5 w-5 text-amber-500" />
       case "approved":
-        return <CheckCircle className="w-5 h-5 text-green-500" />
+        return <CheckCircle className="h-5 w-5 text-green-500" />
       case "rejected":
-        return <XCircle className="w-5 h-5 text-red-500" />
+        return <XCircle className="h-5 w-5 text-red-500" />
       case "completed":
-        return <CheckCircle className="w-5 h-5 text-green-500" />
+        return <CheckCircle className="h-5 w-5 text-green-500" />
       default:
-        return <FileText className="w-5 h-5 text-gray-500" />
+        return <FileText className="h-5 w-5 text-gray-500" />
     }
   }
 
@@ -155,7 +155,7 @@ export function LetterRequestDetails({
       date: request.requestDate,
       title: "Permohonan Diajukan",
       description: `Permohonan surat diajukan oleh ${request.studentName}`,
-      icon: <Clock className="w-4 h-4 text-blue-500" />,
+      icon: <Clock className="h-4 w-4 text-blue-500" />,
     },
   ]
 
@@ -169,7 +169,7 @@ export function LetterRequestDetails({
       date: request.reviewDate || new Date().toISOString(),
       title: "Dalam Proses Review",
       description: "Permohonan sedang ditinjau oleh staff",
-      icon: <AlertCircle className="w-4 h-4 text-amber-500" />,
+      icon: <AlertCircle className="h-4 w-4 text-amber-500" />,
     })
   }
 
@@ -177,8 +177,8 @@ export function LetterRequestDetails({
     timelineEvents.push({
       date: request.approvedDate || new Date().toISOString(),
       title: "Permohonan Disetujui",
-      description: `Disetujui oleh ${request.approvedBy || "Admin Prodi"}`,
-      icon: <CheckCircle className="w-4 h-4 text-green-500" />,
+      description: `Disetujui oleh ${request.approvedBy || "Staff TU"}`,
+      icon: <CheckCircle className="h-4 w-4 text-green-500" />,
     })
   }
 
@@ -187,7 +187,7 @@ export function LetterRequestDetails({
       date: request.completedDate || new Date().toISOString(),
       title: "Surat Selesai",
       description: "Surat telah dibuat dan siap untuk diambil",
-      icon: <FileText className="w-4 h-4 text-green-500" />,
+      icon: <FileText className="h-4 w-4 text-green-500" />,
     })
   }
 
@@ -196,7 +196,7 @@ export function LetterRequestDetails({
       date: request.rejectedDate || new Date().toISOString(),
       title: "Permohonan Ditolak",
       description: request.rejectedReason || "Tidak ada alasan yang diberikan",
-      icon: <XCircle className="w-4 h-4 text-red-500" />,
+      icon: <XCircle className="h-4 w-4 text-red-500" />,
     })
   }
 
@@ -207,9 +207,9 @@ export function LetterRequestDetails({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-white dark:bg-card rounded-lg shadow-lg border-0">
         <DialogHeader>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <DialogTitle className="flex items-center gap-2 text-xl font-semibold">
+              <DialogTitle className="text-xl flex items-center gap-2 font-semibold">
                 {request.title} {getStatusBadge(request.status)}
               </DialogTitle>
               <DialogDescription className="text-muted-foreground">
@@ -218,7 +218,7 @@ export function LetterRequestDetails({
             </div>
             <div className="flex items-center gap-2 mt-2 sm:mt-0">
               <Button variant="outline" size="sm" onClick={() => window.print()} className="hidden sm:flex">
-                <Printer className="w-4 h-4 mr-2" />
+                <Printer className="h-4 w-4 mr-2" />
                 Cetak
               </Button>
             </div>
@@ -226,41 +226,41 @@ export function LetterRequestDetails({
         </DialogHeader>
 
         <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="mt-2">
-          <TabsList className="grid grid-cols-3 p-1 mb-4 bg-muted/50">
+          <TabsList className="grid grid-cols-3 mb-4 p-1 bg-muted/50">
             <TabsTrigger
               value="details"
               className="data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:shadow-sm"
             >
-              <Eye className="w-4 h-4 mr-2" />
+              <Eye className="h-4 w-4 mr-2" />
               Detail
             </TabsTrigger>
             <TabsTrigger
               value="timeline"
               className="data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:shadow-sm"
             >
-              <History className="w-4 h-4 mr-2" />
+              <History className="h-4 w-4 mr-2" />
               Timeline
             </TabsTrigger>
             <TabsTrigger
               value="documents"
               className="data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:shadow-sm"
             >
-              <FileText className="w-4 h-4 mr-2" />
+              <FileText className="h-4 w-4 mr-2" />
               Dokumen
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="details" className="space-y-4">
             {/* Status Card */}
-            <Card className="border shadow-sm bg-gradient-to-br from-primary/5 to-background border-border/50">
+            <Card className="bg-gradient-to-br from-primary/5 to-background border border-border/50 shadow-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-lg">
+                <CardTitle className="text-lg flex items-center gap-2">
                   {getStatusIcon(request.status)}
                   Status Permohonan
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-1">
                     <div className="text-sm text-muted-foreground">Status Saat Ini</div>
                     <div className="font-medium">
@@ -298,15 +298,15 @@ export function LetterRequestDetails({
             </Card>
 
             {/* Student Information */}
-            <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+            <Card className="border border-border/50 shadow-sm hover:shadow transition-shadow duration-200">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <User className="w-5 h-5 text-muted-foreground" />
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <User className="h-5 w-5 text-muted-foreground" />
                   Informasi Mahasiswa
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <div className="text-sm text-muted-foreground">Nama Lengkap</div>
                     <div className="font-medium">{request.studentName}</div>
@@ -336,15 +336,15 @@ export function LetterRequestDetails({
             </Card>
 
             {/* Letter Information */}
-            <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+            <Card className="border border-border/50 shadow-sm hover:shadow transition-shadow duration-200">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <FileText className="w-5 h-5 text-muted-foreground" />
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
                   Informasi Surat
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <div className="text-sm text-muted-foreground">Jenis Surat</div>
                     <div className="font-medium">{letterTypeInfo.title}</div>
@@ -363,15 +363,15 @@ export function LetterRequestDetails({
 
             {/* Additional Information */}
             {request.additionalInfo && Object.keys(request.additionalInfo).length > 0 && (
-              <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+              <Card className="border border-border/50 shadow-sm hover:shadow transition-shadow duration-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <BookOpen className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-muted-foreground" />
                     Informasi Tambahan
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Object.entries(request.additionalInfo).map(([key, value]) => {
                       // Find the field definition to get the label
                       const fieldDef = letterTypeInfo.additionalFields?.find((f) => f.name === key)
@@ -391,33 +391,33 @@ export function LetterRequestDetails({
 
             {/* Rejection Reason */}
             {request.status === "rejected" && request.rejectedReason && (
-              <Card className="border-red-200 shadow-sm bg-red-50/50 dark:bg-red-900/10">
+              <Card className="border-red-200 bg-red-50/50 dark:bg-red-900/10 shadow-sm">
                 <CardHeader className="pb-2 border-b border-red-200">
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-500">
-                    <XCircle className="w-5 h-5 text-red-500" />
+                  <CardTitle className="text-lg flex items-center gap-2 text-red-500">
+                    <XCircle className="h-5 w-5 text-red-500" />
                     Alasan Penolakan
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <div className="p-3 text-red-700 rounded-md bg-red-50">{request.rejectedReason}</div>
+                  <div className="p-3 bg-red-50 rounded-md text-red-700">{request.rejectedReason}</div>
                 </CardContent>
               </Card>
             )}
 
             {/* Approval Information */}
             {(request.status === "approved" || request.status === "completed") && (
-              <Card className="border-green-200 shadow-sm bg-green-50/50 dark:bg-green-900/10">
+              <Card className="border-green-200 bg-green-50/50 dark:bg-green-900/10 shadow-sm">
                 <CardHeader className="pb-2 border-b border-green-200">
-                  <CardTitle className="flex items-center gap-2 text-lg text-green-600">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  <CardTitle className="text-lg flex items-center gap-2 text-green-600">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
                     Informasi Persetujuan
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <div className="text-sm text-muted-foreground">Disetujui Oleh</div>
-                      <div className="font-medium">{request.approvedBy || "Admin Prodi"}</div>
+                      <div className="font-medium">{request.approvedBy || "Admin Staff TU"}</div>
                     </div>
                     {request.approvedDate && (
                       <div>
@@ -438,7 +438,7 @@ export function LetterRequestDetails({
           </TabsContent>
 
           <TabsContent value="timeline" className="space-y-4">
-            <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+            <Card className="border border-border/50 shadow-sm hover:shadow transition-shadow duration-200">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Timeline Permohonan</CardTitle>
                 <CardDescription>Riwayat proses permohonan surat</CardDescription>
@@ -453,7 +453,7 @@ export function LetterRequestDetails({
                           {event.icon}
                           <h4 className="font-medium">{event.title}</h4>
                         </div>
-                        <p className="mb-1 text-sm text-muted-foreground">{event.description}</p>
+                        <p className="text-sm text-muted-foreground mb-1">{event.description}</p>
                         <p className="text-xs text-muted-foreground">{formatDate(event.date)}</p>
                       </div>
                     </div>
@@ -466,10 +466,10 @@ export function LetterRequestDetails({
           <TabsContent value="documents" className="space-y-4">
             {/* Attachments */}
             {request.attachments && request.attachments.length > 0 ? (
-              <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+              <Card className="border border-border/50 shadow-sm hover:shadow transition-shadow duration-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
                     Dokumen Pendukung
                   </CardTitle>
                   <CardDescription>Dokumen yang dilampirkan oleh mahasiswa</CardDescription>
@@ -489,7 +489,7 @@ export function LetterRequestDetails({
                         <TableRow key={attachment.id}>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-muted-foreground" />
+                              <FileText className="h-4 w-4 text-muted-foreground" />
                               <span>{attachment.name}</span>
                             </div>
                           </TableCell>
@@ -498,7 +498,7 @@ export function LetterRequestDetails({
                           <TableCell className="text-right">
                             <a href={attachment.url} target="_blank" rel="noopener noreferrer">
                               <Button variant="ghost" size="sm">
-                                <Download className="w-4 h-4" />
+                                <Download className="h-4 w-4" />
                                 <span className="sr-only">Download</span>
                               </Button>
                             </a>
@@ -510,15 +510,15 @@ export function LetterRequestDetails({
                 </CardContent>
               </Card>
             ) : (
-              <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+              <Card className="border border-border/50 shadow-sm hover:shadow transition-shadow duration-200">
                 <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
                     Dokumen Pendukung
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="py-6 text-center text-muted-foreground">
+                  <div className="text-center py-6 text-muted-foreground">
                     Tidak ada dokumen pendukung yang dilampirkan
                   </div>
                 </CardContent>
@@ -527,19 +527,19 @@ export function LetterRequestDetails({
 
             {/* Generated Letter */}
             {request.status === "completed" && (
-              <Card className="border-green-200 shadow-sm bg-green-50/50 dark:bg-green-900/10">
+              <Card className="border-green-200 bg-green-50/50 dark:bg-green-900/10 shadow-sm">
                 <CardHeader className="pb-2 border-b border-green-200">
-                  <CardTitle className="flex items-center gap-2 text-lg text-green-600">
-                    <FileText className="w-5 h-5 text-green-600" />
+                  <CardTitle className="text-lg flex items-center gap-2 text-green-600">
+                    <FileText className="h-5 w-5 text-green-600" />
                     Dokumen Surat
                   </CardTitle>
                   <CardDescription>Surat yang telah dibuat dan siap untuk diunduh</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <div className="flex items-center justify-between p-4 transition-colors border rounded-md bg-muted/30 hover:bg-muted/50">
+                  <div className="flex items-center justify-between p-4 border rounded-md bg-muted/30 hover:bg-muted/50 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-md bg-primary/10">
-                        <FileText className="w-6 h-6 text-primary" />
+                      <div className="p-2 bg-primary/10 rounded-md">
+                        <FileText className="h-6 w-6 text-primary" />
                       </div>
                       <div>
                         <div className="font-medium">{request.title}.pdf</div>
@@ -550,7 +550,7 @@ export function LetterRequestDetails({
                     </div>
                     <a href={request.letterUrl} target="_blank" rel="noopener noreferrer">
                       <Button className="gap-2 bg-primary hover:bg-primary/90">
-                        <Download className="w-4 h-4" />
+                        <Download className="h-4 w-4" />
                         Unduh
                       </Button>
                     </a>
@@ -561,9 +561,9 @@ export function LetterRequestDetails({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter className="flex flex-col-reverse gap-2 pt-4 mt-4 border-t sm:flex-row sm:gap-0">
+        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-0 border-t pt-4 mt-4">
           {/* For student role, only show the close button and download button if available */}
-          <div className="flex w-full gap-2">
+          <div className="flex gap-2 w-full">
             <Button variant="outline" onClick={onClose} className="flex-1 border-muted">
               Tutup
             </Button>
@@ -572,7 +572,7 @@ export function LetterRequestDetails({
             {role === "mahasiswa" && request.status === "completed" && (
               <a href={request.letterUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
                 <Button className="w-full bg-primary hover:bg-primary/90">
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="h-4 w-4 mr-2" />
                   Unduh Surat
                 </Button>
               </a>
@@ -581,7 +581,7 @@ export function LetterRequestDetails({
 
           {/* Staff actions - only shown for staff_tu role */}
           {role === "staff_tu" && (
-            <div className="flex w-full gap-2 sm:w-auto">
+            <div className="flex gap-2 w-full sm:w-auto">
               {(request.status === "submitted" || request.status === "in-review") && (
                 <>
                   {request.status === "submitted" && (
@@ -590,16 +590,16 @@ export function LetterRequestDetails({
                       onClick={handleMarkInReview}
                       className="flex-1 sm:flex-auto border-amber-200 text-amber-600 hover:bg-amber-50"
                     >
-                      <AlertCircle className="w-4 h-4 mr-2" />
+                      <AlertCircle className="h-4 w-4 mr-2" />
                       Tandai Sedang Ditinjau
                     </Button>
                   )}
                   <Button variant="destructive" onClick={handleReject} className="flex-1 sm:flex-auto">
-                    <XCircle className="w-4 h-4 mr-2" />
+                    <XCircle className="h-4 w-4 mr-2" />
                     Tolak
                   </Button>
-                  <Button onClick={handleApprove} className="flex-1 bg-green-600 sm:flex-auto hover:bg-green-700">
-                    <CheckCircle className="w-4 h-4 mr-2" />
+                  <Button onClick={handleApprove} className="flex-1 sm:flex-auto bg-green-600 hover:bg-green-700">
+                    <CheckCircle className="h-4 w-4 mr-2" />
                     Setujui
                   </Button>
                 </>
@@ -607,14 +607,14 @@ export function LetterRequestDetails({
 
               {request.status === "approved" && (
                 <Button onClick={handleCreateTemplate} className="flex-1 sm:flex-auto bg-primary hover:bg-primary/90">
-                  <FileText className="w-4 h-4 mr-2" />
+                  <FileText className="h-4 w-4 mr-2" />
                   Buat Surat
                 </Button>
               )}
 
               {request.status === "completed" && (
                 <Button className="flex-1 sm:flex-auto bg-primary hover:bg-primary/90">
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="h-4 w-4 mr-2" />
                   Unduh Surat
                 </Button>
               )}
@@ -631,7 +631,7 @@ export function LetterRequestDetails({
               <DialogTitle>Tolak Permohonan Surat</DialogTitle>
               <DialogDescription>Berikan alasan penolakan permohonan surat ini</DialogDescription>
             </DialogHeader>
-            <div className="py-4 space-y-4">
+            <div className="space-y-4 py-4">
               <Textarea
                 placeholder="Alasan penolakan..."
                 value={rejectReason}

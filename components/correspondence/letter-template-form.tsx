@@ -254,7 +254,7 @@ function getSimpleContent(request: LetterRequest): string {
 
 function getFacultyFromMajor(major: string): string {
   switch (major) {
-    case "Informatika":
+    case "Teknik Informatika":
     case "Teknik Elektro":
     case "Teknik Mesin":
     case "Teknik Sipil":

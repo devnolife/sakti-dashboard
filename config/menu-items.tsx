@@ -22,6 +22,7 @@ import {
   Wallet,
   PieChart,
   TrendingDown,
+  FileSpreadsheet,
 } from "lucide-react"
 import type { Role } from "@/types/role"
 
@@ -429,43 +430,104 @@ export const dekanMenuItems = [
 ]
 
 // Menu items for KKP staff
-export const staffKkpMenuItems = [
+export const adminUmumMenuItems = [
   {
     id: "dashboard",
     title: "Dashboard",
-    href: "/dashboard/staff_kkp",
+    href: "/dashboard/admin_umum",
     icon: LayoutDashboard,
   },
   {
-    id: "kkp-applications",
-    title: "Aplikasi KKP",
-    href: "/dashboard/staff_kkp/applications",
-    icon: FileText,
-    badge: { text: "15", variant: "destructive" },
-  },
-  {
-    id: "kkp-locations",
-    title: "Lokasi KKP",
-    href: "/dashboard/staff_kkp/locations",
-    icon: Briefcase,
-  },
-  {
-    id: "kkp-supervisors",
-    title: "Supervisor KKP",
-    href: "/dashboard/staff_kkp/supervisors",
+    id: "non-regular-students",
+    title: "Non Regular",
+    href: "/dashboard/admin_umum/non-regular-students",
     icon: Users,
+    children: [
+      {
+        id: "student-records",
+        title: "Data Mahasiswa",
+        href: "/dashboard/admin_umum/non-regular-students/records",
+      },
+      {
+        id: "payment-processing",
+        title: "Proses Pembayaran",
+        href: "/dashboard/admin_umum/non-regular-students/payments",
+        badge: { text: "New", variant: "outline" },
+      },
+      {
+        id: "academic-matters",
+        title: "Urusan Akademik",
+        href: "/dashboard/admin_umum/non-regular-students/academic",
+      },
+      {
+        id: "registration",
+        title: "Pendaftaran",
+        href: "/dashboard/admin_umum/non-regular-students/registration",
+      },
+    ],
   },
   {
-    id: "kkp-reports",
-    title: "Laporan KKP",
-    href: "/dashboard/staff_kkp/reports",
-    icon: ClipboardList,
+    id: "correspondence",
+    title: "Korespondensi",
+    href: "/dashboard/admin_umum/correspondence",
+    icon: Mail,
+    children: [
+      {
+        id: "draft-letters",
+        title: "Draft Surat",
+        href: "/dashboard/admin_umum/correspondence/drafts",
+        badge: { text: "New", variant: "outline" },
+      },
+      {
+        id: "leadership-correspondence",
+        title: "Surat Pimpinan",
+        href: "/dashboard/admin_umum/correspondence/leadership",
+      },
+      {
+        id: "templates",
+        title: "Template Surat",
+        href: "/dashboard/admin_umum/correspondence/templates",
+      },
+      {
+        id: "archive",
+        title: "Arsip Surat",
+        href: "/dashboard/admin_umum/correspondence/archive",
+      },
+    ],
   },
- 
+  {
+    id: "reports",
+    title: "Laporan",
+    href: "/dashboard/admin_umum/reports",
+    icon: FileSpreadsheet,
+    children: [
+      {
+        id: "payment-reports",
+        title: "Laporan Pembayaran",
+        href: "/dashboard/admin_umum/reports/payments",
+      },
+      {
+        id: "academic-reports",
+        title: "Laporan Akademik",
+        href: "/dashboard/admin_umum/reports/academic",
+      },
+      {
+        id: "correspondence-reports",
+        title: "Laporan Korespondensi",
+        href: "/dashboard/admin_umum/reports/correspondence",
+      },
+    ],
+  },
+  {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/notifications",
+    icon: Bell,
+  },
   {
     id: "settings",
     title: "Pengaturan",
-    href: "/dashboard/staff_kkp/settings",
+    href: "/dashboard/admin_umum/settings",
     icon: Settings,
   },
 ]
@@ -584,7 +646,6 @@ export const lecturerMenuItems = [
   },
 ]
 
-// Add menu items for laboratory admin
 export const laboratoryAdminMenuItems = [
   {
     id: "dashboard",
@@ -666,7 +727,7 @@ export const laboratoryAdminMenuItems = [
   },
 ]
 
-// Update the menuItems record to include laboratory_admin
+
 export const menuItems: Record<Role, typeof adminMenuItems> = {
   admin: adminMenuItems,
   dekan: dekanMenuItems,
@@ -674,11 +735,10 @@ export const menuItems: Record<Role, typeof adminMenuItems> = {
   mahasiswa: mahasiswaMenuItems,
   prodi: prodiMenuItems,
   staff_tu: staffTuMenuItems,
-  staff_kkp: staffKkpMenuItems,
   laboratory_admin: laboratoryAdminMenuItems,
+  staff_umum: adminUmumMenuItems,
 }
 
-// Add the Vice Dean 2 menu items to the dekanItems array
 export const dekanItems = [
   {
     title: "Dashboard",
