@@ -51,8 +51,6 @@ export default function Content({ activeSection, setActiveSection }: ContentProp
         return <ProdiDashboard />
       case "staff_tu":
         return <StaffTUDashboard />
-      case "staff_kkp":
-        return <StaffKKPDashboard activeSection={activeSection || section} />
       case "mahasiswa":
         return <MahasiswaDashboard />
       default:
@@ -62,7 +60,7 @@ export default function Content({ activeSection, setActiveSection }: ContentProp
 
   return (
     <div className="flex-1 overflow-auto">
-      <div className="md:hidden p-3">
+      <div className="p-3 md:hidden">
         <MobileMenu activeSection={activeSection || section} onNavigate={handleSectionChange} />
       </div>
       <div className="px-4 py-4 md:px-6 lg:px-8 ml-52 lg:ml-0">{renderContent()}</div>

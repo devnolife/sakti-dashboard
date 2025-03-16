@@ -10,7 +10,6 @@ export type Role =
   | "prodi"
   | "dekan"
   | "admin"
-  | "staff_kkp"
   | "lecturer"
   | "kepala_jurusan"
   | "laboratory_admin"

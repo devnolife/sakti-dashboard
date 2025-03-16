@@ -21,7 +21,8 @@ export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<Role>("mahasiswa")
   const [showPassword, setShowPassword] = useState(false)
   const [formError, setFormError] = useState("")
-  const { login, isLoading, error } = useAuth()
+  
+  const { login, isLoading } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,12 +32,13 @@ export default function LoginPage() {
       setFormError("Username and password are required.")
       return
     }
-    const success = await login(username, password, selectedRole)
-    if (success) {
-      router.push("/dashboard")
-    } else {
-      setFormError("Invalid username or password.")
-    }
+    await login(username, password, selectedRole)
+      .then(() => {
+        router.push("/dashboard")
+      })
+      .catch(() => {
+        setFormError("Invalid username or password.")
+      })
   }
 
   return (
@@ -50,7 +52,7 @@ export default function LoginPage() {
                 <span className="text-2xl font-bold text-primary-foreground">S</span>
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Welcome to SAKTI</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Welcome to SIAKAD</CardTitle>
             <CardDescription className="text-center">
               Enter your credentials to access the academic information system
             </CardDescription>
@@ -138,11 +140,10 @@ export default function LoginPage() {
                   </SelectContent>
                 </Select>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  For demo purposes, any username and password will work
+                  For demo purposes, any username and password will work with any role including Admin Keuangan
                 </p>
               </div>
               {formError && <p className="text-sm text-center text-destructive">{formError}</p>}
-              {error && <p className="text-sm text-center text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>

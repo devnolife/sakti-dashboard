@@ -74,7 +74,7 @@ export const mahasiswaMenuItems = [
   },
   {
     id: "library",
-    title: "Perpustakaan",
+    title: "Ruang Baca",
     href: "/dashboard/mahasiswa/library",
     icon: Library,
     children: [
@@ -298,6 +298,35 @@ export const staffTuMenuItems = [
     ],
   },
   {
+    id: "aik-komfren",
+    title: "Ujian Komfren AIK",
+    href: "/dashboard/staff_tu/aik-komfren",
+    icon: BookMarked,
+    children: [
+      {
+        id: "aik-komfren-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/staff_tu/aik-komfren",
+      },
+      {
+        id: "aik-komfren-registration",
+        title: "Registration",
+        href: "/dashboard/staff_tu/aik-komfren/registration",
+        badge: { text: "12", variant: "destructive" },
+      },
+      {
+        id: "aik-komfren-examination",
+        title: "Examination",
+        href: "/dashboard/staff_tu/aik-komfren/examination",
+      },
+      {
+        id: "aik-komfren-completion",
+        title: "Completion",
+        href: "/dashboard/staff_tu/aik-komfren/completion",
+      },
+    ],
+  },
+  {
     id: "schedule-management",
     title: "Jadwal Akademik",
     href: "/dashboard/staff_tu/schedule-management",
@@ -480,7 +509,6 @@ export const readingRoomAdminMenuItems = [
         id: "add-book",
         title: "Tambah Buku",
         href: "/dashboard/reading_room_admin/books/add",
-        badge: { text: "New", variant: "outline" },
       },
       {
         id: "book-categories",
@@ -603,7 +631,6 @@ export const adminUmumMenuItems = [
         id: "payment-processing",
         title: "Proses Pembayaran",
         href: "/dashboard/admin_umum/non-regular-students/payments",
-        badge: { text: "New", variant: "outline" },
       },
       {
         id: "academic-matters",
@@ -627,7 +654,6 @@ export const adminUmumMenuItems = [
         id: "draft-letters",
         title: "Draft Surat",
         href: "/dashboard/admin_umum/correspondence/drafts",
-        badge: { text: "New", variant: "outline" },
       },
       {
         id: "leadership-correspondence",
@@ -966,7 +992,7 @@ export const financeAdminMenuItems = [
 export const menuItems: Record<Role, typeof adminMenuItems> = {
   admin: adminMenuItems,
   dekan: dekanMenuItems,
-  lecturer: lecturerMenuItems,
+  dosen: lecturerMenuItems,
   mahasiswa: mahasiswaMenuItems,
   prodi: prodiMenuItems,
   staff_tu: staffTuMenuItems,

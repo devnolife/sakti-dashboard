@@ -29,7 +29,7 @@ export function LibraryDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
-          <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Perpustakaan</h2>
+          <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Ruang Baca</h2>
         <p className="text-muted-foreground">Cari dan pinjam buku dari perpustakaan fakultas.</p>
       </div>
 

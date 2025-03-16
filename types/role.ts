@@ -5,7 +5,7 @@ export type Role =
   | "staff_tu"
   | "dekan"
   | "admin"
-  | "staff_kkp"
+ 
   | "laboratory_admin"
   | "reading_room_admin"
   | "admin_umum"

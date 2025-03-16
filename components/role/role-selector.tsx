@@ -26,7 +26,6 @@ export default function RoleSelector() {
     "prodi",
     "dekan",
     "admin",
-    "staff_kkp",
     "lecturer",
     "laboratory_admin",
   ]
@@ -44,7 +43,6 @@ export default function RoleSelector() {
       prodi: "bg-purple-100 text-purple-800",
       dekan: "bg-amber-100 text-amber-800",
       admin: "bg-red-100 text-red-800",
-      staff_kkp: "bg-teal-100 text-teal-800",
       lecturer: "bg-indigo-100 text-indigo-800",
       laboratory_admin: "bg-cyan-100 text-cyan-800",
     }
@@ -58,7 +56,7 @@ export default function RoleSelector() {
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(role)}`}>
             {getRoleDisplayName(role)}
           </span>
-          <ChevronDown className="h-4 w-4 opacity-50" />
+          <ChevronDown className="w-4 h-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
@@ -76,7 +74,7 @@ export default function RoleSelector() {
             </div>
             {role === roleOption && (
               <Badge variant="outline" className="ml-2 bg-primary/10 text-primary">
-                <Check className="h-3 w-3 mr-1" />
+                <Check className="w-3 h-3 mr-1" />
                 Active
               </Badge>
             )}
