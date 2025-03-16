@@ -127,10 +127,32 @@ export const mahasiswaMenuItems = [
     ],
   },
   {
-    id: "exams",
-    title: "Ujian Komfren Aik",
-    href: "/dashboard/mahasiswa/exams-aik",
-    icon: PanelsTopLeft,
+    id: "aik-komfren",
+    title: "Ujian Komfren AIK",
+    href: "/dashboard/mahasiswa/aik-komfren",
+    icon: BookMarked,
+    children: [
+      {
+        id: "aik-komfren-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/mahasiswa/aik-komfren",
+      },
+      {
+        id: "aik-komfren-registration",
+        title: "Registration & Payment",
+        href: "/dashboard/mahasiswa/aik-komfren/registration",
+      },
+      {
+        id: "aik-komfren-schedule",
+        title: "Schedule & Examiner",
+        href: "/dashboard/mahasiswa/aik-komfren/schedule",
+      },
+      {
+        id: "aik-komfren-completion",
+        title: "Exam Completion",
+        href: "/dashboard/mahasiswa/aik-komfren/completion",
+      },
+    ],
   },
   {
     id: "payment",

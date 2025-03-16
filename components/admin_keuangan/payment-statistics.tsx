@@ -8,7 +8,7 @@ export function PaymentStatistics() {
   return (
     <div className="space-y-4">
       <Tabs defaultValue="by-program" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 h-12 rounded-xl bg-muted/30 p-1">
+        <TabsList className="grid w-full grid-cols-4 h-12 rounded-xl bg-gradient-to-r from-slate-100 to-blue-50 p-1">
           <TabsTrigger
             value="by-program"
             className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
@@ -45,7 +45,7 @@ export function PaymentStatistics() {
         </TabsList>
 
         <TabsContent value="by-program" className="space-y-4">
-          <Card className="border-none shadow-sm bg-white">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-xl font-semibold text-gray-800">Payment Statistics by Study Program</CardTitle>
               <CardDescription className="text-gray-500">
@@ -54,7 +54,7 @@ export function PaymentStatistics() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="h-[300px] w-full bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm">
+                <div className="h-[300px] w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-sm font-medium text-gray-700">Payment Amount by Program</h3>
                     <BarChart3 className="h-5 w-5 text-blue-500" />
@@ -62,16 +62,16 @@ export function PaymentStatistics() {
                   <div className="flex h-[calc(100%-2rem)] w-full items-center justify-center">
                     <div className="relative w-full h-full">
                       {/* Simulated bar chart */}
-                      <div className="absolute bottom-0 left-[10%] w-[10%] h-[65%] bg-blue-400 rounded-t-md"></div>
-                      <div className="absolute bottom-0 left-[30%] w-[10%] h-[85%] bg-indigo-500 rounded-t-md"></div>
-                      <div className="absolute bottom-0 left-[50%] w-[10%] h-[75%] bg-purple-400 rounded-t-md"></div>
-                      <div className="absolute bottom-0 left-[70%] w-[10%] h-[95%] bg-blue-600 rounded-t-md"></div>
-                      <div className="absolute bottom-0 left-[90%] w-[10%] h-[55%] bg-indigo-300 rounded-t-md"></div>
+                      <div className="absolute bottom-0 left-[10%] w-[10%] h-[65%] bg-gradient-to-t from-blue-400 to-blue-300 rounded-t-md"></div>
+                      <div className="absolute bottom-0 left-[30%] w-[10%] h-[85%] bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-md"></div>
+                      <div className="absolute bottom-0 left-[50%] w-[10%] h-[75%] bg-gradient-to-t from-purple-400 to-purple-300 rounded-t-md"></div>
+                      <div className="absolute bottom-0 left-[70%] w-[10%] h-[95%] bg-gradient-to-t from-blue-600 to-blue-500 rounded-t-md"></div>
+                      <div className="absolute bottom-0 left-[90%] w-[10%] h-[55%] bg-gradient-to-t from-indigo-300 to-indigo-200 rounded-t-md"></div>
                     </div>
                   </div>
                 </div>
 
-                <div className="h-[300px] w-full bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 shadow-sm">
+                <div className="h-[300px] w-full bg-gradient-to-br from-purple-50 via-violet-50 to-purple-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-sm font-medium text-gray-700">Student Distribution by Program</h3>
                     <PieChart className="h-5 w-5 text-purple-500" />
@@ -80,23 +80,23 @@ export function PaymentStatistics() {
                     {/* Simulated pie chart */}
                     <div className="relative w-[200px] h-[200px] rounded-full bg-gray-100 overflow-hidden">
                       <div
-                        className="absolute w-full h-full bg-blue-400"
+                        className="absolute w-full h-full bg-gradient-to-br from-blue-400 to-blue-300"
                         style={{ clipPath: "polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-indigo-500"
+                        className="absolute w-full h-full bg-gradient-to-br from-indigo-500 to-indigo-400"
                         style={{ clipPath: "polygon(50% 50%, 50% 0, 100% 0, 100% 50%)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-purple-400"
+                        className="absolute w-full h-full bg-gradient-to-br from-purple-400 to-purple-300"
                         style={{ clipPath: "polygon(50% 50%, 0 50%, 0 0, 50% 0)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-blue-600"
+                        className="absolute w-full h-full bg-gradient-to-br from-blue-600 to-blue-500"
                         style={{ clipPath: "polygon(50% 50%, 0 100%, 0 50%)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-indigo-300"
+                        className="absolute w-full h-full bg-gradient-to-br from-indigo-300 to-indigo-200"
                         style={{ clipPath: "polygon(50% 50%, 50% 100%, 100% 100%)" }}
                       ></div>
                       <div
@@ -110,11 +110,36 @@ export function PaymentStatistics() {
 
               <div className="mt-8 grid gap-4 md:grid-cols-5">
                 {[
-                  { name: "Watering", amount: "Rp 245.8M", students: "458 students", color: "bg-blue-400" },
-                  { name: "Electrical", amount: "Rp 312.4M", students: "523 students", color: "bg-indigo-500" },
-                  { name: "Architecture", amount: "Rp 278.6M", students: "412 students", color: "bg-purple-400" },
-                  { name: "Informatics", amount: "Rp 356.2M", students: "612 students", color: "bg-blue-600" },
-                  { name: "Urban Planning", amount: "Rp 198.9M", students: "340 students", color: "bg-indigo-300" },
+                  {
+                    name: "Watering",
+                    amount: "Rp 245.8M",
+                    students: "458 students",
+                    color: "bg-gradient-to-r from-blue-400 to-blue-300",
+                  },
+                  {
+                    name: "Electrical",
+                    amount: "Rp 312.4M",
+                    students: "523 students",
+                    color: "bg-gradient-to-r from-indigo-500 to-indigo-400",
+                  },
+                  {
+                    name: "Architecture",
+                    amount: "Rp 278.6M",
+                    students: "412 students",
+                    color: "bg-gradient-to-r from-purple-400 to-purple-300",
+                  },
+                  {
+                    name: "Informatics",
+                    amount: "Rp 356.2M",
+                    students: "612 students",
+                    color: "bg-gradient-to-r from-blue-600 to-blue-500",
+                  },
+                  {
+                    name: "Urban Planning",
+                    amount: "Rp 198.9M",
+                    students: "340 students",
+                    color: "bg-gradient-to-r from-indigo-300 to-indigo-200",
+                  },
                 ].map((program) => (
                   <Card key={program.name} className="border-none shadow-sm overflow-hidden">
                     <div className={`h-1 w-full ${program.color}`}></div>
@@ -133,14 +158,14 @@ export function PaymentStatistics() {
         </TabsContent>
 
         <TabsContent value="by-status" className="space-y-4">
-          <Card className="border-none shadow-sm bg-white">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-xl font-semibold text-gray-800">Payment Statistics by Status</CardTitle>
               <CardDescription className="text-gray-500">Breakdown of payments by their current status</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="h-[300px] w-full bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-4 shadow-sm">
+                <div className="h-[300px] w-full bg-gradient-to-br from-green-50 via-teal-50 to-green-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-sm font-medium text-gray-700">Payment Status Distribution</h3>
                     <PieChart className="h-5 w-5 text-green-500" />
@@ -149,23 +174,23 @@ export function PaymentStatistics() {
                     {/* Simulated donut chart */}
                     <div className="relative w-[200px] h-[200px] rounded-full bg-gray-100">
                       <div
-                        className="absolute w-full h-full bg-green-400"
+                        className="absolute w-full h-full bg-gradient-to-br from-green-400 to-green-300"
                         style={{ clipPath: "polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-blue-400"
+                        className="absolute w-full h-full bg-gradient-to-br from-blue-400 to-blue-300"
                         style={{ clipPath: "polygon(50% 50%, 50% 0, 100% 0, 100% 50%)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-gray-300"
+                        className="absolute w-full h-full bg-gradient-to-br from-gray-300 to-gray-200"
                         style={{ clipPath: "polygon(50% 50%, 0 50%, 0 0, 50% 0)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-purple-400"
+                        className="absolute w-full h-full bg-gradient-to-br from-purple-400 to-purple-300"
                         style={{ clipPath: "polygon(50% 50%, 0 100%, 0 50%)" }}
                       ></div>
                       <div
-                        className="absolute w-full h-full bg-red-400"
+                        className="absolute w-full h-full bg-gradient-to-br from-red-400 to-red-300"
                         style={{ clipPath: "polygon(50% 50%, 50% 100%, 0 100%)" }}
                       ></div>
                       <div
@@ -176,7 +201,7 @@ export function PaymentStatistics() {
                   </div>
                 </div>
 
-                <div className="h-[300px] w-full bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-sm">
+                <div className="h-[300px] w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-sm font-medium text-gray-700">Status by Program</h3>
                     <BarChart3 className="h-5 w-5 text-blue-500" />
@@ -186,11 +211,11 @@ export function PaymentStatistics() {
                     <div className="relative w-full h-full flex items-end justify-around">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <div key={i} className="relative w-[15%] h-[90%] bg-gray-100 rounded-t-md overflow-hidden">
-                          <div className="absolute bottom-0 w-full h-[50%] bg-green-400"></div>
-                          <div className="absolute bottom-[50%] w-full h-[20%] bg-blue-400"></div>
-                          <div className="absolute bottom-[70%] w-full h-[15%] bg-gray-300"></div>
-                          <div className="absolute bottom-[85%] w-full h-[8%] bg-purple-400"></div>
-                          <div className="absolute bottom-[93%] w-full h-[7%] bg-red-400"></div>
+                          <div className="absolute bottom-0 w-full h-[50%] bg-gradient-to-t from-green-400 to-green-300"></div>
+                          <div className="absolute bottom-[50%] w-full h-[20%] bg-gradient-to-t from-blue-400 to-blue-300"></div>
+                          <div className="absolute bottom-[70%] w-full h-[15%] bg-gradient-to-t from-gray-300 to-gray-200"></div>
+                          <div className="absolute bottom-[85%] w-full h-[8%] bg-gradient-to-t from-purple-400 to-purple-300"></div>
+                          <div className="absolute bottom-[93%] w-full h-[7%] bg-gradient-to-t from-red-400 to-red-300"></div>
                         </div>
                       ))}
                     </div>
@@ -204,7 +229,7 @@ export function PaymentStatistics() {
                     name: "Paid",
                     count: "1,245",
                     percent: "53.1% of total",
-                    color: "bg-green-400",
+                    color: "bg-gradient-to-r from-green-400 to-green-300",
                     textColor: "text-green-600",
                     borderColor: "border-green-200",
                   },
@@ -212,7 +237,7 @@ export function PaymentStatistics() {
                     name: "Partial",
                     count: "468",
                     percent: "20.0% of total",
-                    color: "bg-blue-400",
+                    color: "bg-gradient-to-r from-blue-400 to-blue-300",
                     textColor: "text-blue-600",
                     borderColor: "border-blue-200",
                   },
@@ -220,7 +245,7 @@ export function PaymentStatistics() {
                     name: "Unpaid",
                     count: "342",
                     percent: "14.6% of total",
-                    color: "bg-gray-300",
+                    color: "bg-gradient-to-r from-gray-300 to-gray-200",
                     textColor: "text-gray-600",
                     borderColor: "border-gray-200",
                   },
@@ -228,7 +253,7 @@ export function PaymentStatistics() {
                     name: "Scholarship",
                     count: "156",
                     percent: "6.7% of total",
-                    color: "bg-purple-400",
+                    color: "bg-gradient-to-r from-purple-400 to-purple-300",
                     textColor: "text-purple-600",
                     borderColor: "border-purple-200",
                   },
@@ -236,7 +261,7 @@ export function PaymentStatistics() {
                     name: "Overdue",
                     count: "134",
                     percent: "5.7% of total",
-                    color: "bg-red-400",
+                    color: "bg-gradient-to-r from-red-400 to-red-300",
                     textColor: "text-red-600",
                     borderColor: "border-red-200",
                   },
@@ -258,7 +283,7 @@ export function PaymentStatistics() {
         </TabsContent>
 
         <TabsContent value="by-semester" className="space-y-4">
-          <Card className="border-none shadow-sm bg-white">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-xl font-semibold text-gray-800">Payment Statistics by Semester</CardTitle>
               <CardDescription className="text-gray-500">
@@ -266,7 +291,7 @@ export function PaymentStatistics() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[400px] w-full bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 shadow-sm">
+              <div className="h-[400px] w-full bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50 rounded-xl p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-sm font-medium text-gray-700">Payment Comparison by Semester</h3>
                   <BarChart3 className="h-5 w-5 text-indigo-500" />
@@ -281,11 +306,11 @@ export function PaymentStatistics() {
                   ].map((item, i) => (
                     <div key={i} className="flex gap-2 items-end justify-center w-[20%]">
                       <div
-                        className={`w-[45%] h-[${item.height1}] bg-indigo-500 rounded-t-md`}
+                        className="w-[45%] bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-md"
                         style={{ height: item.height1 }}
                       ></div>
                       <div
-                        className={`w-[45%] h-[${item.height2}] bg-purple-400 rounded-t-md`}
+                        className="w-[45%] bg-gradient-to-t from-purple-400 to-purple-300 rounded-t-md"
                         style={{ height: item.height2 }}
                       ></div>
                     </div>
@@ -318,7 +343,7 @@ export function PaymentStatistics() {
                           <div className="text-2xl font-bold text-gray-800">{semester.amount}</div>
                           <p className="text-xs text-gray-500 mt-1">{semester.students}</p>
                         </div>
-                        <div className="flex items-center text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-medium">
+                        <div className="flex items-center text-green-500 bg-gradient-to-r from-green-50 to-emerald-50 px-2 py-1 rounded-full text-xs font-medium">
                           <ArrowUpRight className="h-3 w-3 mr-1" />
                           {semester.growth}
                         </div>
@@ -332,13 +357,13 @@ export function PaymentStatistics() {
         </TabsContent>
 
         <TabsContent value="trends" className="space-y-4">
-          <Card className="border-none shadow-sm bg-white">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-xl font-semibold text-gray-800">Payment Trends</CardTitle>
               <CardDescription className="text-gray-500">Payment trends over time</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[400px] w-full bg-gradient-to-br from-teal-50 to-blue-50 rounded-xl p-6 shadow-sm">
+              <div className="h-[400px] w-full bg-gradient-to-br from-teal-50 via-blue-50 to-teal-50 rounded-xl p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-sm font-medium text-gray-700">Payment Trends Over Time</h3>
                   <LineChart className="h-5 w-5 text-teal-500" />
@@ -389,14 +414,14 @@ export function PaymentStatistics() {
 
               <div className="mt-8 grid gap-4 md:grid-cols-3">
                 <Card className="border-none shadow-sm overflow-hidden">
-                  <div className="h-1 w-full bg-teal-400"></div>
+                  <div className="h-1 w-full bg-gradient-to-r from-teal-400 to-teal-300"></div>
                   <CardHeader className="pb-2 pt-4">
                     <CardTitle className="text-sm font-medium text-gray-700">Average Growth</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex justify-between items-center">
                       <div className="text-2xl font-bold text-gray-800">+4.8%</div>
-                      <div className="flex items-center text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-medium">
+                      <div className="flex items-center text-green-500 bg-gradient-to-r from-green-50 to-emerald-50 px-2 py-1 rounded-full text-xs font-medium">
                         <ArrowUpRight className="h-3 w-3 mr-1" />
                         Monthly
                       </div>
@@ -406,14 +431,14 @@ export function PaymentStatistics() {
                 </Card>
 
                 <Card className="border-none shadow-sm overflow-hidden">
-                  <div className="h-1 w-full bg-blue-400"></div>
+                  <div className="h-1 w-full bg-gradient-to-r from-blue-400 to-blue-300"></div>
                   <CardHeader className="pb-2 pt-4">
                     <CardTitle className="text-sm font-medium text-gray-700">Peak Month</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex justify-between items-center">
                       <div className="text-2xl font-bold text-gray-800">September</div>
-                      <div className="flex items-center text-blue-500 bg-blue-50 px-2 py-1 rounded-full text-xs font-medium">
+                      <div className="flex items-center text-blue-500 bg-gradient-to-r from-blue-50 to-sky-50 px-2 py-1 rounded-full text-xs font-medium">
                         <Wallet className="h-3 w-3 mr-1" />
                         Rp 156.2M
                       </div>
@@ -423,14 +448,14 @@ export function PaymentStatistics() {
                 </Card>
 
                 <Card className="border-none shadow-sm overflow-hidden">
-                  <div className="h-1 w-full bg-indigo-400"></div>
+                  <div className="h-1 w-full bg-gradient-to-r from-indigo-400 to-indigo-300"></div>
                   <CardHeader className="pb-2 pt-4">
                     <CardTitle className="text-sm font-medium text-gray-700">Year-over-Year</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex justify-between items-center">
                       <div className="text-2xl font-bold text-gray-800">+12.3%</div>
-                      <div className="flex items-center text-green-500 bg-green-50 px-2 py-1 rounded-full text-xs font-medium">
+                      <div className="flex items-center text-green-500 bg-gradient-to-r from-green-50 to-emerald-50 px-2 py-1 rounded-full text-xs font-medium">
                         <ArrowUpRight className="h-3 w-3 mr-1" />
                         Annual
                       </div>

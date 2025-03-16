@@ -34,6 +34,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { DateRange } from "react-day-picker"
 
 // Mock payment history data
 const paymentHistoryData = [
@@ -639,10 +640,13 @@ export function PaymentHistoryManager() {
                               <CalendarComponent
                                 mode="range"
                                 selected={dateRange}
-                                onSelect={handleDateRangeChange}
+                                onSelect={(range) => handleDateRangeChange({
+                                  from: range?.from,
+                                  to: range?.to
+                                })}
                                 numberOfMonths={1}
                                 className="border-none shadow-none"
-                              />
+                                />
                             </CardContent>
                           </Card>
                         </div>

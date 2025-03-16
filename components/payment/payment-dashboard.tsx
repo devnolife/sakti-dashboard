@@ -114,68 +114,68 @@ export default function PaymentDashboard() {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-primary shadow-sm hover:shadow transition-shadow">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="transition-shadow border-l-4 shadow-sm border-l-primary hover:shadow">
           <CardContent className="p-6">
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Total Dibayar</p>
+                <p className="mb-1 text-sm font-medium text-muted-foreground">Total Dibayar</p>
                 <h3 className="text-2xl font-bold text-primary">{formatCurrency(totalPaid)}</h3>
-                <p className="text-xs text-muted-foreground mt-1">Semester Ini</p>
+                <p className="mt-1 text-xs text-muted-foreground">Semester Ini</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-primary" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                <CheckCircle className="w-5 h-5 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow transition-shadow">
+        <Card className="transition-shadow border-l-4 shadow-sm border-l-amber-500 hover:shadow">
           <CardContent className="p-6">
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Belum Dibayar</p>
+                <p className="mb-1 text-sm font-medium text-muted-foreground">Belum Dibayar</p>
                 <h3 className="text-2xl font-bold text-amber-500">{formatCurrency(totalPending + totalUpcoming)}</h3>
-                <p className="text-xs text-muted-foreground mt-1">{pendingPayments + upcomingPayments} Pembayaran</p>
+                <p className="mt-1 text-xs text-muted-foreground">{pendingPayments + upcomingPayments} Pembayaran</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-amber-500" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10">
+                <AlertCircle className="w-5 h-5 text-amber-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-green-500 shadow-sm hover:shadow transition-shadow">
+        <Card className="transition-shadow border-l-4 shadow-sm border-l-green-500 hover:shadow">
           <CardContent className="p-6">
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Pembayaran Selesai</p>
+                <p className="mb-1 text-sm font-medium text-muted-foreground">Pembayaran Selesai</p>
                 <h3 className="text-2xl font-bold text-green-500">
                   {completedPayments} / {completedPayments + pendingPayments + upcomingPayments}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {Math.round((completedPayments / (completedPayments + pendingPayments + upcomingPayments)) * 100)}%
                   Selesai
                 </p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-green-500" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10">
+                <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-shadow">
+        <Card className="transition-shadow border-l-4 shadow-sm border-l-blue-500 hover:shadow">
           <CardContent className="p-6">
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Jatuh Tempo Terdekat</p>
+                <p className="mb-1 text-sm font-medium text-muted-foreground">Jatuh Tempo Terdekat</p>
                 <h3 className="text-2xl font-bold text-blue-500">
                   {nearestDueDate
                     ? new Date(nearestDueDate).toLocaleDateString("id-ID", { day: "numeric", month: "short" })
                     : "-"}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {nearestDueDate
                     ? (() => {
                         const dueDate = new Date(nearestDueDate)
@@ -187,8 +187,8 @@ export default function PaymentDashboard() {
                     : "Tidak Ada"}
                 </p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Calendar className="h-5 w-5 text-blue-500" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10">
+                <Calendar className="w-5 h-5 text-blue-500" />
               </div>
             </div>
           </CardContent>
@@ -196,15 +196,15 @@ export default function PaymentDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left Column - Payment Tabs */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <Card className="shadow-sm">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle>Pembayaran</CardTitle>
                 <Button onClick={() => setNewPaymentDialogOpen(true)} size="sm" className="h-8">
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className="w-4 h-4 mr-1" />
                   Bayar Sekarang
                 </Button>
               </div>
@@ -212,7 +212,7 @@ export default function PaymentDashboard() {
             <CardContent className="p-0">
               <Tabs defaultValue="upcoming" className="w-full">
                 <div className="px-6 border-b">
-                  <TabsList className="w-full justify-start h-12 p-0 bg-transparent">
+                  <TabsList className="justify-start w-full h-12 p-0 bg-transparent">
                     <TabsTrigger
                       value="upcoming"
                       className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12"
@@ -228,17 +228,17 @@ export default function PaymentDashboard() {
                   </TabsList>
                 </div>
                 <TabsContent value="upcoming" className="p-6 pt-4 m-0">
-                  <UpcomingPaymentsTable payments={sortedUpcomingPayments} />
+                  <UpcomingPaymentsTable payments={sortedUpcomingPayments as unknown as Payment[]} />
                 </TabsContent>
                 <TabsContent value="recent" className="p-6 pt-4 m-0">
                   <RecentPaymentsTable payments={recentPayments} />
                 </TabsContent>
               </Tabs>
             </CardContent>
-            <CardFooter className="border-t px-6 py-4">
+            <CardFooter className="px-6 py-4 border-t">
               <Button variant="ghost" size="sm" className="ml-auto" onClick={() => setHistoryDialogOpen(true)}>
                 Lihat Semua Riwayat
-                <ChevronRight className="h-4 w-4 ml-1" />
+                <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </CardFooter>
           </Card>
@@ -280,23 +280,23 @@ export default function PaymentDashboard() {
                         switch (category) {
                           case "laboratory":
                             color = "bg-primary"
-                            icon = <Flask className="h-4 w-4 text-primary" />
+                            icon = <Flask className="w-4 h-4 text-primary" />
                             break
                           case "exam":
                             color = "bg-secondary"
-                            icon = <FileText className="h-4 w-4 text-secondary" />
+                            icon = <FileText className="w-4 h-4 text-secondary" />
                             break
                           case "kkp":
                             color = "bg-amber-500"
-                            icon = <Briefcase className="h-4 w-4 text-amber-500" />
+                            icon = <Briefcase className="w-4 h-4 text-amber-500" />
                             break
                           case "tuition":
                             color = "bg-blue-500"
-                            icon = <CreditCardIcon className="h-4 w-4 text-blue-500" />
+                            icon = <CreditCardIcon className="w-4 h-4 text-blue-500" />
                             break
                           default:
                             color = "bg-gray-500"
-                            icon = <DollarSign className="h-4 w-4 text-gray-500" />
+                            icon = <DollarSign className="w-4 h-4 text-gray-500" />
                         }
 
                         return (
@@ -318,7 +318,7 @@ export default function PaymentDashboard() {
                               </div>
                               <span className="font-medium">{percentage}%</span>
                             </div>
-                            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="w-full h-2 overflow-hidden rounded-full bg-muted">
                               <div className={`h-full ${color}`} style={{ width: `${percentage}%` }}></div>
                             </div>
                           </div>
@@ -347,35 +347,35 @@ export default function PaymentDashboard() {
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
-                  className="h-auto py-4 px-2 flex flex-col gap-2 items-center justify-center hover:bg-primary/5 hover:text-primary hover:border-primary/30"
+                  className="flex flex-col items-center justify-center h-auto gap-2 px-2 py-4 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
                   onClick={() => setNewPaymentDialogOpen(true)}
                 >
-                  <CircleDollarSign className="h-6 w-6 text-primary" />
+                  <CircleDollarSign className="w-6 h-6 text-primary" />
                   <span className="text-xs font-medium">Bayar Baru</span>
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="h-auto py-4 px-2 flex flex-col gap-2 items-center justify-center hover:bg-secondary/5 hover:text-secondary hover:border-secondary/30"
+                  className="flex flex-col items-center justify-center h-auto gap-2 px-2 py-4 hover:bg-secondary/5 hover:text-secondary hover:border-secondary/30"
                   onClick={() => setHistoryDialogOpen(true)}
                 >
-                  <HistoryIcon className="h-6 w-6 text-secondary" />
+                  <HistoryIcon className="w-6 h-6 text-secondary" />
                   <span className="text-xs font-medium">Riwayat</span>
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="h-auto py-4 px-2 flex flex-col gap-2 items-center justify-center hover:bg-green-500/5 hover:text-green-500 hover:border-green-500/30"
+                  className="flex flex-col items-center justify-center h-auto gap-2 px-2 py-4 hover:bg-green-500/5 hover:text-green-500 hover:border-green-500/30"
                 >
-                  <Flask className="h-6 w-6 text-green-500" />
+                  <Flask className="w-6 h-6 text-green-500" />
                   <span className="text-xs font-medium">Laboratorium</span>
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="h-auto py-4 px-2 flex flex-col gap-2 items-center justify-center hover:bg-blue-500/5 hover:text-blue-500 hover:border-blue-500/30"
+                  className="flex flex-col items-center justify-center h-auto gap-2 px-2 py-4 hover:bg-blue-500/5 hover:text-blue-500 hover:border-blue-500/30"
                 >
-                  <CalendarRange className="h-6 w-6 text-blue-500" />
+                  <CalendarRange className="w-6 h-6 text-blue-500" />
                   <span className="text-xs font-medium">Ujian</span>
                 </Button>
               </div>
@@ -389,9 +389,9 @@ export default function PaymentDashboard() {
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-md border bg-card hover:bg-accent/5 transition-colors cursor-pointer">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <CreditCardIcon className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-3 p-3 transition-colors border rounded-md cursor-pointer bg-card hover:bg-accent/5">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <CreditCardIcon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium">Virtual Account</p>
@@ -399,9 +399,9 @@ export default function PaymentDashboard() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-md border bg-card hover:bg-accent/5 transition-colors cursor-pointer">
-                  <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <Wallet className="h-5 w-5 text-green-500" />
+                <div className="flex items-center gap-3 p-3 transition-colors border rounded-md cursor-pointer bg-card hover:bg-accent/5">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10">
+                    <Wallet className="w-5 h-5 text-green-500" />
                   </div>
                   <div>
                     <p className="font-medium">E-Wallet</p>
@@ -409,9 +409,9 @@ export default function PaymentDashboard() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-md border bg-card hover:bg-accent/5 transition-colors cursor-pointer">
-                  <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                    <ReceiptIcon className="h-5 w-5 text-blue-500" />
+                <div className="flex items-center gap-3 p-3 transition-colors border rounded-md cursor-pointer bg-card hover:bg-accent/5">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10">
+                    <ReceiptIcon className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
                     <p className="font-medium">Minimarket</p>
@@ -420,10 +420,10 @@ export default function PaymentDashboard() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="border-t px-6 py-4">
+            <CardFooter className="px-6 py-4 border-t">
               <Button variant="ghost" size="sm" className="w-full" onClick={() => setNewPaymentDialogOpen(true)}>
                 Lihat Semua Metode
-                <ChevronRight className="h-4 w-4 ml-1" />
+                <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </CardFooter>
           </Card>
@@ -436,9 +436,9 @@ export default function PaymentDashboard() {
             <CardContent className="p-4">
               {mostRecentPayment ? (
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-md border bg-card">
-                    <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                      <CheckCircle className="h-5 w-5 text-green-500" />
+                  <div className="flex items-center gap-3 p-3 border rounded-md bg-card">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-500/10">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
                     </div>
                     <div>
                       <p className="font-medium">{mostRecentPayment.description}</p>
@@ -460,10 +460,10 @@ export default function PaymentDashboard() {
                 </div>
               )}
             </CardContent>
-            <CardFooter className="border-t px-6 py-4">
+            <CardFooter className="px-6 py-4 border-t">
               <Button variant="ghost" size="sm" className="w-full" onClick={() => setHistoryDialogOpen(true)}>
                 Lihat Semua Aktivitas
-                <ChevronRight className="h-4 w-4 ml-1" />
+                <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </CardFooter>
           </Card>
