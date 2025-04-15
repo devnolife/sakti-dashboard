@@ -8,8 +8,8 @@ import { BudgetAllocationComparison } from "@/components/admin_keuangan/budget-a
 import { Download, FileText, Filter, Calendar, ArrowUpDown, Printer, PieChart, BarChart3 } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Budget Allocation | Finance Admin Dashboard",
-  description: "View and manage budget allocation across departments and categories",
+  title: "Alokasi Anggaran | Dasbor Admin Keuangan",
+  description: "Lihat dan kelola alokasi anggaran di seluruh departemen dan kategori",
 }
 
 export default function BudgetAllocationPage() {
@@ -18,18 +18,18 @@ export default function BudgetAllocationPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-cyan-800 bg-clip-text text-transparent">
-            Budget Allocation
+            Alokasi Anggaran
           </h2>
-          <p className="text-muted-foreground">View and manage budget allocation across departments and categories</p>
+          <p className="text-muted-foreground">Lihat dan kelola alokasi anggaran di seluruh departemen dan kategori</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <Button className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700">
             <FileText className="mr-2 h-4 w-4" />
-            Generate Report
+            Buat Laporan
           </Button>
           <Button variant="outline" className="bg-gradient-to-r from-slate-50 to-cyan-50 hover:bg-cyan-100/50">
             <Download className="mr-2 h-4 w-4" />
-            Export Data
+            Ekspor Data
           </Button>
         </div>
       </div>
@@ -37,10 +37,10 @@ export default function BudgetAllocationPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-cyan-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Total Budget</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Total Anggaran</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 12,500,000,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 12.500.000.000</div>
             <p className="text-sm text-cyan-600 mt-1 flex items-center">
               <span className="inline-block bg-cyan-100 text-cyan-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -51,17 +51,17 @@ export default function BudgetAllocationPage() {
                   />
                 </svg>
               </span>
-              +8.5% from previous year
+              +8,5% dari tahun sebelumnya
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-cyan-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Allocated Budget</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Anggaran Teralokasi</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 10,875,000,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 10.875.000.000</div>
             <p className="text-sm text-cyan-600 mt-1 flex items-center">
               <span className="inline-block bg-cyan-100 text-cyan-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -72,17 +72,17 @@ export default function BudgetAllocationPage() {
                   />
                 </svg>
               </span>
-              87.0% of total budget
+              87,0% dari total anggaran
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-cyan-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Remaining Budget</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Sisa Anggaran</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 1,625,000,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 1.625.000.000</div>
             <p className="text-sm text-amber-600 mt-1 flex items-center">
               <span className="inline-block bg-amber-100 text-amber-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -93,7 +93,7 @@ export default function BudgetAllocationPage() {
                   />
                 </svg>
               </span>
-              13.0% of total budget
+              13,0% dari total anggaran
             </p>
           </CardContent>
         </Card>
@@ -103,8 +103,8 @@ export default function BudgetAllocationPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <CardTitle>Budget Allocation</CardTitle>
-              <CardDescription>View and manage budget allocation across departments and categories</CardDescription>
+              <CardTitle>Alokasi Anggaran</CardTitle>
+              <CardDescription>Lihat dan kelola alokasi anggaran di seluruh departemen dan kategori</CardDescription>
             </div>
             <div className="flex gap-2">
               <Button
@@ -113,7 +113,7 @@ export default function BudgetAllocationPage() {
                 className="bg-gradient-to-r from-slate-50 to-cyan-50 hover:bg-cyan-100/50"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                Fiscal Year
+                Tahun Fiskal
               </Button>
               <Button
                 variant="outline"
@@ -121,7 +121,7 @@ export default function BudgetAllocationPage() {
                 className="bg-gradient-to-r from-slate-50 to-cyan-50 hover:bg-cyan-100/50"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Filters
+                Filter
               </Button>
             </div>
           </div>
@@ -129,10 +129,10 @@ export default function BudgetAllocationPage() {
         <CardContent>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="bg-gradient-to-r from-slate-100 to-cyan-50">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="by-department">By Department</TabsTrigger>
-              <TabsTrigger value="by-category">By Category</TabsTrigger>
-              <TabsTrigger value="allocation-table">Allocation Table</TabsTrigger>
+              <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
+              <TabsTrigger value="by-department">Berdasarkan Departemen</TabsTrigger>
+              <TabsTrigger value="by-category">Berdasarkan Kategori</TabsTrigger>
+              <TabsTrigger value="allocation-table">Tabel Alokasi</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
@@ -145,12 +145,12 @@ export default function BudgetAllocationPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Budget Distribution</CardTitle>
+                    <CardTitle className="text-sm font-medium">Distribusi Anggaran Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full bg-gradient-to-br from-white via-cyan-50/10 to-white rounded-xl p-4">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-medium text-gray-700">Budget by Department</h3>
+                        <h3 className="text-sm font-medium text-gray-700">Anggaran berdasarkan Departemen</h3>
                         <PieChart className="h-5 w-5 text-cyan-500" />
                       </div>
                       <div className="h-[calc(100%-2rem)] w-full flex items-center justify-center">
@@ -187,12 +187,12 @@ export default function BudgetAllocationPage() {
                 </Card>
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Budget Comparison</CardTitle>
+                    <CardTitle className="text-sm font-medium">Perbandingan Anggaran Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full bg-gradient-to-br from-white via-cyan-50/10 to-white rounded-xl p-4">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-medium text-gray-700">Budget vs Actual by Department</h3>
+                        <h3 className="text-sm font-medium text-gray-700">Anggaran vs Realisasi berdasarkan Departemen</h3>
                         <BarChart3 className="h-5 w-5 text-cyan-500" />
                       </div>
                       <div className="h-[calc(100%-2rem)] w-full flex items-center justify-center">
@@ -223,7 +223,7 @@ export default function BudgetAllocationPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <ArrowUpDown className="h-3.5 w-3.5" />
-                    <span>Sort</span>
+                    <span>Urutkan</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Filter className="h-3.5 w-3.5" />
@@ -233,11 +233,11 @@ export default function BudgetAllocationPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Printer className="h-3.5 w-3.5" />
-                    <span>Print</span>
+                    <span>Cetak</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Download className="h-3.5 w-3.5" />
-                    <span>Export</span>
+                    <span>Ekspor</span>
                   </Button>
                 </div>
               </div>

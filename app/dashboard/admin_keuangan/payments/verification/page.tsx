@@ -33,15 +33,15 @@ export default function PaymentVerificationPage() {
         <Card className="p-6 border-none shadow-sm bg-white/50 backdrop-blur-sm">
           <Tabs defaultValue="all" className="mb-6">
             <TabsList className="bg-muted/50">
-              <TabsTrigger value="all">All Payments</TabsTrigger>
+              <TabsTrigger value="all">Semua Pembayaran</TabsTrigger>
               <TabsTrigger value="pending" className="text-amber-600">
-                Pending
+                Tertunda
               </TabsTrigger>
               <TabsTrigger value="verified" className="text-emerald-600">
-                Verified
+                Terverifikasi
               </TabsTrigger>
               <TabsTrigger value="rejected" className="text-rose-600">
-                Rejected
+                Ditolak
               </TabsTrigger>
             </TabsList>
             <TabsContent value="all" className="mt-4">
