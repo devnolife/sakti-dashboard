@@ -13,4 +13,3 @@ export default function ProdiLayout({ children }: { children: ReactNode }) {
     </div>
   )
 }
-

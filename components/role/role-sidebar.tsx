@@ -255,4 +255,3 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
     </motion.div>
   )
 }
-
