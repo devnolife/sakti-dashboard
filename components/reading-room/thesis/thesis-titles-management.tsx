@@ -66,17 +66,17 @@ export function ThesisTitlesManagement() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Thesis Titles Management</h1>
-          <p className="text-muted-foreground">Review, approve, and manage thesis titles submitted by students</p>
+          <h1 className="text-2xl font-bold tracking-tight">Manajemen Judul Skripsi</h1>
+          <p className="text-muted-foreground">Tinjau, setujui, dan kelola judul skripsi yang diajukan oleh mahasiswa</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setExportOpen(true)}>
             <Download className="mr-2 h-4 w-4" />
-            Export
+            Ekspor
           </Button>
           <Button>
             <FileText className="mr-2 h-4 w-4" />
-            Generate Report
+            Buat Laporan
           </Button>
         </div>
       </div>
@@ -86,31 +86,31 @@ export function ThesisTitlesManagement() {
       <Tabs defaultValue="all" className="space-y-4">
         <TabsList>
           <TabsTrigger value="all">
-            All Theses
+            Semua Skripsi
             <Badge variant="secondary" className="ml-2">
               {stats.total}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="pending">
-            Pending
+            Tertunda
             <Badge variant="secondary" className="ml-2">
               {stats.pending}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="approved">
-            Approved
+            Disetujui
             <Badge variant="secondary" className="ml-2">
               {stats.approved}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="rejected">
-            Rejected
+            Ditolak
             <Badge variant="secondary" className="ml-2">
               {stats.rejected}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="archived">
-            Archived
+            Diarsipkan
             <Badge variant="secondary" className="ml-2">
               {stats.archived}
             </Badge>
@@ -120,18 +120,18 @@ export function ThesisTitlesManagement() {
         <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle>Thesis Titles</CardTitle>
+              <CardTitle>Judul Skripsi</CardTitle>
               <div className="flex flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Filters:</span>
+                  <span className="text-sm text-muted-foreground">Filter:</span>
                 </div>
                 <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Department" />
+                    <SelectValue placeholder="Jurusan" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
+                    <SelectItem value="all">Semua Jurusan</SelectItem>
                     {departments.map((dept) => (
                       <SelectItem key={dept} value={dept}>
                         {dept}
@@ -141,10 +141,10 @@ export function ThesisTitlesManagement() {
                 </Select>
                 <Select value={yearFilter} onValueChange={setYearFilter}>
                   <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Year" />
+                    <SelectValue placeholder="Tahun" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Years</SelectItem>
+                    <SelectItem value="all">Semua Tahun</SelectItem>
                     {years.map((year) => (
                       <SelectItem key={year} value={year.toString()}>
                         {year}
@@ -162,7 +162,7 @@ export function ThesisTitlesManagement() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search by title, author, or keywords..."
+                    placeholder="Cari berdasarkan judul, penulis, atau kata kunci..."
                     className="pl-8"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -173,11 +173,11 @@ export function ThesisTitlesManagement() {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value="all">Semua Status</SelectItem>
+                    <SelectItem value="pending">Tertunda</SelectItem>
+                    <SelectItem value="approved">Disetujui</SelectItem>
+                    <SelectItem value="rejected">Ditolak</SelectItem>
+                    <SelectItem value="archived">Diarsipkan</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
