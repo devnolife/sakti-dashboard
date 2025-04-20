@@ -11,11 +11,11 @@ import { Download, ChevronDown, Users, Calendar, BarChart3 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-// Mock data for student participation
+// Data contoh untuk partisipasi mahasiswa
 const mockParticipationData = [
   {
     id: 1,
-    labName: "Computer Networks Lab",
+    labName: "Lab Jaringan Komputer",
     totalStudents: 120,
     attendanceRate: 92,
     completionRate: 88,
@@ -30,7 +30,7 @@ const mockParticipationData = [
   },
   {
     id: 2,
-    labName: "Database Systems Lab",
+    labName: "Lab Sistem Basis Data",
     totalStudents: 95,
     attendanceRate: 88,
     completionRate: 82,
@@ -45,7 +45,7 @@ const mockParticipationData = [
   },
   {
     id: 3,
-    labName: "Operating Systems Lab",
+    labName: "Lab Sistem Operasi",
     totalStudents: 110,
     attendanceRate: 85,
     completionRate: 80,
@@ -60,7 +60,7 @@ const mockParticipationData = [
   },
   {
     id: 4,
-    labName: "Software Engineering Lab",
+    labName: "Lab Rekayasa Perangkat Lunak",
     totalStudents: 85,
     attendanceRate: 94,
     completionRate: 90,
@@ -75,7 +75,7 @@ const mockParticipationData = [
   },
   {
     id: 5,
-    labName: "Data Structures Lab",
+    labName: "Lab Struktur Data",
     totalStudents: 130,
     attendanceRate: 90,
     completionRate: 85,
@@ -90,132 +90,132 @@ const mockParticipationData = [
   },
 ]
 
-// Mock data for detailed student participation
+// Data contoh untuk partisipasi mahasiswa secara detail
 const mockDetailedStudentData = [
   {
     id: 1,
     name: "Ahmad Fauzi",
     nim: "1234567890",
-    lab: "Computer Networks Lab",
+    lab: "Lab Jaringan Komputer",
     attendance: 95,
     completionRate: 92,
     score: 88,
-    status: "Excellent",
+    status: "Sangat Baik",
   },
   {
     id: 2,
     name: "Siti Nurhaliza",
     nim: "2345678901",
-    lab: "Computer Networks Lab",
+    lab: "Lab Jaringan Komputer",
     attendance: 90,
     completionRate: 85,
     score: 82,
-    status: "Good",
+    status: "Baik",
   },
   {
     id: 3,
     name: "Budi Santoso",
     nim: "3456789012",
-    lab: "Database Systems Lab",
+    lab: "Lab Sistem Basis Data",
     attendance: 85,
     completionRate: 80,
     score: 75,
-    status: "Average",
+    status: "Cukup",
   },
   {
     id: 4,
     name: "Dewi Kartika",
     nim: "4567890123",
-    lab: "Database Systems Lab",
+    lab: "Lab Sistem Basis Data",
     attendance: 92,
     completionRate: 88,
     score: 85,
-    status: "Good",
+    status: "Baik",
   },
   {
     id: 5,
     name: "Eko Prasetyo",
     nim: "5678901234",
-    lab: "Operating Systems Lab",
+    lab: "Lab Sistem Operasi",
     attendance: 78,
     completionRate: 75,
     score: 70,
-    status: "Below Average",
+    status: "Kurang",
   },
   {
     id: 6,
     name: "Fitri Handayani",
     nim: "6789012345",
-    lab: "Operating Systems Lab",
+    lab: "Lab Sistem Operasi",
     attendance: 88,
     completionRate: 82,
     score: 78,
-    status: "Average",
+    status: "Cukup",
   },
   {
     id: 7,
     name: "Gunawan Wibisono",
     nim: "7890123456",
-    lab: "Software Engineering Lab",
+    lab: "Lab Rekayasa Perangkat Lunak",
     attendance: 96,
     completionRate: 94,
     score: 90,
-    status: "Excellent",
+    status: "Sangat Baik",
   },
   {
     id: 8,
     name: "Hani Susanti",
     nim: "8901234567",
-    lab: "Software Engineering Lab",
+    lab: "Lab Rekayasa Perangkat Lunak",
     attendance: 93,
     completionRate: 90,
     score: 86,
-    status: "Good",
+    status: "Baik",
   },
   {
     id: 9,
     name: "Irfan Hakim",
     nim: "9012345678",
-    lab: "Data Structures Lab",
+    lab: "Lab Struktur Data",
     attendance: 91,
     completionRate: 87,
     score: 84,
-    status: "Good",
+    status: "Baik",
   },
   {
     id: 10,
     name: "Joko Widodo",
     nim: "0123456789",
-    lab: "Data Structures Lab",
+    lab: "Lab Struktur Data",
     attendance: 89,
     completionRate: 84,
     score: 80,
-    status: "Average",
+    status: "Cukup",
   },
 ]
 
-// Function to get status color
+// Fungsi untuk mendapatkan warna status
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "Excellent":
+    case "Sangat Baik":
       return "bg-green-100 text-green-800 hover:bg-green-200"
-    case "Good":
+    case "Baik":
       return "bg-blue-100 text-blue-800 hover:bg-blue-200"
-    case "Average":
+    case "Cukup":
       return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-    case "Below Average":
+    case "Kurang":
       return "bg-red-100 text-red-800 hover:bg-red-200"
     default:
       return "bg-gray-100 text-gray-800 hover:bg-gray-200"
   }
 }
 
-// Function to get bar color based on attendance rate
+// Fungsi untuk mendapatkan warna batang berdasarkan tingkat kehadiran
 const getBarColor = (attendance: number) => {
-  if (attendance >= 90) return "#10b981" // green
-  if (attendance >= 80) return "#3b82f6" // blue
-  if (attendance >= 70) return "#f59e0b" // yellow
-  return "#ef4444" // red
+  if (attendance >= 90) return "#10b981" // hijau
+  if (attendance >= 80) return "#3b82f6" // biru
+  if (attendance >= 70) return "#f59e0b" // kuning
+  return "#ef4444" // merah
 }
 
 export function StudentParticipation() {
@@ -223,17 +223,17 @@ export function StudentParticipation() {
   const [selectedPeriod, setSelectedPeriod] = useState<string>("semester")
   const [selectedView, setSelectedView] = useState<"chart" | "table">("chart")
 
-  // Filter data based on selected lab
+  // Filter data berdasarkan laboratorium yang dipilih
   const filteredLabData =
     selectedLab === "all" ? mockParticipationData : mockParticipationData.filter((lab) => lab.labName === selectedLab)
 
-  // Filter student data based on selected lab
+  // Filter data mahasiswa berdasarkan laboratorium yang dipilih
   const filteredStudentData =
     selectedLab === "all"
       ? mockDetailedStudentData
       : mockDetailedStudentData.filter((student) => student.lab === selectedLab)
 
-  // Prepare data for comparison chart
+  // Siapkan data untuk grafik perbandingan
   const comparisonData = mockParticipationData.map((lab) => ({
     name: lab.labName,
     attendance: lab.attendanceRate,
@@ -245,17 +245,17 @@ export function StudentParticipation() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Student Participation Analysis</h2>
-          <p className="text-muted-foreground">Analyze student participation metrics across different laboratories</p>
+          <h2 className="text-2xl font-bold tracking-tight">Analisis Partisipasi Mahasiswa</h2>
+          <p className="text-muted-foreground">Analisis metrik partisipasi mahasiswa di berbagai laboratorium</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <Select value={selectedLab} onValueChange={setSelectedLab}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Lab" />
+              <SelectValue placeholder="Pilih Laboratorium" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Labs</SelectItem>
+              <SelectItem value="all">Semua Laboratorium</SelectItem>
               {mockParticipationData.map((lab) => (
                 <SelectItem key={lab.id} value={lab.labName}>
                   {lab.labName}
@@ -266,12 +266,12 @@ export function StudentParticipation() {
 
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Period" />
+              <SelectValue placeholder="Pilih Periode" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="semester">Current Semester</SelectItem>
-              <SelectItem value="year">Academic Year</SelectItem>
-              <SelectItem value="month">Last Month</SelectItem>
+              <SelectItem value="semester">Semester Berjalan</SelectItem>
+              <SelectItem value="year">Tahun Akademik</SelectItem>
+              <SelectItem value="month">Bulan Terakhir</SelectItem>
             </SelectContent>
           </Select>
 
@@ -279,35 +279,35 @@ export function StudentParticipation() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-1">
                 <Download className="h-4 w-4" />
-                Export
+                Ekspor
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>Export as PDF</DropdownMenuItem>
-              <DropdownMenuItem>Export as Excel</DropdownMenuItem>
-              <DropdownMenuItem>Export as CSV</DropdownMenuItem>
+              <DropdownMenuItem>Ekspor sebagai PDF</DropdownMenuItem>
+              <DropdownMenuItem>Ekspor sebagai Excel</DropdownMenuItem>
+              <DropdownMenuItem>Ekspor sebagai CSV</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
-      {/* Participation Overview Cards */}
+      {/* Kartu Ringkasan Partisipasi */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Mahasiswa</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{filteredLabData.reduce((sum, lab) => sum + lab.totalStudents, 0)}</div>
-            <p className="text-xs text-muted-foreground">Across {filteredLabData.length} laboratories</p>
+            <p className="text-xs text-muted-foreground">Dari {filteredLabData.length} laboratorium</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Attendance Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Rata-rata Kehadiran</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -316,42 +316,42 @@ export function StudentParticipation() {
             </div>
             <p className="text-xs text-muted-foreground">
               {selectedPeriod === "semester"
-                ? "Current Semester"
+                ? "Semester Berjalan"
                 : selectedPeriod === "year"
-                  ? "Academic Year"
-                  : "Last Month"}
+                  ? "Tahun Akademik"
+                  : "Bulan Terakhir"}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Completion Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Rata-rata Penyelesaian</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {Math.round(filteredLabData.reduce((sum, lab) => sum + lab.completionRate, 0) / filteredLabData.length)}%
             </div>
-            <p className="text-xs text-muted-foreground">Task completion across labs</p>
+            <p className="text-xs text-muted-foreground">Penyelesaian tugas di semua laboratorium</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Score</CardTitle>
+            <CardTitle className="text-sm font-medium">Rata-rata Nilai</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {Math.round(filteredLabData.reduce((sum, lab) => sum + lab.avgScore, 0) / filteredLabData.length)}
             </div>
-            <p className="text-xs text-muted-foreground">Average performance score</p>
+            <p className="text-xs text-muted-foreground">Rata-rata skor performa</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* View Toggle */}
+      {/* Pengalih Tampilan */}
       <div className="flex justify-end">
         <div className="inline-flex rounded-md shadow-sm">
           <Button
@@ -359,25 +359,25 @@ export function StudentParticipation() {
             className="rounded-l-md rounded-r-none"
             onClick={() => setSelectedView("chart")}
           >
-            Chart View
+            Tampilan Grafik
           </Button>
           <Button
             variant={selectedView === "table" ? "default" : "outline"}
             className="rounded-r-md rounded-l-none"
             onClick={() => setSelectedView("table")}
           >
-            Table View
+            Tampilan Tabel
           </Button>
         </div>
       </div>
 
-      {/* Participation Chart */}
+      {/* Grafik Partisipasi */}
       {selectedView === "chart" && (
         <Card>
           <CardHeader>
-            <CardTitle>Participation Metrics Comparison</CardTitle>
+            <CardTitle>Perbandingan Metrik Partisipasi</CardTitle>
             <CardDescription>
-              Comparing attendance, completion rates, and average scores across laboratories
+              Membandingkan tingkat kehadiran, tingkat penyelesaian, dan nilai rata-rata di berbagai laboratorium
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -385,15 +385,15 @@ export function StudentParticipation() {
               <ChartContainer
                 config={{
                   attendance: {
-                    label: "Attendance Rate",
+                    label: "Tingkat Kehadiran",
                     color: "hsl(var(--chart-1))",
                   },
                   completion: {
-                    label: "Completion Rate",
+                    label: "Tingkat Penyelesaian",
                     color: "hsl(var(--chart-2))",
                   },
                   score: {
-                    label: "Average Score",
+                    label: "Nilai Rata-rata",
                     color: "hsl(var(--chart-3))",
                   },
                 }}
@@ -405,9 +405,9 @@ export function StudentParticipation() {
                     <YAxis />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend />
-                    <Bar dataKey="attendance" name="Attendance Rate" fill="var(--color-attendance)" />
-                    <Bar dataKey="completion" name="Completion Rate" fill="var(--color-completion)" />
-                    <Bar dataKey="score" name="Average Score" fill="var(--color-score)" />
+                    <Bar dataKey="attendance" name="Tingkat Kehadiran" fill="var(--color-attendance)" />
+                    <Bar dataKey="completion" name="Tingkat Penyelesaian" fill="var(--color-completion)" />
+                    <Bar dataKey="score" name="Nilai Rata-rata" fill="var(--color-score)" />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -416,25 +416,25 @@ export function StudentParticipation() {
         </Card>
       )}
 
-      {/* Participation Table */}
+      {/* Tabel Partisipasi */}
       {selectedView === "table" && (
         <Card>
           <CardHeader>
-            <CardTitle>Detailed Student Participation</CardTitle>
+            <CardTitle>Partisipasi Mahasiswa Detail</CardTitle>
             <CardDescription>
-              Individual student participation metrics for {selectedLab === "all" ? "all laboratories" : selectedLab}
+              Metrik partisipasi individual mahasiswa untuk {selectedLab === "all" ? "semua laboratorium" : selectedLab}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
+                  <TableHead>Nama</TableHead>
                   <TableHead>NIM</TableHead>
-                  <TableHead>Laboratory</TableHead>
-                  <TableHead className="text-right">Attendance</TableHead>
-                  <TableHead className="text-right">Completion</TableHead>
-                  <TableHead className="text-right">Score</TableHead>
+                  <TableHead>Laboratorium</TableHead>
+                  <TableHead className="text-right">Kehadiran</TableHead>
+                  <TableHead className="text-right">Penyelesaian</TableHead>
+                  <TableHead className="text-right">Nilai</TableHead>
                   <TableHead className="text-center">Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -458,12 +458,12 @@ export function StudentParticipation() {
         </Card>
       )}
 
-      {/* Participation Trends */}
+      {/* Tren Partisipasi */}
       <Card>
         <CardHeader>
-          <CardTitle>Participation Trends</CardTitle>
+          <CardTitle>Tren Partisipasi</CardTitle>
           <CardDescription>
-            Monthly attendance trends for {selectedLab === "all" ? "selected laboratories" : selectedLab}
+            Tren kehadiran bulanan untuk {selectedLab === "all" ? "laboratorium terpilih" : selectedLab}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -481,7 +481,7 @@ export function StudentParticipation() {
                 <YAxis domain={[70, 100]} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="attendance" name="Attendance Rate">
+                <Bar dataKey="attendance" name="Tingkat Kehadiran">
                   {(selectedLab === "all"
                     ? mockParticipationData[0].participationTrend
                     : mockParticipationData.find((lab) => lab.labName === selectedLab)?.participationTrend || []

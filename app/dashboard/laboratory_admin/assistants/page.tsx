@@ -5,7 +5,7 @@ import { LabAssistantsPageSkeleton } from "@/components/laboratory/admin/assista
 export default function LabAssistantsPage() {
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">Laboratory Assistants Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Pengelolaan Asisten Laboratorium</h1>
       <Suspense fallback={<LabAssistantsPageSkeleton />}>
         <LabAssistantsManagement />
       </Suspense>
