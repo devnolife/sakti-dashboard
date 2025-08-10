@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Header from "@/components/layout/header"
+import { Header } from "@/components/common"
 import Sidebar from "@/components/layout/sidebar"
 import Content from "@/components/layout/content"
 

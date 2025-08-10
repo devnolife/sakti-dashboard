@@ -206,7 +206,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
     >
       {/* Logo and App Name */}
       <motion.div
-        className="flex items-center justify-center h-20 px-6 border-b"
+        className="flex items-center justify-center h-20 px-6 "
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.3 }}
