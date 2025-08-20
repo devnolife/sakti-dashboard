@@ -149,7 +149,7 @@ export function BelowAverageGpaTable({ departmentId }: BelowAverageGpaTableProps
         (departmentId === "electrical" && student.department === "Teknik Elektro") ||
         (departmentId === "architecture" && student.department === "Arsitektur") ||
         (departmentId === "informatics" && student.department === "Informatika") ||
-        (departmentId === "urban" && student.department === "Perencanaan Wilayah dan Kota"),
+        (departmentId === "urban" && student.department === "Perencanaan Wilayah Kota"),
     )
     .filter(
       (student) => student.name.toLowerCase().includes(searchQuery.toLowerCase()) || student.nim.includes(searchQuery),

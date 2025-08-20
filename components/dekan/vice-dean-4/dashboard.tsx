@@ -38,11 +38,11 @@ export function ViceDean4Dashboard() {
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false)
 
   const departments = [
-    "Informatika",
-    "Sistem Informasi",
-    "Teknik Komputer",
+    "Teknik Pengairan",
     "Teknik Elektro",
-    "Manajemen Informatika",
+    "Arsitektur",
+    "Informatika",
+    "Perencanaan Wilayah Kota",
   ]
 
   const handleDepartmentSelect = (dept: string) => {
@@ -54,7 +54,7 @@ export function ViceDean4Dashboard() {
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text">
-           Kuliah Kerja Profesi Plus
+            Kuliah Kerja Profesi Plus
           </h2>
           <p className="text-muted-foreground">Dashboard Wakil Dekan 4 untuk pengelolaan kerja profesi plus</p>
         </div>
@@ -118,11 +118,10 @@ export function ViceDean4Dashboard() {
             <Badge
               key={dept}
               variant={selectedDepartment === dept ? "default" : "outline"}
-              className={`cursor-pointer transition-all ${
-                selectedDepartment === dept
+              className={`cursor-pointer transition-all ${selectedDepartment === dept
                   ? "bg-primary hover:bg-primary-600"
                   : "border-primary-100 hover:bg-primary-50 hover:text-primary-700"
-              }`}
+                }`}
               onClick={() => handleDepartmentSelect(dept)}
             >
               {dept}

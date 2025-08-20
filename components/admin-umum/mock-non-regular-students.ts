@@ -1,13 +1,11 @@
 import type { NonRegularStudent, Program, StudentStatus, PaymentStatus } from "@/types/non-regular-student"
 
 const departments = [
-  "Teknik Informatika",
-  "Sistem Informasi",
+  "Informatika",
+  "Teknik Pengairan",
   "Teknik Elektro",
-  "Teknik Sipil",
-  "Manajemen",
-  "Akuntansi",
-  "Ilmu Komunikasi",
+  "Arsitektur",
+  "Perencanaan Wilayah Kota",
   "Psikologi",
   "Hukum",
   "Kedokteran",
@@ -60,11 +58,11 @@ export const mockNonRegularStudents: NonRegularStudent[] = Array.from({ length: 
   const firstName =
     gender === "male"
       ? ["Ahmad", "Budi", "Dedi", "Eko", "Fajar", "Gunawan", "Hadi", "Irfan", "Joko", "Kurniawan"][
-          Math.floor(Math.random() * 10)
-        ]
+      Math.floor(Math.random() * 10)
+      ]
       : ["Ani", "Bintang", "Citra", "Dewi", "Eka", "Fitri", "Gita", "Hana", "Indah", "Juwita"][
-          Math.floor(Math.random() * 10)
-        ]
+      Math.floor(Math.random() * 10)
+      ]
 
   const lastName = [
     "Wijaya",

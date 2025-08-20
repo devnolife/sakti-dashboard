@@ -18,7 +18,7 @@ const studyPrograms = [
   { id: "electrical", name: "Teknik Elektro" },
   { id: "architecture", name: "Arsitektur" },
   { id: "informatics", name: "Informatika" },
-  { id: "urban", name: "Perencanaan Wilayah dan Kota" },
+  { id: "urban", name: "Perencanaan Wilayah Kota" },
 ]
 
 export function PaymentReports() {

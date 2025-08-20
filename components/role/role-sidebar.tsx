@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { menuItems } from "@/config/menu-items"
+import { menuItems, type MenuItem } from "@/config/menu-items"
 import type { Role } from "@/types/role"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight } from "lucide-react"
@@ -66,15 +66,15 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
     return false
   }
 
-  const renderMenuItem = (item: any, depth = 0) => {
+  const renderMenuItem = (item: MenuItem, depth = 0) => {
     const active = isActive(item.href)
     const hasChildren = item.children && item.children.length > 0
     const isChildActive =
       hasChildren &&
       item.children.some(
-        (child: any) =>
+        (child: MenuItem) =>
           isActive(child.href) ||
-          (child.children && child.children.some((grandchild: any) => isActive(grandchild.href))),
+          (child.children && child.children.some((grandchild: MenuItem) => isActive(grandchild.href))),
       )
 
     return (
@@ -110,7 +110,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
               whileHover={{ scale: 1.01, x: 2 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex gap-3 items-center">
                 {item.icon && (
                   <motion.div
                     initial={{ rotate: 0 }}
@@ -149,7 +149,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {item.children.map((child: any) => renderMenuItem(child, depth + 1))}
+                  {item.children.map((child: MenuItem) => renderMenuItem(child, depth + 1))}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -163,14 +163,14 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
                 active ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-accent hover:text-foreground",
               )}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex gap-3 items-center">
                 {item.icon && (
                   <motion.div
                     initial={{ rotate: 0 }}
                     animate={{ rotate: active ? [0, -10, 0] : 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <item.icon className={cn("h-5 w-5", active ? "text-primary" : "text-foreground/70")} />
+                    <item.icon className={cn("w-5 h-5", active ? "text-primary" : "text-foreground/70")} />
                   </motion.div>
                 )}
                 <span>{item.title}</span>
@@ -199,21 +199,21 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
 
   return (
     <motion.div
-      className="fixed inset-y-0 left-0 z-30 flex-col hidden w-64 border-r bg-background lg:flex"
+      className="hidden fixed inset-y-0 left-0 z-30 flex-col w-64 border-r bg-background lg:flex"
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3, type: "spring", stiffness: 100 }}
     >
       {/* Logo and App Name */}
       <motion.div
-        className="flex items-center justify-center h-20 px-6 "
+        className="flex justify-center items-center px-6 h-20"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.3 }}
       >
-        <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex items-center gap-3">
+        <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex gap-3 items-center">
           <motion.div
-            className="flex items-center justify-center w-10 h-10 rounded-md bg-primary"
+            className="flex justify-center items-center w-10 h-10 rounded-md bg-primary"
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -231,7 +231,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
       </motion.div>
 
       <motion.div
-        className="flex-1 p-4 overflow-y-auto"
+        className="overflow-y-auto flex-1 p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.3 }}

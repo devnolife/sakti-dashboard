@@ -5,11 +5,13 @@ export type Role =
   | "staff_tu"
   | "dekan"
   | "admin"
- 
+
   | "laboratory_admin"
   | "reading_room_admin"
   | "admin_umum"
   | "admin_keuangan"
+  | "gkm"
+  | "kepala_tata_usaha"
 
 export interface RoleConfig {
   displayName: string
@@ -89,6 +91,20 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     icon: "dollar-sign",
     color: "text-emerald-500",
     bgColor: "bg-emerald-100",
+  },
+  gkm: {
+    displayName: "GKM",
+    description: "Gerakan Kegiatan Mahasiswa role with access to student activities and event management.",
+    icon: "sparkles",
+    color: "text-violet-500",
+    bgColor: "bg-violet-100",
+  },
+  kepala_tata_usaha: {
+    displayName: "Kepala Tata Usaha",
+    description: "Head of Administrative Affairs with access to office management and administrative oversight.",
+    icon: "crown",
+    color: "text-amber-500",
+    bgColor: "bg-amber-100",
   },
 }
 

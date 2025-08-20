@@ -18,7 +18,7 @@ export function BudgetPlanningChart() {
     canvas.height = canvas.offsetHeight
 
     // Mock data
-    const departments = ["Informatics", "Architecture", "Electrical", "Urban Planning", "Watering"]
+    const departments = ["Informatika", "Arsitektur", "Teknik Elektro", "Perencanaan Wilayah Kota", "Teknik Pengairan"]
     const currentData = [3500, 2750, 2250, 2100, 1900] // in millions
     const plannedData = [3850, 3025, 2475, 2310, 2090] // in millions
 

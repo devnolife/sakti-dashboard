@@ -20,11 +20,11 @@ Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, A
 
 // Department data
 const departments = [
-  "Teknik Sipil - Irigasi",
+  "Teknik Pengairan",
   "Teknik Elektro",
   "Arsitektur",
   "Informatika",
-  "Perencanaan Wilayah & Kota",
+  "Perencanaan Wilayah Kota",
 ]
 
 // Exam applications data

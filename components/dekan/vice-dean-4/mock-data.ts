@@ -59,11 +59,11 @@ export type KkpPlusSupervisor = {
 
 // Generate departments
 const departments = [
-  "Informatika",
-  "Sistem Informasi",
-  "Teknik Komputer",
+  "Teknik Pengairan",
   "Teknik Elektro",
-  "Manajemen Informatika",
+  "Arsitektur",
+  "Informatika",
+  "Perencanaan Wilayah Kota",
 ]
 
 // Generate supervisors

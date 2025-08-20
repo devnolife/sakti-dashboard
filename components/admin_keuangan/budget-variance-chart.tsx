@@ -18,7 +18,7 @@ export function BudgetVarianceChart() {
     canvas.height = canvas.offsetHeight
 
     // Mock data
-    const departments = ["Informatics", "Architecture", "Electrical", "Urban Planning", "Watering"]
+    const departments = ["Informatika", "Arsitektur", "Teknik Elektro", "Perencanaan Wilayah Kota", "Teknik Pengairan"]
     const varianceData = [3.5, -2.1, 4.8, -1.5, 2.3] // Positive means over budget, negative means under budget
 
     // Chart dimensions

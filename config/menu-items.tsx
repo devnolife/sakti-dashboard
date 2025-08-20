@@ -26,8 +26,33 @@ import {
   BookMarked,
   ScrollText,
   PanelsTopLeft,
+
 } from "lucide-react"
 import type { Role } from "@/types/role"
+
+// Type definitions for menu items
+interface MenuBadge {
+  text: string
+  variant: "default" | "secondary" | "destructive" | "outline"
+}
+
+interface BaseMenuItem {
+  id: string
+  title: string
+  href: string
+  icon: React.ComponentType<any>
+  badge?: MenuBadge
+}
+
+interface MenuItemWithChildren extends BaseMenuItem {
+  children: MenuItem[]
+}
+
+interface MenuItemWithoutChildren extends BaseMenuItem {
+  children?: never
+}
+
+export type MenuItem = MenuItemWithChildren | MenuItemWithoutChildren
 
 export const mahasiswaMenuItems = [
   {
@@ -123,7 +148,7 @@ export const mahasiswaMenuItems = [
         title: "Daftar Ujian",
         href: "/dashboard/mahasiswa/exams/register",
       },
-     
+
     ],
   },
   {
@@ -338,7 +363,7 @@ export const staffTuMenuItems = [
     href: "/dashboard/staff_tu/kkp",
     icon: Briefcase
   },
- 
+
   {
     id: "settings",
     title: "Pengaturan",
@@ -420,7 +445,7 @@ export const prodiMenuItems = [
     href: "/dashboard/prodi/faculty-directory",
     icon: Users,
   },
- 
+
   {
     id: "settings",
     title: "Pengaturan",
@@ -479,7 +504,7 @@ export const dekanMenuItems = [
     href: "/dashboard/dekan/department-analytics",
     icon: BarChart,
   },
- 
+
   {
     id: "settings",
     title: "Pengaturan",
@@ -736,7 +761,7 @@ export const adminMenuItems = [
     href: "/dashboard/admin/logs",
     icon: FileText,
   },
- 
+
 ]
 
 // Menu items for lecturer
@@ -808,7 +833,7 @@ export const lecturerMenuItems = [
     href: "/dashboard/lecturer/schedule",
     icon: Calendar,
   },
- 
+
   {
     id: "settings",
     title: "Pengaturan",
@@ -889,7 +914,7 @@ export const laboratoryAdminMenuItems = [
       },
     ],
   },
- 
+
   {
     id: "settings",
     title: "Pengaturan",
@@ -988,8 +1013,296 @@ export const financeAdminMenuItems = [
   },
 ]
 
+// Menu items untuk GKM (Gerakan Kegiatan Mahasiswa)
+export const gkmMenuItems = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/gkm",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "events",
+    title: "Event Management",
+    href: "/dashboard/gkm/events",
+    icon: Calendar,
+    children: [
+      {
+        id: "create-event",
+        title: "Create New Event",
+        href: "/dashboard/gkm/events/create",
+      },
+      {
+        id: "manage-events",
+        title: "Manage Events",
+        href: "/dashboard/gkm/events/manage",
+      },
+      {
+        id: "event-calendar",
+        title: "Event Calendar",
+        href: "/dashboard/gkm/events/calendar",
+      },
+    ],
+  },
+  {
+    id: "student-activities",
+    title: "Student Activities",
+    href: "/dashboard/gkm/activities",
+    icon: Users,
+    children: [
+      {
+        id: "activity-dashboard",
+        title: "Activity Hub",
+        href: "/dashboard/gkm/activities",
+      },
+      {
+        id: "club-management",
+        title: "Club Management",
+        href: "/dashboard/gkm/activities/clubs",
+      },
+      {
+        id: "competitions",
+        title: "Competitions",
+        href: "/dashboard/gkm/activities/competitions",
+        badge: { text: "12", variant: "destructive" },
+      },
+    ],
+  },
+  {
+    id: "social-media",
+    title: "Social Media",
+    href: "/dashboard/gkm/social",
+    icon: Megaphone,
+    children: [
+      {
+        id: "content-calendar",
+        title: "Content Calendar",
+        href: "/dashboard/gkm/social/calendar",
+      },
+      {
+        id: "posts-management",
+        title: "Posts Management",
+        href: "/dashboard/gkm/social/posts",
+      },
+      {
+        id: "engagement-stats",
+        title: "Engagement Stats",
+        href: "/dashboard/gkm/social/stats",
+      },
+    ],
+  },
+  {
+    id: "announcements",
+    title: "Announcements",
+    href: "/dashboard/gkm/announcements",
+    icon: Bell,
+    badge: { text: "5", variant: "secondary" },
+  },
+  {
+    id: "achievements",
+    title: "Achievement Tracker",
+    href: "/dashboard/gkm/achievements",
+    icon: Trophy,
+  },
+  {
+    id: "collaboration",
+    title: "Collaboration",
+    href: "/dashboard/gkm/collaboration",
+    icon: ClipboardCheck,
+    children: [
+      {
+        id: "project-management",
+        title: "Project Management",
+        href: "/dashboard/gkm/collaboration/projects",
+      },
+      {
+        id: "team-chat",
+        title: "Team Chat",
+        href: "/dashboard/gkm/collaboration/chat",
+      },
+      {
+        id: "file-sharing",
+        title: "File Sharing",
+        href: "/dashboard/gkm/collaboration/files",
+      },
+    ],
+  },
+  {
+    id: "reports",
+    title: "Reports & Analytics",
+    href: "/dashboard/gkm/reports",
+    icon: BarChart,
+  },
+  {
+    id: "settings",
+    title: "Settings",
+    href: "/dashboard/gkm/settings",
+    icon: Settings,
+  },
+]
 
-export const menuItems: Record<Role, typeof adminMenuItems> = {
+// Menu items untuk Kepala Tata Usaha
+export const kepalaTataUsahaMenuItems = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/kepala_tata_usaha",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "administration",
+    title: "Administration",
+    href: "/dashboard/kepala_tata_usaha/administration",
+    icon: Users,
+    children: [
+      {
+        id: "staff-management",
+        title: "Staff Management",
+        href: "/dashboard/kepala_tata_usaha/administration/staff",
+      },
+      {
+        id: "office-operations",
+        title: "Office Operations",
+        href: "/dashboard/kepala_tata_usaha/administration/operations",
+      },
+      {
+        id: "policies",
+        title: "Policies & Procedures",
+        href: "/dashboard/kepala_tata_usaha/administration/policies",
+      },
+    ],
+  },
+  {
+    id: "document-management",
+    title: "Document Management",
+    href: "/dashboard/kepala_tata_usaha/documents",
+    icon: FileText,
+    children: [
+      {
+        id: "document-approval",
+        title: "Document Approval",
+        href: "/dashboard/kepala_tata_usaha/documents/approval",
+        badge: { text: "15", variant: "destructive" },
+      },
+      {
+        id: "document-archive",
+        title: "Document Archive",
+        href: "/dashboard/kepala_tata_usaha/documents/archive",
+      },
+      {
+        id: "templates",
+        title: "Document Templates",
+        href: "/dashboard/kepala_tata_usaha/documents/templates",
+      },
+    ],
+  },
+  {
+    id: "workflow",
+    title: "Workflow Management",
+    href: "/dashboard/kepala_tata_usaha/workflow",
+    icon: ClipboardList,
+    children: [
+      {
+        id: "process-approval",
+        title: "Process Approval",
+        href: "/dashboard/kepala_tata_usaha/workflow/approval",
+      },
+      {
+        id: "task-delegation",
+        title: "Task Delegation",
+        href: "/dashboard/kepala_tata_usaha/workflow/delegation",
+      },
+      {
+        id: "monitoring",
+        title: "Process Monitoring",
+        href: "/dashboard/kepala_tata_usaha/workflow/monitoring",
+      },
+    ],
+  },
+  {
+    id: "coordination",
+    title: "Coordination",
+    href: "/dashboard/kepala_tata_usaha/coordination",
+    icon: Crown,
+    children: [
+      {
+        id: "inter-department",
+        title: "Inter-Department",
+        href: "/dashboard/kepala_tata_usaha/coordination/departments",
+      },
+      {
+        id: "external-relations",
+        title: "External Relations",
+        href: "/dashboard/kepala_tata_usaha/coordination/external",
+      },
+      {
+        id: "meetings",
+        title: "Meeting Management",
+        href: "/dashboard/kepala_tata_usaha/coordination/meetings",
+      },
+    ],
+  },
+  {
+    id: "budget-oversight",
+    title: "Budget Management",
+    href: "/dashboard/kepala_tata_usaha/budget",
+    icon: CreditCard,
+    children: [
+      {
+        id: "budget-approval",
+        title: "Budget Approval",
+        href: "/dashboard/kepala_tata_usaha/budget/approval",
+      },
+      {
+        id: "expense-monitoring",
+        title: "Expense Monitoring",
+        href: "/dashboard/kepala_tata_usaha/budget/monitoring",
+      },
+      {
+        id: "financial-reports",
+        title: "Financial Reports",
+        href: "/dashboard/kepala_tata_usaha/budget/reports",
+      },
+    ],
+  },
+  {
+    id: "facility-management",
+    title: "Facility Management",
+    href: "/dashboard/kepala_tata_usaha/facilities",
+    icon: Briefcase,
+    children: [
+      {
+        id: "maintenance",
+        title: "Maintenance Requests",
+        href: "/dashboard/kepala_tata_usaha/facilities/maintenance",
+      },
+      {
+        id: "resource-allocation",
+        title: "Resource Allocation",
+        href: "/dashboard/kepala_tata_usaha/facilities/resources",
+      },
+      {
+        id: "space-management",
+        title: "Space Management",
+        href: "/dashboard/kepala_tata_usaha/facilities/spaces",
+      },
+    ],
+  },
+  {
+    id: "reports",
+    title: "Reports & Analytics",
+    href: "/dashboard/kepala_tata_usaha/analytics",
+    icon: BarChart,
+  },
+  {
+    id: "settings",
+    title: "Settings",
+    href: "/dashboard/kepala_tata_usaha/settings",
+    icon: Settings,
+  },
+]
+
+export const menuItems: Record<Role, MenuItem[]> = {
   admin: adminMenuItems,
   dekan: dekanMenuItems,
   dosen: lecturerMenuItems,
@@ -1000,6 +1313,8 @@ export const menuItems: Record<Role, typeof adminMenuItems> = {
   admin_umum: adminUmumMenuItems,
   reading_room_admin: readingRoomAdminMenuItems,
   admin_keuangan: financeAdminMenuItems,
+  gkm: gkmMenuItems,
+  kepala_tata_usaha: kepalaTataUsahaMenuItems,
 }
 
 export const dekanItems = [

@@ -47,11 +47,11 @@ const formSchema = z.object({
 
 export function AddSupervisorDialog({ open, onOpenChange }: AddSupervisorDialogProps) {
   const departments = [
-    "Informatika",
-    "Sistem Informasi",
-    "Teknik Komputer",
+    "Teknik Pengairan",
     "Teknik Elektro",
-    "Manajemen Informatika",
+    "Arsitektur",
+    "Informatika",
+    "Perencanaan Wilayah Kota",
   ]
 
   const form = useForm<z.infer<typeof formSchema>>({

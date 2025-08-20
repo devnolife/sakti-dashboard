@@ -18,7 +18,7 @@ export function StudentPaymentChart() {
     canvas.height = canvas.offsetHeight
 
     // Mock data
-    const departments = ["Watering", "Electrical", "Architecture", "Informatics", "Urban Planning"]
+    const departments = ["Teknik Pengairan", "Teknik Elektro", "Arsitektur", "Informatika", "Perencanaan Wilayah Kota"]
     const paidData = [380, 450, 350, 520, 290]
     const outstandingData = [78, 73, 62, 92, 48]
 

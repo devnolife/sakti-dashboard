@@ -30,10 +30,10 @@ export function DepartmentStudentRecap() {
   // Mock data for department student recap
   const departmentsData: DepartmentData[] = [
     {
-      id: "civil",
-      name: "Teknik Sipil - Irigasi",
+      id: "watering",
+      name: "Teknik Pengairan",
       totalStudents: 320,
-      activeStudents: 320,
+      activeStudents: 305,
       onLeaveStudents: 15,
       graduatedStudents: 85,
       averageGpa: 3.1,
