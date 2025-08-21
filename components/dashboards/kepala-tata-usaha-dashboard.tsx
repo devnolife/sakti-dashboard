@@ -48,33 +48,33 @@ export default function KepalaTataUsahaDashboard() {
   // Administrative Operations Metrics
   const adminMetrics = [
     {
-      title: "Total Staff",
+      title: "Total Staf",
       value: "156",
-      change: "+3 this month",
+      change: "+3 bulan ini",
       icon: Users,
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-gradient-to-r from-blue-50 to-cyan-50"
     },
     {
-      title: "Documents Processed",
+      title: "Dokumen Diproses",
       value: "2,847",
-      change: "+12% this week",
+      change: "+12% minggu ini",
       icon: FileText,
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-gradient-to-r from-green-50 to-emerald-50"
     },
     {
-      title: "Budget Allocation",
+      title: "Alokasi Anggaran",
       value: "85.2%",
-      change: "On track",
+      change: "Sesuai target",
       icon: DollarSign,
       color: "from-purple-500 to-violet-500",
       bgColor: "bg-gradient-to-r from-purple-50 to-violet-50"
     },
     {
-      title: "Service Efficiency",
+      title: "Efisiensi Layanan",
       value: "94.8%",
-      change: "+2.1% improvement",
+      change: "+2.1% peningkatan",
       icon: Target,
       color: "from-orange-500 to-red-500",
       bgColor: "bg-gradient-to-r from-orange-50 to-red-50"
@@ -83,12 +83,12 @@ export default function KepalaTataUsahaDashboard() {
 
   // Department Performance Data
   const departmentPerformance = [
-    { department: "Academic Affairs", efficiency: 92, staff: 28, budget: 85000, satisfaction: 4.5 },
-    { department: "Student Services", efficiency: 89, staff: 35, budget: 65000, satisfaction: 4.3 },
-    { department: "Finance", efficiency: 96, staff: 18, budget: 45000, satisfaction: 4.6 },
-    { department: "HR Management", efficiency: 87, staff: 22, budget: 55000, satisfaction: 4.2 },
-    { department: "Facilities", efficiency: 91, staff: 31, budget: 120000, satisfaction: 4.4 },
-    { department: "IT Services", efficiency: 94, staff: 15, budget: 75000, satisfaction: 4.5 }
+    { department: "Administrasi Akademik", efficiency: 92, staff: 28, budget: 85000, satisfaction: 4.5 },
+    { department: "Layanan Mahasiswa", efficiency: 89, staff: 35, budget: 65000, satisfaction: 4.3 },
+    { department: "Keuangan", efficiency: 96, staff: 18, budget: 45000, satisfaction: 4.6 },
+    { department: "Kepegawaian", efficiency: 87, staff: 22, budget: 55000, satisfaction: 4.2 },
+    { department: "Sarana Prasarana", efficiency: 91, staff: 31, budget: 120000, satisfaction: 4.4 },
+    { department: "Teknologi Informasi", efficiency: 94, staff: 15, budget: 75000, satisfaction: 4.5 }
   ]
 
   // Budget Utilization Data
@@ -103,43 +103,43 @@ export default function KepalaTataUsahaDashboard() {
 
   // Staff Performance Distribution
   const staffPerformance = [
-    { rating: "Excellent", count: 89, percentage: 57, color: "#10b981" },
-    { rating: "Good", count: 45, percentage: 29, color: "#3b82f6" },
-    { rating: "Satisfactory", count: 18, percentage: 12, color: "#f59e0b" },
-    { rating: "Needs Improvement", count: 4, percentage: 2, color: "#ef4444" }
+    { rating: "Sangat Baik", count: 89, percentage: 57, color: "#10b981" },
+    { rating: "Baik", count: 45, percentage: 29, color: "#3b82f6" },
+    { rating: "Cukup", count: 18, percentage: 12, color: "#f59e0b" },
+    { rating: "Perlu Perbaikan", count: 4, percentage: 2, color: "#ef4444" }
   ]
 
   // Recent Administrative Activities
   const recentActivities = [
     {
-      activity: "Budget Review Meeting",
-      department: "Finance",
+      activity: "Rapat Evaluasi Anggaran",
+      department: "Keuangan",
       type: "meeting",
-      timestamp: "2 hours ago",
+      timestamp: "2 jam yang lalu",
       status: "Completed",
       participants: 8
     },
     {
-      activity: "Staff Performance Evaluation",
-      department: "HR Management",
+      activity: "Evaluasi Kinerja Staf",
+      department: "Kepegawaian",
       type: "evaluation",
-      timestamp: "4 hours ago",
+      timestamp: "4 jam yang lalu",
       status: "In Progress",
       staff: 15
     },
     {
-      activity: "Document Approval Process",
-      department: "Academic Affairs",
+      activity: "Proses Persetujuan Dokumen",
+      department: "Administrasi Akademik",
       type: "approval",
-      timestamp: "6 hours ago",
+      timestamp: "6 jam yang lalu",
       status: "Pending",
       documents: 23
     },
     {
-      activity: "Student Services Review",
-      department: "Student Services",
+      activity: "Review Layanan Mahasiswa",
+      department: "Layanan Mahasiswa",
       type: "review",
-      timestamp: "1 day ago",
+      timestamp: "1 hari yang lalu",
       status: "Completed",
       requests: 45
     }
@@ -148,31 +148,31 @@ export default function KepalaTataUsahaDashboard() {
   // Urgent Tasks and Priorities
   const urgentTasks = [
     {
-      task: "Annual Budget Submission",
+      task: "Pengajuan Anggaran Tahunan",
       priority: "High",
-      deadline: "Today",
-      department: "Finance",
+      deadline: "Hari ini",
+      department: "Keuangan",
       progress: 85
     },
     {
-      task: "Staff Training Schedule",
+      task: "Jadwal Pelatihan Staf",
       priority: "Medium",
-      deadline: "Tomorrow",
-      department: "HR Management",
+      deadline: "Besok",
+      department: "Kepegawaian",
       progress: 60
     },
     {
-      task: "Facility Maintenance Approval",
+      task: "Persetujuan Maintenance Fasilitas",
       priority: "High",
-      deadline: "2 days",
-      department: "Facilities",
+      deadline: "2 hari",
+      department: "Sarana Prasarana",
       progress: 40
     },
     {
-      task: "Student Registration System Update",
+      task: "Update Sistem Registrasi Mahasiswa",
       priority: "Medium",
-      deadline: "3 days",
-      department: "IT Services",
+      deadline: "3 hari",
+      department: "Teknologi Informasi",
       progress: 75
     }
   ]
@@ -213,10 +213,10 @@ export default function KepalaTataUsahaDashboard() {
             <Crown className="w-10 h-10 text-indigo-600" />
           </motion.div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Head of Administration Dashboard
+            Dashboard Kepala Tata Usaha
           </h1>
         </div>
-        <p className="text-gray-600 text-lg">Administrative Operations Management & Oversight</p>
+        <p className="text-gray-600 text-lg">Manajemen Operasional Administrasi & Pengawasan Fakultas Teknik</p>
       </motion.div>
 
       {/* Key Administrative Metrics */}
@@ -256,11 +256,11 @@ export default function KepalaTataUsahaDashboard() {
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="staff">Staff Management</TabsTrigger>
-          <TabsTrigger value="budget">Budget & Resources</TabsTrigger>
-          <TabsTrigger value="operations">Operations</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
+          <TabsTrigger value="staff">Manajemen Staf</TabsTrigger>
+          <TabsTrigger value="budget">Anggaran</TabsTrigger>
+          <TabsTrigger value="operations">Operasional</TabsTrigger>
+          <TabsTrigger value="analytics">Analitik</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -271,7 +271,7 @@ export default function KepalaTataUsahaDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Building className="w-5 h-5 text-blue-600" />
-                  Department Efficiency
+                  Efisiensi Departemen
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -297,7 +297,7 @@ export default function KepalaTataUsahaDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ClipboardList className="w-5 h-5 text-green-600" />
-                  Recent Activities
+                  Aktivitas Terbaru
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -338,7 +338,7 @@ export default function KepalaTataUsahaDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-orange-600" />
-                Urgent Tasks & Priorities
+                Tugas Mendesak & Prioritas
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -359,8 +359,8 @@ export default function KepalaTataUsahaDashboard() {
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Deadline: {task.deadline}</span>
-                        <span className="text-gray-600">{task.progress}% complete</span>
+                        <span className="text-gray-600">Tenggat: {task.deadline}</span>
+                        <span className="text-gray-600">{task.progress}% selesai</span>
                       </div>
                       <Progress value={task.progress} className="h-2" />
                       <p className="text-xs text-gray-500">{task.department}</p>
@@ -378,7 +378,7 @@ export default function KepalaTataUsahaDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-purple-600" />
-                Staff Performance Distribution
+                Distribusi Kinerja Staf
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -411,7 +411,7 @@ export default function KepalaTataUsahaDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-green-600" />
-                Budget Utilization Trends
+                Tren Utilisasi Anggaran
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -435,9 +435,9 @@ export default function KepalaTataUsahaDashboard() {
         <TabsContent value="operations" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Document Processing", value: "98.5%", subtitle: "Completion Rate", icon: FileText, color: "text-blue-600" },
-              { title: "Service Delivery", value: "96.2%", subtitle: "Quality Score", icon: Target, color: "text-green-600" },
-              { title: "Process Efficiency", value: "94.8%", subtitle: "Optimization Level", icon: Settings, color: "text-purple-600" }
+              { title: "Pemrosesan Dokumen", value: "98.5%", subtitle: "Tingkat Penyelesaian", icon: FileText, color: "text-blue-600" },
+              { title: "Penyampaian Layanan", value: "96.2%", subtitle: "Skor Kualitas", icon: Target, color: "text-green-600" },
+              { title: "Efisiensi Proses", value: "94.8%", subtitle: "Level Optimasi", icon: Settings, color: "text-purple-600" }
             ].map((metric, index) => (
               <motion.div
                 key={metric.title}
@@ -464,7 +464,7 @@ export default function KepalaTataUsahaDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-indigo-600" />
-                Department Resource Allocation
+                Alokasi Sumber Daya Departemen
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -499,16 +499,16 @@ export default function KepalaTataUsahaDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Briefcase className="w-6 h-6" />
-              Administrative Actions
+              Aksi Administratif
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "Approve Documents", icon: CheckCircle, count: "23" },
-                { label: "Review Budget", icon: DollarSign, count: "5" },
-                { label: "Staff Reports", icon: Users, count: "12" },
-                { label: "Generate Analytics", icon: BarChart3, count: "3" }
+                { label: "Setujui Dokumen", icon: CheckCircle, count: "23" },
+                { label: "Review Anggaran", icon: DollarSign, count: "5" },
+                { label: "Laporan Staf", icon: Users, count: "12" },
+                { label: "Buat Analitik", icon: BarChart3, count: "3" }
               ].map((action, index) => (
                 <motion.div
                   key={action.label}

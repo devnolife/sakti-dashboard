@@ -26,6 +26,7 @@ import {
   BookMarked,
   ScrollText,
   PanelsTopLeft,
+  TrendingUp,
 
 } from "lucide-react"
 import type { Role } from "@/types/role"
@@ -131,6 +132,28 @@ export const mahasiswaMenuItems = [
     title: "Layanan Surat",
     href: "/dashboard/mahasiswa/correspondence",
     icon: Mail,
+    children: [
+      {
+        id: "correspondence-general",
+        title: "Surat Umum",
+        href: "/dashboard/mahasiswa/correspondence",
+      },
+      {
+        id: "correspondence-transfer",
+        title: "Surat Pindah",
+        href: "/dashboard/mahasiswa/correspondence/transfer",
+      },
+      {
+        id: "correspondence-survey",
+        title: "Surat Pengantar Survey",
+        href: "/dashboard/mahasiswa/correspondence/survey",
+      },
+      {
+        id: "correspondence-generate",
+        title: "Buat Surat",
+        href: "/dashboard/mahasiswa/correspondence/generate",
+      },
+    ],
   },
   {
     id: "exams",
@@ -187,8 +210,13 @@ export const mahasiswaMenuItems = [
     children: [
       {
         id: "payment-dashboard",
-        title: "Dashboard",
+        title: "Dashboard Umum",
         href: "/dashboard/mahasiswa/payment",
+      },
+      {
+        id: "payment-special",
+        title: "Pembayaran Khusus",
+        href: "/dashboard/mahasiswa/payment/special",
       },
       {
         id: "payment-history",
@@ -233,30 +261,42 @@ export const mahasiswaMenuItems = [
   {
     id: "kkp-plus",
     title: "KKP Plus",
-    href: "/dashboard/mahasiswa/kkp/plus",
+    href: "/dashboard/mahasiswa/kkp-plus",
     icon: Award,
     children: [
       {
-        id: "kkp-plus-overview",
-        title: "Overview",
-        href: "/dashboard/mahasiswa/kkp/plus",
+        id: "kkp-plus-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/mahasiswa/kkp-plus",
       },
       {
-        id: "kkp-plus-workshops",
-        title: "Workshop",
-        href: "/dashboard/mahasiswa/kkp/plus/workshops",
+        id: "kkp-plus-registration",
+        title: "Pendaftaran",
+        href: "/dashboard/mahasiswa/kkp-plus/registration",
       },
       {
-        id: "kkp-plus-certifications",
-        title: "Sertifikasi",
-        href: "/dashboard/mahasiswa/kkp/plus/certifications",
+        id: "kkp-plus-progress",
+        title: "Progress",
+        href: "/dashboard/mahasiswa/kkp-plus/progress",
       },
       {
-        id: "kkp-plus-resources",
-        title: "Sumber Daya",
-        href: "/dashboard/mahasiswa/kkp/plus/resources",
+        id: "kkp-plus-documents",
+        title: "Dokumen",
+        href: "/dashboard/mahasiswa/kkp-plus/documents",
       },
     ],
+  },
+  {
+    id: "journal",
+    title: "Jurnal Mahasiswa",
+    href: "/dashboard/mahasiswa/journal",
+    icon: BookOpen,
+  },
+  {
+    id: "certificate-check",
+    title: "Pengecekan Ijazah",
+    href: "/dashboard/mahasiswa/certificate-check",
+    icon: Award,
   },
   {
     id: "settings",
@@ -434,10 +474,42 @@ export const prodiMenuItems = [
     icon: Mail
   },
   {
-    id: "kkp-locations",
+    id: "kkp-management",
     title: "Manajement KKP",
-    href: "/dashboard/prodi/kkp-locations",
-    icon: Briefcase
+    href: "/dashboard/prodi/kkp",
+    icon: Briefcase,
+    children: [
+      {
+        id: "kkp-overview",
+        title: "Overview KKP",
+        href: "/dashboard/prodi/kkp",
+      },
+      {
+        id: "kkp-regular",
+        title: "KKP Reguler",
+        href: "/dashboard/prodi/kkp/regular",
+      },
+      {
+        id: "kkp-plus-management",
+        title: "KKP Plus",
+        href: "/dashboard/prodi/kkp/plus",
+      },
+      {
+        id: "kkp-grading",
+        title: "Input Nilai",
+        href: "/dashboard/prodi/kkp/grading",
+      },
+      {
+        id: "kkp-supervisors",
+        title: "Pembimbing",
+        href: "/dashboard/prodi/kkp/supervisors",
+      },
+      {
+        id: "kkp-locations",
+        title: "Lokasi KKP",
+        href: "/dashboard/prodi/kkp/locations",
+      },
+    ],
   },
   {
     id: "faculty-directory",
@@ -1013,7 +1085,7 @@ export const financeAdminMenuItems = [
   },
 ]
 
-// Menu items untuk GKM (Gerakan Kegiatan Mahasiswa)
+// Menu items untuk GKM (Gugus Kendali Mutu)
 export const gkmMenuItems = [
   {
     id: "dashboard",
@@ -1022,120 +1094,146 @@ export const gkmMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    id: "events",
-    title: "Event Management",
-    href: "/dashboard/gkm/events",
-    icon: Calendar,
-    children: [
-      {
-        id: "create-event",
-        title: "Create New Event",
-        href: "/dashboard/gkm/events/create",
-      },
-      {
-        id: "manage-events",
-        title: "Manage Events",
-        href: "/dashboard/gkm/events/manage",
-      },
-      {
-        id: "event-calendar",
-        title: "Event Calendar",
-        href: "/dashboard/gkm/events/calendar",
-      },
-    ],
-  },
-  {
-    id: "student-activities",
-    title: "Student Activities",
-    href: "/dashboard/gkm/activities",
-    icon: Users,
-    children: [
-      {
-        id: "activity-dashboard",
-        title: "Activity Hub",
-        href: "/dashboard/gkm/activities",
-      },
-      {
-        id: "club-management",
-        title: "Club Management",
-        href: "/dashboard/gkm/activities/clubs",
-      },
-      {
-        id: "competitions",
-        title: "Competitions",
-        href: "/dashboard/gkm/activities/competitions",
-        badge: { text: "12", variant: "destructive" },
-      },
-    ],
-  },
-  {
-    id: "social-media",
-    title: "Social Media",
-    href: "/dashboard/gkm/social",
-    icon: Megaphone,
-    children: [
-      {
-        id: "content-calendar",
-        title: "Content Calendar",
-        href: "/dashboard/gkm/social/calendar",
-      },
-      {
-        id: "posts-management",
-        title: "Posts Management",
-        href: "/dashboard/gkm/social/posts",
-      },
-      {
-        id: "engagement-stats",
-        title: "Engagement Stats",
-        href: "/dashboard/gkm/social/stats",
-      },
-    ],
-  },
-  {
-    id: "announcements",
-    title: "Announcements",
-    href: "/dashboard/gkm/announcements",
-    icon: Bell,
-    badge: { text: "5", variant: "secondary" },
-  },
-  {
-    id: "achievements",
-    title: "Achievement Tracker",
-    href: "/dashboard/gkm/achievements",
-    icon: Trophy,
-  },
-  {
-    id: "collaboration",
-    title: "Collaboration",
-    href: "/dashboard/gkm/collaboration",
+    id: "quality-monitoring",
+    title: "Monitoring Mutu",
+    href: "/dashboard/gkm/quality-monitoring",
     icon: ClipboardCheck,
     children: [
       {
-        id: "project-management",
-        title: "Project Management",
-        href: "/dashboard/gkm/collaboration/projects",
+        id: "academic-quality",
+        title: "Mutu Akademik",
+        href: "/dashboard/gkm/quality-monitoring/academic",
       },
       {
-        id: "team-chat",
-        title: "Team Chat",
-        href: "/dashboard/gkm/collaboration/chat",
+        id: "service-quality", 
+        title: "Mutu Layanan",
+        href: "/dashboard/gkm/quality-monitoring/service",
       },
       {
-        id: "file-sharing",
-        title: "File Sharing",
-        href: "/dashboard/gkm/collaboration/files",
+        id: "facility-quality",
+        title: "Mutu Fasilitas",
+        href: "/dashboard/gkm/quality-monitoring/facility",
+      },
+    ],
+  },
+  {
+    id: "quality-evaluation",
+    title: "Evaluasi Mutu",
+    href: "/dashboard/gkm/quality-evaluation",
+    icon: BarChart,
+    children: [
+      {
+        id: "lecturer-evaluation",
+        title: "Evaluasi Dosen",
+        href: "/dashboard/gkm/quality-evaluation/lecturer",
+      },
+      {
+        id: "curriculum-evaluation",
+        title: "Evaluasi Kurikulum",
+        href: "/dashboard/gkm/quality-evaluation/curriculum",
+      },
+      {
+        id: "learning-evaluation",
+        title: "Evaluasi Pembelajaran",
+        href: "/dashboard/gkm/quality-evaluation/learning",
+      },
+    ],
+  },
+  {
+    id: "quality-improvement",
+    title: "Perbaikan Mutu",
+    href: "/dashboard/gkm/quality-improvement",
+    icon: TrendingDown,
+    children: [
+      {
+        id: "improvement-plans",
+        title: "Rencana Perbaikan",
+        href: "/dashboard/gkm/quality-improvement/plans",
+      },
+      {
+        id: "improvement-tracking",
+        title: "Tracking Perbaikan",
+        href: "/dashboard/gkm/quality-improvement/tracking",
+      },
+      {
+        id: "best-practices",
+        title: "Best Practices",
+        href: "/dashboard/gkm/quality-improvement/best-practices",
+      },
+    ],
+  },
+  {
+    id: "accreditation",
+    title: "Akreditasi",
+    href: "/dashboard/gkm/accreditation",
+    icon: Award,
+    children: [
+      {
+        id: "accreditation-preparation",
+        title: "Persiapan Akreditasi",
+        href: "/dashboard/gkm/accreditation/preparation",
+      },
+      {
+        id: "document-management",
+        title: "Manajemen Dokumen",
+        href: "/dashboard/gkm/accreditation/documents",
+      },
+      {
+        id: "assessment-results",
+        title: "Hasil Penilaian",
+        href: "/dashboard/gkm/accreditation/results",
+      },
+    ],
+  },
+  {
+    id: "surveys",
+    title: "Survei & Feedback",
+    href: "/dashboard/gkm/surveys",
+    icon: ClipboardList,
+    children: [
+      {
+        id: "student-satisfaction",
+        title: "Kepuasan Mahasiswa",
+        href: "/dashboard/gkm/surveys/student-satisfaction",
+      },
+      {
+        id: "stakeholder-feedback",
+        title: "Feedback Stakeholder",
+        href: "/dashboard/gkm/surveys/stakeholder-feedback",
+      },
+      {
+        id: "survey-analysis",
+        title: "Analisis Survei",
+        href: "/dashboard/gkm/surveys/analysis",
       },
     ],
   },
   {
     id: "reports",
-    title: "Reports & Analytics",
+    title: "Laporan Mutu",
     href: "/dashboard/gkm/reports",
-    icon: BarChart,
+    icon: FileSpreadsheet,
+    children: [
+      {
+        id: "quality-reports",
+        title: "Laporan Berkala",
+        href: "/dashboard/gkm/reports/periodic",
+      },
+      {
+        id: "performance-metrics",
+        title: "Metrik Kinerja",
+        href: "/dashboard/gkm/reports/metrics",
+      },
+      {
+        id: "annual-report",
+        title: "Laporan Tahunan",
+        href: "/dashboard/gkm/reports/annual",
+      },
+    ],
   },
   {
     id: "settings",
-    title: "Settings",
+    title: "Pengaturan",
     href: "/dashboard/gkm/settings",
     icon: Settings,
   },
@@ -1151,152 +1249,25 @@ export const kepalaTataUsahaMenuItems = [
   },
   {
     id: "administration",
-    title: "Administration",
+    title: "Administrasi",
     href: "/dashboard/kepala_tata_usaha/administration",
     icon: Users,
-    children: [
-      {
-        id: "staff-management",
-        title: "Staff Management",
-        href: "/dashboard/kepala_tata_usaha/administration/staff",
-      },
-      {
-        id: "office-operations",
-        title: "Office Operations",
-        href: "/dashboard/kepala_tata_usaha/administration/operations",
-      },
-      {
-        id: "policies",
-        title: "Policies & Procedures",
-        href: "/dashboard/kepala_tata_usaha/administration/policies",
-      },
-    ],
   },
   {
     id: "document-management",
-    title: "Document Management",
+    title: "Manajemen Dokumen",
     href: "/dashboard/kepala_tata_usaha/documents",
     icon: FileText,
-    children: [
-      {
-        id: "document-approval",
-        title: "Document Approval",
-        href: "/dashboard/kepala_tata_usaha/documents/approval",
-        badge: { text: "15", variant: "destructive" },
-      },
-      {
-        id: "document-archive",
-        title: "Document Archive",
-        href: "/dashboard/kepala_tata_usaha/documents/archive",
-      },
-      {
-        id: "templates",
-        title: "Document Templates",
-        href: "/dashboard/kepala_tata_usaha/documents/templates",
-      },
-    ],
-  },
-  {
-    id: "workflow",
-    title: "Workflow Management",
-    href: "/dashboard/kepala_tata_usaha/workflow",
-    icon: ClipboardList,
-    children: [
-      {
-        id: "process-approval",
-        title: "Process Approval",
-        href: "/dashboard/kepala_tata_usaha/workflow/approval",
-      },
-      {
-        id: "task-delegation",
-        title: "Task Delegation",
-        href: "/dashboard/kepala_tata_usaha/workflow/delegation",
-      },
-      {
-        id: "monitoring",
-        title: "Process Monitoring",
-        href: "/dashboard/kepala_tata_usaha/workflow/monitoring",
-      },
-    ],
-  },
-  {
-    id: "coordination",
-    title: "Coordination",
-    href: "/dashboard/kepala_tata_usaha/coordination",
-    icon: Crown,
-    children: [
-      {
-        id: "inter-department",
-        title: "Inter-Department",
-        href: "/dashboard/kepala_tata_usaha/coordination/departments",
-      },
-      {
-        id: "external-relations",
-        title: "External Relations",
-        href: "/dashboard/kepala_tata_usaha/coordination/external",
-      },
-      {
-        id: "meetings",
-        title: "Meeting Management",
-        href: "/dashboard/kepala_tata_usaha/coordination/meetings",
-      },
-    ],
-  },
-  {
-    id: "budget-oversight",
-    title: "Budget Management",
-    href: "/dashboard/kepala_tata_usaha/budget",
-    icon: CreditCard,
-    children: [
-      {
-        id: "budget-approval",
-        title: "Budget Approval",
-        href: "/dashboard/kepala_tata_usaha/budget/approval",
-      },
-      {
-        id: "expense-monitoring",
-        title: "Expense Monitoring",
-        href: "/dashboard/kepala_tata_usaha/budget/monitoring",
-      },
-      {
-        id: "financial-reports",
-        title: "Financial Reports",
-        href: "/dashboard/kepala_tata_usaha/budget/reports",
-      },
-    ],
-  },
-  {
-    id: "facility-management",
-    title: "Facility Management",
-    href: "/dashboard/kepala_tata_usaha/facilities",
-    icon: Briefcase,
-    children: [
-      {
-        id: "maintenance",
-        title: "Maintenance Requests",
-        href: "/dashboard/kepala_tata_usaha/facilities/maintenance",
-      },
-      {
-        id: "resource-allocation",
-        title: "Resource Allocation",
-        href: "/dashboard/kepala_tata_usaha/facilities/resources",
-      },
-      {
-        id: "space-management",
-        title: "Space Management",
-        href: "/dashboard/kepala_tata_usaha/facilities/spaces",
-      },
-    ],
   },
   {
     id: "reports",
-    title: "Reports & Analytics",
-    href: "/dashboard/kepala_tata_usaha/analytics",
+    title: "Laporan",
+    href: "/dashboard/kepala_tata_usaha/reports",
     icon: BarChart,
   },
   {
     id: "settings",
-    title: "Settings",
+    title: "Pengaturan",
     href: "/dashboard/kepala_tata_usaha/settings",
     icon: Settings,
   },

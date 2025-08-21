@@ -93,11 +93,11 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     bgColor: "bg-emerald-100",
   },
   gkm: {
-    displayName: "GKM",
-    description: "Gerakan Kegiatan Mahasiswa role with access to student activities and event management.",
-    icon: "sparkles",
-    color: "text-violet-500",
-    bgColor: "bg-violet-100",
+    displayName: "Gugus Kendali Mutu",
+    description: "Quality Control Group with access to quality monitoring, evaluation, and improvement systems.",
+    icon: "clipboard-check",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
   },
   kepala_tata_usaha: {
     displayName: "Kepala Tata Usaha",
