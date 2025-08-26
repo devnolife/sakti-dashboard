@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -29,9 +27,6 @@ import {
   BookOpen,
   FileCheck,
   AlertTriangle,
-  CheckCircle,
-  Clock,
-  Award,
   Eye,
   BarChart3,
   Settings,
@@ -193,7 +188,7 @@ export default function GKMDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-8 pt-20">
       {/* Header Section */}
       <motion.div
         className="text-center space-y-4"
@@ -305,7 +300,7 @@ export default function GKMDashboard() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {qualityIndicators.map((indicator, index) => (
+                  {qualityIndicators.map((indicator) => (
                     <div key={indicator.name} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium text-gray-700">{indicator.name}</span>
@@ -497,7 +492,7 @@ export default function GKMDashboard() {
                     { label: "Monitor Kepatuhan", icon: Eye, color: "from-orange-500 to-red-500" },
                     { label: "Update Metrik", icon: Settings, color: "from-gray-500 to-slate-500" },
                     { label: "Feedback Dosen", icon: Users, color: "from-pink-500 to-rose-500" }
-                  ].map((action, index) => (
+                  ].map((action) => (
                     <motion.div
                       key={action.label}
                       whileHover={{ scale: 1.05, x: 5 }}
