@@ -1,5 +1,4 @@
 "use client"
-
 import QualityMonitoringCard from "@/components/gkm/quality-monitoring-card"
 import AccreditationStatus from "@/components/gkm/accreditation-status"
 import { motion } from "framer-motion"
@@ -10,7 +9,6 @@ import {
   Building,
   Target
 } from "lucide-react"
-
 export default function QualityMonitoringPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-8">
@@ -28,7 +26,6 @@ export default function QualityMonitoringPage() {
           Monitoring dan Evaluasi Mutu 5 Program Studi Fakultas Teknik
         </p>
       </motion.div>
-
       {/* Quality Monitoring Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <QualityMonitoringCard
@@ -192,7 +189,6 @@ export default function QualityMonitoringPage() {
           ]}
         />
       </div>
-
       {/* Accreditation Status */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -1,8 +1,6 @@
 "use client"
-
 import EvaluationMetrics from "@/components/gkm/evaluation-metrics"
 import { motion } from "framer-motion"
-
 export default function QualityEvaluationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 p-6 space-y-8">
@@ -20,7 +18,6 @@ export default function QualityEvaluationPage() {
           Evaluasi Komprehensif Kinerja 5 Program Studi Fakultas Teknik
         </p>
       </motion.div>
-
       {/* Evaluation Metrics for Each Program */}
       <div className="space-y-8">
         <EvaluationMetrics
@@ -40,7 +37,6 @@ export default function QualityEvaluationPage() {
             "Implementasikan teknologi smart irrigation dalam kurikulum"
           ]}
         />
-
         <EvaluationMetrics
           title="Evaluasi Teknik Elektro"
           currentScore={87}
@@ -58,7 +54,6 @@ export default function QualityEvaluationPage() {
             "Jalin kerjasama dengan industri teknologi untuk magang mahasiswa"
           ]}
         />
-
         <EvaluationMetrics
           title="Evaluasi Arsitektur"
           currentScore={92}
@@ -76,7 +71,6 @@ export default function QualityEvaluationPage() {
             "Tingkatkan kerjasama dengan arsitek profesional untuk guest lecture"
           ]}
         />
-
         <EvaluationMetrics
           title="Evaluasi Informatika"
           currentScore={85}
@@ -94,7 +88,6 @@ export default function QualityEvaluationPage() {
             "Perkuat kerjasama dengan startup dan perusahaan teknologi"
           ]}
         />
-
         <EvaluationMetrics
           title="Evaluasi Perencanaan Wilayah Kota"
           currentScore={88}

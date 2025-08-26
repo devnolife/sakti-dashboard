@@ -34,26 +34,20 @@ import type { Role } from "@/types/role"
 // Type definitions for menu items
 interface MenuBadge {
   text: string
-  variant: "default" | "secondary" | "destructive" | "outline"
+  variant: "default" | "secondary" | "destructive" | "outline" | string
 }
 
 interface BaseMenuItem {
   id: string
   title: string
   href: string
-  icon: React.ComponentType<any>
+  icon?: React.ComponentType<any>
   badge?: MenuBadge
 }
 
-interface MenuItemWithChildren extends BaseMenuItem {
-  children: MenuItem[]
+export interface MenuItem extends BaseMenuItem {
+  children?: MenuItem[]
 }
-
-interface MenuItemWithoutChildren extends BaseMenuItem {
-  children?: never
-}
-
-export type MenuItem = MenuItemWithChildren | MenuItemWithoutChildren
 
 export const mahasiswaMenuItems = [
   {
@@ -584,7 +578,7 @@ export const dekanMenuItems = [
     icon: Settings,
   },
 ]
-export const readingRoomAdminMenuItems = [
+export const readingRoomAdminMenuItems: MenuItem[] = [
   {
     id: "dashboard",
     title: "Dashboard",
@@ -601,16 +595,19 @@ export const readingRoomAdminMenuItems = [
         id: "book-list",
         title: "Daftar Buku",
         href: "/dashboard/reading_room_admin/books/list",
+        icon: BookOpen,
       },
       {
         id: "add-book",
         title: "Tambah Buku",
         href: "/dashboard/reading_room_admin/books/add",
+        icon: BookOpen,
       },
       {
         id: "book-categories",
         title: "Kategori Buku",
         href: "/dashboard/reading_room_admin/books/categories",
+        icon: BookOpen,
       },
     ],
   },
@@ -624,22 +621,26 @@ export const readingRoomAdminMenuItems = [
         id: "active-borrowing",
         title: "Peminjaman Aktif",
         href: "/dashboard/reading_room_admin/borrowing/active",
-        badge: { text: "12", variant: "destructive" },
+        icon: BookMarked,
+        badge: { text: "12", variant: "destructive" as const },
       },
       {
         id: "new-borrowing",
         title: "Peminjaman Baru",
         href: "/dashboard/reading_room_admin/borrowing/new",
+        icon: BookMarked,
       },
       {
         id: "return-books",
         title: "Pengembalian Buku",
         href: "/dashboard/reading_room_admin/borrowing/returns",
+        icon: BookMarked,
       },
       {
         id: "borrowing-history",
         title: "Riwayat Peminjaman",
         href: "/dashboard/reading_room_admin/borrowing/history",
+        icon: BookMarked,
       },
     ],
   },
@@ -653,17 +654,20 @@ export const readingRoomAdminMenuItems = [
         id: "thesis-titles",
         title: "Judul Skripsi",
         href: "/dashboard/reading_room_admin/thesis/titles",
+        icon: ScrollText,
       },
       {
         id: "title-submissions",
         title: "Pengajuan Judul",
         href: "/dashboard/reading_room_admin/thesis/submissions",
-        badge: { text: "8", variant: "destructive" },
+        icon: ScrollText,
+        badge: { text: "8", variant: "destructive" as const },
       },
       {
         id: "thesis-archive",
         title: "Arsip Skripsi",
         href: "/dashboard/reading_room_admin/thesis/archive",
+        icon: ScrollText,
       },
     ],
   },
@@ -677,17 +681,20 @@ export const readingRoomAdminMenuItems = [
         id: "borrowing-reports",
         title: "Laporan Peminjaman",
         href: "/dashboard/reading_room_admin/reports/borrowing",
+        icon: FileText,
       },
       {
         id: "popular-books",
         title: "Buku Populer",
         href: "/dashboard/reading_room_admin/reports/popular",
+        icon: FileText,
       },
       {
         id: "overdue-reports",
         title: "Laporan Keterlambatan",
         href: "/dashboard/reading_room_admin/reports/overdue",
-        badge: { text: "5", variant: "destructive" },
+        icon: FileText,
+        badge: { text: "5", variant: "destructive" as const },
       },
     ],
   },
@@ -801,7 +808,7 @@ export const adminUmumMenuItems = [
 ]
 
 // Menu items for admin
-export const adminMenuItems = [
+export const adminMenuItems: MenuItem[] = [
   {
     id: "dashboard",
     title: "Dashboard",
@@ -819,7 +826,7 @@ export const adminMenuItems = [
     title: "KKP Requests",
     href: "/dashboard/admin/kkp-requests",
     icon: Briefcase,
-    badge: { text: "12", variant: "destructive" },
+    badge: { text: "12", variant: "destructive" as const },
   },
   {
     id: "system-settings",
@@ -885,17 +892,20 @@ export const lecturerMenuItems = [
         id: "exam-schedule",
         title: "Jadwal Ujian",
         href: "/dashboard/lecturer/exams/schedule",
+        icon: Calendar,
       },
       {
         id: "exam-committees",
         title: "Penguji",
         href: "/dashboard/lecturer/exams/committees",
+        icon: UserCheck,
         badge: { text: "7", variant: "destructive" },
       },
       {
         id: "exam-grading",
         title: "Penilaian Ujian",
         href: "/dashboard/lecturer/exams/grading",
+        icon: ClipboardCheck,
       },
     ],
   },
@@ -914,7 +924,7 @@ export const lecturerMenuItems = [
   },
 ]
 
-export const laboratoryAdminMenuItems = [
+export const laboratoryAdminMenuItems: MenuItem[] = [
   {
     id: "dashboard",
     title: "Dashboard",
@@ -931,16 +941,19 @@ export const laboratoryAdminMenuItems = [
         id: "lab-inventory",
         title: "Inventaris Lab",
         href: "/dashboard/laboratory_admin/lab-management/inventory",
+        icon: Briefcase,
       },
       {
         id: "lab-schedule",
         title: "Jadwal Lab",
         href: "/dashboard/laboratory_admin/lab-management/schedule",
+        icon: Calendar,
       },
       {
         id: "lab-maintenance",
         title: "Pemeliharaan Lab",
         href: "/dashboard/laboratory_admin/lab-management/maintenance",
+        icon: Settings,
       },
     ],
   },
@@ -973,16 +986,19 @@ export const laboratoryAdminMenuItems = [
         id: "practicum-schedule",
         title: "Jadwal Praktikum",
         href: "/dashboard/laboratory_admin/practicum/schedule",
+        icon: Calendar,
       },
       {
         id: "practicum-materials",
         title: "Materi Praktikum",
         href: "/dashboard/laboratory_admin/practicum/materials",
+        icon: BookOpen,
       },
       {
         id: "practicum-grades",
         title: "Nilai Praktikum",
         href: "/dashboard/laboratory_admin/practicum/grades",
+        icon: Award,
       },
     ],
   },
@@ -1086,7 +1102,7 @@ export const financeAdminMenuItems = [
 ]
 
 // Menu items untuk GKM (Gugus Kendali Mutu)
-export const gkmMenuItems = [
+export const gkmMenuItems: MenuItem[] = [
   {
     id: "dashboard",
     title: "Dashboard",
@@ -1103,16 +1119,19 @@ export const gkmMenuItems = [
         id: "academic-quality",
         title: "Mutu Akademik",
         href: "/dashboard/gkm/quality-monitoring/academic",
+        icon: BarChart,
       },
       {
-        id: "service-quality", 
+        id: "service-quality",
         title: "Mutu Layanan",
         href: "/dashboard/gkm/quality-monitoring/service",
+        icon: ClipboardCheck,
       },
       {
         id: "facility-quality",
         title: "Mutu Fasilitas",
         href: "/dashboard/gkm/quality-monitoring/facility",
+        icon: Briefcase,
       },
     ],
   },
@@ -1126,16 +1145,19 @@ export const gkmMenuItems = [
         id: "lecturer-evaluation",
         title: "Evaluasi Dosen",
         href: "/dashboard/gkm/quality-evaluation/lecturer",
+        icon: Users,
       },
       {
         id: "curriculum-evaluation",
         title: "Evaluasi Kurikulum",
         href: "/dashboard/gkm/quality-evaluation/curriculum",
+        icon: BookOpen,
       },
       {
         id: "learning-evaluation",
         title: "Evaluasi Pembelajaran",
         href: "/dashboard/gkm/quality-evaluation/learning",
+        icon: GraduationCapIcon,
       },
     ],
   },
@@ -1143,22 +1165,25 @@ export const gkmMenuItems = [
     id: "quality-improvement",
     title: "Perbaikan Mutu",
     href: "/dashboard/gkm/quality-improvement",
-    icon: TrendingDown,
+    icon: TrendingUp,
     children: [
       {
         id: "improvement-plans",
         title: "Rencana Perbaikan",
         href: "/dashboard/gkm/quality-improvement/plans",
+        icon: ClipboardList,
       },
       {
         id: "improvement-tracking",
         title: "Tracking Perbaikan",
         href: "/dashboard/gkm/quality-improvement/tracking",
+        icon: TrendingUp,
       },
       {
         id: "best-practices",
         title: "Best Practices",
         href: "/dashboard/gkm/quality-improvement/best-practices",
+        icon: Award,
       },
     ],
   },
@@ -1172,16 +1197,19 @@ export const gkmMenuItems = [
         id: "accreditation-preparation",
         title: "Persiapan Akreditasi",
         href: "/dashboard/gkm/accreditation/preparation",
+        icon: ClipboardCheck,
       },
       {
         id: "document-management",
         title: "Manajemen Dokumen",
         href: "/dashboard/gkm/accreditation/documents",
+        icon: FileText,
       },
       {
         id: "assessment-results",
         title: "Hasil Penilaian",
         href: "/dashboard/gkm/accreditation/results",
+        icon: BarChart,
       },
     ],
   },
@@ -1195,16 +1223,19 @@ export const gkmMenuItems = [
         id: "student-satisfaction",
         title: "Kepuasan Mahasiswa",
         href: "/dashboard/gkm/surveys/student-satisfaction",
+        icon: Users,
       },
       {
         id: "stakeholder-feedback",
         title: "Feedback Stakeholder",
         href: "/dashboard/gkm/surveys/stakeholder-feedback",
+        icon: Mail,
       },
       {
         id: "survey-analysis",
         title: "Analisis Survei",
         href: "/dashboard/gkm/surveys/analysis",
+        icon: BarChart,
       },
     ],
   },
@@ -1218,16 +1249,19 @@ export const gkmMenuItems = [
         id: "quality-reports",
         title: "Laporan Berkala",
         href: "/dashboard/gkm/reports/periodic",
+        icon: FileText,
       },
       {
         id: "performance-metrics",
         title: "Metrik Kinerja",
         href: "/dashboard/gkm/reports/metrics",
+        icon: BarChart,
       },
       {
         id: "annual-report",
         title: "Laporan Tahunan",
         href: "/dashboard/gkm/reports/annual",
+        icon: FileSpreadsheet,
       },
     ],
   },
