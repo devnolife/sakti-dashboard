@@ -5,7 +5,7 @@ import RoleMobileMenu from "@/components/role/role-mobile-menu"
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: "Lecturer Dashboard | SAKTI",
+  title: "Lecturer Dashboard | SINTEKMu",
   description: "Lecturer dashboard for managing academic guidance, exams, and KKP supervision",
 }
 

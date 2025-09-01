@@ -52,7 +52,7 @@ export default function LoginPage() {
                 <span className="text-2xl font-bold text-primary-foreground">S</span>
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Welcome to <span className="text-primary">SAKTI</span></CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Welcome to <span className="text-primary">SINTEKMu</span></CardTitle>
             <CardDescription className="text-center">
               Enter your credentials to access the academic information system
             </CardDescription>

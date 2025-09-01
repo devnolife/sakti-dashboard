@@ -110,7 +110,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
               whileHover={{ scale: 1.01, x: 2 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="flex gap-3 items-center">
+              <div className="flex items-center gap-3">
                 {item.icon && (
                   <motion.div
                     initial={{ rotate: 0 }}
@@ -163,7 +163,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
                 active ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-accent hover:text-foreground",
               )}
             >
-              <div className="flex gap-3 items-center">
+              <div className="flex items-center gap-3">
                 {item.icon && (
                   <motion.div
                     initial={{ rotate: 0 }}
@@ -199,21 +199,21 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
 
   return (
     <motion.div
-      className="hidden fixed inset-y-0 left-0 z-30 flex-col w-64 border-r bg-background lg:flex"
+      className="fixed inset-y-0 left-0 z-30 flex-col hidden w-64 border-r bg-background lg:flex"
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3, type: "spring", stiffness: 100 }}
     >
       {/* Logo and App Name */}
       <motion.div
-        className="flex justify-center items-center px-6 h-20"
+        className="flex items-center justify-center h-20 px-6"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.3 }}
       >
-        <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex gap-3 items-center">
+        <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex items-center gap-3">
           <motion.div
-            className="flex justify-center items-center w-10 h-10 rounded-md bg-primary"
+            className="flex items-center justify-center w-10 h-10 rounded-md bg-primary"
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -225,13 +225,13 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.3 }}
           >
-            SAKTI
+            SINTEKMu
           </motion.span>
         </Link>
       </motion.div>
 
       <motion.div
-        className="overflow-y-auto flex-1 p-4"
+        className="flex-1 p-4 overflow-y-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.3 }}

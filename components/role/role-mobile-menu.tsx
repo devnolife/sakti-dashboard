@@ -180,7 +180,7 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
               <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary">
                 <span className="text-lg font-bold text-primary-foreground">S</span>
               </div>
-              <span className="text-xl font-semibold">SAKTI</span>
+              <span className="text-xl font-semibold">SINTEKMu</span>
             </div>
             <button
               onClick={() => setIsOpen(false)}

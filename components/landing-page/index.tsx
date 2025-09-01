@@ -1,0 +1,5 @@
+export { default as HeroSection } from './HeroSection'
+export { default as UsefulFeature } from './UsefulFeature'
+export { default as OurTeam } from './OurTeam'
+export { default as GetStarted } from './GetStarted'
+export { default as ContactUs } from './ContactUs'
