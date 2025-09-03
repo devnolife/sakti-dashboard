@@ -498,8 +498,8 @@ export function PaymentListManager() {
           <CardHeader className="pb-3">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <CardTitle>Payment List</CardTitle>
-                <CardDescription>Manage student payments across all study programs</CardDescription>
+                <CardTitle>Daftar Pembayaran</CardTitle>
+                <CardDescription>Kelola pembayaran mahasiswa dari seluruh program studi</CardDescription>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">

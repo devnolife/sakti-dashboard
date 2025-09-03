@@ -23,7 +23,7 @@ export function ThesisArchiveManagement() {
   const [restoreOpen, setRestoreOpen] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid")
 
-  // Filter theses based on search query and filters
+  // Filter skripsi berdasarkan kueri pencarian dan filter
   const filteredTheses = mockArchivedThesisData.filter((thesis) => {
     const matchesSearch =
       thesis.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,11 +36,11 @@ export function ThesisArchiveManagement() {
     return matchesSearch && matchesDepartment && matchesYear
   })
 
-  // Get unique departments and years for filters
+  // Mendapatkan jurusan dan tahun unik untuk filter
   const departments = Array.from(new Set(mockArchivedThesisData.map((thesis) => thesis.department)))
   const years = Array.from(new Set(mockArchivedThesisData.map((thesis) => thesis.year))).sort((a, b) => b - a)
 
-  // Calculate statistics
+  // Menghitung statistik
   const stats = {
     total: mockArchivedThesisData.length,
     byDepartment: departments.map((dept) => ({
@@ -68,8 +68,8 @@ export function ThesisArchiveManagement() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Thesis Archive</h1>
-          <p className="text-muted-foreground">Browse and manage archived thesis documents</p>
+          <h1 className="text-2xl font-bold tracking-tight">Skripsi Terarsip</h1>
+          <p className="text-muted-foreground">Telusuri dan kelola dokumen skripsi yang diarsipkan</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setExportOpen(true)}>

@@ -47,16 +47,16 @@ export function PaymentStatistics() {
         <TabsContent value="by-program" className="space-y-4">
           <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-gray-800">Payment Statistics by Study Program</CardTitle>
+              <CardTitle className="text-xl font-semibold text-gray-800">Statistik Pembayaran berdasarkan Program Studi</CardTitle>
               <CardDescription className="text-gray-500">
-                Breakdown of payments across the five study programs
+                Rincian pembayaran di lima program studi
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="h-[300px] w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Payment Amount by Program</h3>
+                    <h3 className="text-sm font-medium text-gray-700">Jumlah Pembayaran berdasarkan Program</h3>
                     <BarChart3 className="h-5 w-5 text-blue-500" />
                   </div>
                   <div className="flex h-[calc(100%-2rem)] w-full items-center justify-center">
@@ -73,7 +73,7 @@ export function PaymentStatistics() {
 
                 <div className="h-[300px] w-full bg-gradient-to-br from-purple-50 via-violet-50 to-purple-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Student Distribution by Program</h3>
+                    <h3 className="text-sm font-medium text-gray-700">Distribusi Mahasiswa berdasarkan Program</h3>
                     <PieChart className="h-5 w-5 text-purple-500" />
                   </div>
                   <div className="flex h-[calc(100%-2rem)] w-full items-center justify-center">
@@ -111,33 +111,33 @@ export function PaymentStatistics() {
               <div className="mt-8 grid gap-4 md:grid-cols-5">
                 {[
                   {
-                    name: "Watering",
-                    amount: "Rp 245.8M",
-                    students: "458 students",
+                    name: "Pengairan",
+                    amount: "Rp 245,8 M",
+                    students: "458 mahasiswa",
                     color: "bg-gradient-to-r from-blue-400 to-blue-300",
                   },
                   {
-                    name: "Electrical",
-                    amount: "Rp 312.4M",
-                    students: "523 students",
+                    name: "Elektro",
+                    amount: "Rp 312,4 M",
+                    students: "523 mahasiswa",
                     color: "bg-gradient-to-r from-indigo-500 to-indigo-400",
                   },
                   {
-                    name: "Architecture",
-                    amount: "Rp 278.6M",
-                    students: "412 students",
+                    name: "Arsitektur",
+                    amount: "Rp 278,6 M",
+                    students: "412 mahasiswa",
                     color: "bg-gradient-to-r from-purple-400 to-purple-300",
                   },
                   {
-                    name: "Informatics",
-                    amount: "Rp 356.2M",
-                    students: "612 students",
+                    name: "Informatika",
+                    amount: "Rp 356,2 M",
+                    students: "612 mahasiswa",
                     color: "bg-gradient-to-r from-blue-600 to-blue-500",
                   },
                   {
-                    name: "Urban Planning",
-                    amount: "Rp 198.9M",
-                    students: "340 students",
+                    name: "Perencanaan Wilayah",
+                    amount: "Rp 198,9 M",
+                    students: "340 mahasiswa",
                     color: "bg-gradient-to-r from-indigo-300 to-indigo-200",
                   },
                 ].map((program) => (
@@ -160,14 +160,14 @@ export function PaymentStatistics() {
         <TabsContent value="by-status" className="space-y-4">
           <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-gray-800">Payment Statistics by Status</CardTitle>
-              <CardDescription className="text-gray-500">Breakdown of payments by their current status</CardDescription>
+              <CardTitle className="text-xl font-semibold text-gray-800">Statistik Pembayaran berdasarkan Status</CardTitle>
+              <CardDescription className="text-gray-500">Rincian pembayaran berdasarkan status terkini</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="h-[300px] w-full bg-gradient-to-br from-green-50 via-teal-50 to-green-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Payment Status Distribution</h3>
+                    <h3 className="text-sm font-medium text-gray-700">Distribusi Status Pembayaran</h3>
                     <PieChart className="h-5 w-5 text-green-500" />
                   </div>
                   <div className="flex h-[calc(100%-2rem)] w-full items-center justify-center">
@@ -203,7 +203,7 @@ export function PaymentStatistics() {
 
                 <div className="h-[300px] w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-50 rounded-xl p-4 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-medium text-gray-700">Status by Program</h3>
+                    <h3 className="text-sm font-medium text-gray-700">Status berdasarkan Program</h3>
                     <BarChart3 className="h-5 w-5 text-blue-500" />
                   </div>
                   <div className="flex h-[calc(100%-2rem)] w-full items-center justify-center">
@@ -285,15 +285,15 @@ export function PaymentStatistics() {
         <TabsContent value="by-semester" className="space-y-4">
           <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-gray-800">Payment Statistics by Semester</CardTitle>
+              <CardTitle className="text-xl font-semibold text-gray-800">Statistik Pembayaran berdasarkan Semester</CardTitle>
               <CardDescription className="text-gray-500">
-                Comparison of payments across different semesters
+                Perbandingan pembayaran antar semester yang berbeda
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50 rounded-xl p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-sm font-medium text-gray-700">Payment Comparison by Semester</h3>
+                  <h3 className="text-sm font-medium text-gray-700">Perbandingan Pembayaran berdasarkan Semester</h3>
                   <BarChart3 className="h-5 w-5 text-indigo-500" />
                 </div>
                 <div className="flex h-[calc(100%-3rem)] w-full items-end justify-around">
@@ -359,13 +359,13 @@ export function PaymentStatistics() {
         <TabsContent value="trends" className="space-y-4">
           <Card className="border-none shadow-sm bg-gradient-to-br from-white via-slate-50 to-white">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-gray-800">Payment Trends</CardTitle>
-              <CardDescription className="text-gray-500">Payment trends over time</CardDescription>
+              <CardTitle className="text-xl font-semibold text-gray-800">Tren Pembayaran</CardTitle>
+              <CardDescription className="text-gray-500">Tren pembayaran dari waktu ke waktu</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full bg-gradient-to-br from-teal-50 via-blue-50 to-teal-50 rounded-xl p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-sm font-medium text-gray-700">Payment Trends Over Time</h3>
+                  <h3 className="text-sm font-medium text-gray-700">Tren Pembayaran Seiring Waktu</h3>
                   <LineChart className="h-5 w-5 text-teal-500" />
                 </div>
                 <div className="flex h-[calc(100%-3rem)] w-full items-center justify-center">

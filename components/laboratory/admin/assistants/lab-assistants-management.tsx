@@ -20,7 +20,7 @@ export function LabAssistantsManagement() {
   const [labFilter, setLabFilter] = useState("all")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
-  // Filter assistants based on search query and filters
+  // Filter asisten berdasarkan kueri pencarian dan filter
   const filteredAssistants = mockLabAssistants.filter((assistant) => {
     const matchesSearch =
       assistant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -41,14 +41,14 @@ export function LabAssistantsManagement() {
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
             <div>
-              <CardTitle>Laboratory Assistants</CardTitle>
-              <CardDescription>Manage laboratory assistants, schedules, and performance</CardDescription>
+              <CardTitle>Asisten Laboratorium</CardTitle>
+              <CardDescription>Kelola asisten laboratorium, jadwal, dan kinerja</CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search assistants..."
+                  placeholder="Cari asisten..."
                   className="pl-8 w-full sm:w-[250px]"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -56,7 +56,7 @@ export function LabAssistantsManagement() {
               </div>
               <Button onClick={() => setIsAddDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Assistant
+                Tambah Asisten
               </Button>
             </div>
           </div>
@@ -67,30 +67,30 @@ export function LabAssistantsManagement() {
               <span className="text-sm font-medium">Status:</span>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder="Filter berdasarkan status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="probation">Probation</SelectItem>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="active">Aktif</SelectItem>
+                  <SelectItem value="inactive">Tidak Aktif</SelectItem>
+                  <SelectItem value="probation">Masa Percobaan</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium">Laboratory:</span>
+              <span className="text-sm font-medium">Laboratorium:</span>
               <Select value={labFilter} onValueChange={setLabFilter}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by laboratory" />
+                  <SelectValue placeholder="Filter berdasarkan laboratorium" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Laboratories</SelectItem>
-                  <SelectItem value="Computer Networks">Computer Networks</SelectItem>
-                  <SelectItem value="Database Systems">Database Systems</SelectItem>
-                  <SelectItem value="Programming">Programming</SelectItem>
+                  <SelectItem value="all">Semua Laboratorium</SelectItem>
+                  <SelectItem value="Computer Networks">Jaringan Komputer</SelectItem>
+                  <SelectItem value="Database Systems">Sistem Basis Data</SelectItem>
+                  <SelectItem value="Programming">Pemrograman</SelectItem>
                   <SelectItem value="Multimedia">Multimedia</SelectItem>
-                  <SelectItem value="Artificial Intelligence">Artificial Intelligence</SelectItem>
+                  <SelectItem value="Artificial Intelligence">Kecerdasan Buatan</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -100,15 +100,15 @@ export function LabAssistantsManagement() {
             <TabsList className="mb-4">
               <TabsTrigger value="assistants">
                 <FileText className="mr-2 h-4 w-4" />
-                Assistants List
+                Daftar Asisten
               </TabsTrigger>
               <TabsTrigger value="schedule">
                 <Calendar className="mr-2 h-4 w-4" />
-                Schedule
+                Jadwal
               </TabsTrigger>
               <TabsTrigger value="performance">
                 <BarChart className="mr-2 h-4 w-4" />
-                Performance
+                Kinerja
               </TabsTrigger>
             </TabsList>
 

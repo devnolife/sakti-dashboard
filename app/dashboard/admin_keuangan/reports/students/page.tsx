@@ -9,8 +9,8 @@ import { Download, FileText, Filter, Calendar, Printer, Search } from "lucide-re
 import { Input } from "@/components/ui/input"
 
 export const metadata: Metadata = {
-  title: "Student Payment Reports | Finance Admin Dashboard",
-  description: "View and analyze student payment reports and statistics",
+  title: "Laporan Pembayaran Mahasiswa | Dasbor Admin Keuangan",
+  description: "Lihat dan analisis laporan dan statistik pembayaran mahasiswa",
 }
 
 export default function StudentPaymentReportsPage() {
@@ -19,18 +19,18 @@ export default function StudentPaymentReportsPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-purple-800 bg-clip-text text-transparent">
-            Student Payment Reports
+            Laporan Pembayaran Mahasiswa
           </h2>
-          <p className="text-muted-foreground">View and analyze student payment data and outstanding balances</p>
+          <p className="text-muted-foreground">Lihat dan analisis data pembayaran mahasiswa dan saldo terutang</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
             <FileText className="mr-2 h-4 w-4" />
-            Generate Report
+            Buat Laporan
           </Button>
           <Button variant="outline" className="bg-gradient-to-r from-slate-50 to-purple-50 hover:bg-purple-100/50">
             <Download className="mr-2 h-4 w-4" />
-            Export Data
+            Ekspor Data
           </Button>
         </div>
       </div>
@@ -38,10 +38,10 @@ export default function StudentPaymentReportsPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-purple-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Total Students</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Total Mahasiswa</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">2,345</div>
+            <div className="text-3xl font-bold text-gray-900">2.345</div>
             <p className="text-sm text-purple-600 mt-1 flex items-center">
               <span className="inline-block bg-purple-100 text-purple-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -52,17 +52,17 @@ export default function StudentPaymentReportsPage() {
                   />
                 </svg>
               </span>
-              +5.2% from previous year
+              +5,2% dari tahun sebelumnya
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-purple-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Paid in Full</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Lunas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">1,876</div>
+            <div className="text-3xl font-bold text-gray-900">1.876</div>
             <p className="text-sm text-green-600 mt-1 flex items-center">
               <span className="inline-block bg-green-100 text-green-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -73,14 +73,14 @@ export default function StudentPaymentReportsPage() {
                   />
                 </svg>
               </span>
-              80.0% of total students
+              80,0% dari total mahasiswa
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-purple-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Outstanding Payments</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Pembayaran Tertunggak</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-gray-900">469</div>
@@ -94,7 +94,7 @@ export default function StudentPaymentReportsPage() {
                   />
                 </svg>
               </span>
-              20.0% of total students
+              20,0% dari total mahasiswa
             </p>
           </CardContent>
         </Card>
@@ -104,8 +104,8 @@ export default function StudentPaymentReportsPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <CardTitle>Student Payment Analysis</CardTitle>
-              <CardDescription>View and analyze student payment data</CardDescription>
+              <CardTitle>Analisis Pembayaran Mahasiswa</CardTitle>
+              <CardDescription>Lihat dan analisis data pembayaran mahasiswa</CardDescription>
             </div>
             <div className="flex gap-2">
               <Button
@@ -114,7 +114,7 @@ export default function StudentPaymentReportsPage() {
                 className="bg-gradient-to-r from-slate-50 to-purple-50 hover:bg-purple-100/50"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                Select Period
+                Pilih Periode
               </Button>
               <Button
                 variant="outline"
@@ -122,7 +122,7 @@ export default function StudentPaymentReportsPage() {
                 className="bg-gradient-to-r from-slate-50 to-purple-50 hover:bg-purple-100/50"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Filters
+                Filter
               </Button>
             </div>
           </div>
@@ -130,10 +130,10 @@ export default function StudentPaymentReportsPage() {
         <CardContent>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="bg-gradient-to-r from-slate-100 to-purple-50">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="by-status">By Status</TabsTrigger>
-              <TabsTrigger value="by-department">By Department</TabsTrigger>
-              <TabsTrigger value="student-list">Student List</TabsTrigger>
+              <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
+              <TabsTrigger value="by-status">Berdasarkan Status</TabsTrigger>
+              <TabsTrigger value="by-department">Berdasarkan Departemen</TabsTrigger>
+              <TabsTrigger value="student-list">Daftar Mahasiswa</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
@@ -152,26 +152,26 @@ export default function StudentPaymentReportsPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Payment Status</CardTitle>
+                    <CardTitle className="text-sm font-medium">Status Pembayaran Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full">
                       {/* Department chart would go here */}
                       <div className="h-full w-full bg-gradient-to-br from-white via-purple-50/10 to-white rounded-xl flex items-center justify-center">
-                        <p className="text-muted-foreground">Department payment status chart</p>
+                        <p className="text-muted-foreground">Grafik status pembayaran departemen</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Comparison</CardTitle>
+                    <CardTitle className="text-sm font-medium">Perbandingan Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full">
                       {/* Department comparison would go here */}
                       <div className="h-full w-full bg-gradient-to-br from-white via-purple-50/10 to-white rounded-xl flex items-center justify-center">
-                        <p className="text-muted-foreground">Department comparison chart</p>
+                        <p className="text-muted-foreground">Grafik perbandingan departemen</p>
                       </div>
                     </div>
                   </CardContent>
@@ -184,18 +184,18 @@ export default function StudentPaymentReportsPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search by student name, ID, or department..."
+                    placeholder="Cari berdasarkan nama, NIM, atau departemen mahasiswa..."
                     className="pl-10 bg-background/50 border-muted transition-all focus-visible:bg-background"
                   />
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Printer className="h-3.5 w-3.5" />
-                    <span>Print</span>
+                    <span>Cetak</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Download className="h-3.5 w-3.5" />
-                    <span>Export</span>
+                    <span>Ekspor</span>
                   </Button>
                 </div>
               </div>

@@ -38,7 +38,7 @@ export default function PracticumMaterialsManagement() {
   const handleApproveRequest = (id) => {
     setRequests(requests.map((request) => (request.id === id ? { ...request, status: "approved" } : request)))
 
-    // Update material quantity
+    // Perbarui jumlah bahan
     const request = requests.find((r) => r.id === id)
     if (request) {
       setMaterials(
@@ -58,10 +58,10 @@ export default function PracticumMaterialsManagement() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Practicum Materials Management</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Pengelolaan Bahan Praktikum</h1>
         <Button onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Material
+          Tambah Bahan
         </Button>
       </div>
 
@@ -69,8 +69,8 @@ export default function PracticumMaterialsManagement() {
 
       <Tabs defaultValue="inventory">
         <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="inventory">Inventory</TabsTrigger>
-          <TabsTrigger value="requests">Material Requests</TabsTrigger>
+          <TabsTrigger value="inventory">Inventaris</TabsTrigger>
+          <TabsTrigger value="requests">Permintaan Bahan</TabsTrigger>
         </TabsList>
 
         <TabsContent value="inventory" className="mt-6">

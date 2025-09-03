@@ -60,18 +60,18 @@ export default function ReportsPage() {
       >
         <motion.div variants={itemVariants}>
           <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-blue-800 bg-clip-text text-transparent">
-            Financial Reports
+            Laporan Keuangan
           </h2>
-          <p className="text-muted-foreground">Generate, view, and export financial reports and statistics</p>
+          <p className="text-muted-foreground">Buat, lihat, dan ekspor laporan keuangan dan statistik</p>
         </motion.div>
         <motion.div className="flex flex-col sm:flex-row gap-2" variants={itemVariants}>
           <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
             <FileText className="mr-2 h-4 w-4" />
-            Generate Report
+            Buat Laporan
           </Button>
           <Button variant="outline" className="bg-gradient-to-r from-slate-50 to-blue-50 hover:bg-blue-100/50">
             <Download className="mr-2 h-4 w-4" />
-            Export Data
+            Ekspor Data
           </Button>
         </motion.div>
       </motion.div>
@@ -81,8 +81,8 @@ export default function ReportsPage() {
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle>Financial Reports</CardTitle>
-                <CardDescription>View and analyze financial data</CardDescription>
+                <CardTitle>Laporan Keuangan</CardTitle>
+                <CardDescription>Lihat dan analisis data keuangan</CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -91,7 +91,7 @@ export default function ReportsPage() {
                   className="bg-gradient-to-r from-slate-50 to-blue-50 hover:bg-blue-100/50"
                 >
                   <Calendar className="mr-2 h-4 w-4" />
-                  Select Period
+                  Pilih Periode
                 </Button>
                 <Button
                   variant="outline"
@@ -99,7 +99,7 @@ export default function ReportsPage() {
                   className="bg-gradient-to-r from-slate-50 to-blue-50 hover:bg-blue-100/50"
                 >
                   <Filter className="mr-2 h-4 w-4" />
-                  Filters
+                  Filter
                 </Button>
               </div>
             </div>
@@ -107,10 +107,10 @@ export default function ReportsPage() {
           <CardContent>
             <Tabs defaultValue="statistics" className="space-y-4">
               <TabsList className="bg-gradient-to-r from-slate-100 to-blue-50">
-                <TabsTrigger value="statistics">Statistics</TabsTrigger>
-                <TabsTrigger value="income">Income</TabsTrigger>
-                <TabsTrigger value="expenses">Expenses</TabsTrigger>
-                <TabsTrigger value="students">Student Payments</TabsTrigger>
+                <TabsTrigger value="statistics">Statistik</TabsTrigger>
+                <TabsTrigger value="income">Pendapatan</TabsTrigger>
+                <TabsTrigger value="expenses">Pengeluaran</TabsTrigger>
+                <TabsTrigger value="students">Pembayaran Mahasiswa</TabsTrigger>
               </TabsList>
 
               <TabsContent value="statistics">
@@ -137,16 +137,16 @@ export default function ReportsPage() {
                   <div className="h-[400px] w-full flex items-center justify-center border border-dashed rounded-md bg-gradient-to-br from-white via-green-50/10 to-white">
                     <div className="text-center">
                       <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-                      <h3 className="mt-4 text-lg font-medium">Income Reports</h3>
+                      <h3 className="mt-4 text-lg font-medium">Laporan Pendapatan</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Detailed reports of all income sources and transactions
+                        Laporan terperinci dari semua sumber pendapatan dan transaksi
                       </p>
                       <Button
                         className="mt-4"
                         variant="outline"
                         className="bg-gradient-to-r from-slate-50 to-green-50 hover:bg-green-100/50"
                       >
-                        View Income Reports
+                        Lihat Laporan Pendapatan
                       </Button>
                     </div>
                   </div>
@@ -160,16 +160,16 @@ export default function ReportsPage() {
                   <div className="h-[400px] w-full flex items-center justify-center border border-dashed rounded-md bg-gradient-to-br from-white via-red-50/10 to-white">
                     <div className="text-center">
                       <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-                      <h3 className="mt-4 text-lg font-medium">Expense Reports</h3>
+                      <h3 className="mt-4 text-lg font-medium">Laporan Pengeluaran</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Detailed reports of all expenses and expenditures
+                        Laporan terperinci dari semua biaya dan pengeluaran
                       </p>
                       <Button
                         className="mt-4"
                         variant="outline"
                         className="bg-gradient-to-r from-slate-50 to-red-50 hover:bg-red-100/50"
                       >
-                        View Expense Reports
+                        Lihat Laporan Pengeluaran
                       </Button>
                     </div>
                   </div>
@@ -183,16 +183,16 @@ export default function ReportsPage() {
                   <div className="h-[400px] w-full flex items-center justify-center border border-dashed rounded-md bg-gradient-to-br from-white via-purple-50/10 to-white">
                     <div className="text-center">
                       <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-                      <h3 className="mt-4 text-lg font-medium">Student Payment Reports</h3>
+                      <h3 className="mt-4 text-lg font-medium">Laporan Pembayaran Mahasiswa</h3>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Detailed reports of student payments and outstanding balances
+                        Laporan terperinci pembayaran mahasiswa dan saldo terutang
                       </p>
                       <Button
                         className="mt-4"
                         variant="outline"
                         className="bg-gradient-to-r from-slate-50 to-purple-50 hover:bg-purple-100/50"
                       >
-                        View Student Reports
+                        Lihat Laporan Mahasiswa
                       </Button>
                     </div>
                   </div>

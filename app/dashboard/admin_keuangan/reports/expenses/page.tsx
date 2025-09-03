@@ -8,8 +8,8 @@ import { ExpenseCategoriesChart } from "@/components/admin_keuangan/expense-cate
 import { Download, FileText, Filter, Calendar, ArrowUpDown, Printer } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Expense Reports | Finance Admin Dashboard",
-  description: "View and analyze expense reports and statistics",
+  title: "Laporan Pengeluaran | Dasbor Admin Keuangan",
+  description: "Lihat dan analisis laporan dan statistik pengeluaran",
 }
 
 export default function ExpenseReportsPage() {
@@ -18,18 +18,18 @@ export default function ExpenseReportsPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-red-800 bg-clip-text text-transparent">
-            Expense Reports
+            Laporan Pengeluaran
           </h2>
-          <p className="text-muted-foreground">View and analyze expense categories and transactions</p>
+          <p className="text-muted-foreground">Lihat dan analisis kategori pengeluaran dan transaksi</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <Button className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700">
             <FileText className="mr-2 h-4 w-4" />
-            Generate Report
+            Buat Laporan
           </Button>
           <Button variant="outline" className="bg-gradient-to-r from-slate-50 to-red-50 hover:bg-red-100/50">
             <Download className="mr-2 h-4 w-4" />
-            Export Data
+            Ekspor Data
           </Button>
         </div>
       </div>
@@ -37,10 +37,10 @@ export default function ExpenseReportsPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-red-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Total Pengeluaran</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 1,876,543,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 1.876.543.000</div>
             <p className="text-sm text-red-600 mt-1 flex items-center">
               <span className="inline-block bg-red-100 text-red-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -51,17 +51,17 @@ export default function ExpenseReportsPage() {
                   />
                 </svg>
               </span>
-              +8.3% from previous year
+              +8,3% dari tahun sebelumnya
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-red-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Operational Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Biaya Operasional</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 1,245,678,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 1.245.678.000</div>
             <p className="text-sm text-red-600 mt-1 flex items-center">
               <span className="inline-block bg-red-100 text-red-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -72,17 +72,17 @@ export default function ExpenseReportsPage() {
                   />
                 </svg>
               </span>
-              66.4% of total expenses
+              66,4% dari total pengeluaran
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-red-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Capital Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Biaya Modal</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 630,865,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 630.865.000</div>
             <p className="text-sm text-amber-600 mt-1 flex items-center">
               <span className="inline-block bg-amber-100 text-amber-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -93,7 +93,7 @@ export default function ExpenseReportsPage() {
                   />
                 </svg>
               </span>
-              33.6% of total expenses
+              33,6% dari total pengeluaran
             </p>
           </CardContent>
         </Card>
@@ -103,8 +103,8 @@ export default function ExpenseReportsPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <CardTitle>Expense Analysis</CardTitle>
-              <CardDescription>View and analyze expense data</CardDescription>
+              <CardTitle>Analisis Pengeluaran</CardTitle>
+              <CardDescription>Lihat dan analisis data pengeluaran</CardDescription>
             </div>
             <div className="flex gap-2">
               <Button
@@ -113,7 +113,7 @@ export default function ExpenseReportsPage() {
                 className="bg-gradient-to-r from-slate-50 to-red-50 hover:bg-red-100/50"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                Select Period
+                Pilih Periode
               </Button>
               <Button
                 variant="outline"
@@ -121,7 +121,7 @@ export default function ExpenseReportsPage() {
                 className="bg-gradient-to-r from-slate-50 to-red-50 hover:bg-red-100/50"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Filters
+                Filter
               </Button>
             </div>
           </div>
@@ -129,10 +129,10 @@ export default function ExpenseReportsPage() {
         <CardContent>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="bg-gradient-to-r from-slate-100 to-red-50">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="by-category">By Category</TabsTrigger>
-              <TabsTrigger value="by-department">By Department</TabsTrigger>
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
+              <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
+              <TabsTrigger value="by-category">Berdasarkan Kategori</TabsTrigger>
+              <TabsTrigger value="by-department">Berdasarkan Departemen</TabsTrigger>
+              <TabsTrigger value="transactions">Transaksi</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
@@ -151,26 +151,26 @@ export default function ExpenseReportsPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Comparison</CardTitle>
+                    <CardTitle className="text-sm font-medium">Perbandingan Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full">
                       {/* Department chart would go here */}
                       <div className="h-full w-full bg-gradient-to-br from-white via-red-50/10 to-white rounded-xl flex items-center justify-center">
-                        <p className="text-muted-foreground">Department expense chart</p>
+                        <p className="text-muted-foreground">Grafik pengeluaran departemen</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Breakdown</CardTitle>
+                    <CardTitle className="text-sm font-medium">Rincian Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full">
                       {/* Department breakdown would go here */}
                       <div className="h-full w-full bg-gradient-to-br from-white via-red-50/10 to-white rounded-xl flex items-center justify-center">
-                        <p className="text-muted-foreground">Department breakdown chart</p>
+                        <p className="text-muted-foreground">Grafik rincian departemen</p>
                       </div>
                     </div>
                   </CardContent>
@@ -183,7 +183,7 @@ export default function ExpenseReportsPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <ArrowUpDown className="h-3.5 w-3.5" />
-                    <span>Sort</span>
+                    <span>Urutkan</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Filter className="h-3.5 w-3.5" />
@@ -193,11 +193,11 @@ export default function ExpenseReportsPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Printer className="h-3.5 w-3.5" />
-                    <span>Print</span>
+                    <span>Cetak</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Download className="h-3.5 w-3.5" />
-                    <span>Export</span>
+                    <span>Ekspor</span>
                   </Button>
                 </div>
               </div>
