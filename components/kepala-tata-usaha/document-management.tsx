@@ -68,7 +68,7 @@ export default function DocumentManagement() {
   // Document Categories
   const documentCategories = [
     {
-      category: "Student Records",
+      category: "Arsip Mahasiswa",
       totalDocs: 12567,
       processed: 12245,
       pending: 322,
@@ -76,7 +76,7 @@ export default function DocumentManagement() {
       growth: "+5.2%"
     },
     {
-      category: "Academic Documents",
+      category: "Dokumen Akademik",
       totalDocs: 8934,
       processed: 8651,
       pending: 283,
@@ -84,7 +84,7 @@ export default function DocumentManagement() {
       growth: "+3.8%"
     },
     {
-      category: "Administrative Records",
+      category: "Arsip Administrasi",
       totalDocs: 6789,
       processed: 6543,
       pending: 246,
@@ -92,7 +92,7 @@ export default function DocumentManagement() {
       growth: "+7.1%"
     },
     {
-      category: "Financial Documents",
+      category: "Dokumen Keuangan",
       totalDocs: 4523,
       processed: 4398,
       pending: 125,
@@ -100,7 +100,7 @@ export default function DocumentManagement() {
       growth: "+2.4%"
     },
     {
-      category: "Legal & Compliance",
+      category: "Hukum & Kepatuhan",
       totalDocs: 2345,
       processed: 2289,
       pending: 56,
@@ -245,14 +245,14 @@ export default function DocumentManagement() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Document & Record Management</h1>
-          <p className="text-gray-600">Centralized document control and archive system</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manajemen Dokumen & Arsip</h1>
+          <p className="text-gray-600">Sistem kontrol dan arsip dokumen terpusat Fakultas Teknik</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Search documents..."
+              placeholder="Cari dokumen..."
               className="pl-10 w-64"
             />
           </div>
@@ -266,7 +266,7 @@ export default function DocumentManagement() {
           </Button>
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
-            Export
+            Ekspor
           </Button>
         </div>
       </div>

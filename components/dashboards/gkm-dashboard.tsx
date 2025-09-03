@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -29,9 +27,6 @@ import {
   BookOpen,
   FileCheck,
   AlertTriangle,
-  CheckCircle,
-  Clock,
-  Award,
   Eye,
   BarChart3,
   Settings,
@@ -45,7 +40,7 @@ export default function GKMDashboard() {
   // Quality Metrics Data
   const qualityMetrics = [
     {
-      title: "Academic Standards",
+      title: "Standar Akademik",
       value: "96.5%",
       change: "+2.3%",
       icon: ShieldCheck,
@@ -53,7 +48,7 @@ export default function GKMDashboard() {
       bgColor: "bg-gradient-to-r from-green-50 to-emerald-50"
     },
     {
-      title: "Curriculum Compliance",
+      title: "Kesesuaian Kurikulum",
       value: "94.2%",
       change: "+1.8%",
       icon: BookOpen,
@@ -61,7 +56,7 @@ export default function GKMDashboard() {
       bgColor: "bg-gradient-to-r from-blue-50 to-cyan-50"
     },
     {
-      title: "Faculty Performance",
+      title: "Kinerja Dosen",
       value: "92.8%",
       change: "+0.5%",
       icon: Users,
@@ -69,7 +64,7 @@ export default function GKMDashboard() {
       bgColor: "bg-gradient-to-r from-purple-50 to-violet-50"
     },
     {
-      title: "Student Satisfaction",
+      title: "Kepuasan Mahasiswa",
       value: "89.4%",
       change: "+3.2%",
       icon: GraduationCap,
@@ -90,18 +85,18 @@ export default function GKMDashboard() {
 
   // Quality Indicators
   const qualityIndicators = [
-    { name: "Teaching Quality", value: 85, color: "#8b5cf6" },
-    { name: "Research Output", value: 78, color: "#06b6d4" },
-    { name: "Student Engagement", value: 92, color: "#10b981" },
-    { name: "Infrastructure", value: 88, color: "#f59e0b" },
-    { name: "Industry Relevance", value: 82, color: "#ef4444" }
+    { name: "Kualitas Pengajaran", value: 85, color: "#8b5cf6" },
+    { name: "Output Penelitian", value: 78, color: "#06b6d4" },
+    { name: "Keterlibatan Mahasiswa", value: 92, color: "#10b981" },
+    { name: "Infrastruktur", value: 88, color: "#f59e0b" },
+    { name: "Relevansi Industri", value: 82, color: "#ef4444" }
   ]
 
   // Recent Audits & Reviews
   const recentAudits = [
     {
-      type: "Internal Audit",
-      department: "Computer Science",
+      type: "Audit Internal",
+      department: "Teknik Sipil (Pengairan)",
       status: "Completed",
       score: 94,
       date: "2024-01-15",
@@ -109,8 +104,8 @@ export default function GKMDashboard() {
       severity: "Low"
     },
     {
-      type: "Curriculum Review",
-      department: "Information Systems",
+      type: "Review Kurikulum",
+      department: "Arsitektur",
       status: "In Progress",
       score: 87,
       date: "2024-01-20",
@@ -118,11 +113,29 @@ export default function GKMDashboard() {
       severity: "Medium"
     },
     {
-      type: "Accreditation Prep",
-      department: "Software Engineering",
+      type: "Persiapan Akreditasi",
+      department: "Informatika",
+      status: "Completed",
+      score: 92,
+      date: "2024-01-25",
+      findings: 2,
+      severity: "Low"
+    },
+    {
+      type: "Evaluasi Eksternal",
+      department: "Teknik Elektro",
+      status: "In Progress",
+      score: 89,
+      date: "2024-01-30",
+      findings: 4,
+      severity: "Medium"
+    },
+    {
+      type: "Assessment Mutu",
+      department: "Perencanaan Wilayah Kota",
       status: "Scheduled",
       score: null,
-      date: "2024-02-01",
+      date: "2024-02-05",
       findings: 0,
       severity: "None"
     }
@@ -131,25 +144,25 @@ export default function GKMDashboard() {
   // Faculty Performance Overview
   const facultyPerformance = [
     {
-      category: "Teaching Excellence",
+      category: "Keunggulan Mengajar",
       current: 92,
       target: 95,
       status: "On Track"
     },
     {
-      category: "Research Publications",
+      category: "Publikasi Penelitian",
       current: 78,
       target: 85,
       status: "Needs Improvement"
     },
     {
-      category: "Community Service",
+      category: "Pengabdian Masyarakat",
       current: 88,
       target: 90,
       status: "Good"
     },
     {
-      category: "Professional Development",
+      category: "Pengembangan Profesi",
       current: 85,
       target: 88,
       status: "Good"
@@ -175,7 +188,7 @@ export default function GKMDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-8 pt-20">
       {/* Header Section */}
       <motion.div
         className="text-center space-y-4"
@@ -191,10 +204,10 @@ export default function GKMDashboard() {
             <ShieldCheck className="w-10 h-10 text-blue-600" />
           </motion.div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            GKM Dashboard
+            Gugus Kendali Mutu Dashboard
           </h1>
         </div>
-        <p className="text-gray-600 text-lg">Quality Control & Academic Excellence Monitoring</p>
+        <p className="text-gray-600 text-lg">Sistem Monitoring dan Evaluasi Mutu Akademik Fakultas Teknik</p>
       </motion.div>
 
       {/* Quality Metrics Grid */}
@@ -235,9 +248,9 @@ export default function GKMDashboard() {
       <Tabs defaultValue="monitoring" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-1/2 mx-auto">
           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-          <TabsTrigger value="audits">Audits</TabsTrigger>
-          <TabsTrigger value="faculty">Faculty</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="audits">Audit</TabsTrigger>
+          <TabsTrigger value="faculty">Dosen</TabsTrigger>
+          <TabsTrigger value="analytics">Analitik</TabsTrigger>
         </TabsList>
 
         {/* Academic Monitoring Tab */}
@@ -253,7 +266,7 @@ export default function GKMDashboard() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <BarChart3 className="w-6 h-6 text-blue-500" />
-                    <CardTitle>Academic Performance Trends</CardTitle>
+                    <CardTitle>Tren Kinerja Akademik</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -283,11 +296,11 @@ export default function GKMDashboard() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Target className="w-6 h-6 text-green-500" />
-                    <CardTitle>Quality Indicators</CardTitle>
+                    <CardTitle>Indikator Mutu</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {qualityIndicators.map((indicator, index) => (
+                  {qualityIndicators.map((indicator) => (
                     <div key={indicator.name} className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium text-gray-700">{indicator.name}</span>
@@ -319,7 +332,7 @@ export default function GKMDashboard() {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-6 h-6 text-orange-500" />
-                  <CardTitle>Recent Audits & Reviews</CardTitle>
+                  <CardTitle>Audit & Review Terbaru</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -383,7 +396,7 @@ export default function GKMDashboard() {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <UserCheck className="w-6 h-6 text-purple-500" />
-                  <CardTitle>Faculty Performance Overview</CardTitle>
+                  <CardTitle>Ikhtisar Kinerja Dosen</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -431,7 +444,7 @@ export default function GKMDashboard() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Activity className="w-6 h-6 text-indigo-500" />
-                    <CardTitle>Quality Distribution</CardTitle>
+                    <CardTitle>Distribusi Mutu</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -468,18 +481,18 @@ export default function GKMDashboard() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Zap className="w-6 h-6 text-yellow-500" />
-                    <CardTitle>Quick Actions</CardTitle>
+                    <CardTitle>Aksi Cepat</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {[
-                    { label: "Schedule Audit", icon: FileCheck, color: "from-blue-500 to-cyan-500" },
-                    { label: "Generate Report", icon: BarChart3, color: "from-green-500 to-emerald-500" },
-                    { label: "Review Standards", icon: ShieldCheck, color: "from-purple-500 to-violet-500" },
-                    { label: "Monitor Compliance", icon: Eye, color: "from-orange-500 to-red-500" },
-                    { label: "Update Metrics", icon: Settings, color: "from-gray-500 to-slate-500" },
-                    { label: "Faculty Feedback", icon: Users, color: "from-pink-500 to-rose-500" }
-                  ].map((action, index) => (
+                    { label: "Jadwalkan Audit", icon: FileCheck, color: "from-blue-500 to-cyan-500" },
+                    { label: "Buat Laporan", icon: BarChart3, color: "from-green-500 to-emerald-500" },
+                    { label: "Review Standar", icon: ShieldCheck, color: "from-purple-500 to-violet-500" },
+                    { label: "Monitor Kepatuhan", icon: Eye, color: "from-orange-500 to-red-500" },
+                    { label: "Update Metrik", icon: Settings, color: "from-gray-500 to-slate-500" },
+                    { label: "Feedback Dosen", icon: Users, color: "from-pink-500 to-rose-500" }
+                  ].map((action) => (
                     <motion.div
                       key={action.label}
                       whileHover={{ scale: 1.05, x: 5 }}
@@ -511,22 +524,22 @@ export default function GKMDashboard() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-6 h-6" />
-              <CardTitle>Quality Alerts & Notifications</CardTitle>
+              <CardTitle>Peringatan & Notifikasi Mutu</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
               <div className="space-y-2">
                 <div className="text-2xl font-bold">3</div>
-                <div className="text-sm opacity-90">Pending Reviews</div>
+                <div className="text-sm opacity-90">Review Tertunda</div>
               </div>
               <div className="space-y-2">
                 <div className="text-2xl font-bold">7</div>
-                <div className="text-sm opacity-90">Action Items</div>
+                <div className="text-sm opacity-90">Item Tindakan</div>
               </div>
               <div className="space-y-2">
                 <div className="text-2xl font-bold">2</div>
-                <div className="text-sm opacity-90">Critical Issues</div>
+                <div className="text-sm opacity-90">Isu Kritis</div>
               </div>
             </div>
           </CardContent>

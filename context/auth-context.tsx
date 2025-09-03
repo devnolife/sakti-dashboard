@@ -40,9 +40,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check for existing session on mount
   useEffect(() => {
     const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null
+    
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      try {
+        const parsedUser = JSON.parse(storedUser)
+        setUser(parsedUser)
+      } catch (error) {
+        localStorage.removeItem("user")
+      }
     }
+    
     setIsLoading(false)
   }, [])
 
