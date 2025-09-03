@@ -258,11 +258,90 @@
   background: hsl(var(--primary));
 }
 
-/* Added styles for the new component */
-.new-component {
-  /* Styles for the new component */
-  background-color: #f0f0f0;
-  padding: 20px;
-  border-radius: 5px;
+/* Optimized Gen Z Landing Page Animations */
+@keyframes animate-blob {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(20px, -30px) scale(1.05);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes soft-pulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+.animate-blob {
+  animation: animate-blob 8s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 3s ease-in-out infinite;
+}
+
+/* Simplified Hover effects */
+.hover-scale-105:hover {
+  transform: scale(1.05);
+}
+
+.hover-scale-102:hover {
+  transform: scale(1.02);
+}
+
+/* Simplified Glassmorphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Simplified shadow effects */
+.shadow-purple {
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
+}
+
+.shadow-pink {
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.25);
+}
+
+.shadow-cyan {
+  box-shadow: 0 4px 20px rgba(34, 211, 238, 0.25);
+}
+
+/* Simplified hover effects */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
 }
 

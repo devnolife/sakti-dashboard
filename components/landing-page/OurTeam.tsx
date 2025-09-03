@@ -86,11 +86,31 @@ const OurTeam = () => {
   ]
 
   return (
-    <section id='team' className='py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 relative overflow-hidden'>
-      {/* Background Decorations */}
+    <section id='team' className='py-24 bg-gradient-to-br from-fuchsia-50 via-purple-50 to-cyan-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 relative overflow-hidden'>
+      {/* Enhanced Background Decorations */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-r from-blue-400 to-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob"></div>
-        <div className="absolute bottom-20 left-10 w-64 h-64 bg-gradient-to-r from-purple-400 to-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-r from-fuchsia-400 via-purple-500 to-violet-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-pink-400 to-rose-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-blob animation-delay-4000"></div>
+      </div>
+      
+      {/* Simplified Floating Elements - Only 8 elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute rounded-full opacity-30 animate-pulse ${
+              i % 2 === 0 ? 'w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500' :
+              'w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-500'
+            }`}
+            style={{
+              left: `${15 + i * 10}%`,
+              top: `${20 + i * 8}%`,
+              animationDelay: `${i * 0.3}s`,
+              animationDuration: '2s'
+            }}
+          />
+        ))}
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -101,20 +121,41 @@ const OurTeam = () => {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <Badge className="mb-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 px-4 py-2">
-            <Users className="w-4 h-4 mr-2" />
-            Tim Kepemimpinan
-          </Badge>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0, y: -20 }}
+            whileInView={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <Badge className="mb-6 bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-600 text-white border-0 px-6 py-3 text-sm font-bold shadow-xl hover:shadow-purple-500/30 transition-all duration-300 animate-pulse">
+              <Users className="w-5 h-5 mr-2" />
+              The Squad That Runs This 👑
+            </Badge>
+          </motion.div>
           
-          <h2 className='text-4xl lg:text-5xl font-bold mb-6'>
-            <span className='bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent'>
-              Pimpinan Fakultas
-            </span>
-          </h2>
+          <motion.h2 
+            className='text-4xl lg:text-6xl font-black mb-6 leading-tight'
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <span className='bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent animate-gradient-x'>
+              Leadership That Hits Different
+            </span> 🔥
+          </motion.h2>
           
-          <p className='text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto'>
-            Dipimpin oleh para ahli berpengalaman yang berkomitmen untuk memajukan pendidikan teknik berkualitas tinggi
-          </p>
+          <motion.p 
+            className='text-xl lg:text-2xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto font-medium leading-relaxed'
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            viewport={{ once: true }}
+          >
+            Led by <span className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">absolute legends</span> who are{' '}
+            <span className="font-bold text-cyan-600">totally committed</span> to advancing high-quality technical education that's straight up{' '}
+            <span className="font-bold text-fuchsia-600">next level!</span> 🎆💪
+          </motion.p>
         </motion.div>
 
         {/* Dean Section */}

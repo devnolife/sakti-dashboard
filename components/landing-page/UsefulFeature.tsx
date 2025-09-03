@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
@@ -105,11 +105,36 @@ const UsefulFeature = () => {
   const ref = useRef<HTMLElement>(null)
 
   return (
-    <section id='features' ref={ref} className='bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-900 dark:via-indigo-900 dark:to-slate-900 py-20 relative overflow-hidden'>
-      {/* Background Decorations */}
+    <section id='features' ref={ref} className='bg-gradient-to-br from-violet-50 via-pink-50 to-cyan-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 py-24 relative overflow-hidden'>
+      {/* Enhanced Background Decorations */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-80 h-80 bg-gradient-to-r from-indigo-400 to-cyan-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-violet-400 via-purple-500 to-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-pink-400 to-rose-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-blob animation-delay-4000"></div>
+      </div>
+      
+      {/* Simplified Floating Elements - Only 6 instead of 20 */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-20"
+            style={{
+              left: `${20 + i * 15}%`,
+              top: `${20 + i * 10}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              delay: i * 0.5,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -120,27 +145,46 @@ const UsefulFeature = () => {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <Badge className="mb-6 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white border-0 px-4 py-2">
-            ✨ Fitur Unggulan
-          </Badge>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <Badge className="mb-6 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white border-0 px-6 py-3 text-sm font-semibold shadow-lg hover:shadow-purple-500/25 transition-all duration-300 animate-pulse">
+              ✨ Fitur Unggulan Gen Z
+            </Badge>
+          </motion.div>
           
-          <h2 className='text-4xl lg:text-5xl font-bold mb-6'>
-            <span className='bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent'>
-              Semua yang Anda Butuhkan
+          <motion.h2 
+            className='text-4xl lg:text-6xl font-black mb-6 leading-tight'
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <span className='bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient-x'>
+              Semua yang Gen Z Butuhkan
             </span>
             <br />
-            <span className="text-slate-800 dark:text-slate-100 text-3xl lg:text-4xl">
-              untuk Mengelola Fakultas
+            <span className="text-slate-800 dark:text-slate-100 text-3xl lg:text-5xl font-bold">
+              untuk Mengelola Fakultas 🔥
             </span>
-          </h2>
+          </motion.h2>
           
-          <p className='text-xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed'>
-            Platform terintegrasi yang menyediakan solusi lengkap untuk manajemen akademik modern 
-            dengan teknologi terdepan dan pengalaman pengguna yang luar biasa
-          </p>
+          <motion.p 
+            className='text-xl lg:text-2xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed font-medium'
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            viewport={{ once: true }}
+          >
+            Platform <span className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">super lit</span> yang menyediakan solusi lengkap untuk manajemen akademik modern 
+            dengan teknologi <span className="font-bold text-purple-600">next-level</span> dan UX yang absolutely <span className="font-bold text-pink-600">fire</span> 🚀💯
+          </motion.p>
         </motion.div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -149,16 +193,20 @@ const UsefulFeature = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <Card className="h-full hover:shadow-lg transition-shadow duration-300 group">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className={`${feature.color} group-hover:scale-110 transition-transform duration-300`}>
+              <Card className="h-full bg-white/80 dark:bg-slate-800/80 border border-purple-200/30 hover:border-purple-500/50 hover:shadow-xl transition-all duration-300 group cursor-pointer hover:scale-105 hover:-translate-y-1 rounded-2xl overflow-hidden">
+                <CardContent className="p-8 h-full">
+                  <div className="flex flex-col items-center text-center space-y-6 h-full">
+                    <div className={`${feature.color} group-hover:scale-110 transition-transform duration-300 p-4 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30`}>
                       {feature.icon}
                     </div>
-                    <h3 className="text-xl font-semibold">{feature.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {feature.description}
-                    </p>
+                    <div className="flex-1 flex flex-col justify-center">
+                      <h3 className="text-xl lg:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-3 group-hover:text-purple-600 transition-colors duration-300">
+                        {feature.title}
+                      </h3>
+                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors duration-300">
+                        {feature.description}
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -166,29 +214,58 @@ const UsefulFeature = () => {
           ))}
         </div>
 
-        {/* Statistics Section */}
+        {/* Enhanced Statistics Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           viewport={{ once: true }}
-          className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-6"
+          className="mt-24 relative"
         >
-          {[
-            { label: "Role Pengguna", value: "14+" },
-            { label: "Fitur Utama", value: "50+" },
-            { label: "Modul Sistem", value: "8" },
-            { label: "Uptime", value: "99.9%" }
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-3xl lg:text-4xl font-bold text-primary mb-2">
-                {stat.value}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {stat.label}
-              </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
+          <div className="relative bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-3xl p-8 border-2 border-white/20">
+            <div className="text-center mb-8">
+              <motion.h3 
+                className="text-2xl lg:text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2"
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                Platform Stats That Hit Different 📊
+              </motion.h3>
+              <p className="text-slate-600 dark:text-slate-300">Numbers that speak volumes about our impact</p>
             </div>
-          ))}
+            
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { label: "Role Pengguna", value: "14+", icon: "👥", color: "from-purple-500 to-violet-600" },
+                { label: "Fitur Utama", value: "50+", icon: "⚡", color: "from-pink-500 to-rose-600" },
+                { label: "Modul Sistem", value: "8", icon: "🧩", color: "from-cyan-500 to-blue-600" },
+                { label: "Uptime", value: "99.9%", icon: "🚀", color: "from-green-500 to-emerald-600" }
+              ].map((stat, index) => (
+                <motion.div 
+                  key={index} 
+                  className="text-center group cursor-pointer"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.1, y: -5 }}
+                >
+                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${stat.color} flex items-center justify-center text-2xl group-hover:shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300`}>
+                    {stat.icon}
+                  </div>
+                  <div className={`text-4xl lg:text-5xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300`}>
+                    {stat.value}
+                  </div>
+                  <div className="text-sm font-semibold text-slate-600 dark:text-slate-400 group-hover:text-purple-600 transition-colors duration-300">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
