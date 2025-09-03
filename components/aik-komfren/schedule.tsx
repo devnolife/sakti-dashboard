@@ -17,24 +17,24 @@ export function AIKKomfrenSchedule() {
   // This would come from an API in a real application
   const examData = {
     date: "2025-03-15",
-    time: "10:00 AM - 11:00 AM",
-    location: "Room 301, Islamic Studies Building",
+    time: "10:00 - 11:00",
+    location: "Ruang 301, Gedung Studi Islam",
     examiner: {
       name: "Dr. Ahmad Fauzi, M.A.",
-      position: "Senior Lecturer",
-      department: "Islamic Studies Department",
+      position: "Dosen Senior",
+      department: "Departemen Studi Islam",
       email: "ahmad.fauzi@university.ac.id",
       phone: "+62 812-3456-7890",
       avatarUrl: "/placeholder.svg?height=100&width=100",
     },
     materials: [
-      "Al-Qur'an recitation (Surah Al-Baqarah: 1-10)",
-      "Basic Islamic principles",
-      "Islamic ethics and values",
-      "Islamic history",
+      "Bacaan Al-Qur'an (Surah Al-Baqarah: 1-10)",
+      "Prinsip dasar Islam",
+      "Etika dan nilai-nilai Islam",
+      "Sejarah Islam",
     ],
     notes:
-      "Please arrive 15 minutes before the scheduled time. Bring your student ID card and a copy of the Al-Qur'an.",
+      "Harap tiba 15 menit sebelum waktu yang dijadwalkan. Bawa kartu mahasiswa Anda dan salinan Al-Qur'an.",
   }
 
   return (
@@ -42,23 +42,23 @@ export function AIKKomfrenSchedule() {
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            AIK Komfren Exam Schedule
+            Jadwal Ujian AIK Komfren
           </span>
         </h1>
-        <p className="text-muted-foreground mt-2">View your exam schedule and examiner information</p>
+        <p className="text-muted-foreground mt-2">Lihat jadwal ujian dan informasi penguji Anda</p>
       </div>
 
       {examStatus === "not_registered" && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Not Registered</AlertTitle>
+          <AlertTitle>Belum Terdaftar</AlertTitle>
           <AlertDescription>
-            You have not registered for the AIK Komfren Exam yet. Please complete the registration process first.
+            Anda belum terdaftar untuk Ujian AIK Komfren. Silakan selesaikan proses pendaftaran terlebih dahulu.
           </AlertDescription>
           <div className="mt-4">
             <Button asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren/registration">
-                Register Now <ArrowRight className="ml-2 h-4 w-4" />
+                Daftar Sekarang <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -68,10 +68,10 @@ export function AIKKomfrenSchedule() {
       {examStatus === "registered" && (
         <Alert className="bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-900/30 dark:text-blue-300">
           <Info className="h-4 w-4" />
-          <AlertTitle>Registration Completed</AlertTitle>
+          <AlertTitle>Pendaftaran Selesai</AlertTitle>
           <AlertDescription>
-            Your registration has been processed successfully. Your exam schedule is being prepared and will be
-            available soon. You will be notified once the schedule is available.
+            Pendaftaran Anda telah diproses dengan sukses. Jadwal ujian Anda sedang disiapkan dan akan 
+            segera tersedia. Anda akan diberi tahu setelah jadwal tersedia.
           </AlertDescription>
         </Alert>
       )}
@@ -84,7 +84,7 @@ export function AIKKomfrenSchedule() {
           <Card className="bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200 dark:from-primary-950/50 dark:to-primary-900/50 dark:border-primary-800/30">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-primary-800 dark:text-primary-300">Exam Schedule</CardTitle>
+                <CardTitle className="text-primary-800 dark:text-primary-300">Jadwal Ujian</CardTitle>
                 <Badge
                   className={
                     examStatus === "scheduled"
@@ -97,16 +97,16 @@ export function AIKKomfrenSchedule() {
                   }
                 >
                   {examStatus === "scheduled"
-                    ? "Upcoming"
+                    ? "Akan Datang"
                     : examStatus === "completed"
-                      ? "Completed"
+                      ? "Selesai"
                       : examStatus === "passed"
-                        ? "Passed"
-                        : "Failed"}
+                        ? "Lulus"
+                        : "Tidak Lulus"}
                 </Badge>
               </div>
               <CardDescription className="text-primary-700 dark:text-primary-400">
-                Your AIK Komfren Exam has been scheduled
+                Ujian AIK Komfren Anda telah dijadwalkan
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -114,10 +114,10 @@ export function AIKKomfrenSchedule() {
                 <div className="bg-white dark:bg-background rounded-lg p-4 shadow-sm border border-primary-200 dark:border-primary-800/30">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Date</span>
+                    <span className="font-medium">Tanggal</span>
                   </div>
                   <p className="text-lg">
-                    {new Date(examData.date).toLocaleDateString("en-US", {
+                    {new Date(examData.date).toLocaleDateString("id-ID", {
                       weekday: "long",
                       year: "numeric",
                       month: "long",
@@ -128,14 +128,14 @@ export function AIKKomfrenSchedule() {
                 <div className="bg-white dark:bg-background rounded-lg p-4 shadow-sm border border-primary-200 dark:border-primary-800/30">
                   <div className="flex items-center gap-2 mb-2">
                     <Clock className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Time</span>
+                    <span className="font-medium">Waktu</span>
                   </div>
                   <p className="text-lg">{examData.time}</p>
                 </div>
                 <div className="bg-white dark:bg-background rounded-lg p-4 shadow-sm border border-primary-200 dark:border-primary-800/30">
                   <div className="flex items-center gap-2 mb-2">
                     <MapPin className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Location</span>
+                    <span className="font-medium">Lokasi</span>
                   </div>
                   <p className="text-lg">{examData.location}</p>
                 </div>
@@ -144,22 +144,22 @@ export function AIKKomfrenSchedule() {
               <div className="bg-white dark:bg-background rounded-lg p-4 shadow-sm border border-primary-200 dark:border-primary-800/30">
                 <div className="flex items-center gap-2 mb-4">
                   <Info className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Important Notes</span>
+                  <span className="font-medium">Catatan Penting</span>
                 </div>
                 <p>{examData.notes}</p>
               </div>
             </CardContent>
             <CardFooter>
               <Button variant="outline" className="w-full bg-white/80 dark:bg-background/80">
-                <Calendar className="mr-2 h-4 w-4" /> Add to Calendar
+                <Calendar className="mr-2 h-4 w-4" /> Tambahkan ke Kalender
               </Button>
             </CardFooter>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Examiner Information</CardTitle>
-              <CardDescription>Details about your assigned examiner</CardDescription>
+              <CardTitle>Informasi Penguji</CardTitle>
+              <CardDescription>Detail tentang penguji yang ditugaskan untuk Anda</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col md:flex-row gap-6">
@@ -189,7 +189,7 @@ export function AIKKomfrenSchedule() {
                     </div>
                   </div>
                   <div className="border-t pt-4">
-                    <h4 className="font-medium mb-2">Exam Materials</h4>
+                    <h4 className="font-medium mb-2">Materi Ujian</h4>
                     <ul className="space-y-2">
                       {examData.materials.map((material, index) => (
                         <li key={index} className="flex items-start gap-2">
@@ -206,12 +206,12 @@ export function AIKKomfrenSchedule() {
 
           <div className="flex justify-between">
             <Button variant="outline" asChild>
-              <Link href="/dashboard/mahasiswa/aik-komfren">Back to Dashboard</Link>
+              <Link href="/dashboard/mahasiswa/aik-komfren">Kembali ke Dashboard</Link>
             </Button>
             {examStatus === "scheduled" && (
               <Button asChild>
                 <Link href="/dashboard/mahasiswa/aik-komfren/completion">
-                  Proceed to Exam Completion <ArrowRight className="ml-2 h-4 w-4" />
+                  Lanjut ke Penyelesaian Ujian <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             )}

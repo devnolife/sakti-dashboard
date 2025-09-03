@@ -20,25 +20,25 @@ import { toast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "Nama harus minimal 2 karakter.",
   }),
   nim: z.string().min(5, {
-    message: "NIM must be at least 5 characters.",
+    message: "NIM harus minimal 5 karakter.",
   }),
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: "Masukkan alamat email yang valid.",
   }),
   phone: z.string().min(10, {
-    message: "Phone number must be at least 10 characters.",
+    message: "Nomor telepon harus minimal 10 karakter.",
   }),
   semester: z.string().min(1, {
-    message: "Please select your current semester.",
+    message: "Pilih semester Anda saat ini.",
   }),
   preferredDate: z.string().optional(),
   preferredTime: z.string().optional(),
   notes: z.string().optional(),
   termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms and conditions.",
+    message: "Anda harus menyetujui syarat dan ketentuan.",
   }),
 })
 
@@ -73,8 +73,8 @@ export function AIKKomfrenRegistration() {
       setIsSubmitting(false)
       setIsRegistered(true)
       toast({
-        title: "Registration Successful",
-        description: "Your AIK Komfren Exam registration has been submitted successfully.",
+        title: "Pendaftaran Berhasil",
+        description: "Pendaftaran Ujian AIK Komfren Anda telah berhasil diajukan.",
       })
     }, 2000)
   }
@@ -95,44 +95,44 @@ export function AIKKomfrenRegistration() {
         <div className="flex flex-col">
           <h1 className="text-3xl font-bold tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-              Payment for AIK Komfren Exam
+              Pembayaran Ujian AIK Komfren
             </span>
           </h1>
-          <p className="text-muted-foreground mt-2">Complete your payment to finalize your registration</p>
+          <p className="text-muted-foreground mt-2">Selesaikan pembayaran Anda untuk menyelesaikan pendaftaran</p>
         </div>
 
         <Alert className="bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-900/30 dark:text-green-300">
           <Check className="h-4 w-4" />
-          <AlertTitle>Registration Submitted</AlertTitle>
+          <AlertTitle>Pendaftaran Terkirim</AlertTitle>
           <AlertDescription>
-            Your registration information has been submitted successfully. Please complete the payment to finalize your
-            registration.
+            Informasi pendaftaran Anda telah berhasil dikirim. Silakan selesaikan pembayaran untuk menyelesaikan
+            pendaftaran Anda.
           </AlertDescription>
         </Alert>
 
         <Card>
           <CardHeader>
-            <CardTitle>Payment Details</CardTitle>
-            <CardDescription>Please select a payment method and complete the payment</CardDescription>
+            <CardTitle>Detail Pembayaran</CardTitle>
+            <CardDescription>Silakan pilih metode pembayaran dan selesaikan pembayaran</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="rounded-lg border p-4 bg-muted/50">
               <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h3 className="font-medium">AIK Komfren Exam Fee</h3>
-                  <p className="text-sm text-muted-foreground">Consumption and administration fee</p>
+                  <h3 className="font-medium">Biaya Ujian AIK Komfren</h3>
+                  <p className="text-sm text-muted-foreground">Biaya konsumsi dan administrasi</p>
                 </div>
-                <div className="text-xl font-bold">Rp 50,000</div>
+                <div className="text-xl font-bold">Rp 50.000</div>
               </div>
               <Separator className="my-2" />
               <div className="flex justify-between items-center mt-4">
-                <div className="font-medium">Total Payment</div>
-                <div className="text-xl font-bold text-primary">Rp 50,000</div>
+                <div className="font-medium">Total Pembayaran</div>
+                <div className="text-xl font-bold text-primary">Rp 50.000</div>
               </div>
             </div>
 
             <div className="space-y-4">
-              <Label>Select Payment Method</Label>
+              <Label>Pilih Metode Pembayaran</Label>
               <RadioGroup
                 defaultValue="virtual_account"
                 value={paymentMethod}
@@ -148,7 +148,7 @@ export function AIKKomfrenRegistration() {
                     <CreditCard className="mb-3 h-8 w-8" />
                     <span className="font-medium text-lg mb-1">Virtual Account</span>
                     <span className="text-sm text-center text-muted-foreground">
-                      Transfer via ATM, mobile banking, or internet banking
+                      Transfer melalui ATM, mobile banking, atau internet banking
                     </span>
                   </Label>
                 </div>
@@ -161,7 +161,7 @@ export function AIKKomfrenRegistration() {
                     <Wallet className="mb-3 h-8 w-8" />
                     <span className="font-medium text-lg mb-1">E-Wallet</span>
                     <span className="text-sm text-center text-muted-foreground">
-                      Pay with GoPay, OVO, DANA, LinkAja, or ShopeePay
+                      Bayar dengan GoPay, OVO, DANA, LinkAja, atau ShopeePay
                     </span>
                   </Label>
                 </div>
@@ -174,7 +174,7 @@ export function AIKKomfrenRegistration() {
                     <Building className="mb-3 h-8 w-8" />
                     <span className="font-medium text-lg mb-1">Teller Bank</span>
                     <span className="text-sm text-center text-muted-foreground">
-                      Pay directly at the nearest bank branch
+                      Bayar langsung di cabang bank terdekat
                     </span>
                   </Label>
                 </div>
@@ -185,10 +185,10 @@ export function AIKKomfrenRegistration() {
               <div className="flex items-start gap-2">
                 <Info className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium">Important:</p>
+                  <p className="font-medium">Penting:</p>
                   <p>
-                    Please complete the payment within 24 hours. Your registration will be automatically canceled if
-                    payment is not received within this timeframe.
+                    Harap selesaikan pembayaran dalam waktu 24 jam. Pendaftaran Anda akan otomatis dibatalkan jika
+                    pembayaran tidak diterima dalam jangka waktu tersebut.
                   </p>
                 </div>
               </div>
@@ -196,16 +196,16 @@ export function AIKKomfrenRegistration() {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={() => setIsRegistered(false)}>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Registration
+              <ArrowLeft className="mr-2 h-4 w-4" /> Kembali ke Pendaftaran
             </Button>
             <Button onClick={handlePayment} disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Memproses...
                 </>
               ) : (
                 <>
-                  Pay Now <ArrowRight className="ml-2 h-4 w-4" />
+                  Bayar Sekarang <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
             </Button>
@@ -220,10 +220,10 @@ export function AIKKomfrenRegistration() {
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            AIK Komfren Exam Registration
+            Pendaftaran Ujian AIK Komfren
           </span>
         </h1>
-        <p className="text-muted-foreground mt-2">Register for your AIK Komfren Examination</p>
+        <p className="text-muted-foreground mt-2">Daftar untuk Ujian AIK Komfren Anda</p>
       </div>
 
       <div className="mb-8">
@@ -249,13 +249,13 @@ export function AIKKomfrenRegistration() {
           </div>
           <div className="flex justify-between mt-2 text-sm">
             <div className={`text-center w-20 ${step >= 1 ? "text-primary font-medium" : "text-gray-500"}`}>
-              Personal Info
+              Info Pribadi
             </div>
             <div className={`text-center w-20 ${step >= 2 ? "text-primary font-medium" : "text-gray-500"}`}>
-              Preferences
+              Preferensi
             </div>
             <div className={`text-center w-20 ${step >= 3 ? "text-primary font-medium" : "text-gray-500"}`}>
-              Confirmation
+              Konfirmasi
             </div>
           </div>
         </div>
@@ -264,14 +264,14 @@ export function AIKKomfrenRegistration() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {step === 1 ? "Personal Information" : step === 2 ? "Exam Preferences" : "Review and Confirm Registration"}
+            {step === 1 ? "Informasi Pribadi" : step === 2 ? "Preferensi Ujian" : "Tinjau dan Konfirmasi Pendaftaran"}
           </CardTitle>
           <CardDescription>
             {step === 1
-              ? "Please provide your personal details for registration"
+              ? "Silakan berikan detail pribadi Anda untuk pendaftaran"
               : step === 2
-                ? "Select your preferred exam date and time"
-                : "Review your information before submitting"}
+                ? "Pilih tanggal dan waktu ujian yang Anda inginkan"
+                : "Tinjau informasi Anda sebelum mengirim"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -284,9 +284,9 @@ export function AIKKomfrenRegistration() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>Nama Lengkap</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your full name" {...field} />
+                          <Input placeholder="Masukkan nama lengkap Anda" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -298,9 +298,9 @@ export function AIKKomfrenRegistration() {
                     name="nim"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Student ID (NIM)</FormLabel>
+                        <FormLabel>Nomor Induk Mahasiswa (NIM)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your NIM" {...field} />
+                          <Input placeholder="Masukkan NIM Anda" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -315,7 +315,7 @@ export function AIKKomfrenRegistration() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" type="email" {...field} />
+                            <Input placeholder="Masukkan email Anda" type="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -327,9 +327,9 @@ export function AIKKomfrenRegistration() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel>Nomor Telepon</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your phone number" {...field} />
+                            <Input placeholder="Masukkan nomor telepon Anda" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -342,12 +342,12 @@ export function AIKKomfrenRegistration() {
                     name="semester"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current Semester</FormLabel>
+                        <FormLabel>Semester Saat Ini</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your current semester" {...field} />
+                          <Input placeholder="Masukkan semester Anda saat ini" {...field} />
                         </FormControl>
                         <FormDescription>
-                          You must be at least in semester 4 to register for the AIK Komfren Exam
+                          Anda harus minimal berada di semester 4 untuk mendaftar Ujian AIK Komfren
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -363,12 +363,12 @@ export function AIKKomfrenRegistration() {
                     name="preferredDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Preferred Exam Date</FormLabel>
+                        <FormLabel>Tanggal Ujian yang Diinginkan</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Select your preferred date for the exam (subject to availability)
+                          Pilih tanggal ujian yang Anda inginkan (tergantung ketersediaan)
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -380,17 +380,17 @@ export function AIKKomfrenRegistration() {
                     name="preferredTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Preferred Time Slot</FormLabel>
+                        <FormLabel>Waktu yang Diinginkan</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a time slot" />
+                            <SelectValue placeholder="Pilih waktu" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="morning">Morning (08:00 - 12:00)</SelectItem>
-                            <SelectItem value="afternoon">Afternoon (13:00 - 16:00)</SelectItem>
+                            <SelectItem value="morning">Pagi (08:00 - 12:00)</SelectItem>
+                            <SelectItem value="afternoon">Siang (13:00 - 16:00)</SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormDescription>Select your preferred time slot (subject to availability)</FormDescription>
+                        <FormDescription>Pilih waktu yang Anda inginkan (tergantung ketersediaan)</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -401,9 +401,9 @@ export function AIKKomfrenRegistration() {
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Additional Notes</FormLabel>
+                        <FormLabel>Catatan Tambahan</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Any additional information or special requests" {...field} />
+                          <Textarea placeholder="Informasi tambahan atau permintaan khusus" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -416,27 +416,27 @@ export function AIKKomfrenRegistration() {
                 <div className="space-y-6">
                   <div className="rounded-lg border p-4 space-y-4">
                     <div>
-                      <h3 className="font-medium text-sm text-muted-foreground">Personal Information</h3>
+                      <h3 className="font-medium text-sm text-muted-foreground">Informasi Pribadi</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                         <div>
-                          <p className="text-sm font-medium">Full Name</p>
-                          <p className="text-sm">{form.getValues("name") || "Not provided"}</p>
+                          <p className="text-sm font-medium">Nama Lengkap</p>
+                          <p className="text-sm">{form.getValues("name") || "Tidak disediakan"}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium">Student ID (NIM)</p>
-                          <p className="text-sm">{form.getValues("nim") || "Not provided"}</p>
+                          <p className="text-sm font-medium">Nomor Induk Mahasiswa (NIM)</p>
+                          <p className="text-sm">{form.getValues("nim") || "Tidak disediakan"}</p>
                         </div>
                         <div>
                           <p className="text-sm font-medium">Email</p>
-                          <p className="text-sm">{form.getValues("email") || "Not provided"}</p>
+                          <p className="text-sm">{form.getValues("email") || "Tidak disediakan"}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium">Phone Number</p>
-                          <p className="text-sm">{form.getValues("phone") || "Not provided"}</p>
+                          <p className="text-sm font-medium">Nomor Telepon</p>
+                          <p className="text-sm">{form.getValues("phone") || "Tidak disediakan"}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium">Current Semester</p>
-                          <p className="text-sm">{form.getValues("semester") || "Not provided"}</p>
+                          <p className="text-sm font-medium">Semester Saat Ini</p>
+                          <p className="text-sm">{form.getValues("semester") || "Tidak disediakan"}</p>
                         </div>
                       </div>
                     </div>
@@ -444,30 +444,30 @@ export function AIKKomfrenRegistration() {
                     <Separator />
 
                     <div>
-                      <h3 className="font-medium text-sm text-muted-foreground">Exam Preferences</h3>
+                      <h3 className="font-medium text-sm text-muted-foreground">Preferensi Ujian</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                         <div>
-                          <p className="text-sm font-medium">Preferred Date</p>
+                          <p className="text-sm font-medium">Tanggal yang Diinginkan</p>
                           <p className="text-sm">
                             {form.getValues("preferredDate")
-                              ? new Date(form.getValues("preferredDate")).toLocaleDateString()
-                              : "No preference"}
+                              ? new Date(form.getValues("preferredDate") || "").toLocaleDateString()
+                              : "Tidak ada preferensi"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium">Preferred Time</p>
+                          <p className="text-sm font-medium">Waktu yang Diinginkan</p>
                           <p className="text-sm">
                             {form.getValues("preferredTime") === "morning"
-                              ? "Morning (08:00 - 12:00)"
+                              ? "Pagi (08:00 - 12:00)"
                               : form.getValues("preferredTime") === "afternoon"
-                                ? "Afternoon (13:00 - 16:00)"
-                                : "No preference"}
+                                ? "Siang (13:00 - 16:00)"
+                                : "Tidak ada preferensi"}
                           </p>
                         </div>
                       </div>
                       {form.getValues("notes") && (
                         <div className="mt-2">
-                          <p className="text-sm font-medium">Additional Notes</p>
+                          <p className="text-sm font-medium">Catatan Tambahan</p>
                           <p className="text-sm">{form.getValues("notes")}</p>
                         </div>
                       )}
@@ -476,15 +476,15 @@ export function AIKKomfrenRegistration() {
                     <Separator />
 
                     <div>
-                      <h3 className="font-medium text-sm text-muted-foreground">Payment Information</h3>
+                      <h3 className="font-medium text-sm text-muted-foreground">Informasi Pembayaran</h3>
                       <div className="mt-2">
                         <div className="flex justify-between items-center">
-                          <p className="text-sm">AIK Komfren Exam Fee (Consumption & Administration)</p>
-                          <p className="text-sm font-medium">Rp 50,000</p>
+                          <p className="text-sm">Biaya Ujian AIK Komfren (Konsumsi & Administrasi)</p>
+                          <p className="text-sm font-medium">Rp 50.000</p>
                         </div>
                         <div className="flex justify-between items-center mt-2">
                           <p className="text-sm font-medium">Total</p>
-                          <p className="text-sm font-bold">Rp 50,000</p>
+                          <p className="text-sm font-bold">Rp 50.000</p>
                         </div>
                       </div>
                     </div>
@@ -494,10 +494,10 @@ export function AIKKomfrenRegistration() {
                     <div className="flex items-start gap-2">
                       <Info className="h-5 w-5 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Important:</p>
+                        <p className="font-medium">Penting:</p>
                         <p>
-                          By submitting this registration, you agree to proceed with the payment of Rp 50,000 for the
-                          AIK Komfren Exam fee. After registration, you will be directed to the payment page.
+                          Dengan mengirimkan pendaftaran ini, Anda setuju untuk melanjutkan dengan pembayaran sebesar Rp 50.000 untuk
+                          biaya Ujian AIK Komfren. Setelah pendaftaran, Anda akan diarahkan ke halaman pembayaran.
                         </p>
                       </div>
                     </div>
@@ -513,8 +513,8 @@ export function AIKKomfrenRegistration() {
                         </FormControl>
                         <div className="space-y-1 leading-none">
                           <FormLabel>
-                            I confirm that all the information provided is correct and I agree to the terms and
-                            conditions
+                            Saya mengonfirmasi bahwa semua informasi yang diberikan benar dan saya menyetujui syarat dan
+                            ketentuan
                           </FormLabel>
                           <FormMessage />
                         </div>
@@ -529,12 +529,12 @@ export function AIKKomfrenRegistration() {
         <CardFooter className="flex justify-between">
           {step > 1 ? (
             <Button variant="outline" onClick={() => setStep(step - 1)}>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+              <ArrowLeft className="mr-2 h-4 w-4" /> Kembali
             </Button>
           ) : (
             <Button variant="outline" asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Cancel
+                <ArrowLeft className="mr-2 h-4 w-4" /> Batal
               </Link>
             </Button>
           )}
@@ -552,17 +552,17 @@ export function AIKKomfrenRegistration() {
                 setStep(step + 1)
               }}
             >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
+              Selanjutnya <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
             <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Mengirim...
                 </>
               ) : (
                 <>
-                  Submit Registration <ArrowRight className="ml-2 h-4 w-4" />
+                  Kirim Pendaftaran <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
             </Button>

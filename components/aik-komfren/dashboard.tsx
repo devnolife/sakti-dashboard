@@ -30,8 +30,8 @@ export function AIKKomfrenDashboard() {
   const studentData = {
     name: "Andi Wijaya",
     nim: "12345678",
-    faculty: "Faculty of Computer Science",
-    program: "Computer Science",
+    faculty: "Fakultas Ilmu Komputer",
+    program: "Ilmu Komputer",
     semester: 6,
   }
 
@@ -40,31 +40,31 @@ export function AIKKomfrenDashboard() {
       case "not_registered":
         return (
           <Badge variant="outline" className="text-gray-500">
-            Not Registered
+            Belum Terdaftar
           </Badge>
         )
       case "registered":
         return (
           <Badge variant="outline" className="text-blue-500">
-            Registered
+            Terdaftar
           </Badge>
         )
       case "scheduled":
         return (
           <Badge variant="outline" className="text-amber-500">
-            Scheduled
+            Terjadwal
           </Badge>
         )
       case "completed":
         return (
           <Badge variant="outline" className="text-purple-500">
-            Completed
+            Selesai
           </Badge>
         )
       case "passed":
-        return <Badge className="bg-green-500">Passed</Badge>
+        return <Badge className="bg-green-500">Lulus</Badge>
       case "failed":
-        return <Badge variant="destructive">Failed</Badge>
+        return <Badge variant="destructive">Tidak Lulus</Badge>
     }
   }
 
@@ -110,79 +110,79 @@ export function AIKKomfrenDashboard() {
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            AIK Komfren Examination
+            Ujian AIK Komfren
           </span>
         </h1>
         <p className="text-muted-foreground mt-2">
-          Manage your AIK Komfren Examination process from registration to completion.
+          Kelola proses Ujian AIK Komfren Anda mulai dari pendaftaran hingga penyelesaian.
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-primary/5 to-primary/10">
-            <CardTitle className="text-sm font-medium">Exam Status</CardTitle>
+            <CardTitle className="text-sm font-medium">Status Ujian</CardTitle>
             <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
               <GraduationCap className="h-4 w-4 text-primary" />
             </div>
           </CardHeader>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{renderStatusBadge()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Last updated: Today</p>
+            <p className="text-xs text-muted-foreground mt-1">Pembaruan terakhir: Hari ini</p>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-secondary/5 to-secondary/10">
-            <CardTitle className="text-sm font-medium">Registration</CardTitle>
+            <CardTitle className="text-sm font-medium">Pendaftaran</CardTitle>
             <div className="h-8 w-8 rounded-full bg-secondary/20 flex items-center justify-center">
               <FileText className="h-4 w-4 text-secondary" />
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">{examStatus === "not_registered" ? "Not Started" : "Completed"}</div>
+            <div className="text-2xl font-bold">{examStatus === "not_registered" ? "Belum Mulai" : "Selesai"}</div>
             <p className="text-xs text-muted-foreground mt-1">
               {examStatus === "not_registered"
-                ? "Register to start the process"
-                : "Registration completed on 10/03/2025"}
+                ? "Daftar untuk memulai proses"
+                : "Pendaftaran selesai pada 10/03/2025"}
             </p>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-green-500/5 to-green-500/10">
-            <CardTitle className="text-sm font-medium">Exam Schedule</CardTitle>
+            <CardTitle className="text-sm font-medium">Jadwal Ujian</CardTitle>
             <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center">
               <Calendar className="h-4 w-4 text-green-500" />
             </div>
           </CardHeader>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">
-              {examStatus === "not_registered" || examStatus === "registered" ? "Pending" : "15/03/2025"}
+              {examStatus === "not_registered" || examStatus === "registered" ? "Tertunda" : "15/03/2025"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {examStatus === "not_registered" || examStatus === "registered"
-                ? "Waiting for schedule assignment"
-                : "10:00 AM - Room 301"}
+                ? "Menunggu penugasan jadwal"
+                : "10:00 - Ruang 301"}
             </p>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-amber-500/5 to-amber-500/10">
-            <CardTitle className="text-sm font-medium">Examiner</CardTitle>
+            <CardTitle className="text-sm font-medium">Penguji</CardTitle>
             <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center">
               <User className="h-4 w-4 text-amber-500" />
             </div>
           </CardHeader>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">
-              {examStatus === "not_registered" || examStatus === "registered" ? "Not Assigned" : "Dr. Ahmad"}
+              {examStatus === "not_registered" || examStatus === "registered" ? "Belum Ditugaskan" : "Dr. Ahmad"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {examStatus === "not_registered" || examStatus === "registered"
-                ? "Examiner will be assigned after registration"
-                : "Islamic Studies Department"}
+                ? "Penguji akan ditugaskan setelah pendaftaran"
+                : "Departemen Studi Islam"}
             </p>
           </CardContent>
         </Card>
@@ -191,15 +191,14 @@ export function AIKKomfrenDashboard() {
       {examStatus === "not_registered" && (
         <Alert className="bg-primary/5 border-primary/20">
           <Info className="h-4 w-4 text-primary" />
-          <AlertTitle>Get Started with AIK Komfren Exam</AlertTitle>
+          <AlertTitle>Mulai dengan Ujian AIK Komfren</AlertTitle>
           <AlertDescription>
-            You haven't registered for the AIK Komfren Exam yet. Start by completing the registration and payment
-            process.
+            Anda belum terdaftar untuk Ujian AIK Komfren. Mulailah dengan menyelesaikan proses pendaftaran dan pembayaran.
           </AlertDescription>
           <div className="mt-4">
             <Button asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren/registration">
-                Register Now <ArrowRight className="ml-2 h-4 w-4" />
+                Daftar Sekarang <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -209,15 +208,14 @@ export function AIKKomfrenDashboard() {
       {examStatus === "registered" && (
         <Alert className="bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-900/30 dark:text-blue-300">
           <Info className="h-4 w-4" />
-          <AlertTitle>Registration Completed</AlertTitle>
+          <AlertTitle>Pendaftaran Selesai</AlertTitle>
           <AlertDescription>
-            Your registration has been processed successfully. Please wait for your exam schedule and examiner
-            assignment. You will be notified once the schedule is available.
+            Pendaftaran Anda telah diproses dengan sukses. Silakan tunggu jadwal ujian dan penugasan penguji Anda. Anda akan diberi tahu setelah jadwal tersedia.
           </AlertDescription>
           <div className="mt-4">
             <Button asChild variant="outline">
               <Link href="/dashboard/mahasiswa/aik-komfren/schedule">
-                Check Schedule Status <ArrowRight className="ml-2 h-4 w-4" />
+                Periksa Status Jadwal <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -227,15 +225,14 @@ export function AIKKomfrenDashboard() {
       {examStatus === "scheduled" && (
         <Alert className="bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-900/30 dark:text-amber-300">
           <Calendar className="h-4 w-4" />
-          <AlertTitle>Exam Scheduled</AlertTitle>
+          <AlertTitle>Ujian Telah Dijadwalkan</AlertTitle>
           <AlertDescription>
-            Your AIK Komfren Exam has been scheduled for March 15, 2025 at 10:00 AM in Room 301. Your examiner will be
-            Dr. Ahmad from the Islamic Studies Department. Please arrive 15 minutes before the scheduled time.
+            Ujian AIK Komfren Anda telah dijadwalkan pada tanggal 15 Maret 2025 pukul 10:00 di Ruang 301. Penguji Anda adalah Dr. Ahmad dari Departemen Studi Islam. Harap tiba 15 menit sebelum waktu yang dijadwalkan.
           </AlertDescription>
           <div className="mt-4">
             <Button asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren/schedule">
-                View Schedule Details <ArrowRight className="ml-2 h-4 w-4" />
+                Lihat Detail Jadwal <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -260,14 +257,14 @@ export function AIKKomfrenDashboard() {
             <Info className="h-4 w-4" />
           )}
           <AlertTitle>
-            {examStatus === "passed" ? "Exam Passed" : examStatus === "failed" ? "Exam Failed" : "Exam Completed"}
+            {examStatus === "passed" ? "Ujian Lulus" : examStatus === "failed" ? "Ujian Tidak Lulus" : "Ujian Selesai"}
           </AlertTitle>
           <AlertDescription>
             {examStatus === "passed"
-              ? "Congratulations! You have successfully passed the AIK Komfren Exam. Your certificate will be available soon."
+              ? "Selamat! Anda telah berhasil lulus Ujian AIK Komfren. Sertifikat Anda akan segera tersedia."
               : examStatus === "failed"
-                ? "Unfortunately, you did not pass the AIK Komfren Exam. Please contact your academic advisor for guidance on retaking the exam."
-                : "Your exam has been completed and is currently being evaluated. Results will be available soon."}
+                ? "Sayangnya, Anda tidak lulus Ujian AIK Komfren. Silakan hubungi penasihat akademik Anda untuk panduan mengulang ujian."
+                : "Ujian Anda telah selesai dan sedang dievaluasi. Hasil akan segera tersedia."}
           </AlertDescription>
           <div className="mt-4">
             <Button
@@ -275,7 +272,7 @@ export function AIKKomfrenDashboard() {
               variant={examStatus === "passed" ? "default" : examStatus === "failed" ? "destructive" : "outline"}
             >
               <Link href="/dashboard/mahasiswa/aik-komfren/completion">
-                View Exam Details <ArrowRight className="ml-2 h-4 w-4" />
+                Lihat Detail Ujian <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -284,29 +281,29 @@ export function AIKKomfrenDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>AIK Komfren Exam Progress</CardTitle>
-          <CardDescription>Track your progress through the AIK Komfren examination process</CardDescription>
+          <CardTitle>Kemajuan Ujian AIK Komfren</CardTitle>
+          <CardDescription>Lacak kemajuan Anda dalam proses ujian AIK Komfren</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
             {renderProgressStep(
               1,
-              "Registration & Payment",
-              "Register for the exam and pay the consumption fee",
+              "Pendaftaran & Pembayaran",
+              "Daftar ujian dan bayar biaya konsumsi",
               examStatus !== "not_registered" ? "completed" : "current",
             )}
             <div className="mx-4 h-5 border-l border-dashed border-muted-foreground/30"></div>
             {renderProgressStep(
               2,
-              "Schedule & Examiner Assignment",
-              "Receive your exam schedule and examiner information",
+              "Penugasan Jadwal & Penguji",
+              "Terima jadwal ujian dan informasi penguji",
               examStatus === "not_registered" ? "upcoming" : examStatus === "registered" ? "current" : "completed",
             )}
             <div className="mx-4 h-5 border-l border-dashed border-muted-foreground/30"></div>
             {renderProgressStep(
               3,
-              "Exam Preparation",
-              "Prepare for your exam using the provided materials",
+              "Persiapan Ujian",
+              "Bersiap untuk ujian Anda menggunakan materi yang disediakan",
               examStatus === "not_registered" || examStatus === "registered"
                 ? "upcoming"
                 : examStatus === "scheduled"
@@ -316,8 +313,8 @@ export function AIKKomfrenDashboard() {
             <div className="mx-4 h-5 border-l border-dashed border-muted-foreground/30"></div>
             {renderProgressStep(
               4,
-              "Exam Completion",
-              "Complete your exam and submit required information",
+              "Penyelesaian Ujian",
+              "Selesaikan ujian dan kirimkan informasi yang diperlukan",
               examStatus === "not_registered" || examStatus === "registered" || examStatus === "scheduled"
                 ? "upcoming"
                 : examStatus === "completed"
@@ -327,8 +324,8 @@ export function AIKKomfrenDashboard() {
             <div className="mx-4 h-5 border-l border-dashed border-muted-foreground/30"></div>
             {renderProgressStep(
               5,
-              "Results & Certification",
-              "Receive your exam results and certification",
+              "Hasil & Sertifikasi",
+              "Terima hasil ujian dan sertifikasi Anda",
               examStatus === "passed" || examStatus === "failed" ? "completed" : "upcoming",
             )}
           </div>
@@ -338,62 +335,62 @@ export function AIKKomfrenDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Exam Information</CardTitle>
-            <CardDescription>Important information about the AIK Komfren Exam</CardDescription>
+            <CardTitle>Informasi Ujian</CardTitle>
+            <CardDescription>Informasi penting tentang Ujian AIK Komfren</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
               <BookMarked className="h-5 w-5 text-primary" />
-              <span className="font-medium">Exam Format:</span>
-              <span>Oral examination on Islamic studies</span>
+              <span className="font-medium">Format Ujian:</span>
+              <span>Ujian lisan tentang studi Islam</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
-              <span className="font-medium">Duration:</span>
-              <span>30-45 minutes</span>
+              <span className="font-medium">Durasi:</span>
+              <span>30-45 menit</span>
             </div>
             <div className="flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-primary" />
-              <span className="font-medium">Materials:</span>
-              <span>Al-Qur'an, Hadith, and Islamic principles</span>
+              <span className="font-medium">Materi:</span>
+              <span>Al-Qur'an, Hadits, dan prinsip-prinsip Islam</span>
             </div>
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary" />
-              <span className="font-medium">Requirements:</span>
-              <span>Minimum semester 4 student</span>
+              <span className="font-medium">Persyaratan:</span>
+              <span>Minimal mahasiswa semester 4</span>
             </div>
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="#">View Complete Exam Guidelines</Link>
+              <Link href="#">Lihat Panduan Ujian Lengkap</Link>
             </Button>
           </CardFooter>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Manage your AIK Komfren Exam process</CardDescription>
+            <CardTitle>Tindakan Cepat</CardTitle>
+            <CardDescription>Kelola proses Ujian AIK Komfren Anda</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Button className="w-full justify-start" asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren/registration">
-                <FileText className="mr-2 h-4 w-4" /> Registration & Payment
+                <FileText className="mr-2 h-4 w-4" /> Pendaftaran & Pembayaran
               </Link>
             </Button>
             <Button className="w-full justify-start" variant="outline" asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren/schedule">
-                <Calendar className="mr-2 h-4 w-4" /> View Schedule & Examiner
+                <Calendar className="mr-2 h-4 w-4" /> Lihat Jadwal & Penguji
               </Link>
             </Button>
             <Button className="w-full justify-start" variant="outline" asChild>
               <Link href="/dashboard/mahasiswa/aik-komfren/completion">
-                <CheckCircle2 className="mr-2 h-4 w-4" /> Exam Completion
+                <CheckCircle2 className="mr-2 h-4 w-4" /> Penyelesaian Ujian
               </Link>
             </Button>
             <Button className="w-full justify-start" variant="outline" asChild>
               <Link href="#">
-                <Bookmark className="mr-2 h-4 w-4" /> Study Materials
+                <Bookmark className="mr-2 h-4 w-4" /> Materi Belajar
               </Link>
             </Button>
           </CardContent>
