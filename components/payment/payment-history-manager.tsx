@@ -533,8 +533,8 @@ export function PaymentHistoryManager() {
         <CardHeader className="pb-3">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <CardTitle>Payment History</CardTitle>
-              <CardDescription>View and analyze historical payment records</CardDescription>
+              <CardTitle>Riwayat Pembayaran</CardTitle>
+              <CardDescription>Lihat dan analisis riwayat pembayaran</CardDescription>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button variant="outline" className="gap-2">

@@ -8,8 +8,8 @@ import { BudgetForecastChart } from "@/components/admin_keuangan/budget-forecast
 import { Download, Filter, Calendar, ArrowUpDown, Printer, TrendingUp, Save } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Budget Planning | Finance Admin Dashboard",
-  description: "Plan and forecast budget for upcoming fiscal periods",
+  title: "Perencanaan Anggaran | Dasbor Admin Keuangan",
+  description: "Rencanakan dan perkirakan anggaran untuk periode fiskal mendatang",
 }
 
 export default function BudgetPlanningPage() {
@@ -18,18 +18,18 @@ export default function BudgetPlanningPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-violet-800 bg-clip-text text-transparent">
-            Budget Planning
+            Perencanaan Anggaran
           </h2>
-          <p className="text-muted-foreground">Plan and forecast budget for upcoming fiscal periods</p>
+          <p className="text-muted-foreground">Rencanakan dan perkirakan anggaran untuk periode fiskal mendatang</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700">
             <Save className="mr-2 h-4 w-4" />
-            Save Plan
+            Simpan Rencana
           </Button>
           <Button variant="outline" className="bg-gradient-to-r from-slate-50 to-violet-50 hover:bg-violet-100/50">
             <Download className="mr-2 h-4 w-4" />
-            Export Plan
+            Ekspor Rencana
           </Button>
         </div>
       </div>
@@ -37,10 +37,10 @@ export default function BudgetPlanningPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-violet-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Current Budget</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Anggaran Saat Ini</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 12,500,000,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 12.500.000.000</div>
             <p className="text-sm text-violet-600 mt-1 flex items-center">
               <span className="inline-block bg-violet-100 text-violet-800 rounded-full p-0.5 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -51,32 +51,32 @@ export default function BudgetPlanningPage() {
                   />
                 </svg>
               </span>
-              Fiscal Year 2023
+              Tahun Fiskal 2023
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-violet-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Planned Budget</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Anggaran yang Direncanakan</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">Rp 13,750,000,000</div>
+            <div className="text-3xl font-bold text-gray-900">Rp 13.750.000.000</div>
             <p className="text-sm text-violet-600 mt-1 flex items-center">
               <span className="inline-block bg-violet-100 text-violet-800 rounded-full p-0.5 mr-1">
                 <TrendingUp className="w-3 h-3" />
               </span>
-              +10.0% from current budget
+              +10,0% dari anggaran saat ini
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-gradient-to-br from-white via-violet-50/10 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Forecast Accuracy</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Akurasi Perkiraan</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">94.8%</div>
+            <div className="text-3xl font-bold text-gray-900">94,8%</div>
             <div className="w-full h-3 bg-gray-100 rounded-full mt-2 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full"
@@ -93,7 +93,7 @@ export default function BudgetPlanningPage() {
                   />
                 </svg>
               </span>
-              Based on previous 3 years
+              Berdasarkan 3 tahun sebelumnya
             </p>
           </CardContent>
         </Card>
@@ -103,8 +103,8 @@ export default function BudgetPlanningPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <CardTitle>Budget Planning</CardTitle>
-              <CardDescription>Plan and forecast budget for upcoming fiscal periods</CardDescription>
+              <CardTitle>Perencanaan Anggaran</CardTitle>
+              <CardDescription>Rencanakan dan perkirakan anggaran untuk periode fiskal mendatang</CardDescription>
             </div>
             <div className="flex gap-2">
               <Button
@@ -113,7 +113,7 @@ export default function BudgetPlanningPage() {
                 className="bg-gradient-to-r from-slate-50 to-violet-50 hover:bg-violet-100/50"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                Fiscal Year
+                Tahun Fiskal
               </Button>
               <Button
                 variant="outline"
@@ -121,7 +121,7 @@ export default function BudgetPlanningPage() {
                 className="bg-gradient-to-r from-slate-50 to-violet-50 hover:bg-violet-100/50"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Filters
+                Filter
               </Button>
             </div>
           </div>
@@ -129,10 +129,10 @@ export default function BudgetPlanningPage() {
         <CardContent>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="bg-gradient-to-r from-slate-100 to-violet-50">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="forecast">Forecast</TabsTrigger>
-              <TabsTrigger value="comparison">Year Comparison</TabsTrigger>
-              <TabsTrigger value="planning-table">Planning Table</TabsTrigger>
+              <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
+              <TabsTrigger value="forecast">Perkiraan</TabsTrigger>
+              <TabsTrigger value="comparison">Perbandingan Tahunan</TabsTrigger>
+              <TabsTrigger value="planning-table">Tabel Perencanaan</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
@@ -151,12 +151,12 @@ export default function BudgetPlanningPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Year-over-Year Comparison</CardTitle>
+                    <CardTitle className="text-sm font-medium">Perbandingan Tahun ke Tahun</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full bg-gradient-to-br from-white via-violet-50/10 to-white rounded-xl p-4">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-medium text-gray-700">Budget Comparison</h3>
+                        <h3 className="text-sm font-medium text-gray-700">Perbandingan Anggaran</h3>
                         <TrendingUp className="h-5 w-5 text-violet-500" />
                       </div>
                       <div className="h-[calc(100%-2rem)] w-full flex items-center justify-center">
@@ -206,12 +206,12 @@ export default function BudgetPlanningPage() {
                 </Card>
                 <Card className="border-none shadow-sm">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">Department Growth</CardTitle>
+                    <CardTitle className="text-sm font-medium">Pertumbuhan Departemen</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full bg-gradient-to-br from-white via-violet-50/10 to-white rounded-xl p-4">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-sm font-medium text-gray-700">Department Budget Growth</h3>
+                        <h3 className="text-sm font-medium text-gray-700">Pertumbuhan Anggaran Departemen</h3>
                         <TrendingUp className="h-5 w-5 text-violet-500" />
                       </div>
                       <div className="h-[calc(100%-2rem)] w-full flex items-center justify-center">
@@ -236,7 +236,7 @@ export default function BudgetPlanningPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <ArrowUpDown className="h-3.5 w-3.5" />
-                    <span>Sort</span>
+                    <span>Urutkan</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Filter className="h-3.5 w-3.5" />
@@ -246,11 +246,11 @@ export default function BudgetPlanningPage() {
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Printer className="h-3.5 w-3.5" />
-                    <span>Print</span>
+                    <span>Cetak</span>
                   </Button>
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <Download className="h-3.5 w-3.5" />
-                    <span>Export</span>
+                    <span>Ekspor</span>
                   </Button>
                 </div>
               </div>

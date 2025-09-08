@@ -25,9 +25,9 @@ export default function PaymentManagementPage() {
       >
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Payment Management</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Pengelolaan Pembayaran</h2>
             <p className="text-muted-foreground">
-              View, create, and update payment records for students across all study programs
+              Lihat, buat, dan perbarui catatan pembayaran mahasiswa dari semua program studi
             </p>
           </div>
         </div>

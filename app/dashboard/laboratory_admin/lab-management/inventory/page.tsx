@@ -34,16 +34,16 @@ import { InventoryItemDialog } from "@/components/laboratory/admin/inventory-ite
 import { AddInventoryDialog } from "@/components/laboratory/admin/add-inventory-dialog"
 import { OrderSuppliesDialog } from "@/components/laboratory/admin/order-supplies-dialog"
 
-// Mock data for inventory items
+// Data contoh untuk inventaris
 const inventoryItems = [
   {
     id: "INV001",
-    name: "Microscope - Binocular",
-    category: "Equipment",
+    name: "Mikroskop - Binokuler",
+    category: "Peralatan",
     location: "Lab A",
     quantity: 15,
     totalQuantity: 20,
-    status: "Available",
+    status: "Tersedia",
     lastMaintenance: "2023-12-10",
     nextMaintenance: "2024-06-10",
     image: "/placeholder.svg?height=100&width=100",
@@ -53,12 +53,12 @@ const inventoryItems = [
   },
   {
     id: "INV002",
-    name: "Test Tubes (100ml)",
-    category: "Glassware",
+    name: "Tabung Reaksi (100ml)",
+    category: "Peralatan Kaca",
     location: "Lab B",
     quantity: 75,
     totalQuantity: 100,
-    status: "Low Stock",
+    status: "Stok Rendah",
     lastMaintenance: null,
     nextMaintenance: null,
     image: "/placeholder.svg?height=100&width=100",
@@ -68,12 +68,12 @@ const inventoryItems = [
   },
   {
     id: "INV003",
-    name: "Digital pH Meter",
-    category: "Equipment",
+    name: "pH Meter Digital",
+    category: "Peralatan",
     location: "Lab C",
     quantity: 8,
     totalQuantity: 10,
-    status: "Available",
+    status: "Tersedia",
     lastMaintenance: "2023-11-05",
     nextMaintenance: "2024-05-05",
     image: "/placeholder.svg?height=100&width=100",
@@ -83,12 +83,12 @@ const inventoryItems = [
   },
   {
     id: "INV004",
-    name: "Bunsen Burner",
-    category: "Equipment",
+    name: "Pembakar Bunsen",
+    category: "Peralatan",
     location: "Lab A",
     quantity: 18,
     totalQuantity: 25,
-    status: "Low Stock",
+    status: "Stok Rendah",
     lastMaintenance: "2023-10-15",
     nextMaintenance: "2024-04-15",
     image: "/placeholder.svg?height=100&width=100",
@@ -98,12 +98,12 @@ const inventoryItems = [
   },
   {
     id: "INV005",
-    name: "Safety Goggles",
-    category: "Safety",
-    location: "All Labs",
+    name: "Kacamata Pengaman",
+    category: "Keselamatan",
+    location: "Semua Lab",
     quantity: 45,
     totalQuantity: 60,
-    status: "Available",
+    status: "Tersedia",
     lastMaintenance: null,
     nextMaintenance: null,
     image: "/placeholder.svg?height=100&width=100",
@@ -113,12 +113,12 @@ const inventoryItems = [
   },
   {
     id: "INV006",
-    name: "Pipettes (10ml)",
-    category: "Glassware",
+    name: "Pipet (10ml)",
+    category: "Peralatan Kaca",
     location: "Lab B",
     quantity: 5,
     totalQuantity: 30,
-    status: "Critical",
+    status: "Kritis",
     lastMaintenance: null,
     nextMaintenance: null,
     image: "/placeholder.svg?height=100&width=100",
@@ -128,12 +128,12 @@ const inventoryItems = [
   },
   {
     id: "INV007",
-    name: "Electronic Balance",
-    category: "Equipment",
+    name: "Timbangan Elektronik",
+    category: "Peralatan",
     location: "Lab C",
     quantity: 4,
     totalQuantity: 5,
-    status: "Available",
+    status: "Tersedia",
     lastMaintenance: "2023-09-20",
     nextMaintenance: "2024-03-20",
     image: "/placeholder.svg?height=100&width=100",
@@ -143,12 +143,12 @@ const inventoryItems = [
   },
   {
     id: "INV008",
-    name: "Lab Coats",
-    category: "Safety",
-    location: "All Labs",
+    name: "Jas Lab",
+    category: "Keselamatan",
+    location: "Semua Lab",
     quantity: 30,
     totalQuantity: 40,
-    status: "Available",
+    status: "Tersedia",
     lastMaintenance: null,
     nextMaintenance: null,
     image: "/placeholder.svg?height=100&width=100",
@@ -158,42 +158,42 @@ const inventoryItems = [
   },
 ]
 
-// Categories for filtering
-const categories = ["All Categories", "Equipment", "Glassware", "Chemicals", "Safety", "Consumables", "Tools"]
+// Kategori untuk pemfilteran
+const categories = ["Semua Kategori", "Peralatan", "Peralatan Kaca", "Bahan Kimia", "Keselamatan", "Habis Pakai", "Alat"]
 
-// Locations for filtering
-const locations = ["All Locations", "Lab A", "Lab B", "Lab C", "Storage Room", "Prep Room"]
+// Lokasi untuk pemfilteran
+const locations = ["Semua Lokasi", "Lab A", "Lab B", "Lab C", "Ruang Penyimpanan", "Ruang Persiapan"]
 
-// Status options for filtering
-const statusOptions = ["All Status", "Available", "Low Stock", "Critical", "Out of Stock", "Maintenance Required"]
+// Opsi status untuk pemfilteran
+const statusOptions = ["Semua Status", "Tersedia", "Stok Rendah", "Kritis", "Habis", "Perlu Perawatan"]
 
 export default function InventoryPage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All Categories")
-  const [selectedLocation, setSelectedLocation] = useState("All Locations")
-  const [selectedStatus, setSelectedStatus] = useState("All Status")
+  const [selectedCategory, setSelectedCategory] = useState("Semua Kategori")
+  const [selectedLocation, setSelectedLocation] = useState("Semua Lokasi")
+  const [selectedStatus, setSelectedStatus] = useState("Semua Status")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [isItemDialogOpen, setIsItemDialogOpen] = useState(false)
 
-  // Filter items based on search query and filters
+  // Filter item berdasarkan kueri pencarian dan filter
   const filteredItems = inventoryItems.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.id.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "All Categories" || item.category === selectedCategory
-    const matchesLocation = selectedLocation === "All Locations" || item.location === selectedLocation
-    const matchesStatus = selectedStatus === "All Status" || item.status === selectedStatus
+    const matchesCategory = selectedCategory === "Semua Kategori" || item.category === selectedCategory
+    const matchesLocation = selectedLocation === "Semua Lokasi" || item.location === selectedLocation
+    const matchesStatus = selectedStatus === "Semua Status" || item.status === selectedStatus
 
     return matchesSearch && matchesCategory && matchesLocation && matchesStatus
   })
 
-  // Calculate inventory statistics
+  // Hitung statistik inventaris
   const totalItems = inventoryItems.reduce((sum, item) => sum + item.quantity, 0)
   const totalValue = inventoryItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const lowStockItems = inventoryItems.filter(
-    (item) => item.status === "Low Stock" || item.status === "Critical",
+    (item) => item.status === "Stok Rendah" || item.status === "Kritis",
   ).length
   const maintenanceItems = inventoryItems.filter(
     (item) => item.nextMaintenance && new Date(item.nextMaintenance) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -207,58 +207,58 @@ export default function InventoryPage() {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Laboratory Inventory</h1>
-        <p className="text-muted-foreground">Manage and track all laboratory equipment, supplies, and consumables</p>
+        <h1 className="text-3xl font-bold tracking-tight">Inventaris Laboratorium</h1>
+        <p className="text-muted-foreground">Kelola dan pantau semua peralatan laboratorium, persediaan, dan barang habis pakai</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Kartu Statistik */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Items</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Barang</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalItems}</div>
-            <p className="text-xs text-muted-foreground mt-1">Across {inventoryItems.length} unique items</p>
+            <p className="text-xs text-muted-foreground mt-1">Dari {inventoryItems.length} jenis barang</p>
           </CardContent>
         </Card>
         <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Inventory Value</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Nilai Inventaris</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalValue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total investment in inventory</p>
+            <p className="text-xs text-muted-foreground mt-1">Total investasi inventaris</p>
           </CardContent>
         </Card>
         <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Items</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Barang Stok Rendah</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{lowStockItems}</div>
-            <p className="text-xs text-muted-foreground mt-1">Items requiring reorder</p>
+            <p className="text-xs text-muted-foreground mt-1">Barang yang perlu dipesan ulang</p>
           </CardContent>
         </Card>
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Maintenance Due</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Jadwal Perawatan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{maintenanceItems}</div>
-            <p className="text-xs text-muted-foreground mt-1">Items due for maintenance in 30 days</p>
+            <p className="text-xs text-muted-foreground mt-1">Barang yang perlu perawatan dalam 30 hari</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters and Actions */}
+      {/* Filter dan Tindakan */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-4 md:flex-row md:items-center">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search inventory..."
+              placeholder="Cari inventaris..."
               className="w-full pl-8 md:w-[300px]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -270,12 +270,12 @@ export default function InventoryPage() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9">
                   <Filter className="mr-2 h-4 w-4" />
-                  Category: {selectedCategory}
+                  Kategori: {selectedCategory}
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter berdasarkan Kategori</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {categories.map((category) => (
                   <DropdownMenuItem
@@ -293,12 +293,12 @@ export default function InventoryPage() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9">
                   <Filter className="mr-2 h-4 w-4" />
-                  Location: {selectedLocation}
+                  Lokasi: {selectedLocation}
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuLabel>Filter by Location</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter berdasarkan Lokasi</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {locations.map((location) => (
                   <DropdownMenuItem
@@ -321,7 +321,7 @@ export default function InventoryPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter berdasarkan Status</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {statusOptions.map((status) => (
                   <DropdownMenuItem
@@ -345,54 +345,54 @@ export default function InventoryPage() {
             onClick={() => setIsAddDialogOpen(true)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Add Item
+            Tambah Barang
           </Button>
           <Button variant="outline" size="sm" className="h-9" onClick={() => setIsOrderDialogOpen(true)}>
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Order Supplies
+            Pesan Suplai
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-9">
                 <ArrowDownUp className="mr-2 h-4 w-4" />
-                Export/Import
+                Ekspor/Impor
                 <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
                 <Download className="mr-2 h-4 w-4" />
-                Export to CSV
+                Ekspor ke CSV
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Download className="mr-2 h-4 w-4" />
-                Export to Excel
+                Ekspor ke Excel
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Upload className="mr-2 h-4 w-4" />
-                Import from CSV
+                Impor dari CSV
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
-      {/* Inventory Items */}
+      {/* Item Inventaris */}
       <Tabs defaultValue="grid" className="w-full">
         <div className="flex items-center justify-between">
           <TabsList>
             <TabsTrigger value="grid" className="flex items-center">
               <Box className="mr-2 h-4 w-4" />
-              Grid View
+              Tampilan Grid
             </TabsTrigger>
             <TabsTrigger value="table" className="flex items-center">
               <Box className="mr-2 h-4 w-4" />
-              Table View
+              Tampilan Tabel
             </TabsTrigger>
           </TabsList>
           <div className="text-sm text-muted-foreground">
-            Showing {filteredItems.length} of {inventoryItems.length} items
+            Menampilkan {filteredItems.length} dari {inventoryItems.length} barang
           </div>
         </div>
 
@@ -402,9 +402,9 @@ export default function InventoryPage() {
               <div className="rounded-full bg-muted p-3">
                 <AlertCircle className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold">No items found</h3>
+              <h3 className="mt-4 text-lg font-semibold">Tidak ada barang ditemukan</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Try adjusting your search or filters to find what you're looking for.
+                Coba sesuaikan pencarian atau filter untuk menemukan apa yang Anda cari.
               </p>
             </div>
           ) : (
@@ -428,9 +428,9 @@ export default function InventoryPage() {
                     <div className="flex justify-between">
                       <Badge
                         variant={
-                          item.status === "Available"
+                          item.status === "Tersedia"
                             ? "default"
-                            : item.status === "Low Stock"
+                            : item.status === "Stok Rendah"
                               ? "warning"
                               : "destructive"
                         }
@@ -449,7 +449,7 @@ export default function InventoryPage() {
                   <CardContent className="p-4 pt-2">
                     <div className="mt-2">
                       <div className="mb-1 flex justify-between text-xs">
-                        <span>Quantity</span>
+                        <span>Jumlah</span>
                         <span className="font-medium">
                           {item.quantity} / {item.totalQuantity}
                         </span>
@@ -470,7 +470,7 @@ export default function InventoryPage() {
                       <div className="text-sm font-medium">${item.price.toFixed(2)}</div>
                       {item.nextMaintenance && (
                         <div className="text-xs text-muted-foreground">
-                          Next maintenance: {new Date(item.nextMaintenance).toLocaleDateString()}
+                          Perawatan berikutnya: {new Date(item.nextMaintenance).toLocaleDateString()}
                         </div>
                       )}
                     </div>
@@ -487,14 +487,14 @@ export default function InventoryPage() {
               <table className="w-full caption-bottom text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="h-12 px-4 text-left font-medium">Item</th>
+                    <th className="h-12 px-4 text-left font-medium">Barang</th>
                     <th className="h-12 px-4 text-left font-medium">ID</th>
-                    <th className="h-12 px-4 text-left font-medium">Category</th>
-                    <th className="h-12 px-4 text-left font-medium">Location</th>
-                    <th className="h-12 px-4 text-left font-medium">Quantity</th>
+                    <th className="h-12 px-4 text-left font-medium">Kategori</th>
+                    <th className="h-12 px-4 text-left font-medium">Lokasi</th>
+                    <th className="h-12 px-4 text-left font-medium">Jumlah</th>
                     <th className="h-12 px-4 text-left font-medium">Status</th>
-                    <th className="h-12 px-4 text-left font-medium">Price</th>
-                    <th className="h-12 px-4 text-left font-medium">Actions</th>
+                    <th className="h-12 px-4 text-left font-medium">Harga</th>
+                    <th className="h-12 px-4 text-left font-medium">Tindakan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -503,9 +503,9 @@ export default function InventoryPage() {
                       <td colSpan={8} className="p-4 text-center">
                         <div className="flex flex-col items-center justify-center py-8">
                           <AlertCircle className="h-8 w-8 text-muted-foreground" />
-                          <h3 className="mt-4 text-lg font-semibold">No items found</h3>
+                          <h3 className="mt-4 text-lg font-semibold">Tidak ada barang ditemukan</h3>
                           <p className="mt-2 text-sm text-muted-foreground">
-                            Try adjusting your search or filters to find what you're looking for.
+                            Coba sesuaikan pencarian atau filter untuk menemukan apa yang Anda cari.
                           </p>
                         </div>
                       </td>
@@ -555,9 +555,9 @@ export default function InventoryPage() {
                         <td className="p-4">
                           <Badge
                             variant={
-                              item.status === "Available"
+                              item.status === "Tersedia"
                                 ? "default"
-                                : item.status === "Low Stock"
+                                : item.status === "Stok Rendah"
                                   ? "warning"
                                   : "destructive"
                             }
@@ -578,11 +578,11 @@ export default function InventoryPage() {
                               }}
                             >
                               <Search className="h-4 w-4" />
-                              <span className="sr-only">View details</span>
+                              <span className="sr-only">Lihat detail</span>
                             </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
                               <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Delete</span>
+                              <span className="sr-only">Hapus</span>
                             </Button>
                           </div>
                         </td>
@@ -596,7 +596,7 @@ export default function InventoryPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Dialogs */}
+      {/* Dialog */}
       {selectedItem && (
         <InventoryItemDialog item={selectedItem} open={isItemDialogOpen} onOpenChange={setIsItemDialogOpen} />
       )}
@@ -604,14 +604,14 @@ export default function InventoryPage() {
       <AddInventoryDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        categories={categories.filter((c) => c !== "All Categories")}
-        locations={locations.filter((l) => l !== "All Locations")}
+        categories={categories.filter((c) => c !== "Semua Kategori")}
+        locations={locations.filter((l) => l !== "Semua Lokasi")}
       />
 
       <OrderSuppliesDialog
         open={isOrderDialogOpen}
         onOpenChange={setIsOrderDialogOpen}
-        lowStockItems={inventoryItems.filter((item) => item.status === "Low Stock" || item.status === "Critical")}
+        lowStockItems={inventoryItems.filter((item) => item.status === "Stok Rendah" || item.status === "Kritis")}
       />
     </div>
   )
