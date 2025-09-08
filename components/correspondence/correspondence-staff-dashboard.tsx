@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, Clock, FileText, X, Mail } from "lucide-react"
+import { CheckCircle, Clock, FileText, X, Mail, Hash, Settings } from "lucide-react"
 import { LetterDetailView } from "@/components/correspondence/letter-detail-view"
+import { NumberingSystemCard } from "@/components/correspondence/numbering-system-card"
+import { NumberingConfigDialog } from "@/components/correspondence/numbering-config-dialog"
 
 // Types
 import type { LetterRequest } from "@/types/correspondence"
@@ -217,6 +219,7 @@ export function CorrespondenceStaffDashboard() {
   })
   const [selectedLetter, setSelectedLetter] = useState<LetterRequest | null>(null)
   const [viewMode, setViewMode] = useState<"list" | "detail">("list")
+  const [showNumberingConfig, setShowNumberingConfig] = useState(false)
 
   // Simulate loading data
   useEffect(() => {
@@ -425,11 +428,20 @@ export function CorrespondenceStaffDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-2xl font-bold tracking-tight">Manajemen Korespondensi</h1>
-        <Button onClick={() => setShowCreateDialog(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Buat Surat
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowNumberingConfig(true)}>
+            <Settings className="w-4 h-4 mr-2" />
+            Atur Nomor
+          </Button>
+          <Button onClick={() => setShowCreateDialog(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Buat Surat
+          </Button>
+        </div>
       </div>
+
+      {/* Numbering System */}
+      <NumberingSystemCard />
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
@@ -565,6 +577,11 @@ export function CorrespondenceStaffDashboard() {
       <LetterCreationDialog 
         open={showCreateDialog} 
         onOpenChange={setShowCreateDialog}
+      />
+
+      <NumberingConfigDialog
+        open={showNumberingConfig}
+        onOpenChange={setShowNumberingConfig}
       />
     </div>
   )

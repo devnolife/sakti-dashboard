@@ -38,7 +38,7 @@ export const roleConfigs = {
     displayName: "Admin",
   },
   lecturer: {
-    path: "/dashboard/lecturer",
+    path: "/dashboard/dosen",
     displayName: "Dosen",
   },
   kepala_jurusan: {
