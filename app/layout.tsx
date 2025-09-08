@@ -5,6 +5,7 @@ import "./globals.css"
 import { RoleProvider } from "@/context/role-context"
 import { AuthProvider } from "@/context/auth-context"
 import { NotificationProvider } from "@/context/notification-context"
+import { I18nProvider } from "@/components/providers/i18n-provider"
 import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -23,14 +24,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <RoleProvider>
-          <AuthProvider>
-            <NotificationProvider>
-              {children}
-              <Toaster />
-            </NotificationProvider>
-          </AuthProvider>
-        </RoleProvider>
+        <I18nProvider>
+          <RoleProvider>
+            <AuthProvider>
+              <NotificationProvider>
+                {children}
+                <Toaster />
+              </NotificationProvider>
+            </AuthProvider>
+          </RoleProvider>
+        </I18nProvider>
       </body>
     </html>
   )
@@ -38,4 +41,3 @@ export default function RootLayout({
 
 
 
-import './globals.css'
