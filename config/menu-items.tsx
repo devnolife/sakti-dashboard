@@ -27,9 +27,10 @@ import {
   ScrollText,
   PanelsTopLeft,
   TrendingUp,
+  Calculator,
 
 } from "lucide-react"
-import type { Role } from "@/types/role"
+import type { Role, DosenSubRole } from "@/types/role"
 
 // Type definitions for menu items
 interface MenuBadge {
@@ -843,68 +844,74 @@ export const adminMenuItems: MenuItem[] = [
 
 ]
 
-// Menu items for lecturer
+// Menu items for dosen (formerly lecturer)
 export const lecturerMenuItems = [
   {
     id: "dashboard",
     title: "Dashboard",
-    href: "/dashboard/lecturer",
+    href: "/dashboard/dosen",
     icon: LayoutDashboard,
   },
   {
     id: "academic-guidance",
     title: "Bimbingan Akademik",
-    href: "/dashboard/lecturer/academic-guidance",
+    href: "/dashboard/dosen/academic-guidance",
     icon: BookOpen,
   },
   {
     id: "exam-guidance",
     title: "Bimbingan Ujian",
-    href: "/dashboard/lecturer/exam-guidance",
+    href: "/dashboard/dosen/exam-guidance",
     icon: GraduationCapIcon,
   },
   {
     id: "kkp-guidance",
     title: "Bimbingan KKP",
-    href: "/dashboard/lecturer/kkp-guidance",
+    href: "/dashboard/dosen/kkp-guidance",
     icon: Briefcase,
   },
   {
     id: "kkp-plus-guidance",
     title: "Bimbingan KKP Plus",
-    href: "/dashboard/lecturer/kkp-plus-guidance",
+    href: "/dashboard/dosen/kkp-plus-guidance",
     icon: Award,
   },
   {
     id: "supervisions",
     title: "Supervisions",
-    href: "/dashboard/lecturer/supervisions",
+    href: "/dashboard/dosen/supervisions",
     icon: ClipboardCheck,
+  },
+  {
+    id: "rekomendasi-judul",
+    title: "Rekomendasi Judul",
+    href: "/dashboard/dosen/rekomendasi-judul",
+    icon: BookMarked,
   },
   {
     id: "exams",
     title: "Ujian",
-    href: "/dashboard/lecturer/exams",
+    href: "/dashboard/dosen/exams",
     icon: GraduationCapIcon,
     badge: { text: "7", variant: "destructive" },
     children: [
       {
         id: "exam-schedule",
         title: "Jadwal Ujian",
-        href: "/dashboard/lecturer/exams/schedule",
+        href: "/dashboard/dosen/exams/schedule",
         icon: Calendar,
       },
       {
         id: "exam-committees",
         title: "Penguji",
-        href: "/dashboard/lecturer/exams/committees",
+        href: "/dashboard/dosen/exams/committees",
         icon: UserCheck,
         badge: { text: "7", variant: "destructive" },
       },
       {
         id: "exam-grading",
         title: "Penilaian Ujian",
-        href: "/dashboard/lecturer/exams/grading",
+        href: "/dashboard/dosen/exams/grading",
         icon: ClipboardCheck,
       },
     ],
@@ -912,17 +919,17 @@ export const lecturerMenuItems = [
   {
     id: "schedule",
     title: "Schedule",
-    href: "/dashboard/lecturer/schedule",
+    href: "/dashboard/dosen/schedule",
     icon: Calendar,
   },
-
   {
     id: "settings",
     title: "Pengaturan",
-    href: "/dashboard/lecturer/settings",
+    href: "/dashboard/dosen/settings",
     icon: Settings,
   },
 ]
+
 
 export const laboratoryAdminMenuItems: MenuItem[] = [
   {
@@ -1310,7 +1317,7 @@ export const kepalaTataUsahaMenuItems = [
 export const menuItems: Record<Role, MenuItem[]> = {
   admin: adminMenuItems,
   dekan: dekanMenuItems,
-  dosen: lecturerMenuItems,
+  dosen: lecturerMenuItems, // Default to lecturer menu, actual menu will be determined by sub-role
   mahasiswa: mahasiswaMenuItems,
   prodi: prodiMenuItems,
   staff_tu: staffTuMenuItems,
@@ -1320,6 +1327,148 @@ export const menuItems: Record<Role, MenuItem[]> = {
   admin_keuangan: financeAdminMenuItems,
   gkm: gkmMenuItems,
   kepala_tata_usaha: kepalaTataUsahaMenuItems,
+}
+
+// Menu items for Wakil Dekan I (Akademik)
+export const wakilDekan1MenuItems: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/dosen/vice-dean-1",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "academic-monitoring",
+    title: "Monitoring Akademik",
+    href: "/dashboard/dosen/vice-dean-1/academic-monitoring",
+    icon: BookOpen,
+  },
+  {
+    id: "student-management",
+    title: "Manajemen Mahasiswa",
+    href: "/dashboard/dosen/vice-dean-1/student-management",
+    icon: Users,
+  },
+  {
+    id: "research-pkm",
+    title: "Penelitian & PKM",
+    href: "/dashboard/dosen/vice-dean-1/research-pkm",
+    icon: ClipboardList,
+  },
+  {
+    id: "partnerships",
+    title: "Kemitraan",
+    href: "/dashboard/dosen/vice-dean-1/partnerships",
+    icon: Briefcase,
+  },
+]
+
+// Menu items for Wakil Dekan II (Administrasi, Perencanaan, Keuangan)
+export const wakilDekan2MenuItems: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/dosen/vice-dean-2",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "budget",
+    title: "Anggaran",
+    href: "/dashboard/dosen/vice-dean-2/budget",
+    icon: Calculator,
+  },
+  {
+    id: "expenses",
+    title: "Pengeluaran",
+    href: "/dashboard/dosen/vice-dean-2/expenses",
+    icon: CreditCard,
+  },
+  {
+    id: "reports",
+    title: "Laporan Keuangan",
+    href: "/dashboard/dosen/vice-dean-2/reports",
+    icon: FileSpreadsheet,
+  },
+]
+
+// Menu items for Wakil Dekan III (Kemahasiswaan)
+export const wakilDekan3MenuItems: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/dosen/vice-dean-3",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "student-affairs",
+    title: "Kemahasiswaan",
+    href: "/dashboard/dosen/vice-dean-3/student-affairs",
+    icon: Users,
+  },
+  {
+    id: "student-activities",
+    title: "Kegiatan Mahasiswa",
+    href: "/dashboard/dosen/vice-dean-3/activities",
+    icon: Calendar,
+  },
+  {
+    id: "scholarships",
+    title: "Beasiswa",
+    href: "/dashboard/dosen/vice-dean-3/scholarships",
+    icon: Award,
+  },
+  {
+    id: "alumni",
+    title: "Alumni",
+    href: "/dashboard/dosen/vice-dean-3/alumni",
+    icon: GraduationCapIcon,
+  },
+]
+
+// Menu items for Wakil Dekan IV (Kerjasama & Pengembangan)
+export const wakilDekan4MenuItems: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/dosen/vice-dean-4",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "cooperation",
+    title: "Kerjasama",
+    href: "/dashboard/dosen/vice-dean-4/cooperation",
+    icon: Briefcase,
+  },
+  {
+    id: "development",
+    title: "Pengembangan",
+    href: "/dashboard/dosen/vice-dean-4/development",
+    icon: TrendingUp,
+  },
+  {
+    id: "partnerships",
+    title: "Mitra",
+    href: "/dashboard/dosen/vice-dean-4/partnerships",
+    icon: Users,
+  },
+  {
+    id: "internships",
+    title: "Program Magang",
+    href: "/dashboard/dosen/vice-dean-4/internships",
+    icon: Briefcase,
+  },
+]
+
+// Mapping sub-roles to their specific menu items
+export const dosenSubRoleMenuItems: Record<DosenSubRole, MenuItem[]> = {
+  dosen: lecturerMenuItems,
+  dekan: dekanMenuItems,
+  wakil_dekan_1: wakilDekan1MenuItems,
+  wakil_dekan_2: wakilDekan2MenuItems,
+  wakil_dekan_3: wakilDekan3MenuItems,
+  wakil_dekan_4: wakilDekan4MenuItems,
+  gkm: gkmMenuItems,
+  prodi: prodiMenuItems,
 }
 
 export const dekanItems = [
