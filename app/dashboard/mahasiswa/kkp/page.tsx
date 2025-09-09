@@ -356,8 +356,8 @@ export default function StudentKkpDashboardPage() {
                 <CalendarDays className="w-6 h-6 text-red-500" />
               </div>
               <div>
-                <h2 className="text-xl font-bold">Next Deadline</h2>
-                <p className="text-sm text-muted-foreground">Your upcoming important deadline</p>
+                <h2 className="text-xl font-bold">Tenggat Waktu Berikutnya</h2>
+                <p className="text-sm text-muted-foreground">Tenggat waktu penting Anda selanjutnya</p>
               </div>
             </div>
           </div>
@@ -366,14 +366,14 @@ export default function StudentKkpDashboardPage() {
               <div className="flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-red-500/10 animate-pulse">
                 <Calendar className="w-10 h-10 text-red-500" />
               </div>
-              <h3 className="text-xl font-bold">Supervisor Meeting</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Schedule your first meeting with your supervisor</p>
+              <h3 className="text-xl font-bold">Pertemuan Pembimbing</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Jadwalkan pertemuan pertama Anda dengan pembimbing</p>
               <div className="flex items-center px-4 py-2 mt-3 text-red-700 rounded-full bg-red-50">
                 <Clock className="w-4 h-4 mr-2" />
-                Due in 2 days (Oct 25, 2023)
+                Tenggat dalam 2 hari (25 Okt 2023)
               </div>
               <Button className="w-full mt-4 text-red-700 bg-white border border-red-200 shadow-sm hover:bg-red-50">
-                Schedule Meeting
+                Jadwalkan Pertemuan
               </Button>
             </div>
           </CardContent>
@@ -383,42 +383,42 @@ export default function StudentKkpDashboardPage() {
       {/* KKP Progress Overview */}
       <Card>
         <CardHeader>
-          <CardTitle>KKP Progress Overview</CardTitle>
-          <CardDescription>Track your overall progress in the KKP program</CardDescription>
+          <CardTitle>Ringkasan Progres KKP</CardTitle>
+          <CardDescription>Pantau progres keseluruhan Anda dalam program KKP</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium">Requirements Completion</span>
+                <span className="text-sm font-medium">Penyelesaian Persyaratan</span>
                 <span className="text-sm font-medium">70%</span>
               </div>
               <Progress value={70} className="h-2" />
-              <p className="text-xs text-muted-foreground">7 of 10 requirements completed</p>
+              <p className="text-xs text-muted-foreground">7 dari 10 persyaratan selesai</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium">Application Status</span>
+                <span className="text-sm font-medium">Status Pengajuan</span>
                 <span className="text-sm font-medium">50%</span>
               </div>
               <Progress value={50} className="h-2" />
-              <p className="text-xs text-muted-foreground">Waiting for supervisor assignment</p>
+              <p className="text-xs text-muted-foreground">Menunggu penugasan pembimbing</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium">Implementation</span>
+                <span className="text-sm font-medium">Pelaksanaan</span>
                 <span className="text-sm font-medium">0%</span>
               </div>
               <Progress value={0} className="h-2" />
-              <p className="text-xs text-muted-foreground">Not started yet</p>
+              <p className="text-xs text-muted-foreground">Belum dimulai</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium">Overall Progress</span>
+                <span className="text-sm font-medium">Progres Keseluruhan</span>
                 <span className="text-sm font-medium">30%</span>
               </div>
               <Progress value={30} className="h-2" />
-              <p className="text-xs text-muted-foreground">KKP in early stages</p>
+              <p className="text-xs text-muted-foreground">KKP dalam tahap awal</p>
             </div>
           </div>
         </CardContent>
@@ -432,8 +432,8 @@ export default function StudentKkpDashboardPage() {
               <Clock className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">KKP Process Timeline</h2>
-              <p className="text-sm text-muted-foreground">Track your journey through the KKP program</p>
+              <h2 className="text-xl font-bold">Alur Proses KKP</h2>
+              <p className="text-sm text-muted-foreground">Pantau perjalanan Anda melalui program KKP</p>
             </div>
           </div>
         </div>
@@ -451,17 +451,17 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 pb-8 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">Registration & Group Formation</h3>
+                    <h3 className="text-lg font-semibold">Pendaftaran & Pembentukan Kelompok</h3>
                     <Badge className="ml-3 text-green-700 bg-green-100 border-green-200 hover:bg-green-200">
-                      Completed
+                      Selesai
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Complete individual registration, form groups of 2-4 students, and submit group registration form.
+                    Lengkapi pendaftaran individu, bentuk kelompok 2-4 mahasiswa, dan kirimkan formulir pendaftaran kelompok.
                   </p>
                   <div className="flex items-center text-xs text-green-600">
                     <CheckCircle className="h-3.5 w-3.5 mr-1" />
-                    <span>Completed on October 10, 2023</span>
+                    <span>Selesai pada 10 Oktober 2023</span>
                   </div>
                 </div>
               </div>
@@ -476,18 +476,18 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 pb-8 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">Location Selection & Approval</h3>
+                    <h3 className="text-lg font-semibold">Pemilihan Lokasi & Persetujuan</h3>
                     <Badge className="ml-3 text-green-700 bg-green-100 border-green-200 hover:bg-green-200">
-                      Completed
+                      Selesai
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Select from approved locations or propose a new location, submit required documentation for
-                    approval.
+                    Pilih dari lokasi yang disetujui atau ajukan lokasi baru, kirimkan dokumentasi yang diperlukan untuk
+                    persetujuan.
                   </p>
                   <div className="flex items-center text-xs text-green-600">
                     <CheckCircle className="h-3.5 w-3.5 mr-1" />
-                    <span>Completed on October 15, 2023</span>
+                    <span>Selesai pada 15 Oktober 2023</span>
                   </div>
                 </div>
               </div>
@@ -502,17 +502,17 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 pb-8 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">Supervisor Assignment</h3>
+                    <h3 className="text-lg font-semibold">Penugasan Pembimbing</h3>
                     <Badge className="ml-3 text-yellow-700 bg-yellow-100 border-yellow-200 hover:bg-yellow-200">
-                      In Progress
+                      Dalam Proses
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Faculty supervisors are assigned to each group, initial consultation meeting is scheduled.
+                    Pembimbing fakultas ditugaskan ke setiap kelompok, pertemuan konsultasi awal dijadwalkan.
                   </p>
                   <div className="flex items-center text-xs text-yellow-600">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Expected completion by October 25, 2023</span>
+                    <span>Perkiraan selesai pada 25 Oktober 2023</span>
                   </div>
                 </div>
               </div>
@@ -527,18 +527,18 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 pb-8 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">KKP Implementation</h3>
+                    <h3 className="text-lg font-semibold">Pelaksanaan KKP</h3>
                     <Badge className="ml-3 text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200">
-                      Not Started
+                      Belum Dimulai
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Complete required hours at approved location, participate in regular supervision meetings, submit
-                    progress reports.
+                    Lengkapi jam yang diperlukan di lokasi yang disetujui, ikuti pertemuan bimbingan rutin, kirimkan
+                    laporan progres.
                   </p>
                   <div className="flex items-center text-xs text-gray-500">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Scheduled for November 1, 2023 - January 31, 2024</span>
+                    <span>Dijadwalkan 1 November 2023 - 31 Januari 2024</span>
                   </div>
                 </div>
               </div>
@@ -553,18 +553,18 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 pb-8 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">Final Report Submission</h3>
+                    <h3 className="text-lg font-semibold">Pengumpulan Laporan Akhir</h3>
                     <Badge className="ml-3 text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200">
-                      Not Started
+                      Belum Dimulai
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Prepare and submit comprehensive final report documenting KKP activities, learning outcomes, and
-                    achievements.
+                    Siapkan dan kirimkan laporan akhir komprehensif yang mendokumentasikan kegiatan KKP, hasil pembelajaran, dan
+                    pencapaian.
                   </p>
                   <div className="flex items-center text-xs text-gray-500">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Due by February 7, 2024</span>
+                    <span>Tenggat waktu 7 Februari 2024</span>
                   </div>
                 </div>
               </div>
@@ -579,18 +579,18 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 pb-8 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">Final Presentation</h3>
+                    <h3 className="text-lg font-semibold">Presentasi Akhir</h3>
                     <Badge className="ml-3 text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200">
-                      Not Started
+                      Belum Dimulai
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Present KKP experience and outcomes to faculty panel, respond to questions about learning and
-                    application.
+                    Presentasikan pengalaman dan hasil KKP kepada panel fakultas, tanggapi pertanyaan tentang pembelajaran dan
+                    aplikasi.
                   </p>
                   <div className="flex items-center text-xs text-gray-500">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Scheduled for February 10-15, 2024</span>
+                    <span>Dijadwalkan 10-15 Februari 2024</span>
                   </div>
                 </div>
               </div>
@@ -604,17 +604,17 @@ export default function StudentKkpDashboardPage() {
                 </div>
                 <div className="pt-1 transition-transform group-hover:translate-x-1">
                   <div className="flex items-center mb-1">
-                    <h3 className="text-lg font-semibold">Evaluation & Grading</h3>
+                    <h3 className="text-lg font-semibold">Evaluasi & Penilaian</h3>
                     <Badge className="ml-3 text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200">
-                      Not Started
+                      Belum Dimulai
                     </Badge>
                   </div>
                   <p className="mb-2 text-muted-foreground">
-                    Final evaluation by faculty supervisor and industry mentor, grade assignment and feedback provision.
+                    Evaluasi akhir oleh pembimbing fakultas dan mentor industri, pemberian nilai dan penyediaan umpan balik.
                   </p>
                   <div className="flex items-center text-xs text-gray-500">
                     <Clock className="h-3.5 w-3.5 mr-1" />
-                    <span>Expected by February 28, 2024</span>
+                    <span>Diharapkan pada 28 Februari 2024</span>
                   </div>
                 </div>
               </div>
@@ -631,8 +631,8 @@ export default function StudentKkpDashboardPage() {
               <Info className="w-6 h-6 text-secondary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">KKP Information</h2>
-              <p className="text-sm text-muted-foreground">Essential information about the KKP program</p>
+              <h2 className="text-xl font-bold">Informasi KKP</h2>
+              <p className="text-sm text-muted-foreground">Informasi penting tentang program KKP</p>
             </div>
           </div>
         </div>
@@ -644,13 +644,13 @@ export default function StudentKkpDashboardPage() {
                   <div className="p-2 rounded-full bg-primary/10">
                     <BookOpen className="w-5 h-5 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold">What is KKP?</h3>
+                  <h3 className="text-lg font-semibold">Apa itu KKP?</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Kuliah Kerja Profesi (KKP) is a professional work-study program designed to provide students with
-                  real-world experience in their field of study. It combines academic learning with practical
-                  application in a professional environment, allowing students to develop industry-relevant skills and
-                  build professional networks.
+                  Kuliah Kerja Profesi (KKP) adalah program magang profesional yang dirancang untuk memberikan mahasiswa
+                  pengalaman nyata di bidang studi mereka. Program ini menggabungkan pembelajaran akademik dengan
+                  aplikasi praktis dalam lingkungan profesional, memungkinkan mahasiswa mengembangkan keterampilan yang relevan
+                  dengan industri dan membangun jaringan profesional.
                 </p>
               </div>
 
@@ -659,12 +659,12 @@ export default function StudentKkpDashboardPage() {
                   <div className="p-2 rounded-full bg-secondary/10">
                     <Users className="w-5 h-5 text-secondary" />
                   </div>
-                  <h3 className="text-lg font-semibold">Group Composition</h3>
+                  <h3 className="text-lg font-semibold">Komposisi Kelompok</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Each KKP group should consist of 2 to 4 members. This size allows for effective collaboration while
-                  ensuring each member has significant responsibilities and learning opportunities. Groups with fewer
-                  than 2 or more than 4 members require special approval from the KKP coordinator.
+                  Setiap kelompok KKP harus terdiri dari 2 hingga 4 anggota. Ukuran ini memungkinkan kolaborasi yang efektif
+                  sambil memastikan setiap anggota memiliki tanggung jawab dan peluang pembelajaran yang signifikan. Kelompok
+                  dengan kurang dari 2 atau lebih dari 4 anggota memerlukan persetujuan khusus dari koordinator KKP.
                 </p>
               </div>
             </div>
@@ -675,7 +675,7 @@ export default function StudentKkpDashboardPage() {
                   <div className="p-2 bg-white rounded-full shadow-sm">
                     <CalendarDays className="w-5 h-5 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold">Implementation Schedule</h3>
+                  <h3 className="text-lg font-semibold">Jadwal Pelaksanaan</h3>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -684,12 +684,12 @@ export default function StudentKkpDashboardPage() {
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
                         <span className="font-semibold text-primary">1</span>
                       </div>
-                      <h4 className="font-medium">Semester Ganjil (Odd Semester)</h4>
+                      <h4 className="font-medium">Semester Ganjil</h4>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      KKP can be undertaken during the Odd Semester starting from Semester 7. The implementation period
-                      typically runs from August to January. Registration for Odd Semester KKP opens in May and closes
-                      in July.
+                      KKP dapat dilaksanakan selama Semester Ganjil mulai dari Semester 7. Periode pelaksanaan
+                      biasanya berlangsung dari Agustus hingga Januari. Pendaftaran KKP Semester Ganjil dibuka pada Mei dan ditutup
+                      pada Juli.
                     </p>
                   </div>
 
@@ -698,12 +698,12 @@ export default function StudentKkpDashboardPage() {
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/10">
                         <span className="font-semibold text-secondary">2</span>
                       </div>
-                      <h4 className="font-medium">Semester Genap (Even Semester)</h4>
+                      <h4 className="font-medium">Semester Genap</h4>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      KKP can be undertaken during the Even Semester starting from Semester 8. The implementation period
-                      typically runs from February to July. Registration for Even Semester KKP opens in November and
-                      closes in January.
+                      KKP dapat dilaksanakan selama Semester Genap mulai dari Semester 8. Periode pelaksanaan
+                      biasanya berlangsung dari Februari hingga Juli. Pendaftaran KKP Semester Genap dibuka pada November dan
+                      ditutup pada Januari.
                     </p>
                   </div>
                 </div>
@@ -712,7 +712,7 @@ export default function StudentKkpDashboardPage() {
                   <Button variant="outline" className="transition-shadow bg-white shadow-sm hover:shadow-md" asChild>
                     <Link href="/dashboard/mahasiswa/kkp/plus">
                       <Award className="w-4 h-4 mr-2" />
-                      KKP Plus Program
+                      Program KKP Plus
                       <ExternalLink className="w-3 h-3 ml-2 opacity-70" />
                     </Link>
                   </Button>
@@ -734,31 +734,31 @@ export default function StudentKkpDashboardPage() {
       {/* Application History */}
       <Card>
         <CardHeader>
-          <CardTitle>Application History</CardTitle>
-          <CardDescription>Your previous KKP applications</CardDescription>
+          <CardTitle>Riwayat Pengajuan</CardTitle>
+          <CardDescription>Pengajuan KKP Anda sebelumnya</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded-md">
             <div className="grid grid-cols-5 p-4 font-medium border-b">
               <div>ID</div>
-              <div>Location</div>
-              <div>Period</div>
+              <div>Lokasi</div>
+              <div>Periode</div>
               <div>Status</div>
-              <div>Action</div>
+              <div>Aksi</div>
             </div>
             <div className="divide-y">
               <div className="grid items-center grid-cols-5 p-4">
                 <div className="text-sm">KKP-2022-0018</div>
                 <div className="text-sm">PT Solusi Digital</div>
-                <div className="text-sm">Jul - Dec 2022</div>
+                <div className="text-sm">Jul - Des 2022</div>
                 <div>
                   <Badge variant="outline" className="text-red-700 border-red-200 bg-red-50">
-                    Rejected
+                    Ditolak
                   </Badge>
                 </div>
                 <div>
                   <Button variant="outline" size="sm">
-                    View
+                    Lihat
                   </Button>
                 </div>
               </div>

@@ -346,12 +346,12 @@ export default function LocationsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="industry">Bidang</Label>
-              <Select value={industryFilter || ""} onValueChange={(v) => setIndustryFilter(v || null)}>
+              <Select value={industryFilter || "all"} onValueChange={(v) => setIndustryFilter(v === "all" ? null : v)}>
                 <SelectTrigger id="industry">
                   <SelectValue placeholder="Semua bidang" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Semua bidang</SelectItem>
+                  <SelectItem value="all">Semua bidang</SelectItem>
                   {industries.map((industry) => (
                     <SelectItem key={industry} value={industry}>
                       {industry}
@@ -363,12 +363,12 @@ export default function LocationsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="city">Kota</Label>
-              <Select value={cityFilter || ""} onValueChange={(v) => setCityFilter(v || null)}>
+              <Select value={cityFilter || "all"} onValueChange={(v) => setCityFilter(v === "all" ? null : v)}>
                 <SelectTrigger id="city">
                   <SelectValue placeholder="Semua kota" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Semua kota</SelectItem>
+                  <SelectItem value="all">Semua kota</SelectItem>
                   {cities.map((city) => (
                     <SelectItem key={city} value={city}>
                       {city}
@@ -380,12 +380,12 @@ export default function LocationsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select value={statusFilter || ""} onValueChange={(v) => setStatusFilter(v || null)}>
+              <Select value={statusFilter || "all"} onValueChange={(v) => setStatusFilter(v === "all" ? null : v)}>
                 <SelectTrigger id="status">
                   <SelectValue placeholder="Semua status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Semua status</SelectItem>
+                  <SelectItem value="all">Semua status</SelectItem>
                   <SelectItem value="available">Tersedia</SelectItem>
                   <SelectItem value="limited">Terbatas</SelectItem>
                   <SelectItem value="full">Penuh</SelectItem>
@@ -395,12 +395,12 @@ export default function LocationsPage() {
 
             <div className="space-y-2">
               <Label htmlFor="sort">Urutkan</Label>
-              <Select value={sortBy || ""} onValueChange={(v) => setSortBy(v || null)}>
+              <Select value={sortBy || "default"} onValueChange={(v) => setSortBy(v === "default" ? null : v)}>
                 <SelectTrigger id="sort">
                   <SelectValue placeholder="Urutan default" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Urutan default</SelectItem>
+                  <SelectItem value="default">Urutan default</SelectItem>
                   <SelectItem value="name-asc">Nama (A-Z)</SelectItem>
                   <SelectItem value="name-desc">Nama (Z-A)</SelectItem>
                   <SelectItem value="distance">Jarak terdekat</SelectItem>
