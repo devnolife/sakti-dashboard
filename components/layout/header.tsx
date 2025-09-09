@@ -16,6 +16,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/context/auth-context"
 import { getRoleDisplayName } from "@/types/role"
 import { motion } from "framer-motion"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function Header() {
   const pathname = usePathname()
@@ -57,6 +58,8 @@ export default function Header() {
                 </Button>
 
                 <NotificationDropdown />
+
+                <LanguageSwitcher />
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

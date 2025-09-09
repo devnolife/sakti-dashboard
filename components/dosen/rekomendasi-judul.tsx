@@ -35,7 +35,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Plus, Edit, Trash2, BookOpen, Users, Calendar, Search, Filter, Download, Star, Lightbulb, TrendingUp, Target, CheckCircle2, Clock, AlertCircle } from "lucide-react"
-import { motion } from "framer-motion"
+// import { motion } from "framer-motion"
 
 interface RekomendasiJudul {
   id: string
@@ -208,14 +208,9 @@ export default function RekomendasiJudul() {
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       {/* Header Section */}
-      <motion.div variants={itemVariants} className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 text-white">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">Rekomendasi Judul Penelitian</h1>
@@ -231,11 +226,11 @@ export default function RekomendasiJudul() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Statistics Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+      <div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Card className="border-0 shadow-sm bg-gradient-to-br from-indigo-50 to-purple-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -248,9 +243,9 @@ export default function RekomendasiJudul() {
               <div className="text-indigo-600 text-sm font-medium">Total Rekomendasi</div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-emerald-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -263,9 +258,9 @@ export default function RekomendasiJudul() {
               <div className="text-green-600 text-sm font-medium">Dapat Diambil</div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-indigo-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -278,9 +273,9 @@ export default function RekomendasiJudul() {
               <div className="text-blue-600 text-sm font-medium">Sedang Dikerjakan</div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-violet-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -293,11 +288,11 @@ export default function RekomendasiJudul() {
               <div className="text-purple-600 text-sm font-medium">Diselesaikan</div>
             </CardContent>
           </Card>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Search and Actions */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div variants={itemVariants} className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-96">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -701,6 +696,6 @@ export default function RekomendasiJudul() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </motion.div>
+    </div>
   )
 }

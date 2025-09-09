@@ -1,56 +1,205 @@
+### 1. GENERAL FEATURES (Priority: High)
+```requirements
+- [ ] Implement bilingual system (Indonesian & English)
+- [ ] Fix language consistency (currently mixed ID/EN)
+- [ ] Standardize UI/UX across all modules
+```
 
-3. Tambahan/Saran User Mahasiswa
-- Tambahkan fitur Surat Pindah di menu khusus surat
-- Tambahkan Surat Pengantar Survey di menu lainnya (untuk pengambilan data pribadi)
-- Sediakan pilihan bahasa Indonesia dan bahasa Inggris di sistem aplikasi
-4. Fitur-Fitur yang Diusulkan
-a. Fitur Ujian (User: Mahasiswa)
-- Akses diberikan kepada Prodi dan Administrasi
-- Hanya dapat memilih jadwal ujian terdekat
-- Ketika memilih ujian, nama mahasiswa langsung masuk ke daftar (belum diverifikasi Prodi)
-b. Fitur AIK (User: Mahasiswa)
-- Tambahkan persyaratan: DAD, Sertifikat Ilmu Falaq, Pembayaran, dan KKP
-c. Fitur Pembayaran (User: Mahasiswa)
-- Menampilkan dua fitur pembayaran: khusus & dashboard umum
-d. Fitur KKP (User: Mahasiswa)
-- Alur: Membuat tim → Pilih lokasi → Pengajuan → Surat otomatis → Persetujuan (upload balasan) → Tercatat di Prodi → SK pembimbing → SK penarikan
-- Lokasi diganti input manual
-- Tambahkan fitur cancel otomatis (batas waktu 14 hari)
-- Laporan harian ditandatangani pembimbing dan diunggah ke sistem
-- Otomatis mencentang persyaratan terhubung ke SIMAK dan laboratorium
-e. Fitur KKP Plus (User: Mahasiswa)
-- Alur: Mahasiswa daftar KKP Plus → Data masuk ke WD 4 → Pembagian kelompok & lokasi oleh WD 4
-- Gabungkan KKP Profesi dan KKP Plus
-- Menu KKP dapat diakses Admin Prodi
-- Menu khusus untuk mahasiswa yang belum memenuhi syarat KKP atau sudah mengambil program tetapi belum melaksanakan
-- Input nilai oleh Admin Prodi (terintegrasi SIMAK)
-- Upload lembar penilaian ke sistem
-- Prodi memberikan nilai dari berkas pengajuan mahasiswa
-f. Tambahan Fitur (User: Mahasiswa)
-- Fitur jurnal mahasiswa
-- Pengecekan ijazah
-- Dashboard awal menampilkan bagan informasi mekanisme dan aturan
-5. Fitur Prodi
-- Fitur surat (disetujui Prodi/Admin, divalidasi Prodi)
-- Menampilkan data mahasiswa: total, cuti, aktif, progress perkuliahan, rekap kepuasan
-- Melihat penasehat akademik
-- Menampilkan data pembimbing TA & KKP
-- Menentukan kelulusan terbaik
-- Mengetahui jumlah PA, jumlah bimbingan skripsi, dan bimbingan KKP
-- Mengetahui mahasiswa yang sudah eligible
-- Menambah dan menentukan penguji serta pembimbing
-6. Fitur User Dekan
-- Fitur tanda tangan (TTD) digital
-- Fitur semua informasi tersimpan di Dekan
-- Fitur ujian di WD1
-- Menu jurusan dihubungkan ke WD terkait:
-- WD2: Keuangan, Data Dosen, Persyaratan, Sumber Daya, Dosen, Tendik, Sarana
-- WD3: Kemahasiswaan
-- WD4: Ilmu Falaq, KKP Plus, Konferensi AIK
-7. Fitur User Dosen
-- Fitur Mengajar
-- Fitur Pembimbing Akademik
-- Fitur Pembimbing Skripsi & Penguji
-- Fitur Penelitian
-- Mengetahui tugas (tanpa dapat mengedit)
-- Fitur Data pribadi dan sertifikat
+### 2. STUDENT FEATURES
+
+#### 2.1 Document Management
+```requirements
+- [ ] Add "Surat Pindah" (Transfer Letter) in dedicated letter menu
+- [ ] Add "Surat Pengantar Survey" (Survey Introduction Letter) in other menu
+- [ ] Implement automatic document generation workflow
+```
+
+#### 2.2 Exam Features (PENDING)
+```requirements
+- [ ] Restrict exam selection to nearest available schedule only
+- [ ] Auto-register student name when selecting exam
+- [ ] Add verification workflow by Study Program
+- [ ] Integration with academic calendar
+```
+
+#### 2.3 AIK Features (PENDING)
+```requirements
+- [ ] Add DAD requirement validation
+- [ ] Add "Sertifikat Ilmu Falaq" (Islamic Astronomy Certificate) validation
+- [ ] Add payment verification integration
+- [ ] Add KKP completion validation
+- [ ] Workflow: Requirements Check → Registration → Approval
+```
+
+#### 2.4 Payment Features
+```requirements
+- [ ] Display specialized payment options
+- [ ] Implement general dashboard for payment overview
+- [ ] Integration with finance department system
+```
+
+#### 2.5 KKP (Community Service) Features
+```requirements
+Workflow Implementation:
+- [ ] Team Creation Module
+- [ ] Location Selection (manual input)
+- [ ] Submission Process
+- [ ] Automatic Letter Generation
+- [ ] Approval System (upload response)
+- [ ] Study Program Registration
+- [ ] Supervisor Assignment (SK Pembimbing)
+- [ ] Withdrawal Letter (SK Penarikan)
+
+Additional Features:
+- [ ] Auto-cancel after 14 days timeout
+- [ ] Daily report system with supervisor signature
+- [ ] Upload daily reports to system
+- [ ] Auto-check requirements (SIMAK & lab integration)
+```
+
+#### 2.6 KKP Plus Features
+```requirements
+Workflow Implementation:
+- [ ] Student registration for KKP Plus
+- [ ] Data routing to WD 4 (Vice Dean 4)
+- [ ] Group division and location assignment by WD 4
+- [ ] Merge KKP Profesi and KKP Plus modules
+
+Admin Features:
+- [ ] KKP menu access for Program Admin
+- [ ] Special menu for students not meeting KKP requirements
+- [ ] Grade input by Program Admin (SIMAK integration)
+- [ ] Assessment sheet upload system
+- [ ] Study program grading from submission documents
+```
+
+#### 2.7 Additional Student Features
+```requirements
+- [ ] Student journal feature
+- [ ] Diploma verification system
+- [ ] Dashboard with mechanism and regulation flowcharts
+```
+
+### 3. STUDY PROGRAM (PRODI) FEATURES
+
+#### 3.1 Document Management
+```requirements
+- [ ] Letter approval system (Prodi/Admin approval, Prodi validation)
+```
+
+#### 3.2 Student Data Dashboard (PENDING)
+```requirements
+- [ ] Total student count display
+- [ ] Students on leave status
+- [ ] Active students count
+- [ ] Academic progress tracking
+- [ ] Satisfaction survey recap
+```
+
+#### 3.3 Academic Management (PENDING)
+```requirements
+- [ ] Academic advisor viewing system
+- [ ] Thesis & KKP supervisor data display
+- [ ] Best graduate determination system
+- [ ] PA count tracking
+- [ ] Thesis supervision count
+- [ ] KKP supervision count
+- [ ] Eligible student identification
+- [ ] Examiner and supervisor assignment system
+```
+
+### 4. DEAN USER FEATURES
+
+#### 4.1 Digital Signature (PENDING - High Priority)
+```requirements
+- [ ] Implement digital signature (TTD) system
+- [ ] Document approval workflow with digital signing
+- [ ] Signature verification system
+```
+
+#### 4.2 Information Management
+```requirements
+- [ ] Centralized information storage system
+- [ ] Exam features for WD1 (Vice Dean 1)
+```
+
+#### 4.3 Department Integration
+```requirements
+WD2 Integration:
+- [ ] Finance data
+- [ ] Lecturer data
+- [ ] Requirements management
+- [ ] Resource management
+- [ ] Staff data (Dosen, Tendik)
+- [ ] Facilities management
+
+WD3 Integration:
+- [ ] Student affairs management
+
+WD4 Integration:
+- [ ] Islamic Astronomy (Ilmu Falaq)
+- [ ] KKP Plus management
+- [ ] AIK Conference management
+```
+
+### 5. LECTURER (DOSEN) FEATURES
+
+#### 5.1 Teaching Management
+```requirements
+- [ ] Teaching assignment display
+- [ ] Academic advisor features
+- [ ] Research project management
+- [ ] Task viewing (read-only)
+- [ ] Personal data and certificate management
+```
+
+#### 5.2 Supervision Features (PENDING)
+```requirements
+- [ ] Thesis supervision interface
+- [ ] Thesis examination features
+- [ ] Student guidance tracking
+```
+
+## TECHNICAL REQUIREMENTS
+
+### Database Schema
+```sql
+-- Core tables needed
+Users (students, lecturers, admin)
+Academic_Programs (prodi data)
+Documents (letter management)
+KKP_Projects (community service)
+Examinations (exam scheduling)
+Signatures (digital signature)
+Payments (finance integration)
+Requirements (validation system)
+```
+
+### Integration Requirements
+```requirements
+- [ ] SIMAK system integration
+- [ ] Laboratory system integration
+- [ ] Finance system integration
+- [ ] Academic calendar integration
+- [ ] Document generation system
+- [ ] Email notification system
+```
+
+### Security Features
+```requirements
+- [ ] Role-based access control
+- [ ] Digital signature verification
+- [ ] Document encryption
+- [ ] Audit trail logging
+- [ ] Session management
+```
+
+### UI/UX Requirements
+```requirements
+- [ ] Responsive design (mobile-first)
+- [ ] Bilingual interface
+- [ ] Dashboard with information flowcharts
+- [ ] Intuitive navigation
+- [ ] Progress indicators
+- [ ] Real-time notifications
+```

@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -16,17 +18,20 @@ import {
   AlertCircle,
 } from "lucide-react"
 import MahasiswaDashboard from "@/components/dashboards/mahasiswa-dashboard"
+import { useI18n } from '@/lib/i18n'
 
 export default function MahasiswaPage() {
+  const { t } = useI18n()
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold tracking-tight">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            Dashboard Mahasiswa
+            {t('student.dashboard')}
           </span>
         </h1>
-        <p className="mt-2 text-muted-foreground">Selamat datang kembali, Andi. Ini adalah ringkasan akademik Anda.</p>
+        <p className="mt-2 text-muted-foreground">{t('student.welcome', { name: 'Andi' })}</p>
       </div>
 
       <MahasiswaDashboard />
@@ -35,15 +40,15 @@ export default function MahasiswaPage() {
         <TabsList className="border bg-background h-11">
           <TabsTrigger value="overview" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <BarChart4 className="w-4 h-4 mr-2" />
-            Ringkasan
+            {t('student.overview')}
           </TabsTrigger>
           <TabsTrigger value="courses" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <BookOpen className="w-4 h-4 mr-2" />
-            Mata Kuliah
+            {t('student.courses')}
           </TabsTrigger>
           <TabsTrigger value="schedule" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <Calendar className="w-4 h-4 mr-2" />
-            Jadwal
+            {t('student.schedule')}
           </TabsTrigger>
         </TabsList>
 
@@ -51,7 +56,7 @@ export default function MahasiswaPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-primary/5 to-primary/10">
-                <CardTitle className="text-sm font-medium">IPK Saat Ini</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('student.gpa')}</CardTitle>
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20">
                   <GraduationCap className="w-4 h-4 text-primary" />
                 </div>
@@ -60,7 +65,7 @@ export default function MahasiswaPage() {
                 <div className="text-2xl font-bold">3.75</div>
                 <div className="flex items-center mt-1">
                   <Badge variant="success" className="text-xs font-normal">
-                    +0.15 dari semester lalu
+                    {t('student.gpa_increase', { amount: '0.15' })}
                   </Badge>
                 </div>
               </CardContent>
@@ -68,20 +73,20 @@ export default function MahasiswaPage() {
 
             <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-secondary/5 to-secondary/10">
-                <CardTitle className="text-sm font-medium">Kredit Saat Ini</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('student.credits')}</CardTitle>
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/20">
                   <BookOpen className="w-4 h-4 text-secondary" />
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="text-2xl font-bold">21</div>
-                <p className="mt-1 text-xs text-muted-foreground">6 mata kuliah aktif</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('student.active_courses', { count: '6' })}</p>
               </CardContent>
             </Card>
 
             <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-green-500/5 to-green-500/10">
-                <CardTitle className="text-sm font-medium">Kehadiran</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('student.attendance')}</CardTitle>
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/20">
                   <Clock className="w-4 h-4 text-green-500" />
                 </div>
@@ -93,7 +98,7 @@ export default function MahasiswaPage() {
                     variant="outline"
                     className="text-xs font-normal text-green-600 border-green-200 bg-green-500/10"
                   >
-                    3 ketidakhadiran
+                    {t('student.absences', { count: '3' })}
                   </Badge>
                 </div>
               </CardContent>
@@ -101,7 +106,7 @@ export default function MahasiswaPage() {
 
             <Card className="overflow-hidden transition-all border-none shadow-md hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 bg-gradient-to-r from-amber-500/5 to-amber-500/10">
-                <CardTitle className="text-sm font-medium">Tugas Mendatang</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('student.upcoming_tasks')}</CardTitle>
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/20">
                   <CalendarDays className="w-4 h-4 text-amber-500" />
                 </div>
@@ -113,7 +118,7 @@ export default function MahasiswaPage() {
                     variant="outline"
                     className="text-xs font-normal bg-amber-500/10 text-amber-600 border-amber-200"
                   >
-                    2 jatuh tempo minggu ini
+                    {t('student.due_this_week', { count: '2' })}
                   </Badge>
                 </div>
               </CardContent>
@@ -124,9 +129,9 @@ export default function MahasiswaPage() {
             <Card className="col-span-4 border-none shadow-md">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle>Aktivitas Akademik</CardTitle>
+                  <CardTitle>{t('student.academic_activities')}</CardTitle>
                   <Button variant="ghost" size="sm" className="h-8 text-primary">
-                    Lihat Semua
+                    {t('student.view_all')}
                   </Button>
                 </div>
               </CardHeader>
@@ -141,7 +146,7 @@ export default function MahasiswaPage() {
                       <p className="text-sm text-muted-foreground">15 Oktober 2023</p>
                     </div>
                     <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
-                      Mendesak
+                      {t('student.urgent')}
                     </Badge>
                   </div>
 
@@ -154,7 +159,7 @@ export default function MahasiswaPage() {
                       <p className="text-sm text-muted-foreground">10 Oktober 2023</p>
                     </div>
                     <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-                      Segera Berakhir
+                      {t('student.due_soon')}
                     </Badge>
                   </div>
 
@@ -167,7 +172,7 @@ export default function MahasiswaPage() {
                       <p className="text-sm text-muted-foreground">12 Oktober 2023</p>
                     </div>
                     <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      Akan Datang
+                      {t('student.upcoming')}
                     </Badge>
                   </div>
 
@@ -180,7 +185,7 @@ export default function MahasiswaPage() {
                       <p className="text-sm text-muted-foreground">14 Oktober 2023</p>
                     </div>
                     <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20">
-                      Akan Datang
+                      {t('student.upcoming')}
                     </Badge>
                   </div>
                 </div>
@@ -190,9 +195,9 @@ export default function MahasiswaPage() {
             <Card className="col-span-3 border-none shadow-md">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle>Pengumuman</CardTitle>
+                  <CardTitle>{t('student.announcements')}</CardTitle>
                   <Button variant="ghost" size="sm" className="h-8 text-primary">
-                    Lihat Semua
+                    {t('student.view_all')}
                   </Button>
                 </div>
               </CardHeader>
@@ -201,7 +206,7 @@ export default function MahasiswaPage() {
                   <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
-                        Penting
+                        {t('student.important')}
                       </Badge>
                       <p className="text-xs text-muted-foreground">5 Okt 2023</p>
                     </div>
@@ -212,7 +217,7 @@ export default function MahasiswaPage() {
                   <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                        Acara
+                        {t('student.event')}
                       </Badge>
                       <p className="text-xs text-muted-foreground">3 Okt 2023</p>
                     </div>
@@ -223,7 +228,7 @@ export default function MahasiswaPage() {
                   <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
-                        Pendaftaran
+                        {t('student.registration')}
                       </Badge>
                       <p className="text-xs text-muted-foreground">1 Okt 2023</p>
                     </div>

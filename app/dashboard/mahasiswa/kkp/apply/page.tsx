@@ -262,29 +262,29 @@ export default function KkpApplicationPage() {
             KKP Application
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Submit your KKP (Field Work Practice) application</p>
+        <p className="text-muted-foreground mt-2">Ajukan aplikasi KKP (Kuliah Kerja Profesi) Anda</p>
       </div>
 
       <form onSubmit={handleSubmit}>
         <Card className="overflow-hidden gradient-border">
           <CardHeader>
-            <CardTitle>KKP Application Form</CardTitle>
-            <CardDescription>Fill in the details to apply for your KKP placement</CardDescription>
+            <CardTitle>Form Pengajuan KKP</CardTitle>
+            <CardDescription>Isi detail untuk mengajukan penempatan KKP Anda</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid grid-cols-3 w-full">
                 <TabsTrigger value="personal">
                   <User className="h-4 w-4 mr-2" />
-                  Personal Information
+                  Informasi Pribadi
                 </TabsTrigger>
                 <TabsTrigger value="company">
                   <Building className="h-4 w-4 mr-2" />
-                  Company Information
+                  Informasi Perusahaan
                 </TabsTrigger>
                 <TabsTrigger value="documents">
                   <FileText className="h-4 w-4 mr-2" />
-                  Documents
+                  Dokumen
                 </TabsTrigger>
               </TabsList>
 
@@ -292,11 +292,11 @@ export default function KkpApplicationPage() {
               <TabsContent value="personal" className="space-y-6 pt-4">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="title">KKP Title</Label>
+                    <Label htmlFor="title">Judul KKP</Label>
                     <Input
                       id="title"
                       name="title"
-                      placeholder="Enter the title of your KKP project"
+                      placeholder="Masukkan judul proyek KKP Anda"
                       value={formData.title}
                       onChange={handleInputChange}
                       required
@@ -304,11 +304,11 @@ export default function KkpApplicationPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">Deskripsi</Label>
                     <Textarea
                       id="description"
                       name="description"
-                      placeholder="Describe your KKP project and objectives"
+                      placeholder="Deskripsikan proyek dan tujuan KKP Anda"
                       value={formData.description}
                       onChange={handleInputChange}
                       className="min-h-[100px]"
@@ -318,7 +318,7 @@ export default function KkpApplicationPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="startDate">Start Date</Label>
+                      <Label htmlFor="startDate">Tanggal Mulai</Label>
                       <DatePicker
                         id="startDate"
                         date={formData.startDate}
@@ -326,7 +326,7 @@ export default function KkpApplicationPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="endDate">End Date</Label>
+                      <Label htmlFor="endDate">Tanggal Selesai</Label>
                       <DatePicker
                         id="endDate"
                         date={formData.endDate}
@@ -339,12 +339,12 @@ export default function KkpApplicationPage() {
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Student Information</h3>
+                      <h3 className="text-lg font-semibold">Informasi Mahasiswa</h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="studentName">Full Name</Label>
+                        <Label htmlFor="studentName">Nama Lengkap</Label>
                         <Input
                           id="studentName"
                           name="studentName"
@@ -364,7 +364,7 @@ export default function KkpApplicationPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="studentMajor">Major</Label>
+                        <Label htmlFor="studentMajor">Jurusan</Label>
                         <Input
                           id="studentMajor"
                           name="studentMajor"
@@ -396,7 +396,7 @@ export default function KkpApplicationPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="studentPhone">Phone</Label>
+                        <Label htmlFor="studentPhone">Telepon</Label>
                         <Input
                           id="studentPhone"
                           name="studentPhone"
@@ -412,17 +412,17 @@ export default function KkpApplicationPage() {
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Group Members (Optional)</h3>
+                      <h3 className="text-lg font-semibold">Anggota Kelompok (Opsional)</h3>
                       <Button type="button" variant="outline" size="sm" onClick={addGroupMember}>
                         <Users className="h-4 w-4 mr-2" />
-                        Add Member
+                        Tambah Anggota
                       </Button>
                     </div>
 
                     {formData.groupMembers.map((member, index) => (
                       <div key={index} className="space-y-4 mb-6">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium">Member {index + 1}</h4>
+                          <h4 className="text-sm font-medium">Anggota {index + 1}</h4>
                           {index > 0 && (
                             <Button
                               type="button"
@@ -503,7 +503,7 @@ export default function KkpApplicationPage() {
 
                 <div className="flex justify-end">
                   <Button type="button" onClick={goToNextTab}>
-                    Next: Company Information
+                    Selanjutnya: Informasi Perusahaan
                   </Button>
                 </div>
               </TabsContent>
@@ -512,11 +512,11 @@ export default function KkpApplicationPage() {
               <TabsContent value="company" className="space-y-6 pt-4">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="companyName">Company Name</Label>
+                    <Label htmlFor="companyName">Nama Perusahaan</Label>
                     <Input
                       id="companyName"
                       name="companyName"
-                      placeholder="Enter the company name"
+                      placeholder="Masukkan nama perusahaan"
                       value={formData.companyName}
                       onChange={handleInputChange}
                       required
@@ -524,11 +524,11 @@ export default function KkpApplicationPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="companyAddress">Address</Label>
+                    <Label htmlFor="companyAddress">Alamat</Label>
                     <Textarea
                       id="companyAddress"
                       name="companyAddress"
-                      placeholder="Enter the company address"
+                      placeholder="Masukkan alamat perusahaan"
                       value={formData.companyAddress}
                       onChange={handleInputChange}
                       required
@@ -537,22 +537,22 @@ export default function KkpApplicationPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="companyCity">City</Label>
+                      <Label htmlFor="companyCity">Kota</Label>
                       <Input
                         id="companyCity"
                         name="companyCity"
-                        placeholder="Enter the city"
+                        placeholder="Masukkan kota"
                         value={formData.companyCity}
                         onChange={handleInputChange}
                         required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="companyIndustry">Industry</Label>
+                      <Label htmlFor="companyIndustry">Industri</Label>
                       <Input
                         id="companyIndustry"
                         name="companyIndustry"
-                        placeholder="Enter the industry"
+                        placeholder="Masukkan industri"
                         value={formData.companyIndustry}
                         onChange={handleInputChange}
                         required
@@ -562,22 +562,22 @@ export default function KkpApplicationPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="companyContactPerson">Contact Person</Label>
+                      <Label htmlFor="companyContactPerson">Narahubung</Label>
                       <Input
                         id="companyContactPerson"
                         name="companyContactPerson"
-                        placeholder="Enter the contact person's name"
+                        placeholder="Masukkan nama narahubung"
                         value={formData.companyContactPerson}
                         onChange={handleInputChange}
                         required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="companyContactPhone">Contact Phone</Label>
+                      <Label htmlFor="companyContactPhone">Telepon Narahubung</Label>
                       <Input
                         id="companyContactPhone"
                         name="companyContactPhone"
-                        placeholder="Enter the contact phone number"
+                        placeholder="Masukkan nomor telepon narahubung"
                         value={formData.companyContactPhone}
                         onChange={handleInputChange}
                         required
@@ -586,11 +586,11 @@ export default function KkpApplicationPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="companyWebsite">Website (Optional)</Label>
+                    <Label htmlFor="companyWebsite">Website (Opsional)</Label>
                     <Input
                       id="companyWebsite"
                       name="companyWebsite"
-                      placeholder="Enter the company website"
+                      placeholder="Masukkan website perusahaan"
                       value={formData.companyWebsite}
                       onChange={handleInputChange}
                     />
@@ -599,10 +599,10 @@ export default function KkpApplicationPage() {
 
                 <div className="flex justify-between">
                   <Button type="button" variant="outline" onClick={goToPreviousTab}>
-                    Previous: Personal Information
+                    Sebelumnya: Informasi Pribadi
                   </Button>
                   <Button type="button" onClick={goToNextTab}>
-                    Next: Documents
+                    Selanjutnya: Dokumen
                   </Button>
                 </div>
               </TabsContent>
@@ -616,13 +616,13 @@ export default function KkpApplicationPage() {
                         <AlertCircle className="h-5 w-5 text-blue-400" />
                       </div>
                       <div className="ml-3">
-                        <h3 className="text-sm font-medium text-blue-800">Document Requirements</h3>
+                        <h3 className="text-sm font-medium text-blue-800">Persyaratan Dokumen</h3>
                         <div className="mt-2 text-sm text-blue-700">
-                          <p>Please upload the following required documents:</p>
+                          <p>Harap unggah dokumen wajib berikut:</p>
                           <ul className="list-disc pl-5 mt-1 space-y-1">
-                            <li>Application Letter (PDF)</li>
-                            <li>KKP Proposal (PDF)</li>
-                            <li>Academic Transcript (PDF)</li>
+                            <li>Surat Lamaran (PDF)</li>
+                            <li>Proposal KKP (PDF)</li>
+                            <li>Transkrip Akademik (PDF)</li>
                           </ul>
                         </div>
                       </div>
@@ -631,7 +631,7 @@ export default function KkpApplicationPage() {
 
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="applicationLetter">Application Letter</Label>
+                      <Label htmlFor="applicationLetter">Surat Lamaran</Label>
                       <div className="flex items-center gap-2 mt-1">
                         <Input
                           id="applicationLetter"
@@ -642,13 +642,13 @@ export default function KkpApplicationPage() {
                         />
                         <Button type="button" variant="outline" size="sm" disabled={isUploading}>
                           <Upload className="h-4 w-4 mr-2" />
-                          Upload
+                          Unggah
                         </Button>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="proposal">KKP Proposal</Label>
+                      <Label htmlFor="proposal">Proposal KKP</Label>
                       <div className="flex items-center gap-2 mt-1">
                         <Input
                           id="proposal"
@@ -659,13 +659,13 @@ export default function KkpApplicationPage() {
                         />
                         <Button type="button" variant="outline" size="sm" disabled={isUploading}>
                           <Upload className="h-4 w-4 mr-2" />
-                          Upload
+                          Unggah
                         </Button>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="transcript">Academic Transcript</Label>
+                      <Label htmlFor="transcript">Transkrip Akademik</Label>
                       <div className="flex items-center gap-2 mt-1">
                         <Input
                           id="transcript"
@@ -676,14 +676,14 @@ export default function KkpApplicationPage() {
                         />
                         <Button type="button" variant="outline" size="sm" disabled={isUploading}>
                           <Upload className="h-4 w-4 mr-2" />
-                          Upload
+                          Unggah
                         </Button>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Uploaded Documents</h3>
+                    <h3 className="text-lg font-semibold mb-2">Dokumen yang Diunggah</h3>
                     {formData.documents.length > 0 ? (
                       <div className="space-y-2">
                         {formData.documents.map((doc, index) => (
@@ -720,10 +720,10 @@ export default function KkpApplicationPage() {
 
                 <div className="flex justify-between">
                   <Button type="button" variant="outline" onClick={goToPreviousTab}>
-                    Previous: Company Information
+                    Sebelumnya: Informasi Perusahaan
                   </Button>
                   <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                    {isSubmitting ? "Mengirim..." : "Kirim Pengajuan"}
                   </Button>
                 </div>
               </TabsContent>

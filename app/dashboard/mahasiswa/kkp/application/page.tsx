@@ -225,28 +225,28 @@ export default function ApplicationPage() {
         return (
           <Badge className="bg-amber-500/10 text-amber-500">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Pending Review
+            Menunggu Peninjauan
           </Badge>
         )
       case "approved":
         return (
           <Badge className="bg-green-500/10 text-green-500">
             <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-            Approved
+            Disetujui
           </Badge>
         )
       case "rejected":
         return (
           <Badge className="bg-red-500/10 text-red-500">
             <XCircle className="h-3.5 w-3.5 mr-1" />
-            Rejected
+            Ditolak
           </Badge>
         )
       case "draft":
         return (
           <Badge variant="outline">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Draft
+            Draf
           </Badge>
         )
       default:
@@ -259,41 +259,40 @@ export default function ApplicationPage() {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Internship Applications
+            Pengajuan Magang
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Manage your internship location applications</p>
+        <p className="text-muted-foreground mt-2">Kelola pengajuan lokasi magang Anda</p>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between gap-4">
-        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex flex-col md:flex-row justify-between gap-4">
           <TabsList className="grid grid-cols-5 w-full md:w-auto">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
-            <TabsTrigger value="draft">Draft</TabsTrigger>
+            <TabsTrigger value="all">Semua</TabsTrigger>
+            <TabsTrigger value="pending">Menunggu</TabsTrigger>
+            <TabsTrigger value="approved">Disetujui</TabsTrigger>
+            <TabsTrigger value="rejected">Ditolak</TabsTrigger>
+            <TabsTrigger value="draft">Draf</TabsTrigger>
           </TabsList>
-        </Tabs>
-        <Dialog open={showNewApplicationDialog} onOpenChange={setShowNewApplicationDialog}>
+          <Dialog open={showNewApplicationDialog} onOpenChange={setShowNewApplicationDialog}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              New Application
+              Pengajuan Baru
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Submit New Location Application</DialogTitle>
+              <DialogTitle>Ajukan Pengajuan Lokasi Baru</DialogTitle>
               <DialogDescription>
-                Fill out the form below to submit a new internship location application
+                Isi formulir di bawah ini untuk mengajukan lokasi magang baru
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="company-name" className="text-sm font-medium">
-                    Company/Institution Name
+                    Nama Perusahaan/Institusi
                   </label>
                   <Input
                     id="company-name"
@@ -304,14 +303,14 @@ export default function ApplicationPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="industry" className="text-sm font-medium">
-                    Industry
+                    Industri
                   </label>
                   <Select
                     value={newApplication.industry}
                     onValueChange={(value) => setNewApplication({ ...newApplication, industry: value })}
                   >
                     <SelectTrigger id="industry">
-                      <SelectValue placeholder="Select industry" />
+                      <SelectValue placeholder="Pilih industri" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Information Technology">Information Technology</SelectItem>
@@ -328,7 +327,7 @@ export default function ApplicationPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="address" className="text-sm font-medium">
-                  Full Address
+                  Alamat Lengkap
                 </label>
                 <Input
                   id="address"
@@ -345,7 +344,7 @@ export default function ApplicationPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="city" className="text-sm font-medium">
-                    City
+                    Kota
                   </label>
                   <Input
                     id="city"
@@ -356,7 +355,7 @@ export default function ApplicationPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="positions" className="text-sm font-medium">
-                    Internship Positions (comma separated)
+                    Posisi Magang (dipisahkan koma)
                   </label>
                   <Input
                     id="positions"
@@ -379,7 +378,7 @@ export default function ApplicationPage() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="description" className="text-sm font-medium">
-                  Company Description
+                  Deskripsi Perusahaan
                 </label>
                 <Textarea
                   id="description"
@@ -397,7 +396,7 @@ export default function ApplicationPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="contact-name" className="text-sm font-medium">
-                    Contact Name
+                    Nama Narahubung
                   </label>
                   <Input
                     id="contact-name"
@@ -413,7 +412,7 @@ export default function ApplicationPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="contact-position" className="text-sm font-medium">
-                    Position
+                    Jabatan
                   </label>
                   <Input
                     id="contact-position"
@@ -448,7 +447,7 @@ export default function ApplicationPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="contact-phone" className="text-sm font-medium">
-                    Phone Number
+                    Nomor Telepon
                   </label>
                   <Input
                     id="contact-phone"
@@ -466,23 +465,23 @@ export default function ApplicationPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowNewApplicationDialog(false)}>
-                Cancel
+                Batal
               </Button>
               <Button variant="outline" onClick={handleCreateApplication}>
-                Save as Draft
+                Simpan sebagai Draf
               </Button>
               <Button type="submit" onClick={handleCreateApplication}>
-                Submit Application
+                Kirim Pengajuan
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+        </div>
 
       <Card className="overflow-hidden gradient-border">
         <CardHeader>
-          <CardTitle>Application List</CardTitle>
-          <CardDescription>Track the status of your internship location applications</CardDescription>
+          <CardTitle>Daftar Pengajuan</CardTitle>
+          <CardDescription>Lacak status pengajuan lokasi magang Anda</CardDescription>
         </CardHeader>
         <CardContent>
           <TabsContent value={activeTab} className="mt-0">
@@ -490,12 +489,12 @@ export default function ApplicationPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Company Name</TableHead>
-                    <TableHead>Industry</TableHead>
-                    <TableHead>City</TableHead>
-                    <TableHead>Submission Date</TableHead>
+                    <TableHead className="w-[250px]">Nama Perusahaan</TableHead>
+                    <TableHead>Industri</TableHead>
+                    <TableHead>Kota</TableHead>
+                    <TableHead>Tanggal Pengajuan</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -504,7 +503,7 @@ export default function ApplicationPage() {
                       <TableCell colSpan={6} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">No applications found</p>
+                          <p className="text-muted-foreground">Tidak ada pengajuan ditemukan</p>
                           <Button
                             variant="outline"
                             size="sm"
@@ -512,7 +511,7 @@ export default function ApplicationPage() {
                             onClick={() => setShowNewApplicationDialog(true)}
                           >
                             <Plus className="h-4 w-4 mr-2" />
-                            Create New Application
+                            Buat Pengajuan Baru
                           </Button>
                         </div>
                       </TableCell>
@@ -529,7 +528,7 @@ export default function ApplicationPage() {
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="sm" onClick={() => setSelectedApplication(application)}>
                               <Eye className="h-4 w-4 mr-1" />
-                              {application.status === "draft" ? "Edit" : "Details"}
+                              {application.status === "draft" ? "Edit" : "Detail"}
                             </Button>
                             {application.status === "draft" && (
                               <Button
@@ -537,7 +536,7 @@ export default function ApplicationPage() {
                                 size="sm"
                                 onClick={() => handleSubmitApplication(application.id)}
                               >
-                                Submit
+                                Kirim
                               </Button>
                             )}
                           </div>
@@ -568,7 +567,7 @@ export default function ApplicationPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">Application ID:</span>
+                  <span className="text-sm font-medium">ID Pengajuan:</span>
                   <span className="text-sm">{selectedApplication.id}</span>
                 </div>
                 {getStatusBadge(selectedApplication.status)}
@@ -577,20 +576,20 @@ export default function ApplicationPage() {
               {selectedApplication.submissionDate && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">Submission Date:</span>
+                  <span className="text-sm font-medium">Tanggal Pengajuan:</span>
                   <span className="text-sm">{selectedApplication.submissionDate}</span>
                 </div>
               )}
 
               {selectedApplication.rejectionReason && (
                 <div className="p-3 rounded-md bg-red-500/10 text-red-500 text-sm">
-                  <div className="font-medium mb-1">Rejection Reason:</div>
+                  <div className="font-medium mb-1">Alasan Penolakan:</div>
                   {selectedApplication.rejectionReason}
                 </div>
               )}
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Company Details</h4>
+                <h4 className="text-sm font-medium">Detail Perusahaan</h4>
                 <div className="space-y-1">
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -599,7 +598,7 @@ export default function ApplicationPage() {
                   <div className="flex items-start gap-2">
                     <Briefcase className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div className="text-sm">
-                      <div className="font-medium">Available Positions:</div>
+                      <div className="font-medium">Posisi yang Tersedia:</div>
                       <ul className="list-disc list-inside">
                         {selectedApplication.details.positions.map((position, index) => (
                           <li key={index}>{position}</li>
@@ -610,7 +609,7 @@ export default function ApplicationPage() {
                   <div className="flex items-start gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div className="text-sm">
-                      <div className="font-medium">Description:</div>
+                      <div className="font-medium">Deskripsi:</div>
                       <p>{selectedApplication.details.description}</p>
                     </div>
                   </div>
@@ -618,14 +617,14 @@ export default function ApplicationPage() {
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Contact Information</h4>
+                <h4 className="text-sm font-medium">Informasi Kontak</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="text-sm">
-                    <div className="font-medium">Name:</div>
+                    <div className="font-medium">Nama:</div>
                     <p>{selectedApplication.details.contactName}</p>
                   </div>
                   <div className="text-sm">
-                    <div className="font-medium">Position:</div>
+                    <div className="font-medium">Jabatan:</div>
                     <p>{selectedApplication.details.contactPosition}</p>
                   </div>
                   <div className="text-sm">
@@ -633,7 +632,7 @@ export default function ApplicationPage() {
                     <p>{selectedApplication.details.contactEmail}</p>
                   </div>
                   <div className="text-sm">
-                    <div className="font-medium">Phone:</div>
+                    <div className="font-medium">Telepon:</div>
                     <p>{selectedApplication.details.contactPhone}</p>
                   </div>
                 </div>
@@ -649,7 +648,7 @@ export default function ApplicationPage() {
                       setSelectedApplication(null)
                     }}
                   >
-                    Delete Draft
+                    Hapus Draf
                   </Button>
                   <Button
                     onClick={() => {
@@ -657,16 +656,17 @@ export default function ApplicationPage() {
                       setSelectedApplication(null)
                     }}
                   >
-                    Submit Application
+                    Kirim Pengajuan
                   </Button>
                 </>
               ) : (
-                <Button onClick={() => setSelectedApplication(null)}>Close</Button>
+                <Button onClick={() => setSelectedApplication(null)}>Tutup</Button>
               )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
       )}
+      </Tabs>
     </div>
   )
 }

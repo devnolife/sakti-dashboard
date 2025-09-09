@@ -196,7 +196,7 @@ export default function AcademicControlCard() {
       toast({
         title: "PDF berhasil diunduh",
         description: "File telah disimpan ke perangkat Anda",
-        variant: "success",
+        variant: "default",
       })
     } catch (error) {
       console.error("Error generating PDF:", error)
@@ -210,15 +210,15 @@ export default function AcademicControlCard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Kartu Kontrol Penasehat Akademik</h2>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" />
+            <Printer className="w-4 h-4 mr-2" />
             Cetak
           </Button>
           <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="w-4 h-4 mr-2" />
             Unduh PDF
           </Button>
         </div>
@@ -227,9 +227,9 @@ export default function AcademicControlCard() {
       <Card className="border shadow-md" ref={cardRef}>
         <CardContent className="p-6 space-y-6" id="control-card-printable">
           {showDetail && (
-            <div className="bg-muted/50 p-6 rounded-lg">
+            <div className="p-6 rounded-lg bg-muted/60">
               <div className="flex items-center justify-between gap-y-4">
-                <Avatar className="h-24 w-24">
+                <Avatar className="w-32 h-32 rounded-lg">
                   <AvatarImage
                     src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-ft-T7L7l1vUFh5KeljiEEEoF4RwUDZysM.png"
                     alt="Logo Fakultas Teknik"
@@ -241,7 +241,7 @@ export default function AcademicControlCard() {
                   <h3 className="text-xl font-bold text-primary">PROGRAM STUDI INFORMATIKA</h3>
                   <h3 className="text-xl font-bold text-primary">FAKULTAS TEKNIK</h3>
                 </div>
-                <Avatar className="h-24 w-24">
+                <Avatar className="w-32 h-32">
                   <AvatarImage
                     src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/unggul-bu5YeqPdJk5brz6jhTnwRjzhs50lwL.png"
                     alt="Logo Unggul"
@@ -273,7 +273,7 @@ export default function AcademicControlCard() {
             </div>
           </div>
 
-          <div className="border rounded-lg overflow-hidden">
+          <div className="overflow-hidden border rounded-lg">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted">
@@ -289,7 +289,7 @@ export default function AcademicControlCard() {
                   <TableRow key={entry.no}>
                     <TableCell className="text-center">{entry.no}</TableCell>
                     <TableCell className="text-center">{entry.date}</TableCell>
-                    <TableCell className="text-center font-medium">{entry.uraian}</TableCell>
+                    <TableCell className="font-medium text-center">{entry.uraian}</TableCell>
                     <TableCell className="text-center">{entry.keterangan}</TableCell>
                     <TableCell className="text-center">
                       <Badge variant={entry.paraf === "Sudah" ? "success" : "outline"}>{entry.paraf}</Badge>
@@ -305,7 +305,7 @@ export default function AcademicControlCard() {
               <Separator className="my-4" />
               <div className="space-y-2">
                 <p className="font-bold">Catatan: Sebelum Tanda Tangan Ketua Prodi, Mahasiswa diwajibkan:</p>
-                <ul className="list-disc pl-6 space-y-1">
+                <ul className="pl-6 space-y-1 list-disc">
                   <li className="font-medium">
                     Konsultasi ke Penasehat Akademik setiap Bulan Semester Berjalan (Min. 5 kali)
                   </li>
@@ -322,7 +322,7 @@ export default function AcademicControlCard() {
                 </ul>
               </div>
 
-              <div className="text-right space-y-1 mt-6">
+              <div className="mt-6 space-y-1 text-right">
                 <p>Makassar, {signatureInfo.tanggal}</p>
                 <p>Ketua Prodi {signatureInfo.namaProdi}</p>
                 <div className="h-16"></div>
@@ -330,8 +330,8 @@ export default function AcademicControlCard() {
                 <p>NBM: {signatureInfo.nbm}</p>
               </div>
 
-              <div className="mt-6 pt-4 border-t-4 border-primary bg-muted/30 p-4 rounded-b-lg">
-                <div className="flex justify-between items-center">
+              <div className="p-4 pt-4 mt-6 border-t-4 rounded-b-lg border-primary bg-muted/30">
+                <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-sm font-medium">
                       Gedung Menara Iqra Lantai 3<br />
@@ -351,12 +351,12 @@ export default function AcademicControlCard() {
                     <img
                       src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/iso-sRoTQ5LzCgK8FuupxU4caXXXog34cF.png"
                       alt="ISO Certification"
-                      className="h-12 w-auto object-contain"
+                      className="object-contain w-auto h-12"
                     />
                     <img
                       src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/merdeka-brEVHdXNXBw3ck1f7GsafYW1yTNNvd.png"
                       alt="Kampus Merdeka"
-                      className="h-12 w-auto object-contain"
+                      className="object-contain w-auto h-12"
                     />
                   </div>
                 </div>
