@@ -117,7 +117,7 @@ export default function StudentKkpDashboardPage() {
               ...step,
               status: "completed",
               completedAt: new Date(),
-              description: `✅ REAL: ${approvedApp.generatedDocument.message} - No. Surat: ${approvedApp.generatedDocument.no_surat}`
+              description: `✅ REAL: ${approvedApp.generatedDocument?.message} - No. Surat: ${approvedApp.generatedDocument?.no_surat}`
             }
           }
           return step

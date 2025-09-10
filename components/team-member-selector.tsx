@@ -155,13 +155,13 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
   const selectMember = (student: Student) => {
     // Check if we've reached the maximum team size (usually 4 for KKP)
     if (selectedMembers.length >= 4) {
-      setErrorMessage("Maximum team size is 4 members")
+      setErrorMessage("Ukuran tim maksimal adalah 4 anggota")
       return
     }
 
     // Check if student is available
     if (!student.availability) {
-      setErrorMessage(`${student.name} is not available for team formation`)
+      setErrorMessage(`${student.name} tidak tersedia untuk pembentukan tim`)
       return
     }
 
@@ -179,7 +179,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
   const handleComplete = () => {
     // Validate team size (minimum 2 members for KKP)
     if (selectedMembers.length < 2) {
-      setErrorMessage("Team must have at least 2 members")
+      setErrorMessage("Tim harus memiliki minimal 2 anggota")
       return
     }
 
@@ -209,15 +209,15 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
-          <span>Team Member Selection</span>
+          <span>Pemilihan Anggota Tim</span>
         </CardTitle>
         <CardDescription>
           {selectedLocation ? (
             <>
-              Select team members for your internship at <strong>{selectedLocation.name}</strong>
+              Pilih anggota tim untuk magang Anda di <strong>{selectedLocation.name}</strong>
             </>
           ) : (
-            <>Select team members for your internship</>
+            <>Pilih anggota tim untuk magang Anda</>
           )}
         </CardDescription>
       </CardHeader>
@@ -235,24 +235,24 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
         <div className="bg-muted/50 p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <Info className="h-5 w-5 text-primary" />
-            <h3 className="font-medium">Team Information</h3>
+            <h3 className="font-medium">Informasi Tim</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-2">
-            Your team must have 2-4 members from the same program. All team members must be available for the internship
-            period.
+            Tim Anda harus memiliki 2-4 anggota dari program studi yang sama. Semua anggota tim harus tersedia untuk
+            periode magang.
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Current team size:</span>
+            <span className="text-sm font-medium">Ukuran tim saat ini:</span>
             <Badge variant={selectedMembers.length < 2 ? "destructive" : "default"}>
-              {selectedMembers.length} / 4 members
+              {selectedMembers.length} / 4 anggota
             </Badge>
           </div>
         </div>
 
         <Tabs defaultValue="search" value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid grid-cols-2">
-            <TabsTrigger value="search">Search Students</TabsTrigger>
-            <TabsTrigger value="selected">Selected Team ({selectedMembers.length})</TabsTrigger>
+            <TabsTrigger value="search">Cari Mahasiswa</TabsTrigger>
+            <TabsTrigger value="selected">Tim Terpilih ({selectedMembers.length})</TabsTrigger>
           </TabsList>
 
           {/* Search tab */}
@@ -261,7 +261,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by name, NIM, or major..."
+                placeholder="Cari berdasarkan nama, NIM, atau jurusan..."
                 className="w-full pl-8 rounded-md border-primary/20 focus-visible:ring-primary"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -288,7 +288,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                           <h4 className="font-medium">{student.name}</h4>
                           {!student.availability && (
                             <Badge variant="outline" className="text-muted-foreground">
-                              Unavailable
+                              Tidak Tersedia
                             </Badge>
                           )}
                         </div>
@@ -297,7 +297,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                           <span>•</span>
                           <span>{student.major}</span>
                           <span>•</span>
-                          <span>Year {student.year}</span>
+                          <span>Angkatan {student.year}</span>
                         </div>
                         {student.skills && (
                           <div className="flex flex-wrap gap-1 mt-1">
@@ -317,7 +317,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                       disabled={!student.availability}
                     >
                       <UserPlus className="h-4 w-4 mr-1" />
-                      Add
+                      Tambah
                     </Button>
                   </div>
                 ))
@@ -326,9 +326,9 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
                     <Users className="h-6 w-6 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium">No students found</h3>
+                  <h3 className="text-lg font-medium">Tidak ada mahasiswa ditemukan</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {searchQuery ? "Try a different search term" : "Start typing to search for students"}
+                    {searchQuery ? "Coba istilah pencarian yang berbeda" : "Mulai mengetik untuk mencari mahasiswa"}
                   </p>
                 </div>
               )}
@@ -356,7 +356,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                           <span>•</span>
                           <span>{member.major}</span>
                           <span>•</span>
-                          <span>GPA: {member.gpa}</span>
+                          <span>IPK: {member.gpa}</span>
                         </div>
                         {member.skills && (
                           <div className="flex flex-wrap gap-1 mt-1">
@@ -371,7 +371,7 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                     </div>
                     <Button size="sm" variant="destructive" onClick={() => removeMember(member.id)}>
                       <X className="h-4 w-4 mr-1" />
-                      Remove
+                      Hapus
                     </Button>
                   </div>
                 ))}
@@ -381,10 +381,10 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-medium">No team members selected</h3>
-                <p className="text-sm text-muted-foreground mt-1">Go to the Search tab to add team members</p>
+                <h3 className="text-lg font-medium">Tidak ada anggota tim terpilih</h3>
+                <p className="text-sm text-muted-foreground mt-1">Pergi ke tab Cari untuk menambahkan anggota tim</p>
                 <Button className="mt-4" variant="outline" onClick={() => setSelectedTab("search")}>
-                  Search Students
+                  Cari Mahasiswa
                 </Button>
               </div>
             )}
@@ -394,10 +394,10 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
 
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={onCancel}>
-          Cancel
+          Batal
         </Button>
         <Button onClick={handleComplete} disabled={selectedMembers.length < 2}>
-          {selectedMembers.length < 2 ? "Need at least 2 members" : "Confirm Team Selection"}
+          {selectedMembers.length < 2 ? "Butuh minimal 2 anggota" : "Konfirmasi Pemilihan Tim"}
         </Button>
       </CardFooter>
 
@@ -405,13 +405,13 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Team Formation</DialogTitle>
+            <DialogTitle>Konfirmasi Pembentukan Tim</DialogTitle>
             <DialogDescription>
-              You are about to form a team with the following members for your internship
+              Anda akan membentuk tim dengan anggota berikut untuk magang Anda
               {selectedLocation && (
                 <>
                   {" "}
-                  at <strong>{selectedLocation.name}</strong>
+                  di <strong>{selectedLocation.name}</strong>
                 </>
               )}
               .
@@ -437,17 +437,17 @@ export default function TeamMemberSelector({ selectedLocation, onComplete, onCan
           </div>
 
           <p className="text-sm text-muted-foreground">
-            Once confirmed, all team members will be notified and your team will be registered for the internship. This
-            action cannot be undone.
+            Setelah dikonfirmasi, semua anggota tim akan diberitahu dan tim Anda akan terdaftar untuk magang.
+            Tindakan ini tidak dapat dibatalkan.
           </p>
 
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
-              Go Back
+              Kembali
             </Button>
             <Button onClick={confirmTeamFormation}>
               <Check className="h-4 w-4 mr-1" />
-              Confirm Team
+              Konfirmasi Tim
             </Button>
           </DialogFooter>
         </DialogContent>
