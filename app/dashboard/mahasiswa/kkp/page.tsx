@@ -36,6 +36,7 @@ import {
 import type { KkpApplication } from "@/types/kkp"
 import { getAllKkpApplications } from "@/app/actions/kkp-management"
 import Link from "next/link"
+import { kkpDataStore } from "@/lib/kkp-data-store"
 
 export default function StudentKkpDashboardPage() {
   const router = useRouter()
@@ -44,11 +45,133 @@ export default function StudentKkpDashboardPage() {
   const [selectedApplication, setSelectedApplication] = useState<KkpApplication | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isMounted, setIsMounted] = useState(false)
+  const [approvedDocument, setApprovedDocument] = useState<any>(null)
+  const [currentStep, setCurrentStep] = useState(1) // Track current approval step
+  const [steps, setSteps] = useState([
+    {
+      id: 1,
+      title: "Pengajuan Mahasiswa",
+      description: "Pengajuan telah disubmit dengan lengkap",
+      status: "completed",
+      completedAt: new Date("2024-01-15")
+    },
+    {
+      id: 2,
+      title: "Verifikasi Staff TU",
+      description: "Dokumen telah diverifikasi dan disetujui",
+      status: "completed",
+      completedAt: new Date("2024-01-18")
+    },
+    {
+      id: 3,
+      title: "Tanda Tangan Digital WD1",
+      description: "Menunggu tanda tangan digital dari Wakil Dekan 1",
+      status: "pending",
+      completedAt: null
+    },
+    {
+      id: 4,
+      title: "Dokumen Resmi",
+      description: "Dokumen KKP siap didownload",
+      status: "pending",
+      completedAt: null
+    }
+  ])
 
   // Set isMounted to true when component mounts (client-side only)
   useEffect(() => {
     setIsMounted(true)
+
+    // Check for approved document for current student (simulation - NIM: 1234567890)
+    const studentNim = "1234567890" // In real app, this would come from auth/session
+    const approvedApp = kkpDataStore.getApprovedApplicationWithDocument(studentNim)
+    if (approvedApp && approvedApp.generatedDocument) {
+      setApprovedDocument(approvedApp.generatedDocument)
+    }
   }, [])
+
+  // Periodically check for document updates and simulate progress
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const studentNim = "1234567890" // In real app, this would come from auth/session
+      const approvedApp = kkpDataStore.getApprovedApplicationWithDocument(studentNim)
+
+      // Real data from API via global store
+      if (approvedApp && approvedApp.generatedDocument && !approvedDocument) {
+        // Use REAL data from API, not demo data
+        setApprovedDocument(approvedApp.generatedDocument)
+        console.log("✅ REAL approved document detected from API:", approvedApp.generatedDocument)
+
+        // Update steps to completed when REAL document is ready from API
+        setSteps(prev => prev.map(step => {
+          if (step.id === 3) {
+            return {
+              ...step,
+              status: "completed",
+              completedAt: new Date(),
+              description: "Dokumen telah ditandatangani secara digital oleh WD1"
+            }
+          }
+          if (step.id === 4) {
+            return {
+              ...step,
+              status: "completed",
+              completedAt: new Date(),
+              description: `✅ REAL: ${approvedApp.generatedDocument.message} - No. Surat: ${approvedApp.generatedDocument.no_surat}`
+            }
+          }
+          return step
+        }))
+
+        setCurrentStep(4)
+
+        // Show notification toast when REAL document is detected from API
+        if (toast) {
+          toast({
+            title: "🎉 Dokumen KKP Selesai!",
+            description: `REAL dari API: Dokumen dengan nomor surat ${approvedApp.generatedDocument?.no_surat} telah siap didownload.`,
+          })
+        }
+      }
+
+      // Simulation: Auto progress for demo purposes (remove in production)
+      // Uncomment below for automatic demo progression
+      /*
+      const now = Date.now()
+      const startTime = Date.now() - 30000 // 30 seconds ago
+      
+      if (now - startTime > 10000 && currentStep === 2) { // After 10 seconds, move to step 3
+        setCurrentStep(3)
+        setSteps(prev => prev.map(step => 
+          step.id === 3 ? { ...step, status: "in_progress", description: "Sedang diproses oleh Wakil Dekan 1..." } : step
+        ))
+      }
+      
+      if (now - startTime > 20000 && currentStep === 3) { // After 20 seconds, complete step 3
+        setCurrentStep(4)
+        setSteps(prev => prev.map(step => {
+          if (step.id === 3) {
+            return { ...step, status: "completed", completedAt: new Date(), description: "Dokumen telah ditandatangani secara digital" }
+          }
+          if (step.id === 4) {
+            return { ...step, status: "completed", completedAt: new Date(), description: "Dokumen KKP dengan nomor surat 25/05/C.4-II/IX/47/2025 telah siap" }
+          }
+          return step
+        }))
+        
+        // Simulate document ready
+        setApprovedDocument({
+          no_surat: "25/05/C.4-II/IX/47/2025",
+          prodi: "informatika",
+          downloadUrl: "http://localhost:8080/download/informatika_kkp_demo.docx"
+        })
+      }
+      */
+
+    }, 2000) // Check every 2 seconds
+
+    return () => clearInterval(interval)
+  }, [approvedDocument, currentStep, toast])
 
   // Fetch applications on component mount
   useEffect(() => {
@@ -423,6 +546,161 @@ export default function StudentKkpDashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Application Status Card - Show current status */}
+      <Card className="overflow-hidden border-none shadow-lg">
+        <div className="p-6 bg-gradient-to-r from-blue-500/10 to-blue-600/5">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-white rounded-full shadow-sm">
+              <Clock className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-blue-800">📋 Status Pengajuan KKP</h2>
+              <p className="text-sm text-blue-600">Pantau progres persetujuan aplikasi Anda</p>
+            </div>
+          </div>
+        </div>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {/* Dynamic Status Timeline */}
+            <div className="space-y-4">
+              {steps.map((step, index) => {
+                const isCompleted = step.status === "completed"
+                const isInProgress = step.status === "in_progress"
+                const isPending = step.status === "pending"
+
+                // Don't show step 4 unless step 3 is completed or in progress
+                if (step.id === 4 && steps[2].status === "pending") {
+                  return null
+                }
+
+                return (
+                  <div
+                    key={step.id}
+                    className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-500 ${isCompleted
+                        ? 'bg-green-50 border-green-200 transform scale-100'
+                        : isInProgress
+                          ? 'bg-blue-50 border-blue-200 transform scale-105 shadow-md'
+                          : 'bg-amber-50 border-amber-200'
+                      }`}
+                  >
+                    <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ${isCompleted
+                        ? 'bg-green-500 text-white'
+                        : isInProgress
+                          ? 'bg-blue-500 text-white animate-pulse'
+                          : 'bg-amber-500 text-white'
+                      }`}>
+                      {isCompleted ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : isInProgress ? (
+                        <Clock className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Clock className="w-5 h-5" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-semibold transition-colors duration-300 ${isCompleted ? 'text-green-800' : isInProgress ? 'text-blue-800' : 'text-amber-800'
+                        }`}>
+                        {step.id}. {step.title}
+                      </h3>
+                      <p className={`text-sm transition-colors duration-300 ${isCompleted ? 'text-green-600' : isInProgress ? 'text-blue-600' : 'text-amber-600'
+                        }`}>
+                        {step.description}
+                      </p>
+                      {step.completedAt && (
+                        <p className="mt-1 text-xs text-gray-500">
+                          Selesai: {step.completedAt.toLocaleDateString('id-ID')} {step.completedAt.toLocaleTimeString('id-ID')}
+                        </p>
+                      )}
+                    </div>
+                    <Badge className={`transition-all duration-300 ${isCompleted
+                        ? 'bg-green-100 text-green-700 border-green-300'
+                        : isInProgress
+                          ? 'bg-blue-100 text-blue-700 border-blue-300 animate-pulse'
+                          : 'bg-amber-100 text-amber-700 border-amber-300'
+                      }`}>
+                      {isCompleted ? 'Selesai' : isInProgress ? 'Diproses' : 'Menunggu'}
+                    </Badge>
+                  </div>
+                )
+              })}
+            </div>
+
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Generated Document Card - Only show when approved */}
+      {approvedDocument && (
+        <Card className="overflow-hidden border-none shadow-lg bg-gradient-to-br from-green-50 to-green-100">
+          <div className="p-6 bg-gradient-to-r from-green-500/10 to-green-600/5">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-white rounded-full shadow-sm">
+                <FileCheck className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-green-800">📄 Dokumen KKP Resmi</h2>
+                <p className="text-sm text-green-600">Dokumen telah ditandatangani dan siap digunakan</p>
+              </div>
+            </div>
+          </div>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="p-4 bg-white border border-green-200 rounded-xl">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-green-600" />
+                      <span className="font-semibold text-green-800">Nomor Surat:</span>
+                    </div>
+                    <p className="p-2 font-mono text-sm border rounded bg-green-50">{approvedDocument.no_surat}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Building className="w-4 h-4 text-green-600" />
+                      <span className="font-semibold text-green-800">Program Studi:</span>
+                    </div>
+                    <p className="p-2 text-sm border rounded bg-green-50">{approvedDocument.prodi}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button
+                  className="flex-1 text-white transition-all bg-green-600 shadow-lg hover:bg-green-700 hover:shadow-xl"
+                  onClick={() => window.open(approvedDocument.downloadUrl, '_blank')}
+                >
+                  <FileCheck className="w-4 h-4 mr-2" />
+                  Download Dokumen Resmi (.docx)
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="flex-1 text-green-700 border-green-300 hover:bg-green-50"
+                  onClick={() => router.push("/dashboard/mahasiswa/kkp/documents")}
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Lihat Semua Dokumen
+                </Button>
+              </div>
+
+              <div className="p-3 border border-green-200 rounded-lg bg-green-50">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-green-600 mt-0.5" />
+                  <div className="text-xs text-green-700">
+                    <p className="mb-1 font-semibold">Catatan Penting:</p>
+                    <ul className="space-y-1">
+                      <li>• Dokumen ini telah ditandatangani secara digital oleh Wakil Dekan 1</li>
+                      <li>• Gunakan dokumen ini sebagai surat pengantar resmi ke tempat KKP</li>
+                      <li>• Simpan salinan dokumen untuk keperluan administrasi</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Process Timeline Section - Modernized UI */}
       <Card className="overflow-hidden border-none shadow-lg">

@@ -237,6 +237,11 @@ export const mahasiswaMenuItems = [
         href: "/dashboard/mahasiswa/kkp",
       },
       {
+        id: "kkp-pengajuan",
+        title: "Pengajuan",
+        href: "/dashboard/mahasiswa/kkp/pengajuan",
+      },
+      {
         id: "kkp-in-progress",
         title: "In KKP",
         href: "/dashboard/mahasiswa/kkp/in-progress",
@@ -396,7 +401,20 @@ export const staffTuMenuItems = [
     id: "kkp-management",
     title: "Manajemen KKP",
     href: "/dashboard/staff_tu/kkp",
-    icon: Briefcase
+    icon: Briefcase,
+    children: [
+      {
+        id: "kkp-overview",
+        title: "Overview KKP",
+        href: "/dashboard/staff_tu/kkp",
+      },
+      {
+        id: "kkp-approval",
+        title: "Persetujuan KKP",
+        href: "/dashboard/staff_tu/kkp-approval",
+        badge: { text: "3", variant: "destructive" },
+      },
+    ],
   },
 
   {
@@ -477,7 +495,7 @@ export const prodiMenuItems = [
       {
         id: "kkp-overview",
         title: "Overview KKP",
-        href: "/dashboard/prodi/kkp",
+        href: "/dashboard/prodi/kkp/overview",
       },
       {
         id: "kkp-regular",
@@ -877,12 +895,6 @@ export const lecturerMenuItems = [
     icon: Award,
   },
   {
-    id: "supervisions",
-    title: "Supervisions",
-    href: "/dashboard/dosen/supervisions",
-    icon: ClipboardCheck,
-  },
-  {
     id: "rekomendasi-judul",
     title: "Rekomendasi Judul",
     href: "/dashboard/dosen/rekomendasi-judul",
@@ -902,9 +914,15 @@ export const lecturerMenuItems = [
         icon: Calendar,
       },
       {
+        id: "student-guidance-list",
+        title: "List Bimbingan Mahasiswa",
+        href: "/dashboard/dosen/exams/student-guidance",
+        icon: Users,
+      },
+      {
         id: "exam-committees",
-        title: "Penguji",
-        href: "/dashboard/dosen/exams/committees",
+        title: "Menu Penguji Mahasiswa",
+        href: "/dashboard/dosen/exams/penguji",
         icon: UserCheck,
         badge: { text: "7", variant: "destructive" },
       },
@@ -1360,6 +1378,13 @@ export const wakilDekan1MenuItems: MenuItem[] = [
     title: "Kemitraan",
     href: "/dashboard/dosen/vice-dean-1/partnerships",
     icon: Briefcase,
+  },
+  {
+    id: "kkp-verification",
+    title: "Verifikasi KKP",
+    href: "/dashboard/dosen/vice-dean-1/kkp-verification",
+    icon: FileText,
+    badge: { text: "2", variant: "destructive" },
   },
 ]
 
