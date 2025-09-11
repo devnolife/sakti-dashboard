@@ -38,89 +38,89 @@ export default function LaboratoryAdminDashboard({ activeSection }: LaboratoryAd
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="overflow-hidden gradient-border card-hover">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Laboratorium</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-cyan-500/10 flex items-center justify-center">
-              <Beaker className="h-4 w-4 text-cyan-500" />
+            <CardTitle className="text-sm font-medium text-cyan-900 dark:text-cyan-100">Total Laboratorium</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
+              <Beaker className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
-            <div className="text-xs text-muted-foreground mt-1">Laboratorium aktif</div>
+            <div className="text-3xl font-bold text-cyan-900 dark:text-cyan-50">8</div>
+            <div className="text-xs text-cyan-700 dark:text-cyan-300 mt-1">Laboratorium aktif</div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden gradient-border card-hover">
+        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendaftaran Praktikum</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-              <ClipboardList className="h-4 w-4 text-blue-500" />
+            <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">Pendaftaran Praktikum</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+              <ClipboardList className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42</div>
+            <div className="text-3xl font-bold text-blue-900 dark:text-blue-50">42</div>
             <div className="flex items-center mt-1">
-              <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
-              <span className="text-xs text-green-500">+12% dari minggu lalu</span>
+              <TrendingUp className="h-3 w-3 text-green-600 dark:text-green-400 mr-1" />
+              <span className="text-xs text-green-600 dark:text-green-400">+12% dari minggu lalu</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden gradient-border card-hover">
+        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Asisten Lab</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-indigo-500/10 flex items-center justify-center">
-              <Users className="h-4 w-4 text-indigo-500" />
+            <CardTitle className="text-sm font-medium text-indigo-900 dark:text-indigo-100">Asisten Lab</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+              <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <div className="text-xs text-muted-foreground mt-1">Asisten aktif</div>
+            <div className="text-3xl font-bold text-indigo-900 dark:text-indigo-50">24</div>
+            <div className="text-xs text-indigo-700 dark:text-indigo-300 mt-1">Asisten aktif</div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden gradient-border card-hover">
+        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pemeliharaan</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center">
-              <Tool className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-sm font-medium text-amber-900 dark:text-amber-100">Pemeliharaan</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <Tool className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <div className="text-xs text-red-500 mt-1">Memerlukan perhatian segera</div>
+            <div className="text-3xl font-bold text-amber-900 dark:text-amber-50">3</div>
+            <div className="text-xs text-red-600 dark:text-red-400 mt-1">Memerlukan perhatian segera</div>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
-          <TabsTrigger value="registrations">Pendaftaran</TabsTrigger>
-          <TabsTrigger value="schedule">Jadwal</TabsTrigger>
-          <TabsTrigger value="inventory">Inventaris</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4 bg-muted/30 p-1 rounded-xl">
+          <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Ikhtisar</TabsTrigger>
+          <TabsTrigger value="registrations" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Pendaftaran</TabsTrigger>
+          <TabsTrigger value="schedule" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Jadwal</TabsTrigger>
+          <TabsTrigger value="inventory" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Inventaris</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>Jadwal Hari Ini</CardTitle>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="border-0 shadow-sm bg-white/50 dark:bg-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold">Jadwal Hari Ini</CardTitle>
                 <CardDescription>Praktikum yang berlangsung hari ini</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-4 rounded-xl border p-4">
-                    <div className="h-10 w-10 rounded-full bg-cyan-500/10 flex items-center justify-center shrink-0">
-                      <Clock className="h-5 w-5 text-cyan-500" />
+                  <div className="flex items-start gap-4 rounded-xl border-0 bg-gradient-to-r from-cyan-50/50 to-blue-50/50 dark:from-cyan-950/50 dark:to-blue-950/50 p-4 hover:shadow-sm transition-all">
+                    <div className="h-12 w-12 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+                      <Clock className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
                     </div>
-                    <div className="grid gap-1">
-                      <p className="text-sm font-medium">Praktikum Basis Data</p>
-                      <p className="text-xs text-muted-foreground">08:00 - 10:00 • Lab Database</p>
-                      <div className="mt-1">
-                        <span className="text-xs bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full">
+                    <div className="grid gap-1 flex-1">
+                      <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">Praktikum Basis Data</p>
+                      <p className="text-xs text-cyan-700 dark:text-cyan-300">08:00 - 10:00 • Lab Database</p>
+                      <div className="mt-2">
+                        <span className="text-xs bg-green-500/20 text-green-700 dark:text-green-300 px-3 py-1 rounded-full font-medium">
                           Berlangsung
                         </span>
                       </div>
@@ -213,16 +213,16 @@ export default function LaboratoryAdminDashboard({ activeSection }: LaboratoryAd
               </CardContent>
             </Card>
 
-            <Card className="lg:col-span-1">
-              <CardHeader>
-                <CardTitle>Aksi Cepat</CardTitle>
+            <Card className="lg:col-span-1 border-0 shadow-sm bg-white/50 dark:bg-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold">Aksi Cepat</CardTitle>
                 <CardDescription>Akses cepat ke fungsi utama</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Link href="/dashboard/laboratory_admin/registrations">
-                    <Button className="w-full justify-start" variant="outline">
-                      <ClipboardList className="mr-2 h-4 w-4" />
+                    <Button className="w-full justify-start h-11 rounded-xl border-0 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 dark:from-blue-950 dark:to-indigo-950 text-blue-700 dark:text-blue-300 font-medium transition-all duration-200 hover:shadow-sm" variant="ghost">
+                      <ClipboardList className="mr-3 h-5 w-5" />
                       Kelola Pendaftaran
                     </Button>
                   </Link>

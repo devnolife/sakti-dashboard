@@ -17,8 +17,8 @@ interface KkpNotificationData {
 const WHATSAPP_API_URL = "https://whatsapp.devnolife.site/send-message"
 
 // WD1 phone number (in international format for WhatsApp API)
-const WD1_PHONE_NUMBER = "6285171079687" // Indonesian format without + sign
-
+const WD1_PHONE_NUMBER = "+628114100444" // Indonesian format without + sign
+// const WD1_PHONE_NUMBER = "6285930101400" // Indonesian format without + sign
 export class WhatsAppService {
   /**
    * Send WhatsApp notification to WD1 for digital signature
@@ -59,26 +59,37 @@ export class WhatsAppService {
   }
 
   /**
-   * Generate simple message for WD1 approval notification
+   * Generate professional message for WD1 approval notification
    */
   private static generateWD1ApprovalMessage(data: KkpNotificationData): string {
-    return `NOTIFIKASI PERSETUJUAN KKP
+    return `🔔 *NOTIFIKASI PERSETUJUAN KKP*
 
-Yth. Wakil Dekan 1,
+Assalamu'alaikum Wr. Wb.
+Yth. Bapak/Ibu Wakil Dekan 1,
 
-Pengajuan KKP baru memerlukan persetujuan:
+Terdapat pengajuan KKP baru yang memerlukan persetujuan dan tanda tangan digital Bapak/Ibu:
 
-ID: ${data.applicationId}
-Mahasiswa: ${data.studentName}
-Prodi: ${data.studentMajor}
-Lokasi: ${data.companyName}
+📋 *Detail Pengajuan:*
+• ID Pengajuan: ${data.applicationId}
+• Ketua Tim: ${data.studentName}
+• Program Studi: ${data.studentMajor}
+• Lokasi KKP: ${data.companyName}
+• Kota: ${data.companyLocation}
 
-Link verifikasi:
+✅ Status: Telah disetujui oleh Administrasi Prodi
+🔐 Diperlukan: Tanda tangan digital Wakil Dekan 1
+
+📱 *Silakan klik link berikut untuk melihat detail dan menandatangani dokumen:*
 http://localhost:3000/verifikasi/${data.applicationId}
 
-Terima kasih.
+⏰ Mohon untuk segera ditindaklanjuti.
 
--- Sistem KKP Fakultas Teknik`
+Terima kasih atas perhatian dan kerjasamanya.
+
+Wassalamu'alaikum Wr. Wb.
+
+---
+*Sistem Informasi Terintegrasi Fakultas Teknik Unismuh Makassar*`
   }
 
   /**
