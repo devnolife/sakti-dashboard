@@ -38,7 +38,7 @@ import {
 import type { KkpApplication, KkpStatus } from "@/types/kkp"
 import { getAllKkpApplications, getKkpApplicationById, updateKkpApplicationStatus } from "@/app/actions/kkp-management"
 
-export default function LecturerSupervisionsPage() {
+export default function LecturerPengujisPage() {
   const { toast } = useToast()
   const [activeTab, setActiveTab] = useState<KkpStatus | "all">("all")
   const [applications, setApplications] = useState<KkpApplication[]>([])
@@ -58,17 +58,17 @@ export default function LecturerSupervisionsPage() {
       try {
         const data = await getAllKkpApplications()
 
-        // Filter to only show applications assigned to the current lecturer (mock)
+        // Filter to only show applications assigned to the current examiner (mock)
         // In a real app, the API would handle this filtering
-        const lecturerApplications = data.filter(
+        const examinerApplications = data.filter(
           (app) =>
             app.supervisor &&
             app.supervisor.id === "lec-001" &&
             (app.status === "approved" || app.status === "in-progress" || app.status === "completed"),
         )
 
-        setApplications(lecturerApplications)
-        setFilteredApplications(lecturerApplications)
+        setApplications(examinerApplications)
+        setFilteredApplications(examinerApplications)
         setIsLoading(false)
       } catch (error) {
         console.error("Error fetching applications:", error)
@@ -263,10 +263,10 @@ export default function LecturerSupervisionsPage() {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            KKP Supervisions
+            Menu Penguji
           </span>
         </h2>
-        <p className="text-muted-foreground mt-2">Manage your assigned KKP supervisions</p>
+        <p className="text-muted-foreground mt-2">Kelola tugas penguji KKP Anda</p>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -290,7 +290,7 @@ export default function LecturerSupervisionsPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search supervisions..."
+            placeholder="Cari penguji..."
             className="pl-8"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -304,8 +304,8 @@ export default function LecturerSupervisionsPage() {
 
       <Card className="overflow-hidden gradient-border">
         <CardHeader>
-          <CardTitle>KKP Supervisions</CardTitle>
-          <CardDescription>Manage and monitor your assigned KKP supervisions</CardDescription>
+          <CardTitle>Menu Penguji KKP</CardTitle>
+          <CardDescription>Kelola dan monitor tugas penguji KKP yang ditugaskan kepada Anda</CardDescription>
         </CardHeader>
         <CardContent>
           <TabsContent value={activeTab} className="mt-0">
@@ -328,7 +328,7 @@ export default function LecturerSupervisionsPage() {
                       <TableCell colSpan={7} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <RotateCcw className="h-8 w-8 text-muted-foreground mb-2 animate-spin" />
-                          <p className="text-muted-foreground">Loading supervisions...</p>
+                          <p className="text-muted-foreground">Memuat data penguji...</p>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -337,7 +337,7 @@ export default function LecturerSupervisionsPage() {
                       <TableCell colSpan={7} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <AlertCircle className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">No supervisions found</p>
+                          <p className="text-muted-foreground">Tidak ada data penguji ditemukan</p>
                         </div>
                       </TableCell>
                     </TableRow>

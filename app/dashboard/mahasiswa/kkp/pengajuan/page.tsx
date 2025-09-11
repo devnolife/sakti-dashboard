@@ -226,11 +226,11 @@ export default function PengajuanPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "available":
-        return <Badge className="text-green-500 bg-green-500/10 hover:bg-green-500/20">Available</Badge>
+        return <Badge className="text-green-500 bg-green-500/10 hover:bg-green-500/20">Tersedia</Badge>
       case "limited":
-        return <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">Limited</Badge>
+        return <Badge className="bg-amber-500/10 text-amber-500 hover:bg-amber-500/20">Terbatas</Badge>
       case "full":
-        return <Badge className="text-red-500 bg-red-500/10 hover:bg-red-500/20">Full</Badge>
+        return <Badge className="text-red-500 bg-red-500/10 hover:bg-red-500/20">Penuh</Badge>
       default:
         return null
     }
@@ -299,40 +299,40 @@ export default function PengajuanPage() {
           <div className="flex items-center gap-2">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "location" ||
-                  currentStep === "team" ||
-                  currentStep === "verification" ||
-                  currentStep === "success"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                currentStep === "team" ||
+                currentStep === "verification" ||
+                currentStep === "success"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground"
                 }`}
             >
               <Building className="w-4 h-4" />
             </div>
-            <span className={currentStep === "location" ? "font-medium" : ""}>Select Location</span>
+            <span className={currentStep === "location" ? "font-medium" : ""}>Pilih Lokasi</span>
           </div>
           <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "team" || currentStep === "verification" || currentStep === "success"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground"
                 }`}
             >
               <Users className="w-4 h-4" />
             </div>
-            <span className={currentStep === "team" ? "font-medium" : ""}>Form Team</span>
+            <span className={currentStep === "team" ? "font-medium" : ""}>Bentuk Tim</span>
           </div>
           <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center ${currentStep === "verification" || currentStep === "success"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground"
                 }`}
             >
               <FileText className="w-4 h-4" />
             </div>
-            <span className={currentStep === "verification" ? "font-medium" : ""}>Verify</span>
+            <span className={currentStep === "verification" ? "font-medium" : ""}>Verifikasi</span>
           </div>
           <div className="w-12 h-px bg-muted md:w-24" />
           <div className="flex items-center gap-2">
@@ -342,7 +342,7 @@ export default function PengajuanPage() {
             >
               <CheckCircle2 className="w-4 h-4" />
             </div>
-            <span className={currentStep === "success" ? "font-medium" : ""}>Complete</span>
+            <span className={currentStep === "success" ? "font-medium" : ""}>Selesai</span>
           </div>
         </div>
       </div>
@@ -351,8 +351,8 @@ export default function PengajuanPage() {
       {currentStep === "location" && (
         <Card>
           <CardHeader>
-            <CardTitle>Select Internship Location</CardTitle>
-            <CardDescription>Choose a location for your KKP internship</CardDescription>
+            <CardTitle>Pilih Lokasi Magang</CardTitle>
+            <CardDescription>Pilih lokasi untuk magang KKP Anda</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Search */}
@@ -360,7 +360,7 @@ export default function PengajuanPage() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search locations..."
+                placeholder="Cari lokasi..."
                 className="w-full pl-8 rounded-md border-primary/20 focus-visible:ring-primary"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -393,7 +393,7 @@ export default function PengajuanPage() {
                                 variant="outline"
                                 className="text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
                               >
-                                Favorite
+                                Favorit
                               </Badge>
                             )}
                           </div>
@@ -420,7 +420,7 @@ export default function PengajuanPage() {
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">
-                          Quota: {location.remaining}/{location.quota} remaining
+                          Kuota: {location.remaining}/{location.quota} tersisa
                         </span>
                       </div>
                     </div>
@@ -428,7 +428,7 @@ export default function PengajuanPage() {
                     {/* Sub-locations */}
                     {location.subLocations.length > 0 && (
                       <div className="mt-3">
-                        <h4 className="mb-2 text-sm font-medium">Sub-locations:</h4>
+                        <h4 className="mb-2 text-sm font-medium">Sub-lokasi:</h4>
                         <div className="space-y-2">
                           {location.subLocations.map((subLoc) => (
                             <div key={subLoc.id} className="text-xs text-muted-foreground">
@@ -445,22 +445,22 @@ export default function PengajuanPage() {
                   <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-muted">
                     <Building className="w-6 h-6 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium">No locations found</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or check back later</p>
+                  <h3 className="text-lg font-medium">Tidak ada lokasi ditemukan</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Coba sesuaikan pencarian Anda atau cek kembali nanti</p>
                 </div>
               )}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={startOver}>
-              Cancel
+              Batal
             </Button>
             <Button onClick={proceedToTeamSelection} disabled={!selectedLocation || selectedLocation.status === "full"}>
               {selectedLocation?.status === "full" ? (
-                "No Positions Available"
+                "Tidak Ada Posisi Tersedia"
               ) : (
                 <>
-                  Continue to Team Selection
+                  Lanjutkan ke Pembentukan Tim
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               )}
@@ -473,13 +473,13 @@ export default function PengajuanPage() {
       {currentStep === "verification" && selectedLocation && (
         <Card>
           <CardHeader>
-            <CardTitle>Verify Your Application</CardTitle>
-            <CardDescription>Review your internship location and team members before submitting</CardDescription>
+            <CardTitle>Verifikasi Pengajuan Anda</CardTitle>
+            <CardDescription>Tinjau lokasi magang dan anggota tim Anda sebelum mengirimkan pengajuan</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Location Details */}
             <div>
-              <h3 className="mb-3 text-lg font-medium">Selected Location</h3>
+              <h3 className="mb-3 text-lg font-medium">Lokasi Terpilih</h3>
               <div className="p-4 border rounded-lg bg-muted/10">
                 <div className="flex items-start gap-3">
                   <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary/10 shrink-0">
@@ -503,13 +503,13 @@ export default function PengajuanPage() {
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm text-muted-foreground">
-                          Quota: {selectedLocation.remaining}/{selectedLocation.quota} remaining
+                          Kuota: {selectedLocation.remaining}/{selectedLocation.quota} tersisa
                         </span>
                       </div>
                     </div>
 
                     <div className="mt-3">
-                      <h4 className="mb-1 text-sm font-medium">Available Positions</h4>
+                      <h4 className="mb-1 text-sm font-medium">Posisi Tersedia</h4>
                       <div className="flex flex-wrap gap-1">
                         {selectedLocation.positions.map((position, index) => (
                           <Badge key={index} variant="outline" className="bg-primary/5">
@@ -522,7 +522,7 @@ export default function PengajuanPage() {
                     {/* Sub-locations */}
                     {selectedLocation.subLocations.length > 0 && (
                       <div className="mt-3">
-                        <h4 className="mb-1 text-sm font-medium">Sub-locations</h4>
+                        <h4 className="mb-1 text-sm font-medium">Sub-lokasi</h4>
                         <div className="space-y-2">
                           {selectedLocation.subLocations.map((subLoc) => (
                             <div key={subLoc.id} className="text-sm">
@@ -542,7 +542,7 @@ export default function PengajuanPage() {
 
             {/* Team Members */}
             <div>
-              <h3 className="mb-3 text-lg font-medium">Team Members ({selectedTeam.length})</h3>
+              <h3 className="mb-3 text-lg font-medium">Anggota Tim ({selectedTeam.length})</h3>
               <div className="space-y-3">
                 {selectedTeam.map((member, index) => (
                   <div key={member.id} className="p-4 border rounded-lg bg-muted/10">
@@ -561,7 +561,7 @@ export default function PengajuanPage() {
                           <span>•</span>
                           <span>{member.major}</span>
                           <span>•</span>
-                          <span>Year {member.year}</span>
+                          <span>Angkatan {member.year}</span>
                         </div>
                         {member.skills && (
                           <div className="flex flex-wrap gap-1 mt-1">
@@ -584,11 +584,11 @@ export default function PengajuanPage() {
               <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 text-blue-500 mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-blue-700">Application Timeline</h4>
+                  <h4 className="font-medium text-blue-700">Timeline Pengajuan</h4>
                   <p className="mt-1 text-sm text-blue-600">
-                    After submission, your application will be reviewed by the KKP coordinator and the internship
-                    location. You will receive a notification once your application is approved or if additional
-                    information is required.
+                    Setelah pengajuan dikirim, aplikasi Anda akan ditinjau oleh koordinator KKP dan lokasi magang.
+                    Anda akan menerima notifikasi setelah aplikasi Anda disetujui atau jika informasi tambahan
+                    diperlukan.
                   </p>
                 </div>
               </div>
@@ -597,10 +597,10 @@ export default function PengajuanPage() {
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={goBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Team Selection
+              Kembali ke Pembentukan Tim
             </Button>
             <Button onClick={handleSubmitApplication}>
-              Submit Application
+              Kirim Pengajuan
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </CardFooter>
@@ -613,15 +613,15 @@ export default function PengajuanPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-green-500" />
-              <span>Application Submitted</span>
+              <span>Pengajuan Terkirim</span>
             </CardTitle>
-            <CardDescription>Your team has been successfully registered for the internship</CardDescription>
+            <CardDescription>Tim Anda telah berhasil terdaftar untuk magang</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 text-center border rounded-lg bg-green-500/10 border-green-500/20">
-              <h3 className="mb-2 text-lg font-medium text-green-700">Congratulations!</h3>
+              <h3 className="mb-2 text-lg font-medium text-green-700">Selamat!</h3>
               <p className="mb-4 text-sm text-green-600">
-                Your team of {selectedTeam.length} members has been successfully registered for an internship at{" "}
+                Tim Anda yang terdiri dari {selectedTeam.length} anggota telah berhasil terdaftar untuk magang di{" "}
                 <strong>{selectedLocation.name}</strong>.
               </p>
               <div className="flex flex-wrap justify-center gap-2">
@@ -634,12 +634,12 @@ export default function PengajuanPage() {
             </div>
 
             <div className="p-4 border rounded-lg">
-              <h4 className="mb-2 font-medium">Next Steps</h4>
+              <h4 className="mb-2 font-medium">Langkah Selanjutnya</h4>
               <ol className="space-y-2 text-sm list-decimal list-inside">
-                <li>Wait for confirmation from the internship location</li>
-                <li>Complete any remaining requirements</li>
-                <li>Attend the pre-internship orientation</li>
-                <li>Prepare your internship proposal</li>
+                <li>Menunggu konfirmasi dari lokasi magang</li>
+                <li>Melengkapi persyaratan yang tersisa</li>
+                <li>Menghadiri orientasi pra-magang</li>
+                <li>Menyiapkan proposal magang Anda</li>
               </ol>
             </div>
 
@@ -647,17 +647,17 @@ export default function PengajuanPage() {
               <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 text-blue-500 mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-blue-700">Application Timeline</h4>
+                  <h4 className="font-medium text-blue-700">Timeline Pengajuan</h4>
                   <p className="text-sm text-blue-600">
-                    Your application has been submitted on {new Date().toLocaleDateString()}. You can expect to receive
-                    a response within 5-7 working days.
+                    Pengajuan Anda telah dikirim pada {new Date().toLocaleDateString('id-ID')}. Anda dapat mengharapkan
+                    respons dalam waktu 5-7 hari kerja.
                   </p>
                 </div>
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button onClick={startOver}>Return to Locations</Button>
+            <Button onClick={startOver}>Kembali ke Lokasi</Button>
           </CardFooter>
         </Card>
       )}
@@ -666,10 +666,10 @@ export default function PengajuanPage() {
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Application Submission</DialogTitle>
+            <DialogTitle>Konfirmasi Pengiriman Pengajuan</DialogTitle>
             <DialogDescription>
-              You are about to submit your internship application for {selectedLocation?.name} with a team of{" "}
-              {selectedTeam.length} members.
+              Anda akan mengirimkan pengajuan magang untuk {selectedLocation?.name} dengan tim yang terdiri dari{" "}
+              {selectedTeam.length} anggota.
             </DialogDescription>
           </DialogHeader>
 
@@ -692,17 +692,17 @@ export default function PengajuanPage() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            Once confirmed, all team members will be notified and your team will be registered for the internship. This
-            action cannot be undone.
+            Setelah dikonfirmasi, semua anggota tim akan diberitahu dan tim Anda akan terdaftar untuk magang.
+            Tindakan ini tidak dapat dibatalkan.
           </p>
 
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
-              Go Back
+              Kembali
             </Button>
             <Button onClick={confirmApplication}>
               <CheckCircle2 className="w-4 h-4 mr-1" />
-              Confirm Submission
+              Konfirmasi Pengiriman
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -712,13 +712,13 @@ export default function PengajuanPage() {
       <Dialog open={showAddSubLocationDialog} onOpenChange={setShowAddSubLocationDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New Sub-location</DialogTitle>
-            <DialogDescription>Enter the details of the new sub-location or sub-agency.</DialogDescription>
+            <DialogTitle>Tambah Sub-lokasi Baru</DialogTitle>
+            <DialogDescription>Masukkan detail sub-lokasi atau sub-instansi baru.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid items-center grid-cols-4 gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                Nama
               </Label>
               <Input
                 id="name"
@@ -729,7 +729,7 @@ export default function PengajuanPage() {
             </div>
             <div className="grid items-center grid-cols-4 gap-4">
               <Label htmlFor="address" className="text-right">
-                Address
+                Alamat
               </Label>
               <Input
                 id="address"
@@ -740,7 +740,7 @@ export default function PengajuanPage() {
             </div>
             <div className="grid items-center grid-cols-4 gap-4">
               <Label htmlFor="contactPerson" className="text-right">
-                Contact Person
+                Narahubung
               </Label>
               <Input
                 id="contactPerson"
@@ -763,7 +763,7 @@ export default function PengajuanPage() {
             </div>
             <div className="grid items-center grid-cols-4 gap-4">
               <Label htmlFor="contactPhone" className="text-right">
-                Phone
+                Telepon
               </Label>
               <Input
                 id="contactPhone"
@@ -776,7 +776,7 @@ export default function PengajuanPage() {
           </div>
           <DialogFooter>
             <Button type="submit" onClick={handleAddSubLocation}>
-              Add Sub-location
+              Tambah Sub-lokasi
             </Button>
           </DialogFooter>
         </DialogContent>
