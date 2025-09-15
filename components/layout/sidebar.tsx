@@ -92,16 +92,17 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
             <button
               onClick={() => toggleSection(item.id)}
               className={cn(
-                "flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ease-in-out",
+                "flex items-center justify-between w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 ease-out group",
                 active || isChildActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-foreground/80 hover:bg-accent hover:text-foreground",
+                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md",
               )}
             >
               <div className="flex items-center gap-3">
                 {item.icon && (
                   <item.icon
-                    className={cn("h-5 w-5", active || isChildActive ? "text-primary" : "text-foreground/70")}
+                    className={cn("h-5 w-5 transition-transform duration-200 group-hover:scale-110",
+                      active || isChildActive ? "text-white" : "text-gray-600")}
                   />
                 )}
                 <span>{item.title}</span>
@@ -122,7 +123,7 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
               </div>
             </button>
             {isOpen && (
-              <div className="mt-1 space-y-1 border-l-2 border-muted pl-3 ml-4 py-1">
+              <div className="mt-2 space-y-2 border-l-2 border-gray-200 pl-4 ml-6 py-2">
                 {item.children?.map((child: any) => renderMenuItem(child, level + 1))}
               </div>
             )}
@@ -131,12 +132,19 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
           <Link
             href={item.href}
             className={cn(
-              "flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ease-in-out",
-              active ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-accent hover:text-foreground",
+              "flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 ease-out group",
+              active
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
+                : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:shadow-md",
             )}
           >
             <div className="flex items-center gap-3">
-              {item.icon && <item.icon className={cn("h-5 w-5", active ? "text-primary" : "text-foreground/70")} />}
+              {item.icon && (
+                <item.icon
+                  className={cn("h-5 w-5 transition-transform duration-200 group-hover:scale-110",
+                    active ? "text-white" : "text-gray-600")}
+                />
+              )}
               <span>{item.title}</span>
             </div>
             {item.badge && item.id !== "notifications" && (
@@ -161,36 +169,83 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
   }
 
   return (
-    <aside
-      className={cn(
-        "fixed left-0 top-16 z-30 hidden h-[calc(100vh-4rem)] w-64 border-r bg-background lg:block",
-        className,
-      )}
-    >
-      <div className="flex h-full flex-col">
-        {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <nav className="space-y-2">{roleMenuItems.map((item: any) => renderMenuItem(item))}</nav>
-        </div>
+    <>
+      <style jsx>{`
+        .scrollbar-hide {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+      <aside
+        className={cn(
+          "fixed left-4 top-20 z-30 hidden h-[calc(100vh-6rem)] w-64 bg-white lg:block rounded-2xl shadow-2xl border border-gray-200/60 backdrop-blur-sm",
+          className,
+        )}
+      >
+        <div className="flex h-full flex-col">
+          {/* Navigation */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 scrollbar-hide">
+            {/* Welcome Section */}
+            <div className="mb-8">
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border border-blue-100">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">D</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Dashboard</h3>
+                  <p className="text-xs text-gray-600">Laboratory Management</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Navigation */}
+            <nav className="space-y-6">
+              {/* Quick Access Section */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">
+                  Quick Access
+                </h4>
+                <div className="space-y-2">
+                  {roleMenuItems.slice(0, 3).map((item: any) => renderMenuItem(item))}
+                </div>
+              </div>
+
+              {/* Separator */}
+              <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+
+              {/* Management Section */}
+              <div>
+                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">
+                  Management
+                </h4>
+                <div className="space-y-2">
+                  {roleMenuItems.slice(3).map((item: any) => renderMenuItem(item))}
+                </div>
+              </div>
+            </nav>
+          </div>
 
         {/* User Profile */}
-        <div className="border-t p-4">
-          <div className="mb-4 flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-            <Avatar className="h-10 w-10 border-2 border-primary/10">
+        <div className="border-t border-gray-100 p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-b-2xl">
+          <div className="mb-4 flex items-center gap-3 p-3 rounded-xl bg-white shadow-sm border border-gray-100">
+            <Avatar className="h-11 w-11 border-2 border-blue-500/20 shadow-md">
               <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />
-              <AvatarFallback className="bg-primary/10 text-primary font-medium">
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
                 {user?.name?.substring(0, 2).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{user?.name || "User"}</span>
-              <span className="text-xs text-muted-foreground">{user?.username || "username"}</span>
+              <span className="text-sm font-semibold text-gray-900">{user?.name || "User"}</span>
+              <span className="text-xs text-gray-500">{user?.username || "username"}</span>
             </div>
           </div>
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300 rounded-xl transition-all duration-200"
             onClick={logout}
           >
             <LogOut className="mr-2 h-4 w-4" />
@@ -199,6 +254,7 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
         </div>
       </div>
     </aside>
+    </>
   )
 }
 

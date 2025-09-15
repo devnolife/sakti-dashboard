@@ -28,6 +28,7 @@ import {
   PanelsTopLeft,
   TrendingUp,
   Calculator,
+  Sparkles,
 
 } from "lucide-react"
 import type { Role, DosenSubRole } from "@/types/role"
@@ -1028,6 +1029,32 @@ export const laboratoryAdminMenuItems: MenuItem[] = [
     ],
   },
 
+  {
+    id: "certificates",
+    title: "Generator Sertifikat",
+    href: "/dashboard/laboratory_admin/certificates",
+    icon: Sparkles,
+    children: [
+      {
+        id: "certificate-generate",
+        title: "Buat Sertifikat",
+        href: "/dashboard/laboratory_admin/certificates/generate",
+        icon: Award,
+      },
+      {
+        id: "certificate-templates",
+        title: "Template Sertifikat",
+        href: "/dashboard/laboratory_admin/certificates/templates",
+        icon: FileText,
+      },
+      {
+        id: "certificate-history",
+        title: "Riwayat Sertifikat",
+        href: "/dashboard/laboratory_admin/certificates/history",
+        icon: ClipboardList,
+      },
+    ],
+  },
   {
     id: "settings",
     title: "Pengaturan",
