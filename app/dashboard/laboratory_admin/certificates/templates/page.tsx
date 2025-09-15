@@ -26,28 +26,30 @@ const certificateTemplates = [
   {
     id: 1,
     name: "UX Design Foundations",
-    description: "Template profesional dengan badge graduation cap dan border dotted yang elegan",
+    description: "Template profesional dengan badge graduation cap dan border dotted yang elegan - Template Utama",
     category: "ux_design_foundations",
     templateKey: "ux_design_foundations" as const,
     color: "from-blue-500 to-purple-600",
     icon: Sparkles,
-    tags: ["Professional", "Clean", "Academic"],
+    tags: ["Professional", "Clean", "Academic", "Main Template"],
     difficulty: "Beginner",
     usage: "Kursus Design, Sertifikat Pelatihan",
-    features: ["Dotted Border", "Graduation Badge", "Signature Line", "Issue Date"]
+    features: ["Dotted Border", "Graduation Badge", "Signature Line", "Issue Date"],
+    isMainTemplate: true
   },
   {
     id: 2,
     name: "Product Designer I",
     description: "Template modern dengan hexagonal badge, QR code dan desain professional",
-    category: "product_designer_1", 
+    category: "product_designer_1",
     templateKey: "product_designer_1" as const,
     color: "from-amber-500 to-orange-600",
     icon: Award,
     tags: ["Modern", "Professional", "Tech"],
     difficulty: "Advanced",
     usage: "Sertifikasi Profesi, Achievement Award",
-    features: ["Hexagon Badge", "QR Code", "Organization Logo", "Certificate ID"]
+    features: ["Hexagon Badge", "QR Code", "Organization Logo", "Certificate ID"],
+    isMainTemplate: false
   },
   {
     id: 3,
@@ -60,7 +62,8 @@ const certificateTemplates = [
     tags: ["Academic", "Formal", "Indonesian"],
     difficulty: "Intermediate",
     usage: "Universitas, Sekolah, Institusi Pendidikan",
-    features: ["University Header", "Formal Layout", "Academic Seal", "Indonesian Text"]
+    features: ["University Header", "Formal Layout", "Academic Seal", "Indonesian Text"],
+    isMainTemplate: false
   },
   {
     id: 4,
@@ -71,9 +74,10 @@ const certificateTemplates = [
     color: "from-violet-500 to-indigo-500",
     icon: Layout,
     tags: ["Modern", "Gradient", "Contemporary"],
-    difficulty: "Intermediate", 
+    difficulty: "Intermediate",
     usage: "Corporate Training, Workshop, Bootcamp",
-    features: ["Gradient Design", "Backdrop Blur", "Modern Typography", "Clean Layout"]
+    features: ["Gradient Design", "Backdrop Blur", "Modern Typography", "Clean Layout"],
+    isMainTemplate: false
   }
 ]
 
@@ -135,16 +139,23 @@ export default function CertificateTemplatesPage() {
     }))
   }
 
-  // Filter templates
-  const filteredTemplates = certificateTemplates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-    
-    const matchesCategory = selectedCategory === "all" || template.category === selectedCategory
-    
-    return matchesSearch && matchesCategory
-  })
+  // Filter templates and sort to show main template first
+  const filteredTemplates = certificateTemplates
+    .filter(template => {
+      const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+
+      const matchesCategory = selectedCategory === "all" || template.category === selectedCategory
+
+      return matchesSearch && matchesCategory
+    })
+    .sort((a, b) => {
+      // Sort by main template first, then by ID
+      if (a.isMainTemplate && !b.isMainTemplate) return -1
+      if (!a.isMainTemplate && b.isMainTemplate) return 1
+      return a.id - b.id
+    })
 
   const categories = ["all", ...Array.from(new Set(certificateTemplates.map(t => t.category)))]
 
@@ -158,6 +169,14 @@ export default function CertificateTemplatesPage() {
         <p className="text-gray-600 dark:text-gray-400 mt-1">
           Jelajahi dan pilih template sertifikat
         </p>
+        <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-blue-500 hover:bg-blue-500 text-white">TEMPLATE UTAMA</Badge>
+            <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+              UX Design Foundations - Template yang direkomendasikan untuk semua sertifikat
+            </span>
+          </div>
+        </div>
       </div>
 
 
@@ -218,12 +237,21 @@ export default function CertificateTemplatesPage() {
                       className={`relative group cursor-pointer border rounded-lg transition-all hover:shadow-sm ${
                         selectedTemplate === template.id
                           ? "border-blue-500 shadow-sm"
+                          : template.isMainTemplate
+                          ? "border-blue-300 hover:border-blue-400"
                           : "border-gray-200 hover:border-gray-300"
                       } ${viewMode === "list" ? "flex gap-4" : ""}`}
                       onClick={() => setSelectedTemplate(template.id)}
                     >
-                      <div className={`${viewMode === "grid" ? "h-32" : "w-32 h-24"} bg-gray-100 dark:bg-gray-800 ${viewMode === "grid" ? "rounded-t-lg" : "rounded-l-lg"} flex items-center justify-center relative overflow-hidden flex-shrink-0`}>
-                        <IconComponent className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+                      <div className={`${viewMode === "grid" ? "h-32" : "w-32 h-24"} ${template.isMainTemplate ? "bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900" : "bg-gray-100 dark:bg-gray-800"} ${viewMode === "grid" ? "rounded-t-lg" : "rounded-l-lg"} flex items-center justify-center relative overflow-hidden flex-shrink-0`}>
+                        <IconComponent className={`h-8 w-8 ${template.isMainTemplate ? "text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"}`} />
+                        {template.isMainTemplate && (
+                          <div className="absolute top-1 left-1">
+                            <Badge className="bg-blue-500 hover:bg-blue-500 text-white text-xs px-1 py-0">
+                              UTAMA
+                            </Badge>
+                          </div>
+                        )}
                         {selectedTemplate === template.id && (
                           <div className="absolute top-2 right-2">
                             <div className="bg-blue-500 rounded-full p-1">
