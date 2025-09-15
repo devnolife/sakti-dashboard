@@ -242,22 +242,24 @@ export function StudentParticipation() {
   }))
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Student Participation Analysis</h2>
-          <p className="text-muted-foreground">Analyze student participation metrics across different laboratories</p>
+    <div className="space-y-8">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div className="space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Student Participation Analysis
+          </h2>
+          <p className="text-gray-600 text-lg">Analyze student participation metrics across different laboratories</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Select value={selectedLab} onValueChange={setSelectedLab}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[200px] h-11 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-xl">
               <SelectValue placeholder="Select Lab" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Labs</SelectItem>
+            <SelectContent className="rounded-xl border-gray-200 shadow-xl">
+              <SelectItem value="all" className="rounded-lg">All Labs</SelectItem>
               {mockParticipationData.map((lab) => (
-                <SelectItem key={lab.id} value={lab.labName}>
+                <SelectItem key={lab.id} value={lab.labName} className="rounded-lg">
                   {lab.labName}
                 </SelectItem>
               ))}
@@ -265,56 +267,64 @@ export function StudentParticipation() {
           </Select>
 
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[200px] h-11 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-xl">
               <SelectValue placeholder="Select Period" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="semester">Current Semester</SelectItem>
-              <SelectItem value="year">Academic Year</SelectItem>
-              <SelectItem value="month">Last Month</SelectItem>
+            <SelectContent className="rounded-xl border-gray-200 shadow-xl">
+              <SelectItem value="semester" className="rounded-lg">Current Semester</SelectItem>
+              <SelectItem value="year" className="rounded-lg">Academic Year</SelectItem>
+              <SelectItem value="month" className="rounded-lg">Last Month</SelectItem>
             </SelectContent>
           </Select>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-1">
+              <Button variant="outline" className="gap-2 h-11 px-6 bg-white border-gray-200 shadow-sm hover:shadow-md transition-all hover:bg-gray-50 rounded-xl">
                 <Download className="h-4 w-4" />
                 Export
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Export as PDF</DropdownMenuItem>
-              <DropdownMenuItem>Export as Excel</DropdownMenuItem>
-              <DropdownMenuItem>Export as CSV</DropdownMenuItem>
+            <DropdownMenuContent className="rounded-xl border-gray-200 shadow-xl">
+              <DropdownMenuItem className="rounded-lg">Export as PDF</DropdownMenuItem>
+              <DropdownMenuItem className="rounded-lg">Export as Excel</DropdownMenuItem>
+              <DropdownMenuItem className="rounded-lg">Export as CSV</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
       {/* Participation Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-sm font-semibold text-blue-900">Total Students</CardTitle>
+            <div className="p-2 bg-blue-500 rounded-xl">
+              <Users className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{filteredLabData.reduce((sum, lab) => sum + lab.totalStudents, 0)}</div>
-            <p className="text-xs text-muted-foreground">Across {filteredLabData.length} laboratories</p>
+            <div className="text-3xl font-bold text-blue-900 mb-1">
+              {filteredLabData.reduce((sum, lab) => sum + lab.totalStudents, 0)}
+            </div>
+            <p className="text-sm text-blue-700">Across {filteredLabData.length} laboratories</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Attendance Rate</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+        <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl bg-gradient-to-br from-green-50 to-green-100">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-sm font-semibold text-green-900">Avg. Attendance Rate</CardTitle>
+            <div className="p-2 bg-green-500 rounded-xl">
+              <Calendar className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-bold text-green-900 mb-1">
               {Math.round(filteredLabData.reduce((sum, lab) => sum + lab.attendanceRate, 0) / filteredLabData.length)}%
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-green-700">
               {selectedPeriod === "semester"
                 ? "Current Semester"
                 : selectedPeriod === "year"
@@ -324,48 +334,64 @@ export function StudentParticipation() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Completion Rate</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+        <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-sm font-semibold text-purple-900">Avg. Completion Rate</CardTitle>
+            <div className="p-2 bg-purple-500 rounded-xl">
+              <BarChart3 className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-bold text-purple-900 mb-1">
               {Math.round(filteredLabData.reduce((sum, lab) => sum + lab.completionRate, 0) / filteredLabData.length)}%
             </div>
-            <p className="text-xs text-muted-foreground">Task completion across labs</p>
+            <p className="text-sm text-purple-700">Task completion across labs</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Score</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+        <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-sm font-semibold text-orange-900">Avg. Score</CardTitle>
+            <div className="p-2 bg-orange-500 rounded-xl">
+              <BarChart3 className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-bold text-orange-900 mb-1">
               {Math.round(filteredLabData.reduce((sum, lab) => sum + lab.avgScore, 0) / filteredLabData.length)}
             </div>
-            <p className="text-xs text-muted-foreground">Average performance score</p>
+            <p className="text-sm text-orange-700">Average performance score</p>
           </CardContent>
         </Card>
       </div>
 
       {/* View Toggle */}
       <div className="flex justify-end">
-        <div className="inline-flex rounded-md shadow-sm">
+        <div className="inline-flex rounded-2xl bg-gray-100 p-1 shadow-inner">
           <Button
-            variant={selectedView === "chart" ? "default" : "outline"}
-            className="rounded-l-md rounded-r-none"
+            variant={selectedView === "chart" ? "default" : "ghost"}
+            className={`rounded-xl px-6 transition-all duration-200 ${
+              selectedView === "chart"
+                ? "bg-white shadow-md text-gray-900"
+                : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+            }`}
             onClick={() => setSelectedView("chart")}
           >
+            <BarChart3 className="h-4 w-4 mr-2" />
             Chart View
           </Button>
           <Button
-            variant={selectedView === "table" ? "default" : "outline"}
-            className="rounded-r-md rounded-l-none"
+            variant={selectedView === "table" ? "default" : "ghost"}
+            className={`rounded-xl px-6 transition-all duration-200 ${
+              selectedView === "table"
+                ? "bg-white shadow-md text-gray-900"
+                : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+            }`}
             onClick={() => setSelectedView("table")}
           >
+            <Users className="h-4 w-4 mr-2" />
             Table View
           </Button>
         </div>
@@ -373,14 +399,14 @@ export function StudentParticipation() {
 
       {/* Participation Chart */}
       {selectedView === "chart" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Participation Metrics Comparison</CardTitle>
-            <CardDescription>
+        <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-100">
+            <CardTitle className="text-xl font-bold text-gray-900">Participation Metrics Comparison</CardTitle>
+            <CardDescription className="text-gray-600">
               Comparing attendance, completion rates, and average scores across laboratories
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-8">
             <div className="h-[400px]">
               <ChartContainer
                 config={{
@@ -400,14 +426,35 @@ export function StudentParticipation() {
               >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={comparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
-                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-45}
+                      textAnchor="end"
+                      height={70}
+                      tick={{ fontSize: 12, fill: '#64748b' }}
+                    />
+                    <YAxis tick={{ fontSize: 12, fill: '#64748b' }} />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Legend />
-                    <Bar dataKey="attendance" name="Attendance Rate" fill="var(--color-attendance)" />
-                    <Bar dataKey="completion" name="Completion Rate" fill="var(--color-completion)" />
-                    <Bar dataKey="score" name="Average Score" fill="var(--color-score)" />
+                    <Bar
+                      dataKey="attendance"
+                      name="Attendance Rate"
+                      fill="var(--color-attendance)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="completion"
+                      name="Completion Rate"
+                      fill="var(--color-completion)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="score"
+                      name="Average Score"
+                      fill="var(--color-score)"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -418,55 +465,59 @@ export function StudentParticipation() {
 
       {/* Participation Table */}
       {selectedView === "table" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Detailed Student Participation</CardTitle>
-            <CardDescription>
+        <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-100">
+            <CardTitle className="text-xl font-bold text-gray-900">Detailed Student Participation</CardTitle>
+            <CardDescription className="text-gray-600">
               Individual student participation metrics for {selectedLab === "all" ? "all laboratories" : selectedLab}
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>NIM</TableHead>
-                  <TableHead>Laboratory</TableHead>
-                  <TableHead className="text-right">Attendance</TableHead>
-                  <TableHead className="text-right">Completion</TableHead>
-                  <TableHead className="text-right">Score</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStudentData.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell className="font-medium">{student.name}</TableCell>
-                    <TableCell>{student.nim}</TableCell>
-                    <TableCell>{student.lab}</TableCell>
-                    <TableCell className="text-right">{student.attendance}%</TableCell>
-                    <TableCell className="text-right">{student.completionRate}%</TableCell>
-                    <TableCell className="text-right">{student.score}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                    </TableCell>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50/50">
+                    <TableHead className="font-semibold text-gray-900">Name</TableHead>
+                    <TableHead className="font-semibold text-gray-900">NIM</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Laboratory</TableHead>
+                    <TableHead className="text-right font-semibold text-gray-900">Attendance</TableHead>
+                    <TableHead className="text-right font-semibold text-gray-900">Completion</TableHead>
+                    <TableHead className="text-right font-semibold text-gray-900">Score</TableHead>
+                    <TableHead className="text-center font-semibold text-gray-900">Status</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredStudentData.map((student) => (
+                    <TableRow key={student.id} className="hover:bg-gray-50/50 transition-colors">
+                      <TableCell className="font-medium text-gray-900">{student.name}</TableCell>
+                      <TableCell className="text-gray-600">{student.nim}</TableCell>
+                      <TableCell className="text-gray-600">{student.lab}</TableCell>
+                      <TableCell className="text-right font-semibold">{student.attendance}%</TableCell>
+                      <TableCell className="text-right font-semibold">{student.completionRate}%</TableCell>
+                      <TableCell className="text-right font-semibold">{student.score}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge className={`${getStatusColor(student.status)} border-0 font-medium`}>
+                          {student.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
 
       {/* Participation Trends */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Participation Trends</CardTitle>
-          <CardDescription>
+      <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-100">
+          <CardTitle className="text-xl font-bold text-gray-900">Participation Trends</CardTitle>
+          <CardDescription className="text-gray-600">
             Monthly attendance trends for {selectedLab === "all" ? "selected laboratories" : selectedLab}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-8">
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -475,13 +526,29 @@ export function StudentParticipation() {
                     ? mockParticipationData[0].participationTrend
                     : mockParticipationData.find((lab) => lab.labName === selectedLab)?.participationTrend || []
                 }
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis domain={[70, 100]} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fontSize: 12, fill: '#64748b' }}
+                  axisLine={{ stroke: '#e2e8f0' }}
+                />
+                <YAxis
+                  domain={[70, 100]}
+                  tick={{ fontSize: 12, fill: '#64748b' }}
+                  axisLine={{ stroke: '#e2e8f0' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                  }}
+                />
                 <Legend />
-                <Bar dataKey="attendance" name="Attendance Rate">
+                <Bar dataKey="attendance" name="Attendance Rate" radius={[8, 8, 0, 0]}>
                   {(selectedLab === "all"
                     ? mockParticipationData[0].participationTrend
                     : mockParticipationData.find((lab) => lab.labName === selectedLab)?.participationTrend || []

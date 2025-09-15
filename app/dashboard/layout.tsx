@@ -40,7 +40,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
       <RoleSidebar role={user.role} />
 
       <div className="lg:pl-64">
