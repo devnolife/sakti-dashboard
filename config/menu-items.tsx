@@ -29,6 +29,10 @@ import {
   TrendingUp,
   Calculator,
   Sparkles,
+  Server,
+  Code,
+  Database,
+  FileSignature,
 
 } from "lucide-react"
 import type { Role, DosenSubRole } from "@/types/role"
@@ -417,7 +421,30 @@ export const staffTuMenuItems = [
       },
     ],
   },
-
+  {
+    id: "document-generation",
+    title: "Document Generation",
+    href: "/dashboard/staff_tu/document-generation",
+    icon: FileSignature,
+    badge: { text: "New", variant: "secondary" },
+    children: [
+      {
+        id: "generate-documents",
+        title: "Generate Documents",
+        href: "/dashboard/staff_tu/document-generation",
+      },
+      {
+        id: "document-templates",
+        title: "Document Templates",
+        href: "/dashboard/staff_tu/document-generation/templates",
+      },
+      {
+        id: "verification-docs",
+        title: "Document Verification",
+        href: "/dashboard/staff_tu/document-generation/verification",
+      },
+    ],
+  },
   {
     id: "settings",
     title: "Pengaturan",
@@ -816,6 +843,30 @@ export const adminUmumMenuItems = [
         id: "correspondence-reports",
         title: "Laporan Korespondensi",
         href: "/dashboard/admin_umum/reports/correspondence",
+      },
+    ],
+  },
+  {
+    id: "document-generation",
+    title: "Document Generation",
+    href: "/dashboard/admin_umum/document-generation",
+    icon: FileSignature,
+    badge: { text: "New", variant: "secondary" },
+    children: [
+      {
+        id: "generate-documents",
+        title: "Generate Documents",
+        href: "/dashboard/admin_umum/document-generation",
+      },
+      {
+        id: "document-templates",
+        title: "Document Templates",
+        href: "/dashboard/admin_umum/document-generation/templates",
+      },
+      {
+        id: "verification-docs",
+        title: "Document Verification",
+        href: "/dashboard/admin_umum/document-generation/verification",
       },
     ],
   },
