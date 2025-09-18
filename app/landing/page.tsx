@@ -1,4 +1,4 @@
-import { HeroSection, UsefulFeature, GetStarted, ContactUs } from '@/components/landing-page'
+import { Header, HeroSection, UsefulFeature, OurTeam, GetStarted, ContactUs, Footer } from '@/components/landing'
 
 export const metadata = {
   title: 'SINTEKMu Landing - Sistem Informasi Fakultas Teknik',
@@ -7,11 +7,16 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen">
-      <HeroSection />
-      <UsefulFeature />
-      <GetStarted />
-      <ContactUs />
-    </main>
+    <>
+      <Header />
+      <main className="min-h-screen pt-20">
+        <HeroSection />
+        <UsefulFeature />
+        <OurTeam />
+        <GetStarted />
+        <ContactUs />
+      </main>
+      <Footer />
+    </>
   )
 }

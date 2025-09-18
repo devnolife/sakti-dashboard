@@ -55,25 +55,25 @@ export default function CertificatesOverviewPage() {
   const recentCertificates = [
     {
       id: 1,
-      title: "Juara 1 Programming Contest",
+      title: "UX Design Foundations Certificate",
       recipient: "Ahmad Fauzi",
-      template: "Modern",
+      template: "UX Design Foundations (Template Utama)",
       date: "2024-01-15",
       status: "completed"
     },
     {
-      id: 2, 
+      id: 2,
       title: "Best Presenter Workshop AI",
       recipient: "Siti Nurhaliza",
-      template: "Academic",
+      template: "UX Design Foundations (Template Utama)",
       date: "2024-01-14",
       status: "completed"
     },
     {
       id: 3,
       title: "Outstanding Student Achievement",
-      recipient: "Budi Santoso", 
-      template: "Classic",
+      recipient: "Budi Santoso",
+      template: "UX Design Foundations (Template Utama)",
       date: "2024-01-13",
       status: "completed"
     }
@@ -151,7 +151,11 @@ export default function CertificatesOverviewPage() {
                   <p className="font-medium text-sm">{cert.title}</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">{cert.recipient} • {cert.date}</p>
                 </div>
-                <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                <span className={`text-xs px-2 py-1 rounded ${
+                  cert.template.includes("Template Utama")
+                    ? "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border border-blue-200"
+                    : "bg-gray-100 dark:bg-gray-700"
+                }`}>
                   {cert.template}
                 </span>
               </div>
