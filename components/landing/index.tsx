@@ -1,0 +1,7 @@
+export { default as Header } from './header'
+export { default as HeroSection } from './hero-section'
+export { default as UsefulFeature } from './useful-feature'
+export { default as OurTeam } from './our-team'
+export { default as GetStarted } from './get-started'
+export { default as ContactUs } from './contact-us'
+export { default as Footer } from './footer'
