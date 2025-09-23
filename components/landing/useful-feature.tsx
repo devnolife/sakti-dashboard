@@ -13,32 +13,32 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    icon: <GraduationCap className="w-12 h-12 text-primary" />,
+    icon: <GraduationCap className="w-12 h-12 text-secondary" />,
     title: 'Manajemen Akademik',
     description: 'Kelola data mahasiswa, nilai, jadwal kuliah, dan seluruh proses akademik dalam satu platform.'
   },
   {
-    icon: <Users className="w-12 h-12 text-primary" />,
+    icon: <Users className="w-12 h-12 text-secondary-alt" />,
     title: 'Multi-Role Dashboard',
     description: 'Dashboard khusus untuk mahasiswa, dosen, admin, dekan, dan seluruh stakeholder fakultas.'
   },
   {
-    icon: <FileCheck className="w-12 h-12 text-primary" />,
+    icon: <FileCheck className="w-12 h-12 text-secondary" />,
     title: 'Surat & Dokumen',
     description: 'Sistem pembuatan surat otomatis dan pengelolaan dokumen akademik yang terintegrasi.'
   },
   {
-    icon: <CreditCard className="w-12 h-12 text-primary" />,
+    icon: <CreditCard className="w-12 h-12 text-secondary-alt" />,
     title: 'Pembayaran Digital',
     description: 'Kelola pembayaran SPP, praktikum, dan administrasi akademik lainnya secara digital.'
   },
   {
-    icon: <Calendar className="w-12 h-12 text-primary" />,
+    icon: <Calendar className="w-12 h-12 text-secondary" />,
     title: 'Jadwal Terintegrasi',
     description: 'Sistem penjadwalan kuliah, ujian, praktikum, dan kegiatan akademik lainnya.'
   },
   {
-    icon: <Shield className="w-12 h-12 text-primary" />,
+    icon: <Shield className="w-12 h-12 text-secondary-alt" />,
     title: 'Keamanan Data',
     description: 'Sistem keamanan berlapis dengan kontrol akses yang ketat untuk melindungi data akademik.'
   }
@@ -72,16 +72,16 @@ const UsefulFeature: React.FC = () => {
   }, [])
 
   return (
-    <section id="features" ref={ref} className="relative py-[100px] bg-white dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden">
-      {/* Modern Background Elements */}
-      <div className="absolute top-10 right-10 w-96 h-96 bg-secondary/12 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-secondary/15 rounded-full blur-3xl animate-pulse delay-1000" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-tertiary/3 via-transparent to-secondary/3 rounded-full blur-3xl" />
+    <section id="features" ref={ref} className="relative py-[100px] bg-gradient-to-br from-white via-mint-50/20 to-lavender-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden">
+      {/* Ultra Modern Background Elements */}
+      <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-lavender-100/30 to-secondary/12 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/15 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-peach-50/20 via-transparent to-slate-50/30 rounded-full blur-3xl" />
 
       <div className="relative flex flex-col gap-16 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Floating Badge with Animation */}
-          <div className="inline-flex items-center px-6 py-3 bg-cream/90 backdrop-blur-xl border border-primary/20 rounded-full text-sm font-semibold text-primary shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
+          {/* Modern Floating Badge */}
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-lavender-100/70 to-mint-100/70 backdrop-blur-xl border border-white/40 rounded-full text-sm font-bold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent shadow-lg shadow-lavender-200/20 hover:shadow-xl hover:shadow-lavender-200/30 transition-all duration-500 animate-float hover:scale-105">
             ⚡ Fitur Unggulan
           </div>
 
@@ -96,7 +96,7 @@ const UsefulFeature: React.FC = () => {
                     className="absolute bottom-0 z-[1] h-[40%] w-[125%] sm:w-[132%] -left-[13%] sm:-left-[19%] top-[17px]"
                   />
                 </span>{' '}
-                <span className="text-primary">
+                <span className="bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent">
                   untuk mengelola fakultas
                 </span>
               </h2>
@@ -115,15 +115,15 @@ const UsefulFeature: React.FC = () => {
                 className="group border-0 bg-white/70 backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 rounded-2xl overflow-hidden"
               >
                 <CardContent className="flex flex-col gap-4 justify-center items-center p-8 relative">
-                  {/* Gradient Background on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/8 via-cream/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Modern Gradient Background on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-lavender-50/30 via-mint-50/20 to-peach-50/25 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                  {/* Icon Container */}
-                  <div className="relative bg-gradient-to-br from-cream/50 to-accent p-4 rounded-2xl border border-primary/20 group-hover:shadow-xl group-hover:scale-110 transition-all duration-500 group-hover:rotate-3">
+                  {/* Modern Icon Container */}
+                  <div className="relative bg-gradient-to-br from-lavender-100/60 to-mint-100/50 p-4 rounded-2xl border border-white/30 group-hover:shadow-xl group-hover:shadow-lavender-200/20 group-hover:scale-110 transition-all duration-500 group-hover:rotate-3 backdrop-blur-sm">
                     {item.icon}
                   </div>
 
-                  <h3 className="relative text-xl font-bold text-neutral-900 dark:text-white mb-2 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="relative text-xl font-bold text-neutral-900 dark:text-white mb-2 group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-secondary-alt group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                     {item.title}
                   </h3>
 

@@ -66,15 +66,15 @@ const OurTeam: React.FC = () => {
   }, [])
 
   return (
-    <section id="team" className="relative py-[100px] bg-white dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
-      {/* Modern Background Elements */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-secondary/12 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl animate-pulse delay-1500" />
+    <section id="team" className="relative py-[100px] bg-gradient-to-tl from-white via-peach-50/20 to-lavender-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
+      {/* Ultra Modern Background Elements */}
+      <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-peach-100/30 to-secondary/12 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-tr from-lavender-100/25 to-secondary-alt/15 rounded-full blur-3xl animate-pulse delay-1500" />
 
       <div className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-cream/90 backdrop-blur-xl border border-primary/20 rounded-full text-sm font-semibold text-primary shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
+          {/* Modern Floating Badge */}
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-peach-100/70 to-lavender-100/70 backdrop-blur-xl border border-white/40 rounded-full text-sm font-bold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent shadow-lg shadow-peach-200/20 hover:shadow-xl hover:shadow-peach-200/30 transition-all duration-500 animate-float hover:scale-105">
             👥 Pimpinan Fakultas
           </div>
 
@@ -89,7 +89,7 @@ const OurTeam: React.FC = () => {
                     className="absolute bottom-0 z-[1] h-[40%] w-[132%] -left-[19%] top-[17px]"
                   />
                 </span>{' '}
-                <span className="text-primary">
+                <span className="bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent">
                   Akademisi Berpengalaman
                 </span>
               </h2>

@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-white/20 dark:bg-neutral-900/80 dark:border-neutral-700/20 shadow-lg shadow-black/5">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white/95 via-lavender-50/30 to-white/95 backdrop-blur-xl border-b border-white/30 dark:bg-gradient-to-r dark:from-neutral-900/90 dark:via-slate-900/40 dark:to-neutral-900/90 dark:border-neutral-700/20 shadow-lg shadow-lavender-200/10">
       <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -48,13 +48,18 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* CTA Buttons */}
+          {/* Modern CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" asChild className="border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300">
-              <Link href="/login">Masuk</Link>
+            <Button variant="outline" asChild className="group border-2 border-secondary-alt/30 text-secondary-alt hover:border-secondary-alt/60 hover:bg-gradient-to-r hover:from-lavender-50/30 hover:to-mint-50/30 transition-all duration-500 hover:scale-105 rounded-xl backdrop-blur-sm shadow-lg shadow-lavender-200/10">
+              <Link href="/login" className="font-semibold">Masuk</Link>
             </Button>
-            <Button asChild className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <Link href="/dashboard">Dashboard</Link>
+            <Button asChild className="group bg-gradient-to-r from-secondary to-secondary-alt hover:from-secondary/90 hover:to-secondary-alt/90 shadow-lg shadow-secondary/20 hover:shadow-xl hover:shadow-secondary/30 transition-all duration-500 hover:scale-105 rounded-xl font-semibold">
+              <Link href="/dashboard" className="flex items-center gap-2">
+                <span>Dashboard</span>
+                <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center group-hover:translate-x-1 transition-transform duration-300 text-xs">
+                  →
+                </div>
+              </Link>
             </Button>
           </div>
 
@@ -94,23 +99,25 @@ const Header: React.FC = () => {
         )}
       </div>
 
-      {/* Quick Info Bar */}
-      <div className="bg-secondary/10 border-b border-secondary/20">
+      {/* Modern Quick Info Bar */}
+      <div className="bg-gradient-to-r from-lavender-50/40 via-mint-50/30 to-peach-50/40 border-b border-white/30 backdrop-blur-sm">
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="flex items-center justify-between py-2 text-sm">
+          <div className="flex items-center justify-between py-3 text-sm">
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2 text-neutral-600 dark:text-neutral-300">
-                <Mail className="w-4 h-4 text-tertiary" />
-                <span className="hidden sm:inline">info@ft-unismuh.ac.id</span>
+              <div className="flex items-center space-x-2 text-slate-600 dark:text-neutral-300">
+                <Mail className="w-4 h-4 text-secondary" />
+                <span className="hidden sm:inline font-medium">info@ft-unismuh.ac.id</span>
               </div>
-              <div className="flex items-center space-x-2 text-neutral-600 dark:text-neutral-300">
-                <Phone className="w-4 h-4 text-secondary" />
-                <span className="hidden sm:inline">(0411) 861543</span>
+              <div className="flex items-center space-x-2 text-slate-600 dark:text-neutral-300">
+                <Phone className="w-4 h-4 text-secondary-alt" />
+                <span className="hidden sm:inline font-medium">(0411) 861543</span>
               </div>
             </div>
-            <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
-              Sistem Informasi Terintegrasi
-            </Badge>
+            <div className="bg-gradient-to-r from-secondary/10 to-secondary-alt/10 px-4 py-2 rounded-full border border-white/30 backdrop-blur-sm shadow-lg shadow-lavender-200/10">
+              <span className="text-xs font-semibold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent">
+                Sistem Informasi Terintegrasi
+              </span>
+            </div>
           </div>
         </div>
       </div>
