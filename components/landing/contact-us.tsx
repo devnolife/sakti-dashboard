@@ -38,16 +38,16 @@ const ContactUs: React.FC = () => {
   }, [])
 
   return (
-    <section id="contact-us" className="relative py-[100px] bg-white dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
-      {/* Modern Background Elements */}
-      <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000" />
+    <section id="contact-us" className="relative py-[100px] bg-gradient-to-br from-white via-slate-50/20 to-mint-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
+      {/* Ultra Modern Background Elements */}
+      <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-slate-100/30 to-secondary/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/10 rounded-full blur-3xl animate-pulse delay-1000" />
 
       <div className="relative flex flex-col gap-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-primary/10 backdrop-blur-xl border border-primary/20 rounded-full text-sm font-semibold text-primary shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
+          {/* Modern Floating Badge */}
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-100/70 to-mint-100/70 backdrop-blur-xl border border-white/40 rounded-full text-sm font-bold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent shadow-lg shadow-slate-200/20 hover:shadow-xl hover:shadow-slate-200/30 transition-all duration-500 animate-float hover:scale-105">
             📞 Hubungi Kami
           </div>
 

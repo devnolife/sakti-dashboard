@@ -14,24 +14,25 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
 
   return (
     <section className="relative py-[100px] overflow-hidden">
-      {/* Modern Gradient Background */}
-      <div className="absolute inset-0 bg-white dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900" />
-      <div className="absolute inset-0 bg-gradient-to-r from-tertiary/3 via-transparent to-secondary/3" />
+      {/* Ultra Modern Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-mint-50/20 to-lavender-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900" />
+      <div className="absolute inset-0 bg-gradient-to-tl from-peach-50/20 via-transparent to-slate-50/40" />
 
-      {/* Animated Background Elements */}
-      <div className="absolute top-10 left-10 w-96 h-96 bg-secondary/15 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-secondary/12 rounded-full blur-3xl animate-pulse delay-1000" />
+      {/* Soft Animated Background Elements */}
+      <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-lavender-100/30 to-secondary/15 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/12 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-gradient-to-r from-peach-100/20 to-lavender-100/20 rounded-full blur-2xl animate-pulse delay-700" />
 
       <div className="relative flex items-center flex-wrap justify-center lg:justify-between gap-y-8 gap-x-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Content Section */}
         <div className="flex flex-col items-start gap-y-10 py-12 z-[1] max-w-2xl">
-          {/* Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-cream/90 backdrop-blur-xl border border-primary/20 rounded-full text-sm font-semibold text-primary shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
+          {/* Modern Floating Badge */}
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-lavender-100/70 to-mint-100/70 backdrop-blur-xl border border-white/40 rounded-full text-sm font-bold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent shadow-lg shadow-lavender-200/20 hover:shadow-xl hover:shadow-lavender-200/30 transition-all duration-500 animate-float hover:scale-105">
             🚀 Mulai Sekarang
           </div>
 
           <div className="flex flex-col gap-y-4">
-            <h2 className="text-primary font-extrabold text-4xl lg:text-5xl leading-tight">
+            <h2 className="bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent font-extrabold text-4xl lg:text-5xl leading-tight">
               Siap Memulai
               <span className="block">Digitalisasi?</span>
             </h2>
@@ -45,7 +46,7 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
             <Button
               asChild
               size="lg"
-              className="group bg-primary hover:bg-primary/90 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-110 px-8 py-4 text-lg font-semibold rounded-xl"
+              className="group bg-secondary hover:bg-secondary/90 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-110 px-8 py-4 text-lg font-semibold rounded-xl"
             >
               <Link href="/login" className="flex items-center gap-3">
                 <span>🔐 Akses Sistem</span>
@@ -58,7 +59,7 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
               asChild
               size="lg"
               variant="outline"
-              className="group border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 hover:scale-105 px-8 py-4 text-lg font-semibold rounded-xl backdrop-blur-sm"
+              className="group border-2 border-secondary-alt/30 text-secondary-alt hover:border-secondary-alt/60 hover:bg-secondary-alt/10 transition-all duration-500 hover:scale-105 px-8 py-4 text-lg font-semibold rounded-xl backdrop-blur-sm"
             >
               <Link href="#contact-us" className="flex items-center gap-3">
                 <span>💬 Hubungi Kami</span>
@@ -72,15 +73,15 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
           {/* Feature Highlights */}
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-2 text-sm text-neutral-600">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
               <span>Terintegrasi</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-neutral-600">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-300" />
+              <div className="w-2 h-2 bg-secondary-alt rounded-full animate-pulse delay-300" />
               <span>Aman & Terpercaya</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-neutral-600">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-700" />
+              <div className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-700" />
               <span>24/7 Support</span>
             </div>
           </div>
@@ -99,13 +100,13 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
             />
 
             {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary rounded-full shadow-lg animate-bounce opacity-80" />
-            <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-primary rounded-full shadow-lg animate-bounce delay-500 opacity-80" />
+            <div className="absolute -top-4 -right-4 w-8 h-8 bg-secondary rounded-full shadow-lg animate-bounce opacity-80" />
+            <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-secondary-alt rounded-full shadow-lg animate-bounce delay-500 opacity-80" />
 
             {/* Stats Overlay */}
             <div className="absolute top-4 left-4 bg-accent/95 backdrop-blur-sm rounded-xl p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-500">
               <div className="text-xs text-neutral-600">Pengguna Aktif</div>
-              <div className="text-lg font-bold text-primary">5000+</div>
+              <div className="text-lg font-bold text-secondary-alt">5000+</div>
             </div>
           </div>
         </div>
