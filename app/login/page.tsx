@@ -11,12 +11,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("")
+  const [nidn, setNidn] = useState("")
   const [password, setPassword] = useState("")
   const [selectedRole, setSelectedRole] = useState<Role>("mahasiswa")
   const [showPassword, setShowPassword] = useState(false)
@@ -28,17 +29,16 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormError("")
-    if (!username || !password) {
-      setFormError("Username and password are required.")
+    if (!nidn || !password) {
+      setFormError("NIDN and password are required.")
       return
     }
-    await login(username, password, selectedRole)
-      .then(() => {
-        router.push("/dashboard")
-      })
-      .catch(() => {
-        setFormError("Invalid username or password.")
-      })
+    
+    try {
+      await login(nidn, password, selectedRole)
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Login failed. Please check your credentials.")
+    }
   }
 
   return (
@@ -60,14 +60,14 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="nidn">NIDN</Label>
                 <div className="relative">
                   <Input
-                    id="username"
+                    id="nidn"
                     type="text"
-                    placeholder="your.username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your NIDN"
+                    value={nidn}
+                    onChange={(e) => setNidn(e.target.value)}
                     className="pl-10"
                     required
                   />
@@ -140,7 +140,7 @@ export default function LoginPage() {
                   </SelectContent>
                 </Select>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  For demo purposes, any username and password will work with any role including Admin Keuangan
+                  Select your role to access the appropriate dashboard. The system will verify your credentials against the database.
                 </p>
               </div>
               {formError && <p className="text-sm text-center text-destructive">{formError}</p>}

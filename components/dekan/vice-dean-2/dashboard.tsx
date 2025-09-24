@@ -25,12 +25,6 @@ import {
 export function ViceDean2Dashboard() {
   return (
     <div className="pb-5 space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text">
-          Wakil Dekan 2 
-        </h2>
-       <p className="text-muted-foreground">Pantau statistik mahasiswa, distribusi IPK, dan status akademik</p>
-      </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">

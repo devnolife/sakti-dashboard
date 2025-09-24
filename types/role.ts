@@ -1,12 +1,15 @@
 export type Role =
   | "mahasiswa"
   | "dosen"
+  | "prodi"
   | "staff_tu"
+  | "dekan"
   | "admin"
   | "laboratory_admin"
   | "reading_room_admin"
   | "admin_umum"
   | "admin_keuangan"
+  | "gkm"
   | "kepala_tata_usaha"
 
 export type DosenSubRole =

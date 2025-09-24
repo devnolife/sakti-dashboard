@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Check, ChevronDown, UserCog } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,12 +18,59 @@ import { dosenSubRoleConfigs, type DosenSubRole } from "@/types/role"
 export default function SubRoleSwitcher() {
   const { currentSubRole, setCurrentSubRole, availableSubRoles } = useDosenSubRole()
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   const currentConfig = dosenSubRoleConfigs[currentSubRole]
 
+  const getSubRoleDashboardPath = (subRole: DosenSubRole) => {
+    switch (subRole) {
+      case 'wakil_dekan_1':
+        return '/dashboard/dosen/vice-dean-1'
+      case 'wakil_dekan_2':
+        return '/dashboard/dosen/vice-dean-2'
+      case 'wakil_dekan_3':
+        return '/dashboard/dosen/vice-dean-3'
+      case 'wakil_dekan_4':
+        return '/dashboard/dosen/vice-dean-4'
+      case 'dekan':
+        return '/dashboard/dekan'
+      case 'gkm':
+        return '/dashboard/gkm'
+      case 'prodi':
+        return '/dashboard/prodi'
+      case 'sekretaris_prodi':
+        return '/dashboard/prodi'
+      case 'dosen':
+      default:
+        return '/dashboard/dosen'
+    }
+  }
+
   const handleSubRoleChange = (subRole: DosenSubRole) => {
-    setCurrentSubRole(subRole)
     setOpen(false)
+    
+    // Check if user has access to the selected subrole
+    if (!availableSubRoles.includes(subRole)) {
+      console.error(`Access denied: User does not have access to subrole '${subRole}'`)
+      return
+    }
+    
+    // Additional check: ensure the subrole configuration exists
+    if (!dosenSubRoleConfigs[subRole]) {
+      console.error(`Invalid subrole configuration: '${subRole}' not found`)
+      return
+    }
+    
+    // Always redirect to the appropriate dashboard path for the selected subrole
+    const redirectPath = getSubRoleDashboardPath(subRole)
+    
+    // First navigate, then set the subrole - this ensures proper path change
+    router.push(redirectPath)
+    
+    // Set subrole after navigation
+    setTimeout(() => {
+      setCurrentSubRole(subRole)
+    }, 100)
   }
 
   return (
@@ -44,7 +92,7 @@ export default function SubRoleSwitcher() {
         <div className="p-2">
           <p className="text-sm font-medium mb-2">Pilih Sub Role</p>
           <div className="space-y-1">
-            {availableSubRoles.map((subRole) => {
+            {availableSubRoles.filter(subRole => dosenSubRoleConfigs[subRole]).map((subRole) => {
               const config = dosenSubRoleConfigs[subRole]
               const isSelected = currentSubRole === subRole
               

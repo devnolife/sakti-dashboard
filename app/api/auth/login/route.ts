@@ -5,9 +5,13 @@ import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key'
 
+console.log('Auth API loaded, bcrypt available:', !!bcrypt)
+
 export async function POST(request: NextRequest) {
   try {
-    const { nidn, password } = await request.json()
+    const { nidn, password, selectedRole } = await request.json()
+
+    console.log('Login attempt:', { nidn, selectedRole })
 
     if (!nidn || !password) {
       return NextResponse.json(
@@ -26,6 +30,8 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('User found:', user ? { nidn: user.nidn, role: user.role, isActive: user.isActive } : 'No user found')
+
     if (!user || !user.isActive) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
@@ -34,12 +40,36 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password)
+    console.log('Comparing passwords...')
+    console.log('Input password length:', password.length)
+    console.log('Stored password hash length:', user.password.length)
+    console.log('Stored password hash starts with:', user.password.substring(0, 10))
+    
+    let isValidPassword = false
+    try {
+      isValidPassword = await bcrypt.compare(password, user.password)
+      console.log('Password valid:', isValidPassword)
+    } catch (bcryptError) {
+      console.error('Bcrypt comparison error:', bcryptError)
+      return NextResponse.json(
+        { error: 'Authentication error' },
+        { status: 500 }
+      )
+    }
 
     if (!isValidPassword) {
+      console.log('Password comparison failed')
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
+      )
+    }
+
+    // Check if selected role matches user's actual role (if provided)
+    if (selectedRole && user.role !== selectedRole) {
+      return NextResponse.json(
+        { error: `Access denied. Your account role is ${user.role}, but you selected ${selectedRole}.` },
+        { status: 403 }
       )
     }
 
@@ -74,7 +104,8 @@ export async function POST(request: NextRequest) {
           loginTime: new Date(),
           userAgent: request.headers.get('user-agent')
         },
-        ipAddress: request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+        // ipAddress: request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+        ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
       }
     })
 
