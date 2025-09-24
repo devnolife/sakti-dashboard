@@ -1,16 +1,12 @@
 export type Role =
   | "mahasiswa"
   | "dosen"
-  | "prodi"
   | "staff_tu"
-  | "dekan"
   | "admin"
-
   | "laboratory_admin"
   | "reading_room_admin"
   | "admin_umum"
   | "admin_keuangan"
-  | "gkm"
   | "kepala_tata_usaha"
 
 export type DosenSubRole =
@@ -20,8 +16,9 @@ export type DosenSubRole =
   | "wakil_dekan_2"
   | "wakil_dekan_3"
   | "wakil_dekan_4"
-  | "gkm"
   | "prodi"
+  | "sekretaris_prodi"
+  | "gkm"
 
 export interface RoleConfig {
   displayName: string
@@ -187,6 +184,13 @@ export const dosenSubRoleConfigs: Record<DosenSubRole, RoleConfig> = {
     icon: "layout",
     color: "text-purple-500",
     bgColor: "bg-purple-100",
+  },
+  sekretaris_prodi: {
+    displayName: "Sekretaris Program Studi",
+    description: "Sekretaris Program Studi dengan akses ke administrasi program dan dukungan akademik.",
+    icon: "user-check",
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-100",
   },
 }
 
