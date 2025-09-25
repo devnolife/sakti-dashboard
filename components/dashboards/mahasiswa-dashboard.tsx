@@ -14,10 +14,73 @@ import {
   BookMarked,
   Award,
   Lightbulb,
+  AlertCircle,
+  CreditCard,
 } from "lucide-react"
 import Link from "next/link"
+import { StudentStatus } from "@/lib/generated/prisma"
 
-export default function MahasiswaDashboard() {
+interface DashboardData {
+  student: {
+    id: string
+    nim: string
+    name: string
+    major: string
+    department: string
+    semester: number
+    academicYear: string
+    gpa: number
+    status: StudentStatus
+  }
+  currentSemester: {
+    courses: number
+    credits: number
+    academicYear: string
+    period: string
+  }
+  kkpStatus: {
+    status: string
+    title: string
+    company?: string
+    supervisor?: string
+    submissionDate: Date
+  } | null
+  upcomingDeadlines: Array<{
+    id: string
+    title: string
+    date: Date
+    type: string
+    urgent: boolean
+  }>
+  currentCourses: Array<{
+    id: string
+    code: string
+    name: string
+    credits: number
+    lecturer: string
+    grade: string
+    semester: string
+    schedules: any[]
+  }>
+  weeklySchedule: Array<{
+    day: string
+    courseName: string
+    courseCode: string
+    time: string
+    location: string
+    lecturer: string
+    credits: number
+  }>
+  pendingPayments: number
+  activeBorrowings: number
+  letterRequests: number
+}
+
+interface Props {
+  dashboardData: DashboardData
+}
+
+export default function MahasiswaDashboard({ dashboardData }: Props) {
   return (
     <div className="space-y-8">
       {/* Quick Stats Section */}
@@ -30,8 +93,10 @@ export default function MahasiswaDashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">Semester 7</div>
-            <div className="mt-1 text-xs text-muted-foreground">Ganjil 2023</div>
+            <div className="text-2xl font-bold">Semester {dashboardData.student.semester}</div>
+            <div className="mt-1 text-xs text-muted-foreground">
+              {dashboardData.currentSemester.period} {dashboardData.currentSemester.academicYear}
+            </div>
           </CardContent>
         </Card>
 
@@ -43,10 +108,19 @@ export default function MahasiswaDashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">3.75</div>
+            <div className="text-2xl font-bold">{dashboardData.student.gpa.toFixed(2)}</div>
             <div className="flex items-center mt-1">
-              <Badge variant="outline" className="text-xs font-normal text-green-600 border-green-200 bg-green-500/10">
-                +0.05 dari semester lalu
+              <Badge 
+                variant="outline" 
+                className={`text-xs font-normal ${
+                  dashboardData.student.gpa >= 3.5 
+                    ? 'text-green-600 border-green-200 bg-green-500/10' 
+                    : dashboardData.student.gpa >= 3.0
+                    ? 'text-blue-600 border-blue-200 bg-blue-500/10'
+                    : 'text-amber-600 border-amber-200 bg-amber-500/10'
+                }`}
+              >
+                {dashboardData.student.gpa >= 3.5 ? 'Sangat Baik' : dashboardData.student.gpa >= 3.0 ? 'Baik' : 'Cukup'}
               </Badge>
             </div>
           </CardContent>
@@ -60,8 +134,8 @@ export default function MahasiswaDashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">5</div>
-            <div className="mt-1 text-xs text-muted-foreground">15 SKS</div>
+            <div className="text-2xl font-bold">{dashboardData.currentSemester.courses}</div>
+            <div className="mt-1 text-xs text-muted-foreground">{dashboardData.currentSemester.credits} SKS</div>
           </CardContent>
         </Card>
 
@@ -73,8 +147,19 @@ export default function MahasiswaDashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">Menunggu</div>
-            <div className="mt-1 text-xs text-muted-foreground">Pengajuan terkirim</div>
+            <div className="text-2xl font-bold">
+              {dashboardData.kkpStatus ? 
+                (dashboardData.kkpStatus.status === 'pending' ? 'Menunggu' :
+                 dashboardData.kkpStatus.status === 'approved' ? 'Disetujui' :
+                 dashboardData.kkpStatus.status === 'rejected' ? 'Ditolak' :
+                 dashboardData.kkpStatus.status === 'in_progress' ? 'Berlangsung' :
+                 dashboardData.kkpStatus.status === 'completed' ? 'Selesai' : 'Unknown') 
+                : 'Belum Apply'
+              }
+            </div>
+            <div className="mt-1 text-xs text-muted-foreground">
+              {dashboardData.kkpStatus?.company || 'Tidak ada pengajuan'}
+            </div>
             <div className="mt-2">
               <Link href="/dashboard/mahasiswa/kkp">
                 <Button variant="outline" size="sm" className="w-full h-8 text-xs">
@@ -103,42 +188,43 @@ export default function MahasiswaDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-500/10">
-                  <FileText className="w-5 h-5 text-red-500" />
+              {dashboardData.upcomingDeadlines.length > 0 ? (
+                dashboardData.upcomingDeadlines.slice(0, 5).map((deadline) => {
+                  const daysUntil = Math.ceil((new Date(deadline.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                  const IconComponent = deadline.type === 'exam' ? AlertCircle : 
+                                       deadline.type === 'payment' ? CreditCard : 
+                                       deadline.type === 'library' ? BookMarked : FileText
+                  
+                  return (
+                    <div key={deadline.id} className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                        deadline.urgent ? 'bg-red-500/10' : 'bg-amber-500/10'
+                      }`}>
+                        <IconComponent className={`w-5 h-5 ${deadline.urgent ? 'text-red-500' : 'text-amber-500'}`} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{deadline.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {daysUntil === 0 ? 'Hari ini' : 
+                           daysUntil === 1 ? 'Besok' : 
+                           daysUntil < 0 ? 'Terlambat' : 
+                           `${daysUntil} hari lagi`}
+                        </p>
+                      </div>
+                      <Badge 
+                        variant="outline" 
+                        className={`${deadline.urgent ? 'text-red-500 border-red-200 bg-red-500/10' : 'text-amber-500 border-amber-200 bg-amber-500/10'}`}
+                      >
+                        {deadline.urgent ? 'Mendesak' : 'Segera'}
+                      </Badge>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="flex items-center justify-center p-6 text-muted-foreground">
+                  <p>Tidak ada tenggat waktu terbaru</p>
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium">Proyek Akhir Sistem Basis Data</p>
-                  <p className="text-xs text-muted-foreground">Tenggat 2 hari lagi</p>
-                </div>
-                <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
-                  Mendesak
-                </Badge>
-              </div>
-              <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10">
-                  <FileText className="w-5 h-5 text-amber-500" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">Kuis Rekayasa Perangkat Lunak</p>
-                  <p className="text-xs text-muted-foreground">Tenggat 5 hari lagi</p>
-                </div>
-                <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-                  Penting
-                </Badge>
-              </div>
-              <div className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                  <Briefcase className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">Pengumpulan Sertifikat Bahasa Inggris KKP</p>
-                  <p className="text-xs text-muted-foreground">Tenggat 10 hari lagi</p>
-                </div>
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                  KKP
-                </Badge>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -158,41 +244,63 @@ export default function MahasiswaDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Penyelesaian Keseluruhan</span>
-                  <span className="text-sm font-medium">78%</span>
+              <div className="p-4 rounded-lg bg-muted/50">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">{dashboardData.student.semester}</div>
+                  <p className="text-sm text-muted-foreground">Semester Saat Ini</p>
                 </div>
-                <Progress value={78} className="h-2 bg-primary/20" indicatorClassName="bg-primary" />
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Mata Kuliah Inti</span>
-                  <span className="text-sm font-medium">92%</span>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Mata Kuliah Aktif</span>
+                  <span className="font-medium">{dashboardData.currentSemester.courses} mata kuliah</span>
                 </div>
-                <Progress value={92} className="h-2 bg-green-500/20" indicatorClassName="bg-green-500" />
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Mata Kuliah Pilihan</span>
-                  <span className="text-sm font-medium">65%</span>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">SKS Semester Ini</span>
+                  <span className="font-medium">{dashboardData.currentSemester.credits} SKS</span>
                 </div>
-                <Progress value={65} className="h-2 bg-amber-500/20" indicatorClassName="bg-amber-500" />
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Persyaratan KKP</span>
-                  <span className="text-sm font-medium">70%</span>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">IPK Terkini</span>
+                  <span className="font-medium">{dashboardData.student.gpa.toFixed(2)}</span>
                 </div>
-                <Progress value={70} className="h-2 bg-secondary/20" indicatorClassName="bg-secondary" />
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Status</span>
+                  <Badge variant="outline" className={`${
+                    dashboardData.student.status === 'active' ? 'text-green-600 border-green-200 bg-green-500/10' :
+                    dashboardData.student.status === 'suspended' ? 'text-red-600 border-red-200 bg-red-500/10' :
+                    'text-gray-600 border-gray-200 bg-gray-500/10'
+                  }`}>
+                    {dashboardData.student.status === 'active' ? 'Aktif' :
+                     dashboardData.student.status === 'suspended' ? 'Suspend' :
+                     dashboardData.student.status === 'graduated' ? 'Lulus' :
+                     dashboardData.student.status === 'dropped_out' ? 'Dropout' :
+                     dashboardData.student.status}
+                  </Badge>
+                </div>
               </div>
-              <div className="pt-2">
-                <Link href="/dashboard/mahasiswa/kkp/requirements">
+              
+              <div className="pt-2 space-y-2">
+                <Link href="/dashboard/mahasiswa/academic">
                   <Button variant="outline" size="sm" className="w-full">
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Lengkapi Persyaratan KKP
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Lihat Data Akademik
                   </Button>
                 </Link>
+                
+                {dashboardData.pendingPayments > 0 && (
+                  <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-200">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-amber-600" />
+                      <span className="text-sm font-medium text-amber-800">
+                        {dashboardData.pendingPayments} pembayaran tertunda
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

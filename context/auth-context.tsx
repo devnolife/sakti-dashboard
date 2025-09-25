@@ -77,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // If user is not authenticated and trying to access protected routes
       if (!user && pathname.startsWith("/dashboard")) {
         router.push("/login")
+        return
       }
 
       // If user is authenticated but on auth pages
@@ -84,10 +85,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Always redirect to main role dashboard
         // Users can switch to subroles from there
         router.push(`/dashboard/${user.role}`)
+        return
       }
 
-      // Only redirect if user is trying to access unauthorized role dashboard
-      // Don't redirect dosen users who are accessing subrole dashboards they have access to
+      // Only redirect if user is trying to access unauthorized role dashboard  
+      // Don't redirect if user is already on an allowed path
       if (user && pathname.startsWith("/dashboard/")) {
         const allowedPaths = [`/dashboard/${user.role}`]
         
@@ -122,7 +124,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           })
         }
         
+        // Check if current path is allowed
         const isAllowedPath = allowedPaths.some(path => pathname.startsWith(path))
+        
+        // Only redirect if user is not on an allowed path
+        // This prevents redirect loops when user is already on their correct dashboard
         if (!isAllowedPath) {
           router.push(`/dashboard/${user.role}`)
         }
