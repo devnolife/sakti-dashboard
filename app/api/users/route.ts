@@ -10,19 +10,29 @@ const createUserSchema = z.object({
   name: z.string().min(1),
   role: z.enum(['mahasiswa', 'dosen', 'prodi', 'staff_tu', 'dekan', 'admin', 'laboratory_admin', 'reading_room_admin', 'admin_umum', 'admin_keuangan', 'gkm', 'kepala_tata_usaha']),
   subRole: z.string().optional(),
-  avatar: z.string().optional()
+  avatar: z.string().optional(),
+  isActive: z.boolean().optional()
 })
 
 // GET /api/users
 export async function GET(request: NextRequest) {
   try {
+    console.log('GET /api/users - Request received')
     const token = await authMiddleware(request)
-    if (token instanceof NextResponse) return token
+    if (token instanceof NextResponse) {
+      console.log('Auth middleware returned NextResponse (error)')
+      return token
+    }
+
+    console.log('Token extracted:', { role: token.role, sub: token.sub })
 
     // Check permission
     if (!hasPermission(token.role as string, 'read', 'users')) {
+      console.log('Permission denied for role:', token.role)
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+
+    console.log('Permission granted for role:', token.role)
 
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
@@ -44,6 +54,8 @@ export async function GET(request: NextRequest) {
         { nidn: { contains: search, mode: 'insensitive' } }
       ]
     }
+
+    console.log('Querying database with where clause:', where)
 
     const [users, total] = await Promise.all([
       prisma.user.findMany({
@@ -87,6 +99,8 @@ export async function GET(request: NextRequest) {
       }),
       prisma.user.count({ where })
     ])
+
+    console.log(`Found ${users.length} users, total: ${total}`)
 
     return NextResponse.json({
       data: users,
@@ -149,7 +163,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(user, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
+      return NextResponse.json({ error: error.issues }, { status: 400 })
     }
     console.error('Error creating user:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

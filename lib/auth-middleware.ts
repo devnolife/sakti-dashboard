@@ -48,7 +48,7 @@ export async function authMiddleware(request: NextRequest) {
 
 // Permission matrix for role-based access control
 const PERMISSIONS = {
-  admin: ['*'], // Admin has all permissions
+  admin: ['*'], // Admin has all permissions including read:users, create:users, update:users, delete:users
   mahasiswa: ['read:own', 'create:own', 'update:own'],
   dosen: [
     'read:own', 'update:own', 'create:own',
@@ -66,12 +66,14 @@ const PERMISSIONS = {
     'read:applications', 'update:applications', 'approve:applications',
     'read:letters', 'approve:letters',
     'read:courses', 'create:courses', 'update:courses',
-    'read:grades', 'update:grades'
+    'read:grades', 'update:grades',
+    'read:users', 'create:users', 'update:users' // Prodi can manage users
   ],
   dekan: [
     'read:faculty', 'update:faculty',
     'approve:major', 'approve:final',
-    'read:budget', 'approve:budget'
+    'read:budget', 'approve:budget',
+    'read:users', 'create:users', 'update:users', 'delete:users' // Dekan can manage users
   ],
   admin_keuangan: [
     'read:payments', 'update:payments', 'verify:payments',

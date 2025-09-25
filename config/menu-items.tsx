@@ -889,7 +889,7 @@ export const adminMenuItems: MenuItem[] = [
   {
     id: "user-management",
     title: "Manajemen Pengguna",
-    href: "/dashboard/admin/user-management",
+    href: "/dashboard/admin/manajemen-pengguna",
     icon: Users,
   },
   {
@@ -1572,6 +1572,7 @@ export const dosenSubRoleMenuItems: Record<DosenSubRole, MenuItem[]> = {
   wakil_dekan_4: wakilDekan4MenuItems,
   gkm: gkmMenuItems,
   prodi: prodiMenuItems,
+  sekretaris_prodi: prodiMenuItems, // Use same menu as prodi
 }
 
 export const dekanItems = [

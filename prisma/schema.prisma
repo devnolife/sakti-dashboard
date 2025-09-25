@@ -19,11 +19,14 @@ enum Role {
   mahasiswa
   dosen
   staff_tu
+  prodi
+  dekan
   admin
   laboratory_admin
   reading_room_admin
   admin_umum
   admin_keuangan
+  gkm
   kepala_tata_usaha
 }
 
