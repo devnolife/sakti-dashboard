@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
     const data = await getStudentDashboardData()
     return NextResponse.json(data)
   } catch (error) {
-    console.error('API error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch student data' },
       { status: 500 }

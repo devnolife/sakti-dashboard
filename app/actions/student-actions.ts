@@ -79,7 +79,7 @@ export async function getStudentDashboardData() {
 
     const student = user.studentProfile
 
-    // Calculate current semester courses and GPA
+    // Calculate current semester courses
     const currentAcademicYear = new Date().getFullYear().toString()
     const currentSemester = new Date().getMonth() < 6 ? 'genap' : 'ganjil'
     
@@ -87,15 +87,6 @@ export async function getStudentDashboardData() {
       grade.academicYear === currentAcademicYear && 
       grade.semester.toLowerCase().includes(currentSemester)
     )
-
-    // Calculate overall GPA
-    const allGrades = student.grades
-    const totalCredits = allGrades.reduce((sum, grade) => sum + grade.course.credits, 0)
-    const weightedGradePoints = allGrades.reduce((sum, grade) => {
-      const gradePoint = getGradePoint(grade.letterGrade)
-      return sum + (gradePoint * grade.course.credits)
-    }, 0)
-    const gpa = totalCredits > 0 ? (weightedGradePoints / totalCredits) : 0
 
     // Get current semester credits
     const currentCredits = currentCourses.reduce((sum, grade) => sum + grade.course.credits, 0)
@@ -163,7 +154,7 @@ export async function getStudentDashboardData() {
         department: student.department,
         semester: student.semester,
         academicYear: student.academicYear,
-        gpa: parseFloat(gpa.toFixed(2)),
+        gpa: student.gpa, // Gunakan GPA dari database, bukan perhitungan ulang
         status: student.status
       },
       currentSemester: {
