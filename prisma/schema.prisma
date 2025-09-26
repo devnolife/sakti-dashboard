@@ -232,16 +232,21 @@ model Student {
   status        StudentStatus @default(active)
   gpa           Float?
 
+  // Academic Advisor
+  academicAdvisorId String?
+  academicAdvisor   Lecturer? @relation("AcademicAdvisor", fields: [academicAdvisorId], references: [id])
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Relations
-  kkpApplications    KkpApplication[]
-  examApplications   ExamApplication[]
-  letterRequests     LetterRequest[]
-  payments           Payment[]
-  bookBorrowings     BookBorrowing[]
-  thesesAuthored     ThesisTitle[]
-  grades             Grade[]
+  kkpApplications      KkpApplication[]
+  examApplications     ExamApplication[]
+  letterRequests       LetterRequest[]
+  payments             Payment[]
+  bookBorrowings       BookBorrowing[]
+  thesesAuthored       ThesisTitle[]
+  grades               Grade[]
+  academicConsultations AcademicConsultation[]
 
   @@map("students")
 }
@@ -259,12 +264,14 @@ model Lecturer {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Relations
-  supervisedKkp      KkpApplication[] @relation("KkpSupervisor")
-  supervisedTheses   ThesisTitle[]    @relation("ThesisSupervisor")
-  examCommittees     ExamCommittee[]
-  courses            Course[]
-  examAdvisor1       ExamApplication[] @relation("ExamAdvisor1")
-  examAdvisor2       ExamApplication[] @relation("ExamAdvisor2")
+  supervisedKkp         KkpApplication[] @relation("KkpSupervisor")
+  supervisedTheses      ThesisTitle[]    @relation("ThesisSupervisor")
+  examCommittees        ExamCommittee[]
+  courses               Course[]
+  examAdvisor1          ExamApplication[] @relation("ExamAdvisor1")
+  examAdvisor2          ExamApplication[] @relation("ExamAdvisor2")
+  adviseeStudents       Student[] @relation("AcademicAdvisor")
+  academicConsultations AcademicConsultation[]
 
   @@map("lecturers")
 }
@@ -837,6 +844,25 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+}
+
+model AcademicConsultation {
+  id          String   @id @default(cuid())
+  date        DateTime
+  uraian      String   // Description of consultation
+  keterangan  String   // Notes/details
+  paraf       Boolean  @default(false) // Whether advisor has signed
+  
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  
+  advisorId   String
+  advisor     Lecturer @relation(fields: [advisorId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("academic_consultations")
 }
 
 model VerificationToken {
