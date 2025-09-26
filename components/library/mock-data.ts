@@ -2,11 +2,11 @@ export type Book = {
   id: string
   title: string
   author: string
-  coverImage: string
+  coverImage: string | null
   category: string
   isAvailable: boolean
   similarityPercentage?: number
-  description: string
+  description: string | null
   publishedYear: number
   publisher: string
   isbn: string

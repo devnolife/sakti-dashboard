@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface TitleSubmissionFormProps {
-  onSubmit: (title: string, keywords: string[], abstract: string) => void
+  onSubmit: (data: { title: string; abstract: string; keywords: string[]; supervisorId?: string }) => void
 }
 
 export function TitleSubmissionForm({ onSubmit }: TitleSubmissionFormProps) {
@@ -29,7 +29,7 @@ export function TitleSubmissionForm({ onSubmit }: TitleSubmissionFormProps) {
       .filter((keyword) => keyword.length > 0)
 
     setTimeout(() => {
-      onSubmit(title, keywords, abstract)
+      onSubmit({ title, abstract, keywords })
       setIsSubmitting(false)
     }, 1000)
   }
