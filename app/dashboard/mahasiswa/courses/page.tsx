@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -13,7 +15,7 @@ import {
   Clock,
   User,
   Star,
-  Fire,
+  Flame,
   TrendingUp,
   Zap,
   Target,
@@ -30,6 +32,7 @@ import {
   Eye,
   MessageCircle,
   Download,
+  Loader2,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useI18n } from '@/lib/i18n'
@@ -49,6 +52,7 @@ interface Course {
   status: CourseStatus
   level: CourseLevel
   semester: string
+  academicYear: string
   schedule: {
     day: string
     time: string
@@ -57,7 +61,7 @@ interface Course {
   description: string
   modules: number
   completedModules: number
-  nextClass?: Date
+  nextClass?: Date | string
   color: string
   thumbnail?: string
   tags: string[]
@@ -66,133 +70,7 @@ interface Course {
   isBookmarked: boolean
 }
 
-const mockCourses: Course[] = [
-  {
-    id: '1',
-    title: 'Advanced React & TypeScript',
-    code: 'CS-401',
-    instructor: 'Dr. Sarah Johnson',
-    credits: 4,
-    currentGrade: 'A-',
-    attendance: '95%',
-    progress: 85,
-    status: 'ongoing',
-    level: 'advanced',
-    semester: 'Fall 2024',
-    schedule: [
-      { day: 'Senin', time: '09:00-11:30', location: 'Lab Komputer A' },
-      { day: 'Rabu', time: '14:00-16:30', location: 'Lab Komputer A' }
-    ],
-    description: 'Master modern web development with React, TypeScript, and advanced patterns',
-    modules: 12,
-    completedModules: 10,
-    nextClass: new Date('2024-01-15T09:00:00'),
-    color: 'from-blue-500 to-purple-600',
-    tags: ['Frontend', 'JavaScript', 'Modern'],
-    likes: 247,
-    views: 1205,
-    isBookmarked: true
-  },
-  {
-    id: '2',
-    title: 'Machine Learning Fundamentals',
-    code: 'AI-301',
-    instructor: 'Prof. Alex Chen',
-    credits: 3,
-    currentGrade: 'A',
-    attendance: '92%',
-    progress: 70,
-    status: 'ongoing',
-    level: 'intermediate',
-    semester: 'Fall 2024',
-    schedule: [
-      { day: 'Selasa', time: '10:00-12:30', location: 'Ruang 201' },
-      { day: 'Kamis', time: '13:00-15:30', location: 'Lab AI' }
-    ],
-    description: 'Dive deep into AI algorithms and practical machine learning applications',
-    modules: 10,
-    completedModules: 7,
-    nextClass: new Date('2024-01-16T10:00:00'),
-    color: 'from-green-500 to-teal-600',
-    tags: ['AI', 'Data Science', 'Hot'],
-    likes: 198,
-    views: 987,
-    isBookmarked: false
-  },
-  {
-    id: '3',
-    title: 'Cloud Architecture & DevOps',
-    code: 'SYS-501',
-    instructor: 'Dr. Mike Rodriguez',
-    credits: 4,
-    currentGrade: 'B+',
-    attendance: '89%',
-    progress: 60,
-    status: 'ongoing',
-    level: 'expert',
-    semester: 'Fall 2024',
-    schedule: [
-      { day: 'Jumat', time: '08:00-11:30', location: 'Lab Cloud' }
-    ],
-    description: 'Build scalable systems using modern cloud platforms and DevOps practices',
-    modules: 15,
-    completedModules: 9,
-    nextClass: new Date('2024-01-17T08:00:00'),
-    color: 'from-orange-500 to-red-600',
-    tags: ['Cloud', 'DevOps', 'Trending'],
-    likes: 156,
-    views: 743,
-    isBookmarked: true
-  },
-  {
-    id: '4',
-    title: 'UI/UX Design Psychology',
-    code: 'DES-201',
-    instructor: 'Luna Martinez',
-    credits: 3,
-    attendance: '100%',
-    progress: 100,
-    status: 'completed',
-    level: 'beginner',
-    semester: 'Fall 2024',
-    schedule: [
-      { day: 'Rabu', time: '15:00-17:30', location: 'Design Studio' }
-    ],
-    description: 'Understanding user behavior and psychology in digital design',
-    modules: 8,
-    completedModules: 8,
-    color: 'from-pink-500 to-rose-600',
-    tags: ['Design', 'Psychology', 'Complete'],
-    likes: 89,
-    views: 432,
-    isBookmarked: false
-  },
-  {
-    id: '5',
-    title: 'Blockchain & Web3 Development',
-    code: 'BC-401',
-    instructor: 'Dr. Crypto Khan',
-    credits: 4,
-    attendance: '0%',
-    progress: 0,
-    status: 'upcoming',
-    level: 'advanced',
-    semester: 'Spring 2024',
-    schedule: [
-      { day: 'Senin', time: '19:00-22:00', location: 'Online' },
-      { day: 'Kamis', time: '19:00-21:30', location: 'Online' }
-    ],
-    description: 'Build decentralized applications and smart contracts',
-    modules: 14,
-    completedModules: 0,
-    nextClass: new Date('2024-02-01T19:00:00'),
-    color: 'from-yellow-500 to-orange-600',
-    tags: ['Blockchain', 'Web3', 'Future'],
-    likes: 312,
-    views: 1876,
-    isBookmarked: true
-  }
-]
+
 
 const statusConfig = {
   ongoing: { 
@@ -221,11 +99,42 @@ const levelConfig = {
 
 export default function CoursesPage() {
   const { t } = useI18n()
-  const [courses] = useState<Course[]>(mockCourses)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedLevel, setSelectedLevel] = useState<CourseLevel | 'all'>('all')
   const [likedCourses, setLikedCourses] = useState<Set<string>>(new Set())
+
+  // Fetch courses data from API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        console.log('🚀 Fetching courses data...')
+        const response = await fetch('/api/student/courses')
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch courses: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('📚 Courses data received:', data.length, 'courses')
+        console.log('📋 Sample course:', data[0])
+        setCourses(data)
+      } catch (error) {
+        console.error('❌ Error fetching courses:', error)
+        setError(error instanceof Error ? error.message : 'Failed to load courses')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCourses()
+  }, [])
 
   const filteredCourses = courses.filter(course => {
     const matchesTab = activeTab === 'all' || course.status === activeTab
@@ -234,6 +143,15 @@ export default function CoursesPage() {
                          course.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel
     return matchesTab && matchesSearch && matchesLevel
+  })
+
+  // Debug log
+  console.log('🎯 Render state:', { 
+    coursesCount: courses.length, 
+    filteredCount: filteredCourses.length, 
+    loading, 
+    error,
+    activeTab 
   })
 
   const toggleLike = (courseId: string) => {
@@ -277,6 +195,34 @@ export default function CoursesPage() {
       y: 0,
       transition: { duration: 0.3 }
     }
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your courses...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold mb-2">Error loading courses</h3>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -523,7 +469,7 @@ export default function CoursesPage() {
                             <span className="font-medium">Next Class</span>
                           </div>
                           <div className="mt-1 text-blue-600">
-                            {course.nextClass.toLocaleDateString('id-ID', { 
+                            {new Date(course.nextClass).toLocaleDateString('id-ID', { 
                               weekday: 'long', 
                               month: 'short', 
                               day: 'numeric',
