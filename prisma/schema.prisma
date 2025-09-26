@@ -166,6 +166,28 @@ enum NotificationType {
   success
 }
 
+// Laboratory related enums
+enum LabStatus {
+  active
+  inactive
+  maintenance
+}
+
+enum LabRegistrationStatus {
+  pending
+  approved
+  rejected
+  completed
+  dropped
+}
+
+enum LabSessionStatus {
+  scheduled
+  ongoing
+  completed
+  cancelled
+}
+
 // Models
 model User {
   id          String   @id @default(cuid())
@@ -250,6 +272,8 @@ model Student {
   grades               Grade[]
   academicConsultations AcademicConsultation[]
   academicEvents       AcademicEvent[]
+  labRegistrations     LabRegistration[]
+  labSubmissions       LabAssignmentSubmission[]
 
   @@map("students")
 }
@@ -276,6 +300,7 @@ model Lecturer {
   adviseeStudents       Student[] @relation("AcademicAdvisor")
   academicConsultations AcademicConsultation[]
   academicEvents        AcademicEvent[]
+  laboratories          Laboratory[]
 
   @@map("lecturers")
 }
@@ -922,4 +947,151 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model Laboratory {
+  id            String     @id @default(cuid())
+  code          String     @unique
+  name          String
+  description   String?
+  image         String?
+  capacity      Int
+  credits       Int
+  semester      String     // "Ganjil 2023/2024"
+  department    String
+  location      String
+  category      String     // "Inti", "Pilihan", etc.
+  status        LabStatus  @default(active)
+  
+  instructorId  String?
+  instructor    Lecturer?  @relation(fields: [instructorId], references: [id])
+  
+  // Relations
+  registrations LabRegistration[]
+  sessions      LabSession[]
+  assignments   LabAssignment[]
+  materials     LabMaterial[]
+  announcements LabAnnouncement[]
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  @@map("laboratories")
+}
+
+model LabRegistration {
+  id            String                @id @default(cuid())
+  status        LabRegistrationStatus @default(pending)
+  registeredAt  DateTime             @default(now())
+  completedAt   DateTime?
+  progress      Float                @default(0)
+  grade         String?              // A, B+, B, etc.
+  
+  studentId     String
+  student       Student              @relation(fields: [studentId], references: [id])
+  
+  laboratoryId  String
+  laboratory    Laboratory           @relation(fields: [laboratoryId], references: [id])
+  
+  // Relations
+  assignments   LabAssignmentSubmission[]
+  
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  
+  @@unique([studentId, laboratoryId])
+  @@map("lab_registrations")
+}
+
+model LabSession {
+  id            String           @id @default(cuid())
+  title         String
+  description   String?
+  sessionDate   DateTime
+  startTime     String           // HH:MM format
+  endTime       String           // HH:MM format
+  location      String?
+  status        LabSessionStatus @default(scheduled)
+  
+  laboratoryId  String
+  laboratory    Laboratory       @relation(fields: [laboratoryId], references: [id])
+  
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  
+  @@map("lab_sessions")
+}
+
+model LabAssignment {
+  id            String       @id @default(cuid())
+  title         String
+  description   String
+  dueDate       DateTime
+  maxScore      Float        @default(100)
+  
+  laboratoryId  String
+  laboratory    Laboratory   @relation(fields: [laboratoryId], references: [id])
+  
+  // Relations
+  submissions   LabAssignmentSubmission[]
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  @@map("lab_assignments")
+}
+
+model LabAssignmentSubmission {
+  id             String          @id @default(cuid())
+  submittedAt    DateTime        @default(now())
+  score          Float?
+  feedback       String?
+  fileUrl        String?
+  
+  studentId      String
+  student        Student         @relation(fields: [studentId], references: [id])
+  
+  assignmentId   String
+  assignment     LabAssignment   @relation(fields: [assignmentId], references: [id])
+  
+  registrationId String
+  registration   LabRegistration @relation(fields: [registrationId], references: [id])
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  
+  @@unique([studentId, assignmentId])
+  @@map("lab_assignment_submissions")
+}
+
+model LabMaterial {
+  id            String      @id @default(cuid())
+  title         String
+  description   String?
+  type          String      // "pdf", "video", "document", etc.
+  fileUrl       String?
+  externalUrl   String?
+  
+  laboratoryId  String
+  laboratory    Laboratory  @relation(fields: [laboratoryId], references: [id])
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@map("lab_materials")
+}
+
+model LabAnnouncement {
+  id            String      @id @default(cuid())
+  title         String
+  content       String
+  isImportant   Boolean     @default(false)
+  
+  laboratoryId  String
+  laboratory    Laboratory  @relation(fields: [laboratoryId], references: [id])
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@map("lab_announcements")
 }

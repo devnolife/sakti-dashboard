@@ -10,443 +10,248 @@ import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { motion, AnimatePresence } from "framer-motion"
 
-// Sample data for active labs
-const myLabs = [
-  {
-    id: "lab-1",
-    title: "Computer Networks Laboratory",
-    description: "Learn about network protocols, configurations, and troubleshooting techniques.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Dr. Ahmad Dahlan",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Monday & Wednesday, 10:00 - 12:00",
-    progress: 75,
-    nextSession: "Monday, 10:00 AM",
-    nextTopic: "Wireless Network Configuration",
-    assignments: [
-      { id: "a1", title: "Network Topology Design", dueDate: "Oct 15, 2023", status: "completed" },
-      { id: "a2", title: "Router Configuration", dueDate: "Oct 22, 2023", status: "in-progress" },
-      { id: "a3", title: "Network Troubleshooting", dueDate: "Oct 29, 2023", status: "upcoming" },
-    ],
-    materials: [
-      { id: "m1", title: "Introduction to Networking", type: "pdf" },
-      { id: "m2", title: "TCP/IP Protocol Suite", type: "pdf" },
-      { id: "m3", title: "Network Configuration Demo", type: "video" },
-    ],
-    announcements: [
-      {
-        id: "an1",
-        title: "Lab Session Rescheduled",
-        date: "Oct 10, 2023",
-        content: "The lab session on October 12 has been rescheduled to October 13 due to maintenance.",
-      },
-    ],
-    location: "Building A, Room 101",
-    color: "blue",
-  },
-  {
-    id: "lab-2",
-    title: "Database Systems Laboratory",
-    description: "Practical implementation of database design, SQL queries, and database management.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Prof. Siti Aminah",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Tuesday & Thursday, 13:00 - 15:00",
-    progress: 40,
-    nextSession: "Tuesday, 1:00 PM",
-    nextTopic: "Advanced SQL Queries",
-    assignments: [
-      { id: "a1", title: "Database Schema Design", dueDate: "Oct 12, 2023", status: "completed" },
-      { id: "a2", title: "SQL Query Optimization", dueDate: "Oct 19, 2023", status: "upcoming" },
-    ],
-    materials: [
-      { id: "m1", title: "Database Fundamentals", type: "pdf" },
-      { id: "m2", title: "SQL Basics", type: "pdf" },
-      { id: "m3", title: "Database Design Principles", type: "video" },
-    ],
-    announcements: [],
-    location: "Building B, Room 203",
-    color: "green",
-  },
-]
+interface MyLabData {
+  id: string
+  labId: string
+  title: string
+  code: string
+  instructor: string
+  progress: number
+  status: string
+  registeredAt: Date
+  totalAssignments: number
+  completedAssignments: number
+  nextDeadline?: Date
+}
 
-export function MyLabsTab() {
-  const [selectedLab, setSelectedLab] = useState<any>(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+interface MyLabsTabProps {
+  labs?: MyLabData[]
+}
 
-  const handleViewDetails = (lab: any) => {
+export function MyLabsTab({ labs = [] }: MyLabsTabProps) {
+  const [selectedLab, setSelectedLab] = useState<MyLabData | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      approved: { label: "Aktif", variant: "default" as const, color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
+      pending: { label: "Menunggu", variant: "secondary" as const, color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" },
+      rejected: { label: "Ditolak", variant: "destructive" as const, color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
+    }
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
+  }
+
+  const getProgressColor = (progress: number) => {
+    if (progress >= 80) return "bg-green-500"
+    if (progress >= 60) return "bg-blue-500"
+    if (progress >= 40) return "bg-yellow-500"
+    return "bg-red-500"
+  }
+
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    }).format(date)
+  }
+
+  const handleViewDetails = (lab: MyLabData) => {
     setSelectedLab(lab)
-    setIsDetailsOpen(true)
+    setIsDetailOpen(true)
   }
 
-  // Helper function to get material icon
-  const getMaterialIcon = (type: string) => {
-    switch (type) {
-      case "pdf":
-        return <FileText className="h-4 w-4" />
-      case "video":
-        return <Clock className="h-4 w-4" />
-      default:
-        return <FileText className="h-4 w-4" />
-    }
-  }
-
-  // Helper function to get color gradient based on lab color
-  const getColorGradient = (color: string) => {
-    switch (color) {
-      case "blue":
-        return "from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30"
-      case "green":
-        return "from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30"
-      case "purple":
-        return "from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30"
-      case "orange":
-        return "from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30"
-      case "red":
-        return "from-red-50 to-rose-50 dark:from-red-950/30 dark:to-rose-950/30"
-      case "teal":
-        return "from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30"
-      default:
-        return "from-gray-50 to-slate-50 dark:from-gray-950/30 dark:to-slate-950/30"
-    }
+  if (labs.length === 0) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center py-16 text-center"
+      >
+        <div className="flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-muted/30">
+          <BookOpen className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h3 className="mb-2 text-lg font-medium">Belum Ada Lab Terdaftar</h3>
+        <p className="max-w-md text-muted-foreground">
+          Anda belum terdaftar dalam laboratorium apapun. Jelajahi lab yang tersedia dan daftar untuk mulai belajar.
+        </p>
+      </motion.div>
+    )
   }
 
   return (
-    <div className="space-y-8">
-      <AnimatePresence>
-        {myLabs.length > 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="grid gap-6 md:grid-cols-2"
-          >
-            {myLabs.map((lab, index) => (
-              <motion.div
-                key={lab.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <Card
-                  className={`overflow-hidden border-none shadow-md bg-gradient-to-br ${getColorGradient(lab.color || "default")} h-full flex flex-col transition-all duration-300`}
-                  onMouseEnter={() => setHoveredCard(lab.id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl leading-tight">{lab.title}</CardTitle>
-                        <CardDescription className="mt-2">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-10 w-10 border-2 border-white dark:border-gray-800 shadow-sm">
-                              <AvatarImage src={lab.instructorImage} alt={lab.instructor} />
-                              <AvatarFallback className="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-                                {lab.instructor
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium">{lab.instructor}</span>
-                              <span className="text-xs text-muted-foreground">Supervising Lecturer</span>
-                            </div>
-                          </div>
-                        </CardDescription>
-                      </div>
-                      {lab.announcements.length > 0 && (
-                        <Badge
-                          variant="outline"
-                          className="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20 shadow-sm"
-                        >
-                          <AlertCircle className="h-3 w-3 mr-1" />
-                          Announcement
-                        </Badge>
-                      )}
+    <div className="space-y-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {labs.map((lab, index) => {
+          const statusBadge = getStatusBadge(lab.status)
+          
+          return (
+            <motion.div
+              key={lab.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card className="h-full transition-all duration-200 hover:shadow-lg">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-base font-semibold line-clamp-2">
+                        {lab.title}
+                      </CardTitle>
+                      <CardDescription className="mt-1 text-sm">
+                        {lab.code}
+                      </CardDescription>
                     </div>
-                  </CardHeader>
-                  <CardContent className="pb-2 flex-grow">
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium">Progress</span>
-                          <span className="text-sm font-medium">{lab.progress}%</span>
-                        </div>
-                        <div className="h-2 rounded-full bg-white/50 dark:bg-gray-800/50 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${lab.progress >= 75 ? "bg-green-500" : lab.progress >= 50 ? "bg-blue-500" : lab.progress >= 25 ? "bg-amber-500" : "bg-red-500"}`}
-                            style={{ width: `${lab.progress}%` }}
-                          />
-                        </div>
-                      </div>
+                    <Badge className={statusBadge.color}>
+                      {statusBadge.label}
+                    </Badge>
+                  </div>
+                </CardHeader>
 
-                      <div className="rounded-md border border-white/20 dark:border-gray-800/50 p-3 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm shadow-sm">
-                        <h4 className="text-sm font-medium mb-2">Next Session</h4>
-                        <div className="space-y-2">
-                          <div className="flex items-center text-sm">
-                            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                            <span>{lab.nextSession}</span>
-                          </div>
-                          <div className="flex items-center text-sm">
-                            <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
-                            <span>{lab.nextTopic}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Upcoming Assignments</h4>
-                        <div className="space-y-2">
-                          {lab.assignments
-                            .filter((a) => a.status !== "completed")
-                            .slice(0, 2)
-                            .map((assignment) => (
-                              <div
-                                key={assignment.id}
-                                className="flex items-center justify-between text-sm p-2 rounded-md bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm"
-                              >
-                                <div className="flex items-center">
-                                  <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                                  <span>{assignment.title}</span>
-                                </div>
-                                <Badge
-                                  variant={assignment.status === "in-progress" ? "default" : "outline"}
-                                  className={
-                                    assignment.status === "in-progress" ? "" : "bg-white/50 dark:bg-gray-900/50"
-                                  }
-                                >
-                                  {assignment.status === "in-progress" ? "In Progress" : "Due " + assignment.dueDate}
-                                </Badge>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-4">
-                    <Button onClick={() => handleViewDetails(lab)} className="w-full group" variant="default">
-                      <span className="mr-2">View Lab Details</span>
-                      <ChevronRight
-                        className={`h-4 w-4 transition-transform duration-300 ${hoveredCard === lab.id ? "translate-x-1" : ""}`}
-                      />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="text-center py-16 px-4 border rounded-xl bg-muted/10 flex flex-col items-center"
-          >
-            <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
-              <BookOpen className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium mb-2">No active laboratories</h3>
-            <p className="text-muted-foreground max-w-md mb-6">
-              You don't have any active laboratories. Browse available labs and register to get started.
-            </p>
-            <Button variant="outline" className="bg-white dark:bg-gray-900">
-              Browse Available Labs
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          {selectedLab && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl">{selectedLab.title}</DialogTitle>
-                <DialogDescription>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Avatar className="h-8 w-8 border-2 border-white dark:border-gray-800 shadow-sm">
-                      <AvatarImage src={selectedLab.instructorImage} alt={selectedLab.instructor} />
-                      <AvatarFallback className="bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-                        {selectedLab.instructor
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src="/placeholder.svg" />
+                      <AvatarFallback className="text-xs">
+                        {lab.instructor.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
-                    <span>{selectedLab.instructor}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{lab.instructor}</p>
+                      <p className="text-xs text-muted-foreground">Instruktur</p>
+                    </div>
                   </div>
-                </DialogDescription>
-              </DialogHeader>
 
-              <div className="space-y-6 mt-4">
-                {/* Progress section */}
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Progress</h3>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">Overall Completion</span>
-                    <span className="text-sm font-medium">{selectedLab.progress}%</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Progress</span>
+                      <span className="font-medium">{lab.progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(lab.progress)}`}
+                        style={{ width: `${lab.progress}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FileText className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        {lab.completedAssignments}/{lab.totalAssignments} Tugas
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        {formatDate(lab.registeredAt)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {lab.nextDeadline && (
+                    <div className="flex items-center p-2 space-x-2 rounded-lg bg-orange-50 dark:bg-orange-900/20">
+                      <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-orange-600 dark:text-orange-400">
+                          Deadline: {formatDate(lab.nextDeadline)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+
+                <Separator />
+
+                <CardFooter className="pt-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => handleViewDetails(lab)}
+                  >
+                    Lihat Detail
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          )
+        })}
+      </div>
+
+      {/* Detail Dialog */}
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selectedLab?.title}</DialogTitle>
+            <DialogDescription>
+              Detail informasi laboratorium dan progress Anda
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedLab && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Kode Lab</label>
+                  <p className="text-sm">{selectedLab.code}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Status</label>
+                  <p className="text-sm">
+                    <Badge className={getStatusBadge(selectedLab.status).color}>
+                      {getStatusBadge(selectedLab.status).label}
+                    </Badge>
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Instruktur</label>
+                  <p className="text-sm">{selectedLab.instructor}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Tanggal Daftar</label>
+                  <p className="text-sm">{formatDate(selectedLab.registeredAt)}</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Progress Keseluruhan</label>
+                <div className="mt-2 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Tugas Selesai: {selectedLab.completedAssignments}/{selectedLab.totalAssignments}</span>
+                    <span className="font-medium">{selectedLab.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
                     <div
-                      className={`h-full rounded-full ${selectedLab.progress >= 75 ? "bg-green-500" : selectedLab.progress >= 50 ? "bg-blue-500" : selectedLab.progress >= 25 ? "bg-amber-500" : "bg-red-500"}`}
+                      className={`h-3 rounded-full transition-all duration-300 ${getProgressColor(selectedLab.progress)}`}
                       style={{ width: `${selectedLab.progress}%` }}
                     />
                   </div>
                 </div>
+              </div>
 
-                <Separator className="bg-muted/50" />
-
-                {/* Announcements section */}
-                {selectedLab.announcements.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Announcements</h3>
-                    <div className="space-y-3">
-                      {selectedLab.announcements.map((announcement: any) => (
-                        <Card key={announcement.id} className="bg-yellow-500/5 border-yellow-500/20 shadow-sm">
-                          <CardHeader className="py-3">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base flex items-center">
-                                <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
-                                {announcement.title}
-                              </CardTitle>
-                              <span className="text-xs text-muted-foreground">{announcement.date}</span>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-0 pb-3">
-                            <p className="text-sm">{announcement.content}</p>
-                          </CardContent>
-                        </Card>
-                      ))}
+              {selectedLab.nextDeadline && (
+                <div className="p-4 border border-orange-200 rounded-lg bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800">
+                  <div className="flex items-center space-x-2">
+                    <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                    <div>
+                      <p className="font-medium text-orange-600 dark:text-orange-400">
+                        Deadline Terdekat
+                      </p>
+                      <p className="text-sm text-orange-600 dark:text-orange-400">
+                        {formatDate(selectedLab.nextDeadline)}
+                      </p>
                     </div>
                   </div>
-                )}
-
-                {/* Schedule section */}
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Schedule Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="bg-white dark:bg-gray-900 shadow-sm border-muted/50">
-                      <CardHeader className="py-3">
-                        <CardTitle className="text-base">Next Session</CardTitle>
-                      </CardHeader>
-                      <CardContent className="py-0 pb-3">
-                        <div className="space-y-2">
-                          <div className="flex items-center text-sm">
-                            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                            <span>{selectedLab.nextSession}</span>
-                          </div>
-                          <div className="flex items-center text-sm">
-                            <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
-                            <span>{selectedLab.nextTopic}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-white dark:bg-gray-900 shadow-sm border-muted/50">
-                      <CardHeader className="py-3">
-                        <CardTitle className="text-base">Regular Schedule</CardTitle>
-                      </CardHeader>
-                      <CardContent className="py-0 pb-3">
-                        <div className="space-y-2">
-                          <div className="flex items-center text-sm">
-                            <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                            <span>{selectedLab.schedule}</span>
-                          </div>
-                          <div className="flex items-center text-sm">
-                            <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                            <span>Location: {selectedLab.location}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
                 </div>
-
-                <Separator className="bg-muted/50" />
-
-                {/* Materials section */}
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Course Materials</h3>
-                  <div className="grid gap-2">
-                    {selectedLab.materials.map((material: any) => (
-                      <div
-                        key={material.id}
-                        className="flex items-center justify-between p-3 border rounded-md hover:bg-muted/50 transition-colors cursor-pointer bg-white dark:bg-gray-900 shadow-sm"
-                      >
-                        <div className="flex items-center">
-                          {getMaterialIcon(material.type)}
-                          <span className="ml-2">{material.title}</span>
-                        </div>
-                        <Badge variant="outline" className="bg-muted/50">
-                          {material.type.toUpperCase()}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator className="bg-muted/50" />
-
-                {/* Assignments section */}
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Assignments</h3>
-                  <div className="space-y-3">
-                    {selectedLab.assignments.map((assignment: any) => (
-                      <Card key={assignment.id} className="bg-white dark:bg-gray-900 shadow-sm border-muted/50">
-                        <CardHeader className="py-3">
-                          <div className="flex justify-between items-center">
-                            <CardTitle className="text-base">{assignment.title}</CardTitle>
-                            <Badge
-                              variant={
-                                assignment.status === "completed"
-                                  ? "success"
-                                  : assignment.status === "in-progress"
-                                    ? "default"
-                                    : "outline"
-                              }
-                              className={
-                                assignment.status !== "completed" && assignment.status !== "in-progress"
-                                  ? "bg-white/50 dark:bg-gray-900/50"
-                                  : ""
-                              }
-                            >
-                              {assignment.status === "completed"
-                                ? "Completed"
-                                : assignment.status === "in-progress"
-                                  ? "In Progress"
-                                  : "Due " + assignment.dueDate}
-                            </Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="py-0 pb-3">
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-muted-foreground">Due: {assignment.dueDate}</span>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled={assignment.status === "completed"}
-                              className="bg-white dark:bg-gray-900"
-                            >
-                              {assignment.status === "completed" ? "View Submission" : "Submit Assignment"}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
+              )}
+            </div>
           )}
         </DialogContent>
       </Dialog>
     </div>
   )
 }
-
