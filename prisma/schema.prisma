@@ -72,6 +72,8 @@ enum ExamType {
   proposal
   result
   final
+  closing
+  midterm
   other
 }
 
@@ -247,6 +249,7 @@ model Student {
   thesesAuthored       ThesisTitle[]
   grades               Grade[]
   academicConsultations AcademicConsultation[]
+  academicEvents       AcademicEvent[]
 
   @@map("students")
 }
@@ -272,6 +275,7 @@ model Lecturer {
   examAdvisor2          ExamApplication[] @relation("ExamAdvisor2")
   adviseeStudents       Student[] @relation("AcademicAdvisor")
   academicConsultations AcademicConsultation[]
+  academicEvents        AcademicEvent[]
 
   @@map("lecturers")
 }
@@ -744,6 +748,7 @@ model Course {
 
   grades      Grade[]
   schedules   CourseSchedule[]
+  academicEvents AcademicEvent[]
 
   @@map("courses")
 }
@@ -863,6 +868,51 @@ model AcademicConsultation {
   updatedAt   DateTime @updatedAt
 
   @@map("academic_consultations")
+}
+
+model AcademicEvent {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  type        EventType
+  examType    ExamType?   // Only for exam events
+  status      EventStatus @default(confirmed)
+  
+  // Relations
+  studentId   String?     // For student-specific events
+  student     Student?    @relation(fields: [studentId], references: [id])
+  
+  courseId    String?     // For course-related events
+  course      Course?     @relation(fields: [courseId], references: [id])
+  
+  lecturerId  String?     // For lecturer-related events
+  lecturer    Lecturer?   @relation(fields: [lecturerId], references: [id])
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("academic_events")
+}
+
+enum EventType {
+  exam
+  class
+  lab
+  consultation
+  seminar
+  workshop
+  deadline
+  organization
+}
+
+enum EventStatus {
+  confirmed
+  pending
+  cancelled
+  completed
 }
 
 model VerificationToken {
