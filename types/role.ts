@@ -8,6 +8,14 @@ export type Role =
   | "admin_umum"
   | "admin_keuangan"
   | "kepala_tata_usaha"
+  | "prodi"
+  | "dekan"
+  | "gkm"
+  | "simak"
+  | "prodi"
+  | "dekan"
+  | "gkm"
+  | "simak"
 
 export type DosenSubRole =
   | "dosen"
@@ -112,6 +120,13 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     icon: "crown",
     color: "text-amber-500",
     bgColor: "bg-amber-100",
+  },
+  simak: {
+    displayName: "SIMAK",
+    description: "Sistem Informasi Manajemen Akademik - Academic schedule management and course administration.",
+    icon: "calendar-clock",
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-100",
   },
 }
 
