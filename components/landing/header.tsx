@@ -26,20 +26,13 @@ const Header: React.FC = () => {
   ]
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${scrolled
-      ? 'bg-white/80 backdrop-blur-2xl border-b border-primary/20 shadow-2xl shadow-primary/10'
-      : 'bg-white/95 backdrop-blur-xl border-b border-primary/5 shadow-lg shadow-primary/5'
-      } dark:bg-neutral-900/85 dark:border-neutral-700/20`}>
-      <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-        <div className="relative flex items-center justify-between h-20">
-          {/* Enhanced Logo with modern glassmorphism */}
-          <Link href="/" className="relative flex items-center space-x-4 group">
-            <div className="relative">
-              <div className="absolute transition-opacity duration-500 -inset-1 bg-gradient-to-r from-primary via-primary/80 to-secondary blur opacity-30 group-hover:opacity-60 rounded-2xl"></div>
-              <div className="relative p-4 transition-all duration-700 border-2 bg-gradient-to-br from-primary/20 via-primary/15 to-primary/25 rounded-2xl border-primary/30 group-hover:border-primary/50 group-hover:shadow-2xl group-hover:shadow-primary/30 group-hover:scale-110 backdrop-blur-sm">
-                <GraduationCap className="w-8 h-8 transition-all duration-700 text-primary group-hover:rotate-12 group-hover:text-primary/90" />
-                <div className="absolute w-2 h-2 rounded-full top-1 right-1 bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse"></div>
-              </div>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-white/95 via-lavender-50/30 to-white/95 backdrop-blur-xl border-b border-white/30 dark:bg-gradient-to-r dark:from-neutral-900/90 dark:via-slate-900/40 dark:to-neutral-900/90 dark:border-neutral-700/20 shadow-lg shadow-lavender-200/10">
+      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="bg-primary/10 p-3 rounded-xl border border-primary/20 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+              <GraduationCap className="w-8 h-8 text-primary group-hover:rotate-12 transition-transform duration-300" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center space-x-2">
@@ -70,19 +63,17 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* Modern CTA Buttons with advanced effects */}
-          <div className="items-center hidden space-x-3 md:flex">
-            <Button variant="outline" asChild className="relative overflow-hidden transition-all duration-500 border-2 group border-primary/30 hover:border-primary/60 bg-white/40 backdrop-blur-md hover:bg-gradient-to-r hover:from-primary/10 hover:to-primary/5 hover:scale-105 hover:shadow-xl rounded-xl">
-              <Link href="/login" className="relative z-10 flex items-center space-x-2">
-                <span>Masuk</span>
-                <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-r from-primary/5 to-transparent group-hover:opacity-100"></div>
-              </Link>
+          {/* Modern CTA Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Button variant="outline" asChild className="group border-2 border-secondary-alt/30 text-secondary-alt hover:border-secondary-alt/60 hover:bg-gradient-to-r hover:from-lavender-50/30 hover:to-mint-50/30 transition-all duration-500 hover:scale-105 rounded-xl backdrop-blur-sm shadow-lg shadow-lavender-200/10">
+              <Link href="/login" className="font-semibold">Masuk</Link>
             </Button>
-            <Button asChild className="relative overflow-hidden transition-all duration-500 border-0 shadow-xl group bg-gradient-to-r from-primary via-primary/95 to-primary/90 hover:from-primary/90 hover:via-primary hover:to-primary hover:shadow-2xl hover:shadow-primary/40 hover:scale-110 rounded-xl">
-              <Link href="/dashboard" className="relative z-10 flex items-center space-x-2">
-                <Zap className="w-4 h-4 group-hover:animate-bounce" />
+            <Button asChild className="group bg-gradient-to-r from-secondary to-secondary-alt hover:from-secondary/90 hover:to-secondary-alt/90 shadow-lg shadow-secondary/20 hover:shadow-xl hover:shadow-secondary/30 transition-all duration-500 hover:scale-105 rounded-xl font-semibold">
+              <Link href="/dashboard" className="flex items-center gap-2">
                 <span>Dashboard</span>
-                <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-r from-white/10 to-transparent group-hover:opacity-100"></div>
+                <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center group-hover:translate-x-1 transition-transform duration-300 text-xs">
+                  →
+                </div>
               </Link>
             </Button>
           </div>
@@ -139,32 +130,25 @@ const Header: React.FC = () => {
         )}
       </div>
 
-      {/* Ultra-modern Quick Info Bar */}
-      <div className="border-b bg-gradient-to-r from-primary/12 via-primary/8 to-primary/12 border-primary/20 backdrop-blur-sm">
-        <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+      {/* Modern Quick Info Bar */}
+      <div className="bg-gradient-to-r from-lavender-50/40 via-mint-50/30 to-peach-50/40 border-b border-white/30 backdrop-blur-sm">
+        <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="flex items-center justify-between py-3 text-sm">
-            <div className="flex items-center space-x-8">
-              <div className="flex items-center space-x-3 cursor-pointer text-primary/90 dark:text-primary/80 group">
-                <div className="p-1.5 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-colors duration-300">
-                  <Mail className="w-4 h-4 transition-transform duration-300 text-primary group-hover:scale-110" />
-                </div>
-                <span className="hidden font-medium transition-colors duration-300 sm:inline group-hover:text-primary">info@ft-unismuh.ac.id</span>
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2 text-slate-600 dark:text-neutral-300">
+                <Mail className="w-4 h-4 text-secondary" />
+                <span className="hidden sm:inline font-medium">info@ft-unismuh.ac.id</span>
               </div>
-              <div className="flex items-center space-x-3 cursor-pointer text-primary/90 dark:text-primary/80 group">
-                <div className="p-1.5 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-colors duration-300">
-                  <Phone className="w-4 h-4 transition-transform duration-300 text-primary group-hover:scale-110" />
-                </div>
-                <span className="hidden font-medium transition-colors duration-300 sm:inline group-hover:text-primary">(0411) 861543</span>
+              <div className="flex items-center space-x-2 text-slate-600 dark:text-neutral-300">
+                <Phone className="w-4 h-4 text-secondary-alt" />
+                <span className="hidden sm:inline font-medium">(0411) 861543</span>
               </div>
             </div>
-            <Badge variant="secondary" className="relative overflow-hidden text-sm font-semibold bg-gradient-to-r from-primary/20 via-primary/15 to-primary/20 text-primary border-2 border-primary/30 hover:border-primary/50 hover:shadow-lg transition-all duration-500 rounded-full px-4 py-1.5 group cursor-pointer">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse"></div>
-                <span>Sistem Informasi Terintegrasi</span>
-                <Sparkles className="w-4 h-4 transition-all duration-300 text-primary/70 group-hover:text-yellow-500 group-hover:animate-spin" />
-              </div>
-              <div className="absolute inset-0 transition-opacity duration-500 transform translate-x-full -skew-x-12 opacity-0 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:opacity-100 group-hover:translate-x-0"></div>
-            </Badge>
+            <div className="bg-gradient-to-r from-secondary/10 to-secondary-alt/10 px-4 py-2 rounded-full border border-white/30 backdrop-blur-sm shadow-lg shadow-lavender-200/10">
+              <span className="text-xs font-semibold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent">
+                Sistem Informasi Terintegrasi
+              </span>
+            </div>
           </div>
         </div>
       </div>

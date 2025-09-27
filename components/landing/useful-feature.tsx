@@ -13,32 +13,32 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    icon: <GraduationCap className="w-12 h-12 text-primary" />,
+    icon: <GraduationCap className="w-12 h-12 text-secondary" />,
     title: 'Manajemen Akademik',
     description: 'Kelola data mahasiswa, nilai, jadwal kuliah, dan seluruh proses akademik dalam satu platform.'
   },
   {
-    icon: <Users className="w-12 h-12 text-primary" />,
+    icon: <Users className="w-12 h-12 text-secondary-alt" />,
     title: 'Multi-Role Dashboard',
     description: 'Dashboard khusus untuk mahasiswa, dosen, admin, dekan, dan seluruh stakeholder fakultas.'
   },
   {
-    icon: <FileCheck className="w-12 h-12 text-primary" />,
+    icon: <FileCheck className="w-12 h-12 text-secondary" />,
     title: 'Surat & Dokumen',
     description: 'Sistem pembuatan surat otomatis dan pengelolaan dokumen akademik yang terintegrasi.'
   },
   {
-    icon: <CreditCard className="w-12 h-12 text-primary" />,
+    icon: <CreditCard className="w-12 h-12 text-secondary-alt" />,
     title: 'Pembayaran Digital',
     description: 'Kelola pembayaran SPP, praktikum, dan administrasi akademik lainnya secara digital.'
   },
   {
-    icon: <Calendar className="w-12 h-12 text-primary" />,
+    icon: <Calendar className="w-12 h-12 text-secondary" />,
     title: 'Jadwal Terintegrasi',
     description: 'Sistem penjadwalan kuliah, ujian, praktikum, dan kegiatan akademik lainnya.'
   },
   {
-    icon: <Shield className="w-12 h-12 text-primary" />,
+    icon: <Shield className="w-12 h-12 text-secondary-alt" />,
     title: 'Keamanan Data',
     description: 'Sistem keamanan berlapis dengan kontrol akses yang ketat untuk melindungi data akademik.'
   }
@@ -72,24 +72,22 @@ const UsefulFeature: React.FC = () => {
   }, [])
 
   return (
-    <section id="features" ref={ref} className="relative py-[100px] bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden">
-      {/* Enhanced Background Elements with #3674B5 */}
-      <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-primary/15 to-secondary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-tl from-primary/20 to-secondary/15 rounded-full blur-3xl animate-pulse delay-1000" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/8 via-transparent to-primary/12 rounded-full blur-3xl" />
-      <div className="absolute top-20 left-1/3 w-40 h-40 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl animate-pulse delay-500" />
+    <section id="features" ref={ref} className="relative py-[100px] bg-gradient-to-br from-white via-mint-50/20 to-lavender-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden">
+      {/* Ultra Modern Background Elements */}
+      <div className="absolute rounded-full top-10 right-10 w-96 h-96 bg-gradient-to-br from-lavender-100/30 to-secondary/12 blur-3xl animate-pulse" />
+      <div className="absolute delay-1000 rounded-full bottom-10 left-10 w-80 h-80 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/15 blur-3xl animate-pulse" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-peach-50/20 via-transparent to-slate-50/30 rounded-full blur-3xl" />
 
-      <div className="relative flex flex-col gap-16 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Enhanced Floating Badge with #3674B5 */}
-          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/12 to-primary/8 backdrop-blur-xl border-2 border-primary/25 rounded-full text-sm font-semibold shadow-xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 animate-float">
-            <span className="w-2 h-2 bg-primary rounded-full mr-3 animate-pulse"></span>
-            <span className="text-primary">⚡ Fitur Unggulan</span>
+      <div className="relative flex flex-col gap-16 px-4 py-12 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex flex-col items-center justify-center gap-y-6">
+          {/* Modern Floating Badge */}
+          <div className="inline-flex items-center px-6 py-3 text-sm font-bold text-transparent transition-all duration-500 border rounded-full shadow-lg bg-gradient-to-r from-lavender-100/70 to-mint-100/70 backdrop-blur-xl border-white/40 from-secondary to-secondary-alt bg-clip-text shadow-lavender-200/20 hover:shadow-xl hover:shadow-lavender-200/30 animate-float hover:scale-105">
+            ⚡ Fitur Unggulan
           </div>
 
-          <div className="flex flex-col items-center gap-y-4 justify-center flex-wrap">
+          <div className="flex flex-col flex-wrap items-center justify-center gap-y-4">
             <div className="flex items-center gap-x-2">
-              <h2 className="text-neutral-900 dark:text-white text-4xl lg:text-5xl text-center font-extrabold leading-tight">
+              <h2 className="text-4xl font-extrabold leading-tight text-center text-neutral-900 dark:text-white lg:text-5xl">
                 <span className="relative z-[1] bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent dark:from-white dark:to-gray-300">
                   Semua yang Anda butuhkan
                   <img
@@ -98,45 +96,43 @@ const UsefulFeature: React.FC = () => {
                     className="absolute bottom-0 z-[1] h-[40%] w-[125%] sm:w-[132%] -left-[13%] sm:-left-[19%] top-[17px]"
                   />
                 </span>{' '}
-                <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 bg-clip-text text-transparent">
+                <span className="text-transparent bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text">
                   untuk mengelola fakultas
                 </span>
               </h2>
             </div>
-            <p className="text-lg text-center text-neutral-600 dark:text-neutral-300 max-w-3xl leading-relaxed">
+            <p className="max-w-3xl text-lg leading-relaxed text-center text-neutral-600 dark:text-neutral-300">
               Platform komprehensif yang mengintegrasikan seluruh aspek pengelolaan akademik fakultas teknik dengan teknologi terdepan.
             </p>
           </div>
         </div>
 
         <div className="relative">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((item, index) => (
               <Card
                 key={index}
-                className="group bg-white/80 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:scale-105 hover:-translate-y-3 rounded-2xl overflow-hidden border-2 border-transparent hover:border-primary/20"
+                className="overflow-hidden transition-all duration-500 border-0 shadow-lg group bg-white/70 backdrop-blur-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-2 rounded-2xl"
               >
-                <CardContent className="flex flex-col gap-4 justify-center items-center p-8 relative">
-                  {/* Enhanced Gradient Background on Hover with #3674B5 */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <CardContent className="relative flex flex-col items-center justify-center gap-4 p-8">
+                  {/* Modern Gradient Background on Hover */}
+                  <div className="absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-br from-lavender-50/30 via-mint-50/20 to-peach-50/25 group-hover:opacity-100" />
 
-                  {/* Enhanced Icon Container with #3674B5 */}
-                  <div className="relative bg-gradient-to-br from-primary/10 to-primary/15 p-4 rounded-2xl border-2 border-primary/20 group-hover:border-primary/40 group-hover:shadow-xl group-hover:shadow-primary/20 group-hover:scale-110 transition-all duration-500 group-hover:rotate-3">
+                  {/* Modern Icon Container */}
+                  <div className="relative p-4 transition-all duration-500 border bg-gradient-to-br from-lavender-100/60 to-mint-100/50 rounded-2xl border-white/30 group-hover:shadow-xl group-hover:shadow-lavender-200/20 group-hover:scale-110 group-hover:rotate-3 backdrop-blur-sm">
                     {item.icon}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
-                  <h3 className="relative text-xl font-bold text-neutral-900 dark:text-white mb-2 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="relative mb-2 text-xl font-bold transition-all duration-300 text-neutral-900 dark:text-white group-hover:bg-gradient-to-r group-hover:from-secondary group-hover:to-secondary-alt group-hover:bg-clip-text group-hover:text-transparent">
                     {item.title}
                   </h3>
 
-                  <p className="relative text-center text-neutral-600 dark:text-neutral-300 leading-relaxed group-hover:text-neutral-700 transition-colors duration-300">
+                  <p className="relative leading-relaxed text-center transition-colors duration-300 text-neutral-600 dark:text-neutral-300 group-hover:text-neutral-700">
                     {item.description}
                   </p>
 
-                  {/* Enhanced Animated Border Effect with #3674B5 */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-sm" />
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/20 via-transparent to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+                  {/* Animated Border Effect */}
+                  <div className="absolute inset-0 transition-opacity duration-500 opacity-0 rounded-2xl bg-primary group-hover:opacity-20 blur-sm" />
                 </CardContent>
               </Card>
             ))}

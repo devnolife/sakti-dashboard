@@ -1,17 +1,21 @@
 export type Role =
   | "mahasiswa"
   | "dosen"
-  | "prodi"
   | "staff_tu"
-  | "dekan"
   | "admin"
-
   | "laboratory_admin"
   | "reading_room_admin"
   | "admin_umum"
   | "admin_keuangan"
-  | "gkm"
   | "kepala_tata_usaha"
+  | "prodi"
+  | "dekan"
+  | "gkm"
+  | "simak"
+  | "prodi"
+  | "dekan"
+  | "gkm"
+  | "simak"
 
 export type DosenSubRole =
   | "dosen"
@@ -20,8 +24,9 @@ export type DosenSubRole =
   | "wakil_dekan_2"
   | "wakil_dekan_3"
   | "wakil_dekan_4"
-  | "gkm"
   | "prodi"
+  | "sekretaris_prodi"
+  | "gkm"
 
 export interface RoleConfig {
   displayName: string
@@ -116,6 +121,13 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: "text-amber-500",
     bgColor: "bg-amber-100",
   },
+  simak: {
+    displayName: "SIMAK",
+    description: "Sistem Informasi Manajemen Akademik - Academic schedule management and course administration.",
+    icon: "calendar-clock",
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-100",
+  },
 }
 
 export const roleLabels = {
@@ -187,6 +199,13 @@ export const dosenSubRoleConfigs: Record<DosenSubRole, RoleConfig> = {
     icon: "layout",
     color: "text-purple-500",
     bgColor: "bg-purple-100",
+  },
+  sekretaris_prodi: {
+    displayName: "Sekretaris Program Studi",
+    description: "Sekretaris Program Studi dengan akses ke administrasi program dan dukungan akademik.",
+    icon: "user-check",
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-100",
   },
 }
 

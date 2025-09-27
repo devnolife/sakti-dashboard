@@ -258,13 +258,16 @@
   background: hsl(var(--primary));
 }
 
-/* Optimized Gen Z Landing Page Animations */
+/* Modern Gen Z Landing Page Animations */
 @keyframes animate-blob {
   0%, 100% {
-    transform: translate(0px, 0px) scale(1);
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
   }
-  50% {
-    transform: translate(20px, -30px) scale(1.05);
+  33% {
+    transform: translate(30px, -20px) scale(1.1) rotate(120deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9) rotate(240deg);
   }
 }
 
@@ -279,20 +282,56 @@
 
 @keyframes soft-pulse {
   0%, 100% {
-    opacity: 0.8;
+    opacity: 0.6;
+    transform: scale(1);
   }
   50% {
-    opacity: 1;
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(-5px) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-15px) translateX(3px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
   }
 }
 
 .animate-gradient-x {
   background-size: 200% 200%;
-  animation: gradient-shift 4s ease infinite;
+  animation: gradient-shift 6s ease infinite;
 }
 
 .animate-blob {
-  animation: animate-blob 8s infinite;
+  animation: animate-blob 12s ease-in-out infinite;
+}
+
+.animate-gentle-float {
+  animation: gentle-float 6s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
 .animation-delay-2000 {
@@ -303,8 +342,36 @@
   animation-delay: 4s;
 }
 
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
 .animate-soft-pulse {
-  animation: soft-pulse 3s ease-in-out infinite;
+  animation: soft-pulse 4s ease-in-out infinite;
+}
+
+/* Modern glassmorphism effects */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Smooth transitions for all interactive elements */
+.smooth-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smooth-hover:hover {
+  transform: translateY(-2px) scale(1.02);
 }
 
 /* Simplified Hover effects */

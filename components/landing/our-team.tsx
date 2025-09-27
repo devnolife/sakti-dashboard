@@ -66,23 +66,21 @@ const OurTeam: React.FC = () => {
   }, [])
 
   return (
-    <section id="team" className="relative py-[100px] bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
-      {/* Enhanced Background Elements with #3674B5 */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-primary/12 to-secondary/8 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-tl from-primary/15 to-secondary/10 rounded-full blur-3xl animate-pulse delay-1500" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-r from-primary/6 via-transparent to-primary/10 rounded-full blur-3xl" />
+    <section id="team" className="relative py-[100px] bg-gradient-to-tl from-white via-peach-50/20 to-lavender-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
+      {/* Ultra Modern Background Elements */}
+      <div className="absolute rounded-full top-20 left-20 w-72 h-72 bg-gradient-to-br from-peach-100/30 to-secondary/12 blur-3xl animate-pulse" />
+      <div className="absolute rounded-full bottom-20 right-20 w-96 h-96 bg-gradient-to-tr from-lavender-100/25 to-secondary-alt/15 blur-3xl animate-pulse delay-1500" />
 
-      <div className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Enhanced Floating Badge with #3674B5 */}
-          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/12 to-primary/8 backdrop-blur-xl border-2 border-primary/25 rounded-full text-sm font-semibold shadow-xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 animate-float">
-            <span className="w-2 h-2 bg-primary rounded-full mr-3 animate-pulse"></span>
-            <span className="text-primary">👥 Pimpinan Fakultas</span>
+      <div className="relative px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex flex-col items-center justify-center gap-y-6">
+          {/* Modern Floating Badge */}
+          <div className="inline-flex items-center px-6 py-3 text-sm font-bold text-transparent transition-all duration-500 border rounded-full shadow-lg bg-gradient-to-r from-peach-100/70 to-lavender-100/70 backdrop-blur-xl border-white/40 from-secondary to-secondary-alt bg-clip-text shadow-peach-200/20 hover:shadow-xl hover:shadow-peach-200/30 animate-float hover:scale-105">
+            👥 Pimpinan Fakultas
           </div>
 
-          <div className="flex flex-col items-center gap-y-4 justify-center flex-wrap">
+          <div className="flex flex-col flex-wrap items-center justify-center gap-y-4">
             <div className="flex items-center gap-x-2">
-              <h2 className="text-neutral-900 dark:text-white text-4xl lg:text-5xl text-center font-extrabold leading-tight">
+              <h2 className="text-4xl font-extrabold leading-tight text-center text-neutral-900 dark:text-white lg:text-5xl">
                 <span className="relative z-[1] bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent dark:from-white dark:to-gray-300">
                   Dipimpin oleh
                   <img
@@ -91,23 +89,23 @@ const OurTeam: React.FC = () => {
                     className="absolute bottom-0 z-[1] h-[40%] w-[132%] -left-[19%] top-[17px]"
                   />
                 </span>{' '}
-                <span className="text-primary">
+                <span className="text-transparent bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text">
                   Akademisi Berpengalaman
                 </span>
               </h2>
             </div>
-            <p className="text-lg text-center text-neutral-600 dark:text-neutral-300 max-w-3xl leading-relaxed">
+            <p className="max-w-3xl text-lg leading-relaxed text-center text-neutral-600 dark:text-neutral-300">
               Fakultas Teknik dipimpin oleh para akademisi dan praktisi yang berpengalaman di bidangnya dengan dedikasi tinggi.
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-16">
+        <div className="grid grid-cols-1 gap-8 pt-16 md:grid-cols-2 lg:grid-cols-4">
           {team.map((member, index) => (
             <div key={index} className="flex flex-col group">
-              <Card className="relative border-0 overflow-visible bg-accent/90 backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-105 hover:-translate-y-4 rounded-3xl group-hover:bg-cream/95">
+              <Card className="relative overflow-visible transition-all duration-700 border-0 shadow-lg bg-accent/90 backdrop-blur-xl hover:shadow-2xl hover:scale-105 hover:-translate-y-4 rounded-3xl group-hover:bg-cream/95">
                 {/* Animated Border Glow */}
-                <div className="absolute inset-0 rounded-3xl bg-primary opacity-0 group-hover:opacity-30 transition-opacity duration-700 blur-sm" />
+                <div className="absolute inset-0 transition-opacity duration-700 opacity-0 rounded-3xl bg-primary group-hover:opacity-30 blur-sm" />
 
                 <div className="relative flex flex-col items-center justify-center p-0">
                   {/* Modern Image Container */}
@@ -115,7 +113,7 @@ const OurTeam: React.FC = () => {
                     className={`flex justify-center w-full mx-auto text-center h-[200px] relative overflow-visible rounded-t-3xl ${member.color} group-hover:bg-gradient-to-br group-hover:from-secondary/15 group-hover:to-cream/50 transition-all duration-700`}
                   >
                     {/* Floating Effects */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-accent/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute inset-0 transition-opacity duration-700 opacity-0 bg-gradient-to-t from-accent/70 to-transparent group-hover:opacity-100" />
 
                     <img
                       src={member.image}
@@ -124,23 +122,23 @@ const OurTeam: React.FC = () => {
                     />
 
                     {/* Sparkle Effects */}
-                    <div className="absolute top-4 right-4 w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-all duration-700" />
-                    <div className="absolute top-8 right-8 w-1 h-1 bg-primary rounded-full opacity-0 group-hover:opacity-100 animate-ping delay-300 transition-all duration-700" />
+                    <div className="absolute w-2 h-2 transition-all duration-700 rounded-full opacity-0 top-4 right-4 bg-primary group-hover:opacity-100 animate-ping" />
+                    <div className="absolute w-1 h-1 transition-all duration-700 delay-300 rounded-full opacity-0 top-8 right-8 bg-primary group-hover:opacity-100 animate-ping" />
                   </div>
 
                   {/* Content Section */}
-                  <div className="flex flex-col gap-4 p-6 w-full relative z-10">
-                    <div className="text-center space-y-2">
-                      <h3 className="text-xl font-bold text-neutral-900 dark:text-white group-hover:text-primary transition-colors duration-500">
+                  <div className="relative z-10 flex flex-col w-full gap-4 p-6">
+                    <div className="space-y-2 text-center">
+                      <h3 className="text-xl font-bold transition-colors duration-500 text-neutral-900 dark:text-white group-hover:text-primary">
                         {member.name}
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-400 font-medium group-hover:text-primary transition-colors duration-500">
+                      <p className="font-medium transition-colors duration-500 text-neutral-600 dark:text-neutral-400 group-hover:text-primary">
                         {member.position}
                       </p>
                     </div>
 
                     {/* Decorative Line */}
-                    <div className="w-16 h-1 bg-primary rounded-full mx-auto opacity-0 group-hover:opacity-100 transition-all duration-700 group-hover:w-24" />
+                    <div className="w-16 h-1 mx-auto transition-all duration-700 rounded-full opacity-0 bg-primary group-hover:opacity-100 group-hover:w-24" />
                   </div>
                 </div>
               </Card>

@@ -1,0 +1,775 @@
+{
+	"info": {
+		"_postman_id": "jadwal-kuliah-api-collection",
+		"name": "Jadwal Kuliah API",
+		"description": "Complete API collection for Jadwal Kuliah system - manages course schedules, prodis, courses, and file operations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "jadwal-api"
+	},
+	"item": [
+		{
+			"name": "System",
+			"item": [
+				{
+					"name": "Root - API Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "System Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Prodis",
+			"item": [
+				{
+					"name": "Get All Prodis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/prodis?page=1&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prodis"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Prodi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Teknik Informatika\",\n  \"code\": \"IF\",\n  \"faculty\": \"Fakultas Teknik\",\n  \"has_specialization\": true,\n  \"regular_classes\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n  \"specializations\": [\"Rekayasa Perangkat Lunak\", \"Jaringan Komputer\", \"Artificial Intelligence\"],\n  \"colors\": {\n    \"primary\": \"#3B82F6\",\n    \"secondary\": \"#1E40AF\",\n    \"accent\": \"#60A5FA\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/prodis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prodis"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Prodi by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/prodis/{{prodi_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prodis",
+								"{{prodi_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Prodi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Teknik Informatika Updated\",\n  \"regular_classes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n  \"colors\": {\n    \"primary\": \"#4F46E5\",\n    \"secondary\": \"#3730A3\",\n    \"accent\": \"#818CF8\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/prodis/{{prodi_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prodis",
+								"{{prodi_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Prodi Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/prodis/{{prodi_id}}/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"prodis",
+								"{{prodi_id}}",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses?page=1&size=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Courses with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses?prodi_id={{prodi_id}}&semester=3&kelas=A&page=1&size=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							],
+							"query": [
+								{
+									"key": "prodi_id",
+									"value": "{{prodi_id}}"
+								},
+								{
+									"key": "semester",
+									"value": "3"
+								},
+								{
+									"key": "kelas",
+									"value": "A"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prodi_id\": {{prodi_id}},\n  \"kode_mk\": \"IF2301\",\n  \"mata_kuliah\": \"Pemrograman Berorientasi Objek\",\n  \"sks\": 3,\n  \"semester\": 3,\n  \"kelas\": \"A\",\n  \"dosen1\": \"Dr. John Doe, S.Kom., M.T.\",\n  \"dosen2\": \"Jane Smith, S.Kom., M.Kom.\",\n  \"is_nr\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Multiple Courses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courses\": [\n    {\n      \"prodi_id\": {{prodi_id}},\n      \"kode_mk\": \"IF2301\",\n      \"mata_kuliah\": \"Pemrograman Berorientasi Objek\",\n      \"sks\": 3,\n      \"semester\": 3,\n      \"kelas\": \"A\",\n      \"dosen1\": \"Dr. John Doe, S.Kom., M.T.\",\n      \"is_nr\": false\n    },\n    {\n      \"prodi_id\": {{prodi_id}},\n      \"kode_mk\": \"IF2301\",\n      \"mata_kuliah\": \"Pemrograman Berorientasi Objek\",\n      \"sks\": 3,\n      \"semester\": 3,\n      \"kelas\": \"B\",\n      \"dosen1\": \"Dr. Jane Smith, S.Kom., M.Kom.\",\n      \"is_nr\": false\n    },\n    {\n      \"prodi_id\": {{prodi_id}},\n      \"kode_mk\": \"IF2302\",\n      \"mata_kuliah\": \"Basis Data\",\n      \"sks\": 3,\n      \"semester\": 3,\n      \"kelas\": \"A\",\n      \"dosen1\": \"Prof. Dr. Alice Brown, S.Kom., M.T.\",\n      \"is_nr\": false\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/bulk",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mata_kuliah\": \"Pemrograman Berorientasi Objek (Updated)\",\n  \"dosen2\": \"Dr. Bob Wilson, S.Kom., M.T.\",\n  \"is_nr\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{course_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{course_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Schedule Generation",
+			"item": [
+				{
+					"name": "Generate Schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prodi\": \"informatika\",\n  \"semester\": 3,\n  \"academic_year\": \"2025-2026\",\n  \"semester_type\": \"ganjil\",\n  \"include_pbo\": true,\n  \"include_semester_7\": false,\n  \"custom_courses\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/generate/schedule",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generate",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Generation Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/generate/status/{{schedule_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generate",
+								"status",
+								"{{schedule_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate PBO Courses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"]"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/generate/pbo?prodi_id={{prodi_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generate",
+								"pbo"
+							],
+							"query": [
+								{
+									"key": "prodi_id",
+									"value": "{{prodi_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Semester 7 Courses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"A\", \"B\", \"C\", \"D\", \"E\"]"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/generate/semester7?prodi_id={{prodi_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generate",
+								"semester7"
+							],
+							"query": [
+								{
+									"key": "prodi_id",
+									"value": "{{prodi_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File Management",
+			"item": [
+				{
+					"name": "Upload File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/upload?file_type=informatika",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"upload"
+							],
+							"query": [
+								{
+									"key": "file_type",
+									"value": "informatika",
+									"description": "Type: informatika, jadwal_semester, etc."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Uploaded Files",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/uploads?page=1&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"uploads"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "file_type",
+									"value": "informatika",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Download & Export",
+			"item": [
+				{
+					"name": "Download Prodi Schedule (Excel)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/download/schedule/{{prodi_code}}?academic_year=2025-2026&semester_type=ganjil&format=xlsx",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"download",
+								"schedule",
+								"{{prodi_code}}"
+							],
+							"query": [
+								{
+									"key": "academic_year",
+									"value": "2025-2026"
+								},
+								{
+									"key": "semester_type",
+									"value": "ganjil"
+								},
+								{
+									"key": "format",
+									"value": "xlsx",
+									"description": "xlsx, pdf, json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Prodi Schedule (JSON)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/download/schedule/{{prodi_code}}?academic_year=2025-2026&semester_type=ganjil&format=json",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"download",
+								"schedule",
+								"{{prodi_code}}"
+							],
+							"query": [
+								{
+									"key": "academic_year",
+									"value": "2025-2026"
+								},
+								{
+									"key": "semester_type",
+									"value": "ganjil"
+								},
+								{
+									"key": "format",
+									"value": "json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download All Schedules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/download/all-schedules?academic_year=2025-2026&semester_type=ganjil&format=xlsx",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"download",
+								"all-schedules"
+							],
+							"query": [
+								{
+									"key": "academic_year",
+									"value": "2025-2026"
+								},
+								{
+									"key": "semester_type",
+									"value": "ganjil"
+								},
+								{
+									"key": "format",
+									"value": "xlsx"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Configuration",
+			"item": [
+				{
+					"name": "Get System Config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/config",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update System Config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": {\n    \"time_slots\": {\n      \"1\": {\"start\": \"07:00\", \"end\": \"08:40\"},\n      \"2\": {\"start\": \"08:40\", \"end\": \"10:20\"},\n      \"3\": {\"start\": \"10:30\", \"end\": \"12:10\"},\n      \"4\": {\"start\": \"13:00\", \"end\": \"14:40\"},\n      \"5\": {\"start\": \"14:40\", \"end\": \"16:20\"}\n    },\n    \"default_academic_year\": \"2025-2026\",\n    \"default_semester_type\": \"ganjil\"\n  },\n  \"description\": \"System time slots and default academic settings\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/config/{{config_key}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"config",
+								"{{config_key}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "prodi_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "course_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "schedule_id",
+			"value": "schedule-123",
+			"type": "string"
+		},
+		{
+			"key": "prodi_code",
+			"value": "IF",
+			"type": "string"
+		},
+		{
+			"key": "config_key",
+			"value": "time_slots",
+			"type": "string"
+		}
+	]
+}
