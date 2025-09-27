@@ -30,7 +30,7 @@ Melakukan migrasi data dari **statik** ke **data real dari database** pada setia
    * Gunakan Prisma Client yang berada di path:
 
      ```ts
-     import prisma from '@/lib/generated/prisma'
+     import { PrismaClient } from './lib/generated/prisma'
      ```
    * Untuk session userId, gunakan function:
 

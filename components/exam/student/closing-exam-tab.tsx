@@ -9,19 +9,39 @@ import { ExamSubmissionForm } from "./exam-submission-form"
 import type { ExamStatus } from "@/types/exam"
 
 interface ClosingExamTabProps {
-  examData: StudentExam
-  resultStatus: ExamStatus
+  examData: StudentExam | null
+  resultStatus?: ExamStatus
+  onRefresh?: () => void
 }
 
-export function ClosingExamTab({ examData, resultStatus }: ClosingExamTabProps) {
+export function ClosingExamTab({ examData, resultStatus, onRefresh }: ClosingExamTabProps) {
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
+
+  // Early return if no exam data
+  if (!examData) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Award className="w-12 h-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">Ujian Tertutup</h3>
+            <p className="text-muted-foreground text-center">
+              Anda belum memiliki ujian tertutup yang terdaftar.
+              <br />
+              Selesaikan ujian hasil terlebih dahulu.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   // Check if result is passed (prerequisite)
   const resultPassed = resultStatus === "passed"
 
   // Update the requirements based on result status
   const updatedRequirements = examData.requirements.map((req) => {
-    if (req.id === "close-req-4") {
+    if (req.id === "close-req-4" || req.id === "clo-req-4") {
       return { ...req, completed: resultPassed }
     }
     return req

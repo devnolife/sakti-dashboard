@@ -8,11 +8,34 @@ import type { StudentExam } from "./mock-student-exam-data"
 import { ExamSubmissionForm } from "./exam-submission-form"
 
 interface ProposalExamTabProps {
-  examData: StudentExam
+  examData: StudentExam | null
+  onRefresh?: () => void
 }
 
-export function ProposalExamTab({ examData }: ProposalExamTabProps) {
+export function ProposalExamTab({ examData, onRefresh }: ProposalExamTabProps) {
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
+
+  // Early return if no exam data
+  if (!examData) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <BookOpen className="w-12 h-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">Ujian Proposal</h3>
+            <p className="text-muted-foreground text-center">
+              Anda belum memiliki ujian proposal yang terdaftar.
+              <br />
+              Silakan ajukan permohonan ujian proposal terlebih dahulu.
+            </p>
+            <Button className="mt-4" onClick={() => window.location.href = '/dashboard/mahasiswa/exams/register'}>
+              Daftar Ujian Proposal
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   // Check if all requirements are completed
   const allRequirementsCompleted = examData.requirements.every((req) => req.completed)

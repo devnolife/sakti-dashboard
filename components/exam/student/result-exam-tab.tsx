@@ -9,12 +9,32 @@ import { ExamSubmissionForm } from "./exam-submission-form"
 import type { ExamStatus } from "@/types/exam"
 
 interface ResultExamTabProps {
-  examData: StudentExam
-  proposalStatus: ExamStatus
+  examData: StudentExam | null
+  proposalStatus?: ExamStatus
+  onRefresh?: () => void
 }
 
-export function ResultExamTab({ examData, proposalStatus }: ResultExamTabProps) {
+export function ResultExamTab({ examData, proposalStatus, onRefresh }: ResultExamTabProps) {
   const [showSubmissionForm, setShowSubmissionForm] = useState(false)
+
+  // Early return if no exam data
+  if (!examData) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <GraduationCap className="w-12 h-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">Ujian Hasil</h3>
+            <p className="text-muted-foreground text-center">
+              Anda belum memiliki ujian hasil yang terdaftar.
+              <br />
+              Selesaikan ujian proposal terlebih dahulu.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   // Check if proposal is passed (prerequisite)
   const proposalPassed = proposalStatus === "passed"
