@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -21,19 +21,73 @@ import {
   Bookmark,
 } from "lucide-react"
 
+interface AIKData {
+  studentInfo: {
+    name: string
+    nim: string
+    faculty: string
+    program: string
+    semester: number
+  }
+  currentExam?: {
+    id: string
+    title: string
+    status: string
+    submissionDate: string
+    scheduledDate?: string
+    completionDate?: string
+    location?: string
+    examiner?: {
+      id: string
+      name: string
+      nip: string
+      nidn: string
+      position: string
+      department: string
+    }
+    documents: any[]
+  }
+  examHistory: any[]
+  nextAction: string
+  examStatus: string
+}
+
 export function AIKKomfrenDashboard() {
   const [examStatus, setExamStatus] = useState<
     "not_registered" | "registered" | "scheduled" | "completed" | "passed" | "failed"
   >("not_registered")
+  const [aikData, setAikData] = useState<AIKData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // This would come from an API in a real application
-  const studentData = {
-    name: "Andi Wijaya",
-    nim: "12345678",
+  useEffect(() => {
+    fetchAIKData()
+  }, [])
+
+  const fetchAIKData = async () => {
+    try {
+      const response = await fetch('/api/student/aik-komfren')
+      if (response.ok) {
+        const result = await response.json()
+        setAikData(result.data)
+        setExamStatus(result.data.examStatus as any)
+      }
+    } catch (error) {
+      console.error('Error fetching AIK data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Use real data or fallback to default
+  const studentData = aikData?.studentInfo || {
+    name: "Loading...",
+    nim: "...",
     faculty: "Faculty of Computer Science",
     program: "Computer Science",
     semester: 6,
   }
+
+  const currentExam = aikData?.currentExam
 
   const renderStatusBadge = () => {
     switch (examStatus) {
@@ -144,7 +198,9 @@ export function AIKKomfrenDashboard() {
             <p className="text-xs text-muted-foreground mt-1">
               {examStatus === "not_registered"
                 ? "Register to start the process"
-                : "Registration completed on 10/03/2025"}
+                : currentExam?.submissionDate 
+                  ? `Registration completed on ${new Date(currentExam.submissionDate).toLocaleDateString()}`
+                  : "Registration completed"}
             </p>
           </CardContent>
         </Card>
@@ -158,12 +214,18 @@ export function AIKKomfrenDashboard() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">
-              {examStatus === "not_registered" || examStatus === "registered" ? "Pending" : "15/03/2025"}
+              {examStatus === "not_registered" || examStatus === "registered" 
+                ? "Pending" 
+                : currentExam?.scheduledDate 
+                  ? new Date(currentExam.scheduledDate).toLocaleDateString()
+                  : "Not Scheduled"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {examStatus === "not_registered" || examStatus === "registered"
                 ? "Waiting for schedule assignment"
-                : "10:00 AM - Room 301"}
+                : currentExam?.scheduledDate && currentExam?.location
+                  ? `${new Date(currentExam.scheduledDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${currentExam.location}`
+                  : "Schedule details pending"}
             </p>
           </CardContent>
         </Card>
@@ -177,12 +239,12 @@ export function AIKKomfrenDashboard() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">
-              {examStatus === "not_registered" || examStatus === "registered" ? "Not Assigned" : "Dr. Ahmad"}
+              {currentExam?.examiner ? currentExam.examiner.name : "Not Assigned"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {examStatus === "not_registered" || examStatus === "registered"
-                ? "Examiner will be assigned after registration"
-                : "Islamic Studies Department"}
+              {currentExam?.examiner 
+                ? currentExam.examiner.department
+                : "Examiner will be assigned after registration"}
             </p>
           </CardContent>
         </Card>
@@ -229,8 +291,13 @@ export function AIKKomfrenDashboard() {
           <Calendar className="h-4 w-4" />
           <AlertTitle>Exam Scheduled</AlertTitle>
           <AlertDescription>
-            Your AIK Komfren Exam has been scheduled for March 15, 2025 at 10:00 AM in Room 301. Your examiner will be
-            Dr. Ahmad from the Islamic Studies Department. Please arrive 15 minutes before the scheduled time.
+            {currentExam?.scheduledDate && currentExam?.location && currentExam?.examiner ? (
+              <>
+                Your AIK Komfren Exam has been scheduled for {new Date(currentExam.scheduledDate).toLocaleDateString()} at {new Date(currentExam.scheduledDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} in {currentExam.location}. Your examiner will be {currentExam.examiner.name} from the {currentExam.examiner.department}. Please arrive 15 minutes before the scheduled time.
+              </>
+            ) : (
+              "Your AIK Komfren Exam has been scheduled. Please check the schedule details for complete information."
+            )}
           </AlertDescription>
           <div className="mt-4">
             <Button asChild>

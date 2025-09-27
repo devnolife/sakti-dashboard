@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -13,9 +13,11 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { ArrowLeft, ArrowRight, Check, CreditCard, Info, Loader2, Wallet, Building } from "lucide-react"
+import { ArrowLeft, ArrowRight, Check, CreditCard, Info, Loader2, Wallet, Building, AlertCircle } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
@@ -48,6 +50,11 @@ export function AIKKomfrenRegistration() {
   const [paymentMethod, setPaymentMethod] = useState<string>("virtual_account")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isRegistered, setIsRegistered] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [canRegister, setCanRegister] = useState(true)
+  const [registrationError, setRegistrationError] = useState<string | null>(null)
+  const [formErrors, setFormErrors] = useState<string[]>([])
+  const [showValidationAlert, setShowValidationAlert] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,19 +71,171 @@ export function AIKKomfrenRegistration() {
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsSubmitting(true)
+  useEffect(() => {
+    fetchRegistrationData()
+  }, [])
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
-      setIsRegistered(true)
+  const fetchRegistrationData = async () => {
+    try {
+      // First, check current AIK status
+      const aikResponse = await fetch('/api/student/aik-komfren')
+      if (aikResponse.ok) {
+        const aikResult = await aikResponse.json()
+        const aikData = aikResult.data
+        
+        // Check if student already has an active/completed exam
+        if (aikData.currentExam) {
+          const status = aikData.currentExam.status
+          if (['applicant', 'pending', 'scheduled', 'completed', 'passed'].includes(status)) {
+            setCanRegister(false)
+            let errorMessage = ''
+            switch (status) {
+              case 'applicant':
+              case 'pending':
+                errorMessage = 'Your AIK Komfren exam application is currently being processed. Please wait for admin approval.'
+                break
+              case 'scheduled':
+                errorMessage = 'Your AIK Komfren exam has already been scheduled. Please check your schedule.'
+                break
+              case 'completed':
+                errorMessage = 'Your AIK Komfren exam has been completed and is awaiting results.'
+                break
+              case 'passed':
+                errorMessage = 'You have already passed the AIK Komfren exam. Congratulations!'
+                break
+              default:
+                errorMessage = 'You already have an active AIK Komfren exam application.'
+            }
+            setRegistrationError(errorMessage)
+            setLoading(false)
+            return
+          }
+        }
+      }
+
+      // If can register, fetch registration form data
+      const response = await fetch('/api/student/aik-komfren/register')
+      if (response.ok) {
+        const result = await response.json()
+        const data = result.data
+        
+        // Pre-fill form with user data
+        form.setValue('name', data.name)
+        form.setValue('nim', data.nim)
+        form.setValue('email', data.email)
+        form.setValue('phone', data.phone)
+        form.setValue('semester', data.semester)
+        setCanRegister(data.canRegister !== false)
+      }
+    } catch (error) {
+      console.error('Error fetching registration data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const validateStep = (currentStep: number) => {
+    const errors: string[] = []
+    setShowValidationAlert(false)
+    
+    if (currentStep === 1) {
+      const { name, nim, email, phone, semester } = form.getValues()
+      
+      if (!name || name.trim().length < 2) {
+        errors.push("Full name must be at least 2 characters")
+      }
+      
+      if (!nim || nim.trim().length < 5) {
+        errors.push("Student ID (NIM) must be at least 5 characters")
+      }
+      
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        errors.push("Please enter a valid email address (example: name@domain.com)")
+      }
+      
+      if (!phone || phone.trim().length < 10) {
+        errors.push("Phone number must be at least 10 characters")
+      }
+      
+      if (!semester || isNaN(Number(semester)) || Number(semester) < 4) {
+        errors.push("You must be at least in semester 4 to register")
+      }
+    }
+    
+    if (currentStep === 3) {
+      const { termsAccepted } = form.getValues()
+      if (!termsAccepted) {
+        errors.push("You must accept the terms and conditions to continue")
+      }
+    }
+    
+    setFormErrors(errors)
+    if (errors.length > 0) {
+      setShowValidationAlert(true)
+      return false
+    }
+    
+    return true
+  }
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Final validation before submit
+    if (!validateStep(3)) {
       toast({
-        title: "Registration Successful",
-        description: "Your AIK Komfren Exam registration has been submitted successfully.",
+        title: "Form Validation Failed",
+        description: "Please fix the errors below before submitting.",
+        variant: "destructive",
       })
-    }, 2000)
+      return
+    }
+
+    setIsSubmitting(true)
+    setFormErrors([])
+    setShowValidationAlert(false)
+
+    try {
+      const response = await fetch('/api/student/aik-komfren/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setIsRegistered(true)
+        toast({
+          title: "Registration Successful",
+          description: result.data.message || "Your AIK Komfren Exam registration has been submitted successfully.",
+        })
+      } else {
+        // Handle specific error cases
+        let title = "Registration Failed"
+        let description = result.message || result.error || "Failed to submit registration."
+        
+        if (result.error === 'Registration not allowed') {
+          title = "Registration Not Allowed"
+          description = result.message
+        }
+        
+        toast({
+          title,
+          description,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting registration:', error)
+      toast({
+        title: "Registration Failed",
+        description: "An error occurred while submitting your registration.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handlePayment = () => {
@@ -87,6 +246,72 @@ export function AIKKomfrenRegistration() {
       setIsSubmitting(false)
       router.push("/dashboard/mahasiswa/aik-komfren/schedule")
     }, 2000)
+  }
+
+  // Clear validation errors when user starts typing
+  const handleFieldChange = (fieldName: string) => {
+    const newErrors = formErrors.filter(error => 
+      !error.toLowerCase().includes(fieldName.toLowerCase())
+    )
+    setFormErrors(newErrors)
+    if (newErrors.length === 0) {
+      setShowValidationAlert(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold tracking-tight">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              AIK Komfren Exam Registration
+            </span>
+          </h1>
+          <p className="text-muted-foreground mt-2">Loading registration information...</p>
+        </div>
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!canRegister && registrationError) {
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold tracking-tight">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              AIK Komfren Exam Registration
+            </span>
+          </h1>
+          <p className="text-muted-foreground mt-2">Registration status check</p>
+        </div>
+
+        <Alert className="bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-900/30 dark:text-amber-300">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Registration Not Available</AlertTitle>
+          <AlertDescription>
+            {registrationError}
+          </AlertDescription>
+        </Alert>
+
+        <div className="flex gap-4">
+          <Button asChild variant="outline">
+            <Link href="/dashboard/mahasiswa/aik-komfren">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/dashboard/mahasiswa/aik-komfren/schedule">
+              View Schedule <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   if (isRegistered) {
@@ -275,6 +500,30 @@ export function AIKKomfrenRegistration() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {step === 1 && (
+            <Alert className="bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-900/30 dark:text-blue-300 mb-6">
+              <Info className="h-4 w-4" />
+              <AlertTitle>Registration Requirements</AlertTitle>
+              <AlertDescription>
+                Please fill in all required fields marked with (*). Make sure you are at least in semester 4 to be eligible for the AIK Komfren exam.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {showValidationAlert && formErrors.length > 0 && (
+            <Alert className="bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-900/30 dark:text-red-300 mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Please Fix the Following Errors:</AlertTitle>
+              <AlertDescription>
+                <ul className="list-disc list-inside mt-2 space-y-1">
+                  {formErrors.map((error, index) => (
+                    <li key={index} className="text-sm">{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {step === 1 && (
@@ -284,9 +533,17 @@ export function AIKKomfrenRegistration() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>Full Name *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your full name" {...field} />
+                          <Input 
+                            placeholder="Enter your full name" 
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e)
+                              handleFieldChange('name')
+                            }}
+                            className={formErrors.some(error => error.includes('Full name')) ? 'border-red-500' : ''}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -298,9 +555,13 @@ export function AIKKomfrenRegistration() {
                     name="nim"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Student ID (NIM)</FormLabel>
+                        <FormLabel>Student ID (NIM) *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your NIM" {...field} />
+                          <Input 
+                            placeholder="Enter your NIM" 
+                            {...field}
+                            className={formErrors.some(error => error.includes('Student ID')) ? 'border-red-500' : ''}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -313,9 +574,14 @@ export function AIKKomfrenRegistration() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>Email *</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" type="email" {...field} />
+                            <Input 
+                              placeholder="Enter your email" 
+                              type="email" 
+                              {...field}
+                              className={formErrors.some(error => error.includes('email')) ? 'border-red-500' : ''}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -327,9 +593,13 @@ export function AIKKomfrenRegistration() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel>Phone Number *</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your phone number" {...field} />
+                            <Input 
+                              placeholder="Enter your phone number (e.g., 081234567890)" 
+                              {...field}
+                              className={formErrors.some(error => error.includes('Phone number')) ? 'border-red-500' : ''}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -342,10 +612,20 @@ export function AIKKomfrenRegistration() {
                     name="semester"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current Semester</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter your current semester" {...field} />
-                        </FormControl>
+                        <FormLabel>Current Semester *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger className={formErrors.some(error => error.includes('semester')) ? 'border-red-500' : ''}>
+                            <SelectValue placeholder="Select your current semester" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="4">Semester 4</SelectItem>
+                            <SelectItem value="5">Semester 5</SelectItem>
+                            <SelectItem value="6">Semester 6</SelectItem>
+                            <SelectItem value="7">Semester 7</SelectItem>
+                            <SelectItem value="8">Semester 8</SelectItem>
+                            <SelectItem value="9">Semester 9+</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormDescription>
                           You must be at least in semester 4 to register for the AIK Komfren Exam
                         </FormDescription>
@@ -450,7 +730,7 @@ export function AIKKomfrenRegistration() {
                           <p className="text-sm font-medium">Preferred Date</p>
                           <p className="text-sm">
                             {form.getValues("preferredDate")
-                              ? new Date(form.getValues("preferredDate")).toLocaleDateString()
+                              ? new Date(form.getValues("preferredDate")!).toLocaleDateString()
                               : "No preference"}
                           </p>
                         </div>
@@ -542,12 +822,13 @@ export function AIKKomfrenRegistration() {
           {step < 3 ? (
             <Button
               onClick={() => {
-                if (step === 1) {
-                  const { name, nim, email, phone, semester } = form.getValues()
-                  if (!name || !nim || !email || !phone || !semester) {
-                    form.trigger(["name", "nim", "email", "phone", "semester"])
-                    return
-                  }
+                if (!validateStep(step)) {
+                  toast({
+                    title: "Please Complete Required Fields",
+                    description: "Fix the errors below before proceeding to the next step.",
+                    variant: "destructive",
+                  })
+                  return
                 }
                 setStep(step + 1)
               }}
@@ -572,8 +853,4 @@ export function AIKKomfrenRegistration() {
     </div>
   )
 }
-
-// Add missing components
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 
