@@ -15,6 +15,6 @@ export {
   deleteLetterRequest
 } from './correspondence/letter-operations';
 
-// Export constants needed by client components
-export { LETTER_TYPES } from './correspondence/constants';
+// Export functions needed by client components
+export { getLetterTypes, getLetterTypesAsObject } from './correspondence/constants';
 

@@ -26,15 +26,16 @@ export async function getLetterTypes(): Promise<LetterType[]> {
   }
 }
 
-// Get letter types as object for backward compatibility
-export async function getLetterTypesAsObject(): Promise<Record<string, any>> {
-  try {
+// Legacy constant for backward compatibility - now uses database data
+let CACHED_LETTER_TYPES: Record<string, any> = {}
+
+// Initialize cache on first use
+async function initializeLetterTypes() {
+  if (Object.keys(CACHED_LETTER_TYPES).length === 0) {
     const types = await getLetterTypes()
-    const result: Record<string, any> = {}
-    
     types.forEach(type => {
       const key = type.title.toLowerCase().replace(/\s+/g, '_')
-      result[key] = {
+      CACHED_LETTER_TYPES[key] = {
         title: type.title,
         description: type.description,
         approvalRole: type.approvalRole,
@@ -43,10 +44,12 @@ export async function getLetterTypesAsObject(): Promise<Record<string, any>> {
         additionalFields: type.additionalFields
       }
     })
-    
-    return result
-  } catch (error) {
-    console.error('Error fetching letter types as object:', error)
-    return {}
   }
+  return CACHED_LETTER_TYPES
 }
+
+// Export for backward compatibility
+export { CACHED_LETTER_TYPES as LETTER_TYPES }
+
+// Initialize on module load
+initializeLetterTypes()

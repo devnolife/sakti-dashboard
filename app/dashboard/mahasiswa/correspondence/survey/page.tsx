@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { motion } from "framer-motion"
+import { getHardcodedStudentId } from "@/lib/auth-utils"
+import { submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { toast } from "@/hooks/use-toast"
 import {
   FileText,
   Download,
@@ -25,6 +29,100 @@ import {
 } from "lucide-react"
 
 export default function SurveyLetterPage() {
+  const [studentData, setStudentData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    researchTitle: "",
+    researchType: "",
+    supervisor: "",
+    targetLocation: "",
+    targetInstitution: "",
+    surveyDuration: "",
+    surveyPurpose: "",
+    ethicalClearance: false
+  })
+
+  useEffect(() => {
+    async function fetchStudentData() {
+      try {
+        const userId = getHardcodedStudentId()
+        const response = await fetch('/api/student/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        })
+        
+        if (response.ok) {
+          const student = await response.json()
+          setStudentData(student)
+        }
+      } catch (error) {
+        console.error("Error fetching student data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStudentData()
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+
+    try {
+      const result = await submitLetterRequest(
+        'survey',
+        'Surat Pengantar Survey',
+        'Permohonan surat pengantar untuk kegiatan survey penelitian',
+        `Permohonan surat pengantar survey untuk penelitian "${formData.researchTitle}" di ${formData.targetInstitution}`,
+        {
+          ...formData,
+          studentMajor: studentData?.major,
+          semester: studentData?.semester || '5'
+        }
+      )
+
+      if (result.success) {
+        toast({
+          title: "Berhasil!",
+          description: result.message,
+        })
+        // Reset form
+        setFormData({
+          researchTitle: "",
+          researchType: "",
+          supervisor: "",
+          targetLocation: "",
+          targetInstitution: "",
+          surveyDuration: "",
+          surveyPurpose: "",
+          ethicalClearance: false
+        })
+      } else {
+        toast({
+          title: "Gagal",
+          description: result.message,
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting survey request:', error)
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat mengajukan permohonan",
+        variant: "destructive"
+      })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50 p-6 space-y-8">
       {/* Header */}
@@ -66,9 +164,10 @@ export default function SurveyLetterPage() {
               </div>
             </CardHeader>
             
-            <CardContent className="space-y-6">
-              {/* Data Peneliti */}
-              <div className="space-y-4">
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Data Peneliti */}
+                <div className="space-y-4">
                 <h3 className="font-semibold text-gray-800 flex items-center gap-2">
                   <User className="w-5 h-5 text-blue-500" />
                   Data Peneliti
@@ -78,7 +177,7 @@ export default function SurveyLetterPage() {
                     <Label htmlFor="nim">NIM</Label>
                     <Input 
                       id="nim" 
-                      value="2021210001" 
+                      value={studentData?.nim || "-"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -87,7 +186,7 @@ export default function SurveyLetterPage() {
                     <Label htmlFor="name">Nama Lengkap</Label>
                     <Input 
                       id="name" 
-                      value="Ahmad Rahman" 
+                      value={studentData?.user?.name || "-"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -96,7 +195,7 @@ export default function SurveyLetterPage() {
                     <Label htmlFor="prodi">Program Studi</Label>
                     <Input 
                       id="prodi" 
-                      value="Teknik Informatika" 
+                      value={studentData?.major || "-"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -105,7 +204,7 @@ export default function SurveyLetterPage() {
                     <Label htmlFor="semester">Semester</Label>
                     <Input 
                       id="semester" 
-                      value="5" 
+                      value={studentData?.semester || "5"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -125,11 +224,13 @@ export default function SurveyLetterPage() {
                     <Input 
                       id="research-title" 
                       placeholder="Masukkan judul penelitian/skripsi"
+                      value={formData.researchTitle}
+                      onChange={(e) => setFormData(prev => ({ ...prev, researchTitle: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="research-type">Jenis Penelitian</Label>
-                    <Select>
+                    <Select value={formData.researchType} onValueChange={(value) => setFormData(prev => ({ ...prev, researchType: value }))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Pilih jenis penelitian" />
                       </SelectTrigger>
@@ -147,6 +248,8 @@ export default function SurveyLetterPage() {
                     <Input 
                       id="supervisor" 
                       placeholder="Nama dosen pembimbing"
+                      value={formData.supervisor}
+                      onChange={(e) => setFormData(prev => ({ ...prev, supervisor: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -263,11 +366,16 @@ export default function SurveyLetterPage() {
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600">
-                <Search className="w-4 h-4 mr-2" />
-                Ajukan Surat Pengantar Survey
-              </Button>
+                {/* Submit Button */}
+                <Button 
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                >
+                  <Search className="w-4 h-4 mr-2" />
+                  {submitting ? "Mengajukan..." : "Ajukan Surat Pengantar Survey"}
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </motion.div>

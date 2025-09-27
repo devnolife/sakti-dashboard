@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { FileText, Clock, CheckCircle, XCircle, AlertCircle, Eye, Plus, Search, Calendar } from "lucide-react"
 import { getStudentLetterRequests } from "@/app/actions/correspondence-actions"
 import { formatDate } from "@/lib/utils"
+import { getHardcodedStudentId } from "@/lib/auth-utils"
 import type { LetterRequest } from "@/types/correspondence"
 import { LetterRequestDetails } from "./letter-request-details"
 import { LetterCreationDialog } from "./letter-creation-dialog"
@@ -30,24 +31,40 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
   const [statusFilter, setStatusFilter] = useState("all")
   const [activeTab, setActiveTab] = useState("all")
 
-  // Use a hardcoded student ID for demo purposes
-  const studentId = "std-001"
+  // Get student ID from the hardcoded user ID
+  const userId = getHardcodedStudentId()
+  const [studentId, setStudentId] = useState<string | null>(null)
 
   useEffect(() => {
-    async function fetchRequests() {
+    async function fetchStudentAndRequests() {
       try {
-        const data = await getStudentLetterRequests(studentId)
-        setRequests(data)
-        setFilteredRequests(data)
+        // First get the student ID from the user ID
+        const response = await fetch('/api/student/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        })
+        
+        if (response.ok) {
+          const student = await response.json()
+          setStudentId(student.id)
+          
+          // Then fetch letter requests
+          const data = await getStudentLetterRequests(student.id)
+          setRequests(data)
+          setFilteredRequests(data)
+        }
       } catch (error) {
-        console.error("Error fetching letter requests:", error)
+        console.error("Error fetching student and letter requests:", error)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchRequests()
-  }, [studentId])
+    if (userId) {
+      fetchStudentAndRequests()
+    }
+  }, [userId])
 
   useEffect(() => {
     // Apply filters
