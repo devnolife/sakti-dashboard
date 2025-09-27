@@ -1410,12 +1410,237 @@ export const kepalaTataUsahaMenuItems = [
   },
 ]
 
+// Menu items untuk SIMAK (Sistem Informasi Manajemen Akademik)
+export const simakMenuItems: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/simak",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "prodis",
+    title: "Manajemen Prodi",
+    href: "/dashboard/simak/prodis",
+    icon: GraduationCapIcon,
+    children: [
+      {
+        id: "prodi-list",
+        title: "Daftar Prodi",
+        href: "/dashboard/simak/prodis",
+        icon: GraduationCapIcon,
+      },
+      {
+        id: "prodi-add",
+        title: "Tambah Prodi",
+        href: "/dashboard/simak/prodis/add",
+        icon: GraduationCapIcon,
+      },
+      {
+        id: "prodi-statistics",
+        title: "Statistik Prodi",
+        href: "/dashboard/simak/prodis/statistics",
+        icon: BarChart,
+      },
+    ],
+  },
+  {
+    id: "courses",
+    title: "Manajemen Mata Kuliah",
+    href: "/dashboard/simak/courses",
+    icon: BookOpen,
+    children: [
+      {
+        id: "course-list",
+        title: "Daftar Mata Kuliah",
+        href: "/dashboard/simak/courses",
+        icon: BookOpen,
+      },
+      {
+        id: "course-add",
+        title: "Tambah Mata Kuliah",
+        href: "/dashboard/simak/courses/add",
+        icon: BookOpen,
+      },
+      {
+        id: "course-bulk",
+        title: "Import Bulk",
+        href: "/dashboard/simak/courses/bulk",
+        icon: FileText,
+      },
+    ],
+  },
+  {
+    id: "schedule-generation",
+    title: "Pembuat Jadwal",
+    href: "/dashboard/simak/schedule-generation",
+    icon: CalendarClock,
+    children: [
+      {
+        id: "generate-schedule",
+        title: "Generate Jadwal",
+        href: "/dashboard/simak/schedule-generation",
+        icon: CalendarClock,
+      },
+      {
+        id: "schedule-status",
+        title: "Status Generasi",
+        href: "/dashboard/simak/schedule-generation/status",
+        icon: ClipboardCheck,
+      },
+      {
+        id: "schedule-templates",
+        title: "Template Jadwal",
+        href: "/dashboard/simak/schedule-generation/templates",
+        icon: FileText,
+      },
+    ],
+  },
+  {
+    id: "schedules",
+    title: "Jadwal Akademik",
+    href: "/dashboard/simak/schedules",
+    icon: Calendar,
+    children: [
+      {
+        id: "view-schedules",
+        title: "Lihat Jadwal",
+        href: "/dashboard/simak/schedules",
+        icon: Calendar,
+      },
+      {
+        id: "schedule-by-prodi",
+        title: "Jadwal per Prodi",
+        href: "/dashboard/simak/schedules/by-prodi",
+        icon: Calendar,
+      },
+      {
+        id: "schedule-conflicts",
+        title: "Konflik Jadwal",
+        href: "/dashboard/simak/schedules/conflicts",
+        icon: ClipboardCheck,
+        badge: { text: "3", variant: "destructive" },
+      },
+    ],
+  },
+  {
+    id: "file-management",
+    title: "Manajemen File",
+    href: "/dashboard/simak/files",
+    icon: FileText,
+    children: [
+      {
+        id: "upload-files",
+        title: "Upload File",
+        href: "/dashboard/simak/files/upload",
+        icon: FileText,
+      },
+      {
+        id: "file-history",
+        title: "Riwayat File",
+        href: "/dashboard/simak/files/history",
+        icon: FileText,
+      },
+      {
+        id: "file-templates",
+        title: "Template File",
+        href: "/dashboard/simak/files/templates",
+        icon: FileText,
+      },
+    ],
+  },
+  {
+    id: "downloads",
+    title: "Download & Export",
+    href: "/dashboard/simak/downloads",
+    icon: FileSpreadsheet,
+    children: [
+      {
+        id: "export-excel",
+        title: "Export Excel",
+        href: "/dashboard/simak/downloads/excel",
+        icon: FileSpreadsheet,
+      },
+      {
+        id: "export-pdf",
+        title: "Export PDF",
+        href: "/dashboard/simak/downloads/pdf",
+        icon: FileText,
+      },
+      {
+        id: "export-json",
+        title: "Export JSON",
+        href: "/dashboard/simak/downloads/json",
+        icon: Code,
+      },
+    ],
+  },
+  {
+    id: "system-config",
+    title: "Konfigurasi Sistem",
+    href: "/dashboard/simak/config",
+    icon: Settings,
+    children: [
+      {
+        id: "time-slots",
+        title: "Pengaturan Waktu",
+        href: "/dashboard/simak/config/time-slots",
+        icon: CalendarClock,
+      },
+      {
+        id: "academic-year",
+        title: "Tahun Akademik",
+        href: "/dashboard/simak/config/academic-year",
+        icon: Calendar,
+      },
+      {
+        id: "system-stats",
+        title: "Statistik Sistem",
+        href: "/dashboard/simak/config/stats",
+        icon: BarChart,
+      },
+    ],
+  },
+  {
+    id: "reports",
+    title: "Laporan",
+    href: "/dashboard/simak/reports",
+    icon: BarChart,
+    children: [
+      {
+        id: "schedule-reports",
+        title: "Laporan Jadwal",
+        href: "/dashboard/simak/reports/schedules",
+        icon: Calendar,
+      },
+      {
+        id: "course-reports",
+        title: "Laporan Mata Kuliah",
+        href: "/dashboard/simak/reports/courses",
+        icon: BookOpen,
+      },
+      {
+        id: "analytics",
+        title: "Analytics",
+        href: "/dashboard/simak/reports/analytics",
+        icon: BarChart,
+      },
+    ],
+  },
+  {
+    id: "settings",
+    title: "Pengaturan",
+    href: "/dashboard/simak/settings",
+    icon: Settings,
+  },
+]
+
 export const menuItems: Record<Role, MenuItem[]> = {
   admin: adminMenuItems,
-  dekan: dekanMenuItems,
   dosen: lecturerMenuItems, // Default to lecturer menu, actual menu will be determined by sub-role
   mahasiswa: mahasiswaMenuItems,
   prodi: prodiMenuItems,
+  dekan: dekanMenuItems,
   staff_tu: staffTuMenuItems,
   laboratory_admin: laboratoryAdminMenuItems,
   admin_umum: adminUmumMenuItems,
@@ -1423,6 +1648,7 @@ export const menuItems: Record<Role, MenuItem[]> = {
   admin_keuangan: financeAdminMenuItems,
   gkm: gkmMenuItems,
   kepala_tata_usaha: kepalaTataUsahaMenuItems,
+  simak: simakMenuItems,
 }
 
 // Menu items for Wakil Dekan I (Akademik)
@@ -1562,6 +1788,74 @@ export const wakilDekan4MenuItems: MenuItem[] = [
   },
 ]
 
+// Menu items untuk Sekretaris Prodi
+export const sekretarisProdiMenuItems: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard/dosen/sekretaris-prodi",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "academic-administration",
+    title: "Administrasi Akademik",
+    href: "/dashboard/dosen/sekretaris-prodi/academic-admin",
+    icon: BookOpen,
+    children: [
+      {
+        id: "curriculum-support",
+        title: "Dukungan Kurikulum",
+        href: "/dashboard/dosen/sekretaris-prodi/academic-admin/curriculum",
+        icon: BookOpen,
+      },
+      {
+        id: "course-scheduling",
+        title: "Penjadwalan Mata Kuliah",
+        href: "/dashboard/dosen/sekretaris-prodi/academic-admin/scheduling",
+        icon: Calendar,
+      },
+    ],
+  },
+  {
+    id: "student-affairs",
+    title: "Urusan Mahasiswa",
+    href: "/dashboard/dosen/sekretaris-prodi/student-affairs",
+    icon: Users,
+    children: [
+      {
+        id: "student-records",
+        title: "Data Mahasiswa",
+        href: "/dashboard/dosen/sekretaris-prodi/student-affairs/records",
+        icon: Users,
+      },
+      {
+        id: "academic-guidance",
+        title: "Bimbingan Akademik",
+        href: "/dashboard/dosen/sekretaris-prodi/student-affairs/guidance",
+        icon: ClipboardCheck,
+      },
+    ],
+  },
+  {
+    id: "correspondence",
+    title: "Korespondensi",
+    href: "/dashboard/dosen/sekretaris-prodi/correspondence",
+    icon: Mail,
+  },
+  {
+    id: "reports",
+    title: "Laporan",
+    href: "/dashboard/dosen/sekretaris-prodi/reports",
+    icon: FileText,
+  },
+  {
+    id: "settings",
+    title: "Pengaturan",
+    href: "/dashboard/dosen/sekretaris-prodi/settings",
+    icon: Settings,
+  },
+]
+
 // Mapping sub-roles to their specific menu items
 export const dosenSubRoleMenuItems: Record<DosenSubRole, MenuItem[]> = {
   dosen: lecturerMenuItems,
@@ -1572,6 +1866,7 @@ export const dosenSubRoleMenuItems: Record<DosenSubRole, MenuItem[]> = {
   wakil_dekan_4: wakilDekan4MenuItems,
   gkm: gkmMenuItems,
   prodi: prodiMenuItems,
+  sekretaris_prodi: sekretarisProdiMenuItems,
 }
 
 export const dekanItems = [
