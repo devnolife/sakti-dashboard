@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 40% 20%;
 
-    --primary: 210 50% 46%;
+    --primary: 214 46% 56%; /* #3674B5 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 45% 56%;
@@ -45,7 +45,7 @@
     --popover: 210 40% 12%;
     --popover-foreground: 210 20% 98%;
 
-    --primary: 210 50% 46%;
+    --primary: 214 46% 56%; /* #3674B5 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 45% 56%;
@@ -336,6 +336,15 @@
   box-shadow: 0 4px 20px rgba(34, 211, 238, 0.25);
 }
 
+/* Enhanced shadow for primary color #3674B5 */
+.shadow-primary {
+  box-shadow: 0 4px 20px rgba(54, 116, 181, 0.25);
+}
+
+.shadow-primary-xl {
+  box-shadow: 0 8px 40px rgba(54, 116, 181, 0.3);
+}
+
 /* Simplified hover effects */
 .hover-lift {
   transition: transform 0.2s ease;
@@ -343,5 +352,17 @@
 
 .hover-lift:hover {
   transform: translateY(-2px);
+}
+
+/* Additional gradient utilities for #3674B5 */
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #3674B5 0%, #578FCA 100%);
+}
+
+.text-primary-gradient {
+  background: linear-gradient(135deg, #3674B5 0%, #578FCA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 

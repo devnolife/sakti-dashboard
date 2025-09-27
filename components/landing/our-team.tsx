@@ -66,16 +66,18 @@ const OurTeam: React.FC = () => {
   }, [])
 
   return (
-    <section id="team" className="relative py-[100px] bg-white dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
-      {/* Modern Background Elements */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-secondary/12 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl animate-pulse delay-1500" />
+    <section id="team" className="relative py-[100px] bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
+      {/* Enhanced Background Elements with #3674B5 */}
+      <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-primary/12 to-secondary/8 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-tl from-primary/15 to-secondary/10 rounded-full blur-3xl animate-pulse delay-1500" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-r from-primary/6 via-transparent to-primary/10 rounded-full blur-3xl" />
 
       <div className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-cream/90 backdrop-blur-xl border border-primary/20 rounded-full text-sm font-semibold text-primary shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
-            👥 Pimpinan Fakultas
+          {/* Enhanced Floating Badge with #3674B5 */}
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/12 to-primary/8 backdrop-blur-xl border-2 border-primary/25 rounded-full text-sm font-semibold shadow-xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 animate-float">
+            <span className="w-2 h-2 bg-primary rounded-full mr-3 animate-pulse"></span>
+            <span className="text-primary">👥 Pimpinan Fakultas</span>
           </div>
 
           <div className="flex flex-col items-center gap-y-4 justify-center flex-wrap">

@@ -38,17 +38,19 @@ const ContactUs: React.FC = () => {
   }, [])
 
   return (
-    <section id="contact-us" className="relative py-[100px] bg-white dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
-      {/* Modern Background Elements */}
-      <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000" />
+    <section id="contact-us" className="relative py-[100px] bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
+      {/* Enhanced Background Elements with #3674B5 */}
+      <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-primary/15 to-primary/8 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-tl from-primary/12 to-primary/6 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-r from-primary/5 via-transparent to-primary/8 rounded-full blur-3xl" />
 
       <div className="relative flex flex-col gap-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col gap-y-6 items-center justify-center">
-          {/* Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-primary/10 backdrop-blur-xl border border-primary/20 rounded-full text-sm font-semibold text-primary shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
-            📞 Hubungi Kami
+          {/* Enhanced Floating Badge with #3674B5 */}
+          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/12 to-primary/8 backdrop-blur-xl border-2 border-primary/25 rounded-full text-sm font-semibold shadow-xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 animate-float">
+            <span className="w-2 h-2 bg-primary rounded-full mr-3 animate-pulse"></span>
+            <span className="text-primary">📞 Hubungi Kami</span>
           </div>
 
           <div className="flex flex-col items-center gap-y-4 justify-center flex-wrap">
@@ -62,7 +64,7 @@ const ContactUs: React.FC = () => {
                     className="absolute bottom-0 z-[1] h-[40%] w-[132%] -left-[19%] top-[17px]"
                   />
                 </span>{' '}
-                <span className="text-primary">
+                <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 bg-clip-text text-transparent">
                   sama
                 </span>
               </h2>

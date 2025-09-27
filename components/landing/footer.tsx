@@ -37,19 +37,20 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="relative bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white overflow-hidden">
-      {/* Modern Background Elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl opacity-50" />
+      {/* Enhanced Background Elements with #3674B5 */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-primary/15 to-primary/8 rounded-full blur-3xl opacity-60" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-primary/12 to-primary/6 rounded-full blur-3xl opacity-60" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-primary/5 via-transparent to-primary/8 rounded-full blur-3xl opacity-40" />
 
       {/* Newsletter Section */}
       <div className="relative border-b border-neutral-700/50 backdrop-blur-sm">
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-16">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="text-center lg:text-left group">
-              <h3 className="text-3xl font-bold mb-3 text-white group-hover:text-primary transition-all duration-500">
+              <h3 className="text-3xl font-bold mb-3 bg-gradient-to-r from-white to-primary/90 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-500">
                 Tetap Terhubung
               </h3>
-              <p className="text-neutral-300 text-lg leading-relaxed">
+              <p className="text-neutral-300 text-lg leading-relaxed group-hover:text-neutral-200 transition-colors duration-300">
                 Dapatkan informasi terbaru tentang sistem dan layanan Fakultas Teknik
               </p>
             </div>
@@ -57,9 +58,9 @@ const Footer: React.FC = () => {
               <Input
                 type="email"
                 placeholder="Masukkan email Anda"
-                className="bg-neutral-800/50 backdrop-blur-sm border-neutral-600 text-white placeholder-neutral-400 flex-1 h-12 rounded-xl focus:border-primary/50 focus:ring-primary/20 group-hover:border-primary/30 transition-all duration-300"
+                className="bg-neutral-800/50 backdrop-blur-sm border-neutral-600 hover:border-primary/40 text-white placeholder-neutral-400 flex-1 h-12 rounded-xl focus:border-primary/50 focus:ring-primary/20 group-hover:border-primary/30 transition-all duration-300"
               />
-              <Button className="bg-primary hover:bg-primary/90 whitespace-nowrap px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold">
+              <Button className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary whitespace-nowrap px-8 py-3 rounded-xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all duration-500 hover:scale-110 font-semibold">
                 🚀 Berlangganan
               </Button>
             </div>
@@ -73,11 +74,11 @@ const Footer: React.FC = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2 group">
             <Link href="/" className="flex items-center space-x-4 mb-8 group-hover:scale-105 transition-transform duration-300">
-              <div className="bg-primary/20 p-4 rounded-2xl border border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
-                <GraduationCap className="w-12 h-12 text-primary group-hover:rotate-12 transition-transform duration-300" />
+              <div className="bg-gradient-to-br from-primary/25 to-primary/15 p-4 rounded-2xl border-2 border-primary/30 group-hover:border-primary/50 group-hover:shadow-xl group-hover:shadow-primary/20 transition-all duration-500">
+                <GraduationCap className="w-12 h-12 text-primary group-hover:rotate-12 transition-transform duration-500" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-3xl text-primary">SINTEKMu</span>
+                <span className="font-bold text-3xl bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">SINTEKMu</span>
                 <span className="text-neutral-300 font-medium">Fakultas Teknik Unismuh</span>
               </div>
             </Link>
