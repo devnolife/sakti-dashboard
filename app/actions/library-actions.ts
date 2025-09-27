@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedStudentId } from '@/lib/auth-utils'
+import { getHardcodedUserId } from '@/lib/auth-utils'
 
 export interface Book {
   id: string
@@ -48,7 +48,7 @@ export interface LibraryData {
 }
 
 export async function getLibraryData(): Promise<LibraryData> {
-  const userId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
   
   console.log('🔍 Fetching library data for user:', userId)
 
@@ -218,7 +218,7 @@ export interface ThesisData {
 }
 
 export async function getThesisTitlesData(): Promise<ThesisData> {
-  const userId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
   
   console.log('🔍 Fetching thesis titles data for user:', userId)
 
@@ -312,7 +312,7 @@ export interface ThesisSubmissionData {
 }
 
 export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
-  const userId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
   
   console.log('🔍 Fetching thesis submission data for user:', userId)
 
@@ -384,7 +384,7 @@ export async function submitThesisTitle(data: {
   keywords: string[]
   supervisorId?: string
 }): Promise<{ success: boolean; message: string; thesisId?: string }> {
-  const userId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
   
   console.log('📝 Submitting thesis title for user:', userId)
 

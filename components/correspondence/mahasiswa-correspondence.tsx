@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { FileText, Clock, CheckCircle, XCircle, AlertCircle, Eye, Plus, Search, Calendar } from "lucide-react"
 import { getStudentLetterRequests } from "@/app/actions/correspondence-actions"
 import { formatDate } from "@/lib/utils"
-import { getHardcodedStudentId } from "@/lib/auth-utils"
+import { getHardcodedUserId } from "@/lib/auth-utils"
 import type { LetterRequest } from "@/types/correspondence"
 import { LetterRequestDetails } from "./letter-request-details"
 import { LetterCreationDialog } from "./letter-creation-dialog"
@@ -32,7 +32,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
   const [activeTab, setActiveTab] = useState("all")
 
   // Get student ID from the hardcoded user ID
-  const userId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
   const [studentId, setStudentId] = useState<string | null>(null)
 
   useEffect(() => {

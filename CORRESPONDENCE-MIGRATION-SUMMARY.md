@@ -15,7 +15,7 @@
 
 ### 3. **Component Updates**
 - ✅ `mahasiswa-correspondence.tsx`: 
-  - Menggunakan `getHardcodedStudentId()` dari auth-utils
+  - Menggunakan `getHardcodeduserId()` dari auth-utils
   - Fetch data student via API `/api/student/profile`
   - Integrasi dengan database actions
 - ✅ `letter-creation-dialog.tsx`: 
@@ -64,7 +64,7 @@ const requests = await prisma.letterRequest.findMany({
 - `User` - Base user information
 
 ## 🔗 Integration Points:
-1. **Auth System**: Uses `getHardcodedStudentId()` untuk mendapatkan user ID
+1. **Auth System**: Uses `getHardcodedUserId()` untuk mendapatkan user ID
 2. **Student Profile**: API endpoint untuk fetch student data dari user ID
 3. **Real-time Updates**: Toast notifications untuk success/error feedback
 4. **Form State**: Proper React state management untuk semua forms

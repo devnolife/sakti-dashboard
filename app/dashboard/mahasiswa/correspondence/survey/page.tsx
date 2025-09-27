@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { motion } from "framer-motion"
-import { getHardcodedStudentId } from "@/lib/auth-utils"
+import { getHardcodedUserId } from "@/lib/auth-utils"
 import { submitLetterRequest } from "@/app/actions/correspondence-actions"
 import { toast } from "@/hooks/use-toast"
 import {
@@ -46,7 +46,7 @@ export default function SurveyLetterPage() {
   useEffect(() => {
     async function fetchStudentData() {
       try {
-        const userId = getHardcodedStudentId()
+        const userId = getHardcodedUserId()
         const response = await fetch('/api/student/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

@@ -2,7 +2,7 @@
 
 import { LetterStatus } from "@/types/correspondence"
 import { prisma } from "@/lib/prisma"
-import { getHardcodedStudentId } from "@/lib/auth-utils"
+import { getHardcodedUserId } from "@/lib/auth-utils"
 
 // Submit a new letter request
 export async function submitLetterRequest(
@@ -15,7 +15,7 @@ export async function submitLetterRequest(
 ): Promise<{ success: boolean; message: string; requestId?: string }> {
   try {
     // Get student ID from hardcoded user ID
-    const userId = getHardcodedStudentId()
+    const userId = getHardcodedUserId()
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { studentProfile: true }

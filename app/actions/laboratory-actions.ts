@@ -1,16 +1,16 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedStudentId } from '@/lib/auth-utils'
+import { getHardcodedUserId } from '@/lib/auth-utils'
 
 // Get laboratory data for student dashboard
 export async function getLaboratoryData() {
-  const studentId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
 
   try {
     // Get student profile
     const student = await prisma.student.findUnique({
-      where: { userId: studentId },
+      where: { userId: userId },
       select: { id: true }
     })
 
@@ -148,7 +148,7 @@ export async function getLaboratoryData() {
 // Register for a laboratory
 export async function registerLaboratory(laboratoryId: string) {
   try {
-    const studentId = getHardcodedStudentId()
+    const studentId = getHardcodedUserId()
     
     const student = await prisma.student.findUnique({
       where: { id: studentId },
@@ -226,7 +226,7 @@ export async function getLabSessions(laboratoryId: string) {
 // Get laboratory assignments
 export async function getLabAssignments(laboratoryId: string) {
   try {
-    const studentId = getHardcodedStudentId()
+    const studentId = getHardcodedUserId()
     
     const student = await prisma.student.findUnique({
       where: { id: studentId },

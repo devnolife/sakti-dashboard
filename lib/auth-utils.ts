@@ -38,8 +38,8 @@ export async function getCurrentUserFromToken(request?: NextRequest): Promise<st
   }
 }
 
-// For server actions, we'll use a hardcoded student ID for now
+// For server actions, we'll use a hardcoded user ID for now
 // In production, this should be replaced with proper session management
-export function getHardcodedStudentId(): string {
-  return 'cmfz4q41z00019yo0urpkhgyf' // Ahmad Fauzi's ID
+export function getHardcodedUserId(): string {
+  return 'cmfz4q41z00019yo0urpkhgyf' // MAHASISWA001 ID
 }

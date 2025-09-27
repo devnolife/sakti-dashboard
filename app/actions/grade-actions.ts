@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedStudentId } from '@/lib/auth-utils'
+import { getHardcodedUserId } from '@/lib/auth-utils'
 
 export interface GradeData {
   id: string
@@ -23,7 +23,7 @@ export interface GradeData {
 }
 
 export async function getStudentGradesData(): Promise<GradeData[]> {
-  const userId = getHardcodedStudentId()
+  const userId = getHardcodedUserId()
   
   console.log('🔍 Fetching student grades data for user:', userId)
 
