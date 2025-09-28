@@ -38,22 +38,22 @@ const ContactUs: React.FC = () => {
   }, [])
 
   return (
-    <section id="contact-us" className="relative py-[100px] bg-gradient-to-br from-white via-slate-50/20 to-mint-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
+    <section id="contact-us" className="relative py-16 bg-gradient-to-br from-white via-slate-50/20 to-mint-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 overflow-hidden" ref={ref}>
       {/* Ultra Modern Background Elements */}
-      <div className="absolute rounded-full top-20 right-20 w-96 h-96 bg-gradient-to-br from-slate-100/30 to-secondary/10 blur-3xl animate-pulse" />
-      <div className="absolute delay-1000 rounded-full bottom-20 left-20 w-80 h-80 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/10 blur-3xl animate-pulse" />
+      <div className="absolute rounded-full top-12 right-12 w-64 h-64 bg-gradient-to-br from-slate-100/30 to-secondary/10 blur-3xl animate-pulse" />
+      <div className="absolute delay-1000 rounded-full bottom-12 left-12 w-56 h-56 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/10 blur-3xl animate-pulse" />
 
-      <div className="relative flex flex-col gap-16 px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+      <div className="relative flex flex-col gap-8 px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         {/* Header Section */}
-        <div className="flex flex-col items-center justify-center gap-y-6">
+        <div className="flex flex-col items-center justify-center gap-y-4">
           {/* Modern Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 text-sm font-bold text-transparent transition-all duration-500 border rounded-full shadow-lg bg-gradient-to-r from-slate-100/70 to-mint-100/70 backdrop-blur-xl border-white/40 from-secondary to-secondary-alt bg-clip-text shadow-slate-200/20 hover:shadow-xl hover:shadow-slate-200/30 animate-float hover:scale-105">
+          <div className="inline-flex items-center px-4 py-2 text-xs font-bold text-transparent transition-all duration-500 border rounded-full shadow-lg bg-gradient-to-r from-slate-100/70 to-mint-100/70 backdrop-blur-xl border-white/40 from-secondary to-secondary-alt bg-clip-text shadow-slate-200/20 hover:shadow-xl hover:shadow-slate-200/30 animate-float hover:scale-105">
             📞 Hubungi Kami
           </div>
 
-          <div className="flex flex-col flex-wrap items-center justify-center gap-y-4">
+          <div className="flex flex-col flex-wrap items-center justify-center gap-y-3">
             <div className="flex items-center gap-x-2">
-              <h2 className="text-4xl font-extrabold leading-tight text-center text-neutral-900 dark:text-white lg:text-5xl">
+              <h2 className="text-2xl font-extrabold leading-tight text-center text-neutral-900 dark:text-white lg:text-3xl">
                 <span className="relative z-[1] bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent dark:from-white dark:to-gray-300">
                   Mari bekerja
                   <img
@@ -67,15 +67,15 @@ const ContactUs: React.FC = () => {
                 </span>
               </h2>
             </div>
-            <p className="max-w-2xl text-lg leading-relaxed text-center text-neutral-600 dark:text-neutral-300">
+            <p className="max-w-2xl text-sm leading-relaxed text-center text-neutral-600 dark:text-neutral-300">
               Ada pertanyaan atau saran? Kirimkan pesan kepada kami dan mari wujudkan digitalisasi akademik bersama.
             </p>
           </div>
         </div>
 
         {/* Content Section */}
-        <div className="lg:pl-[38px]">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+        <div className="lg:pl-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
             {/* Contact Info Card */}
             <div className="md:col-span-5">
               <div className="relative group">

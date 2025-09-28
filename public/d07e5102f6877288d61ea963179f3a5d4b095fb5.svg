@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 55 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Logo" clip-path="url(#clip0_42_65)">
+<g id="Vector">
+</g>
+<path id="Vector_2" fill-rule="evenodd" clip-rule="evenodd" d="M0 16.2245L27.0231 0L54.0462 16.2245V27.0083L27.0231 43.237L0 27.0083V16.2245ZM27.0231 36.3526L48.3138 23.5665V19.6675L48.3127 19.6669L27.0231 32.449L5.73351 19.6669L5.73247 19.6675V23.5665L27.0231 36.3526ZM27.0231 26.4876L43.347 16.6869L39.3704 14.3004L27.0231 21.7137L14.6758 14.3004L10.6992 16.6869L27.0231 26.4876ZM27.0231 15.7523L34.4048 11.3204L27.0231 6.89054L19.6415 11.3204L27.0231 15.7523Z" fill="var(--fill-0, #0451D3)"/>
+<path id="Vector_3" d="M27.0232 0L0 16.2246V27.0083L27.0231 43.237L27.0232 0Z" fill="var(--fill-0, #0451D3)" fill-opacity="0.3"/>
+</g>
+<defs>
+<clipPath id="clip0_42_65">
+<rect width="54.0462" height="43.237" fill="white"/>
+</clipPath>
+</defs>
+</svg>

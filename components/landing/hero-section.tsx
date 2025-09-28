@@ -1,228 +1,142 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { useId } from 'react'
-import { ArrowRight, Play, Users2, BookOpen, Award } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Lightbulb, ArrowRight, CheckCircle2, Users, BookOpen, Timer } from 'lucide-react'
 
-interface HeroSectionProps {
-  mode?: 'light' | 'dark'
-}
+// NOTE: Disederhanakan agar konsisten dengan style Header (glass, gradient, rounded, subtle glow)
 
-// Reasonable assumptions about design:
-// 1. Two-column layout (text left, illustration right) on xl screens, stacked on mobile.
-// 2. Large headline with highlighted / accent span.
-// 3. Subheading / supporting text.
-// 4. Email capture input + CTA button.
-// 5. Quick stats (students, courses, certificates) and trusted logos.
-// 6. Decorative gradient blobs + subtle grid lines.
-// 7. Hero mock / illustration with floating cards and a video play badge.
-// Adjust easily by editing tokens below without touching structure.
-
-const tokens = {
-  bgFrom: '#0451d3',
-  bgTo: '#0451d3',
-  accent: '#A1E3F9',
-  accentText: '#0451d3'
-}
-
-const statItems = [
-  { icon: Users2, value: '2.9M+', label: 'Learners' },
-  { icon: BookOpen, value: '1.2K+', label: 'Courses' },
-  { icon: Award, value: '98%', label: 'Success Rate' }
+const floatingShapes = [
+  'top-20 left-10 w-40 h-40 bg-white/5 blur-3xl',
+  'bottom-28 right-10 w-60 h-60 bg-[#ffffff]/10 blur-3xl',
+  'top-1/2 -left-10 w-72 h-72 bg-[#ffffff]/5 blur-3xl',
 ]
 
-const trustedLogos: { src: string; alt: string; width?: number; height?: number }[] = [
-  { src: '/03050357d21989fd3dcf3dafe1217f613aaa9a79.svg', alt: 'Partner 1' },
-  { src: '/1d463e3abb0c1e12295ad082b53d3dcc7f8e1ee0.svg', alt: 'Partner 2' },
-  { src: '/2b1bc5bf4c0703b770d6af2e39d571f10d8770ed.svg', alt: 'Partner 3' },
-  { src: '/39a01736b4c967e78f94062d93fc014b3b3e6507.svg', alt: 'Partner 4' }
+const stats = [
+  { label: 'Mahasiswa Aktif', value: '5.2K+', icon: Users },
+  { label: 'Dosen & Mentor', value: '180+', icon: Lightbulb },
+  { label: 'Modul & Materi', value: '450+', icon: BookOpen },
 ]
 
-const HeroSection: React.FC<HeroSectionProps> = ({ mode = 'light' }) => {
-  const emailId = useId()
-  const isDark = mode === 'dark'
+const HeroSection: React.FC = () => {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   return (
     <section
       id="home"
-      className="relative overflow-hidden isolate pt-32 sm:pt-40 pb-24 sm:pb-40 bg-gradient-to-br"
-      style={{ backgroundImage: `linear-gradient(135deg, ${tokens.bgFrom} 0%, ${tokens.bgTo} 100%)` }}
+      className="relative overflow-hidden pt-[120px] min-h-[600px] flex items-center bg-gradient-to-br from-[#0451d3] via-[#0451d3]/90 to-[#012c74]"
     >
-      {/* Background grid pattern */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)]"
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-[380px] h-[380px] rounded-full bg-white/10 blur-2xl" />
-        <div className="absolute bottom-0 left-1/3 w-[260px] h-[260px] rounded-full bg-[#A1E3F9]/20 blur-2xl" />
-      </div>
+      {/* Background gradient & noise overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #ffffff10 0 2px, transparent 2px 6px)' }} />
 
-      <div className="container relative z-10">
-        <div className="grid items-center gap-y-16 gap-x-12 xl:grid-cols-2">
-          {/* LEFT CONTENT */}
-          <div className="text-center xl:text-left max-w-2xl mx-auto xl:mx-0">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur-sm mb-6">
-              <span className="text-xs font-medium tracking-wide text-white/80">FLEXIBLE LEARNING PLATFORM</span>
+      {/* Floating blurred shapes */}
+      {floatingShapes.map((c, i) => (
+        <div key={i} className={`absolute rounded-full animate-pulse-slow ${c}`} />
+      ))}
+
+      <div className="relative z-10 w-full px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        <div className="grid items-center gap-8 lg:grid-cols-12">
+          {/* Text Content */}
+          <div className="flex flex-col items-center space-y-6 text-center lg:items-start lg:text-left lg:col-span-7">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md bg-white/10 border border-white/30 shadow-lg shadow-[#ffffff13]">
+              <Lightbulb className="w-3 h-3 text-yellow-300" />
+              <span className="text-xs font-medium tracking-wide text-white">Sistem Informasi Fakultas Teknik</span>
             </div>
-            <h1 className="font-light leading-[1.1] text-4xl sm:text-5xl md:text-[64px] md:leading-[1.05] text-white">
-              Empower Your Future with <span className="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">Quality Education</span>
+
+            <h1 className="font-bold leading-[1.05] tracking-tight text-white text-2xl sm:text-3xl md:text-4xl max-w-[820px]">
+              <span className="font-light">Transformasi Digital untuk </span>
+              <span className="relative inline-block">
+                <span className="relative z-10 text-transparent bg-gradient-to-r from-white to-white/80 bg-clip-text">Akademik Modern</span>
+                <span className="absolute inset-x-0 h-3 bottom-2 rounded-xl bg-white/10 blur-sm" />
+              </span>
             </h1>
-            <p className="mt-6 text-lg sm:text-xl text-white/80 max-w-xl mx-auto xl:mx-0">
-              Belajar kapan saja dan di mana saja bersama mentor terbaik & pengalaman interaktif yang dirancang untuk membantu Anda berkembang lebih cepat.
+
+            <p className="max-w-[560px] text-sm md:text-base text-white/80 leading-relaxed">
+              Kelola perkuliahan, dokumen, pembayaran, magang, hingga sertifikasi dalam satu platform terpadu yang cepat dan aman.
             </p>
 
-            {/* Email Capture */}
-            <form
-              className="mt-10 flex w-full flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-center xl:justify-start"
-              onSubmit={(e) => {
-                e.preventDefault()
-                const data = new FormData(e.currentTarget)
-                const email = data.get('email') as string
-                if (!email) return
-                // TODO: hook into real subscription / registration flow
-                // Placeholder: navigate to dashboard
-                window.location.href = '/dashboard'
-              }}
-            >
-              <div className="relative flex-1 min-w-[240px] group">
-                <label htmlFor={emailId} className="sr-only">
-                  Email address
-                </label>
-                <input
-                  id={emailId}
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="Your email address..."
-                  className="peer w-full rounded-full bg-white/10/50 text-white placeholder-white/50 px-8 py-5 text-base sm:text-lg outline-none ring-2 ring-white/25 focus:ring-white/60 transition"
-                />
-                <span className="pointer-events-none absolute inset-0 rounded-full bg-white/5 backdrop-blur-[2px] ring-1 ring-white/10 peer-focus:ring-white/30" />
-              </div>
-              <Button
-                type="submit"
-                className="relative inline-flex items-center gap-2 rounded-full px-8 sm:px-10 py-5 text-lg font-semibold bg-white text-[#0451d3] hover:bg-white/90 shadow-lg shadow-black/10 transition group"
-              >
-                Get Started
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </form>
-
-            {/* Stats */}
-            <div className="mt-12 flex flex-col sm:flex-row gap-8 sm:gap-12 justify-center xl:justify-start">
-              {statItems.map((s) => (
-                <div key={s.label} className="flex items-start gap-4">
-                  <div className="p-3 rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur-sm text-white">
-                    <s.icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-semibold text-white leading-none mb-1">{s.value}</p>
-                    <p className="text-white/60 text-sm tracking-wide">{s.label}</p>
-                  </div>
-                </div>
+            {/* Feature bullets */}
+            <ul className="grid w-full gap-4 sm:grid-cols-2 max-w-[520px] text-left">
+              {[
+                'Single Sign-On & Akses Terintegrasi',
+                'Monitoring Akademik Real-time',
+                'Pengelolaan Dokumen Otomatis',
+                'Notifikasi & Workflow Pintar'
+              ].map(item => (
+                <li key={item} className="flex items-start gap-3 group">
+                  <span className="flex items-center justify-center w-6 h-6 mt-1 text-white border rounded-lg bg-white/15 border-white/30">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </span>
+                  <span className="text-sm font-medium transition-colors duration-300 text-white/80 group-hover:text-white">{item}</span>
+                </li>
               ))}
+            </ul>
+
+            {/* Actions */}
+            <div className="flex flex-col w-full gap-3 sm:flex-row sm:items-center">
+              <Button asChild className="rounded-xl px-8 py-6 text-base sm:text-lg font-semibold bg-white text-[#0451d3] hover:bg-white/90 hover:shadow-xl shadow-lg shadow-white/20 transition-all">
+                <Link href="/dashboard" className="flex items-center gap-2">
+                  <span>Masuk Dashboard</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="px-8 py-6 text-base font-semibold text-white border-2 rounded-xl sm:text-lg border-white/40 hover:text-white hover:bg-white/10 hover:border-white/70 backdrop-blur-md">
+                <Link href="#features">Jelajahi Fitur</Link>
+              </Button>
             </div>
 
-            {/* Trusted logos */}
-            <div className="mt-14">
-              <p className="text-white/60 text-xs tracking-wider uppercase mb-5">Trusted by leading institutions</p>
-              <div className="flex flex-wrap items-center justify-center xl:justify-start gap-x-8 gap-y-6 opacity-80">
-                {trustedLogos.map((logo) => (
-                  <Image
-                    key={logo.src}
-                    src={logo.src}
-                    alt={logo.alt}
-                    width={logo.width || 120}
-                    height={logo.height || 40}
-                    className="h-8 w-auto object-contain grayscale contrast-125 brightness-110 opacity-80 hover:opacity-100 transition"
-                  />
-                ))}
+            {/* Small meta bar */}
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-white/70">
+              <div className="flex items-center gap-2">
+                <Timer className="w-4 h-4" />
+                <span>Implementasi Cepat</span>
               </div>
+              <span className="hidden w-px h-4 bg-white/30 sm:inline" />
+              <span>Teruji dalam operasional akademik harian</span>
             </div>
           </div>
 
-          {/* RIGHT ILLUSTRATION */}
-          <div className="relative w-full max-w-[640px] mx-auto">
-            {/* Main mock / placeholder image -> Replace with Figma exported asset */}
-            <div className="relative aspect-[4/3] rounded-[32px] bg-gradient-to-br from-white/10 to-white/5 ring-1 ring-white/15 overflow-hidden shadow-2xl shadow-black/30 backdrop-blur-[2px]">
-              <Image
-                src="/2fd43049def0c3ea78eee2eea1f76881f53e874d.png"
-                alt="Platform preview"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 640px"
-                className="object-cover object-center opacity-90 mix-blend-luminosity"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#0451d3]/40 via-transparent to-transparent" />
-            </div>
-
-            {/* Floating video play badge */}
-            <button
-              type="button"
-              aria-label="Play intro video"
-              className="group absolute -bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-4 rounded-2xl bg-white text-[#0451d3] shadow-xl shadow-black/20 hover:shadow-2xl hover:scale-105 transition"
-            >
-              <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#0451d3] text-white shadow-inner">
-                <Play className="w-5 h-5 group-hover:scale-110 transition" />
-              </span>
-              <span className="text-left">
-                <span className="block font-semibold leading-tight">Lihat Video</span>
-                <span className="block text-sm text-[#0451d3]/70">2 menit intro</span>
-              </span>
-            </button>
-
-            {/* Floating mini cards */}
-            <div className="absolute -top-6 -left-4 sm:-left-10 w-40 sm:w-48 rounded-2xl bg-white/15 backdrop-blur-md ring-1 ring-white/30 p-4 flex flex-col gap-2 shadow-lg animate-float">
-              <p className="text-[11px] font-medium tracking-wide text-white/70">Progress</p>
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] text-white/80">
-                  <span>UI Design</span>
-                  <span>80%</span>
-                </div>
-                <div className="h-1 rounded-full bg-white/20">
-                  <div className="h-1 rounded-full bg-[#A1E3F9] w-4/5" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-white/80">
-                  <span>Marketing</span>
-                  <span>42%</span>
-                </div>
-                <div className="h-1 rounded-full bg-white/20">
-                  <div className="h-1 rounded-full bg-[#A1E3F9] w-2/5" />
+          {/* Visual / Mock dashboard placeholder */}
+          <div className="relative lg:col-span-5">
+            <div className="relative p-2 rounded-3xl bg-gradient-to-br from-white/20 via-white/10 to-transparent backdrop-blur-xl border border-white/30 shadow-2xl shadow-[#102a5a]/40">
+              <div className="relative overflow-hidden rounded-[22px] bg-neutral-900/70 aspect-[4/3] flex items-center justify-center">
+                {/* Animated rings */}
+                <div className="absolute w-[140%] h-[140%] rounded-full bg-gradient-to-tr from-[#ffffff18] to-transparent animate-spin-slower" />
+                <div className="absolute w-[120%] h-[120%] rounded-full border border-white/10 animate-spin-slow [animation-direction:reverse]" />
+                <div className="relative z-10 flex flex-col items-center px-8 text-center">
+                  <p className="mb-4 text-sm tracking-widest text-white/50">PREVIEW</p>
+                  <h3 className="mb-3 text-2xl font-semibold text-white">S I N T E K M u</h3>
+                  <p className="max-w-xs text-sm leading-relaxed text-white/60">Integrasi sistem akademik untuk efisiensi pengelolaan fakultas dan peningkatan pengalaman belajar.</p>
                 </div>
               </div>
             </div>
-            <div className="absolute top-12 -right-4 sm:-right-10 w-44 sm:w-52 rounded-2xl bg-white/15 backdrop-blur-md ring-1 ring-white/30 p-4 flex flex-col gap-3 shadow-lg animate-float [animation-delay:1s]">
-              <p className="text-[11px] font-medium tracking-wide text-white/70">Mentor Rating</p>
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-2">
-                  {[...Array(3)].map((_, i) => (
-                    <span
-                      key={i}
-                      className="w-7 h-7 rounded-full ring-2 ring-white/30 bg-gradient-to-br from-white/60 to-white/30 backdrop-blur-md" />
-                  ))}
-                </div>
-                <span className="text-[11px] text-white/80">4.9/5</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                {[60, 50, 40].map((v, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div className="flex-1 h-1.5 rounded-full bg-white/20">
-                      <div className="h-1.5 rounded-full bg-[#A1E3F9]" style={{ width: `${v}%` }} />
+
+            {/* Floating stats cards */}
+            <div className="absolute left-[-12%] top-10 hidden md:flex flex-col gap-4">
+              {stats.map((s, i) => (
+                <div key={s.label} className={`px-5 py-4 rounded-2xl backdrop-blur-lg bg-white/15 border border-white/30 shadow-lg shadow-white/10 hover:shadow-white/20 transition-all ${i === 1 ? 'translate-x-6' : ''}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center justify-center w-10 h-10 text-white rounded-xl bg-white/20">
+                      <s.icon className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <p className="text-lg font-semibold leading-none text-white">{s.value}</p>
+                      <p className="mt-1 text-xs font-medium tracking-wide text-white/70">{s.label}</p>
                     </div>
-                    <span className="text-[10px] text-white/60 w-6 text-right">{v}%</span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom subtle divider shape */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0451d3] to-transparent" />
+      {/* Bottom gradient fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#012244] to-transparent pointer-events-none" />
     </section>
   )
 }

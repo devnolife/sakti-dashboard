@@ -118,13 +118,21 @@ const config: Config = {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' }
+        },
+        'spin-slow': {
+          to: { transform: 'rotate(360deg)' }
+        },
+        'spin-slower': {
+          to: { transform: 'rotate(360deg)' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-slow': 'pulse-slow 3s infinite',
-        float: 'float 3s ease-in-out infinite'
+        float: 'float 3s ease-in-out infinite',
+        'spin-slow': 'spin-slow 18s linear infinite',
+        'spin-slower': 'spin-slower 32s linear infinite'
       }
     }
   },

@@ -13,36 +13,36 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
     : '/images/front-pages/landing-page/get-started-bg-light.png'
 
   return (
-    <section className="relative py-[100px] overflow-hidden">
+    <section className="relative py-16 overflow-hidden">
       {/* Ultra Modern Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-white via-mint-50/20 to-lavender-50/30 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900" />
       <div className="absolute inset-0 bg-gradient-to-tl from-peach-50/20 via-transparent to-slate-50/40" />
 
       {/* Soft Animated Background Elements */}
-      <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-lavender-100/30 to-secondary/15 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/12 rounded-full blur-3xl animate-pulse delay-1000" />
-      <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-gradient-to-r from-peach-100/20 to-lavender-100/20 rounded-full blur-2xl animate-pulse delay-700" />
+      <div className="absolute top-6 left-6 w-64 h-64 bg-gradient-to-br from-lavender-100/30 to-secondary/15 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-6 right-6 w-56 h-56 bg-gradient-to-tr from-mint-100/25 to-secondary-alt/12 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-gradient-to-r from-peach-100/20 to-lavender-100/20 rounded-full blur-2xl animate-pulse delay-700" />
 
-      <div className="relative flex flex-wrap items-center justify-center px-4 mx-auto lg:justify-between gap-y-8 gap-x-16 sm:px-6 lg:px-8 max-w-7xl">
+      <div className="relative flex flex-wrap items-center justify-center px-4 mx-auto lg:justify-between gap-y-6 gap-x-8 sm:px-6 lg:px-8 max-w-7xl">
         {/* Content Section */}
-        <div className="flex flex-col items-start gap-y-10 py-12 z-[1] max-w-2xl">
+        <div className="flex flex-col items-start gap-y-6 py-8 z-[1] max-w-2xl">
           {/* Modern Floating Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-lavender-100/70 to-mint-100/70 backdrop-blur-xl border border-white/40 rounded-full text-sm font-bold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent shadow-lg shadow-lavender-200/20 hover:shadow-xl hover:shadow-lavender-200/30 transition-all duration-500 animate-float hover:scale-105">
+          <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-lavender-100/70 to-mint-100/70 backdrop-blur-xl border border-white/40 rounded-full text-xs font-bold bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent shadow-lg shadow-lavender-200/20 hover:shadow-xl hover:shadow-lavender-200/30 transition-all duration-500 animate-float hover:scale-105">
             🚀 Mulai Sekarang
           </div>
 
-          <div className="flex flex-col gap-y-4">
-            <h2 className="bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent font-extrabold text-4xl lg:text-5xl leading-tight">
+          <div className="flex flex-col gap-y-3">
+            <h2 className="bg-gradient-to-r from-secondary to-secondary-alt bg-clip-text text-transparent font-extrabold text-2xl lg:text-3xl leading-tight">
               Siap Memulai
               <span className="block">Digitalisasi?</span>
             </h2>
-            <p className="text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">
+            <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
               Bergabunglah dengan sistem informasi terintegrasi Fakultas Teknik dan rasakan kemudahan pengelolaan akademik yang modern dan efisien.
             </p>
           </div>
 
           {/* Enhanced CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Button
               asChild
               size="lg"
@@ -71,7 +71,7 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
           </div>
 
           {/* Enhanced Feature Highlights with #3674B5 */}
-          <div className="flex flex-wrap gap-6 pt-4">
+          <div className="flex flex-wrap gap-4 pt-3">
             <div className="flex items-center gap-2 text-sm text-neutral-600">
               <div className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
               <span>Terintegrasi</span>
@@ -100,8 +100,8 @@ const GetStarted: React.FC<GetStartedProps> = ({ mode = 'light' }) => {
             />
 
             {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 w-8 h-8 bg-secondary rounded-full shadow-lg animate-bounce opacity-80" />
-            <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-secondary-alt rounded-full shadow-lg animate-bounce delay-500 opacity-80" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-secondary rounded-full shadow-md animate-bounce opacity-80" />
+            <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-secondary-alt rounded-full shadow-md animate-bounce delay-500 opacity-80" />
 
             {/* Stats Overlay */}
             <div className="absolute p-3 transition-all duration-500 shadow-lg opacity-0 top-4 left-4 bg-accent/95 backdrop-blur-sm rounded-xl group-hover:opacity-100">

@@ -1,7 +1,15 @@
 export { default as Header } from './header'
 export { default as HeroSection } from './hero-section'
+export { default as AboutSection } from './about-section'
+export { default as CoursesSection } from './courses-section'
+export { default as WakilDekanSection } from './wakil_dekan'
+export { default as TestimonialsSection } from './testimonials-section'
+export { default as QuotesSection } from './quotes-section'
+export { default as CTASection } from './cta-section'
+export { default as Footer } from './footer'
+
+// Legacy exports (if still needed)
 export { default as UsefulFeature } from './useful-feature'
 export { default as OurTeam } from './our-team'
 export { default as GetStarted } from './get-started'
 export { default as ContactUs } from './contact-us'
-export { default as Footer } from './footer'
