@@ -92,6 +92,37 @@ enum ExamDocumentType {
   transcript
   proposal
   supervisor_approval
+  // Ujian Proposal
+  pembayaran_bpp
+  biaya_komprehensif
+  surat_sk_pembimbing
+  surat_penyelesaian_kkp
+  transkrip_nilai_145
+  praktikum_ilmu_falaq
+  surat_publikasi_produk
+  bukti_publish_produk
+  surat_baca_alquran
+  sertifikat_dad
+  uji_plagiat_skripsi
+  kartu_kontrol_seminar
+  persetujuan_pembimbing
+  // Ujian Hasil
+  biaya_ujian_seminar
+  transkrip_nilai_hasil
+  sertifikat_praktikum
+  uji_plagiat_hasil
+  persetujuan_pembimbing_hasil
+  skripsi_6_rangkap
+  // Ujian Tutup
+  pembayaran_ujian
+  biaya_tambahan_wd2
+  pembayaran_wisuda_perpustakaan
+  uji_plagiat_tutup
+  persetujuan_pembimbing_tutup
+  skripsi_1_rangkap
+  berkas_loa_jurnal
+  transkrip_nilai_150
+  berkas_persyaratan_yudisium
   other
 }
 
@@ -274,6 +305,7 @@ model Student {
   academicEvents       AcademicEvent[]
   labRegistrations     LabRegistration[]
   labSubmissions       LabAssignmentSubmission[]
+  examRequirements     ExamStudentRequirement[]
 
   @@map("students")
 }
@@ -468,6 +500,42 @@ model ExamDocument {
   exam      ExamApplication @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@map("exam_documents")
+}
+
+model ExamRequirement {
+  id          String              @id @default(cuid())
+  examType    ExamType           // proposal, result, closing
+  title       String             // e.g., "Pembayaran BPP"
+  description String?            // Description of the requirement
+  required    Boolean            @default(true)
+  order       Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  // Student requirement status
+  studentRequirements ExamStudentRequirement[]
+
+  @@map("exam_requirements")
+}
+
+model ExamStudentRequirement {
+  id            String         @id @default(cuid())
+  studentId     String
+  requirementId String
+  completed     Boolean        @default(false)
+  completedAt   DateTime?
+  fileUrl       String?        // Path to uploaded file
+  fileName      String?        // Original filename
+  fileSize      Int?           // File size in bytes
+  uploadedAt    DateTime?      // When file was uploaded
+  verifiedAt    DateTime?      // When file was verified by admin
+  notes         String?        // Additional notes
+  
+  student       Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  requirement   ExamRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, requirementId])
+  @@map("exam_student_requirements")
 }
 
 model ThesisTitle {

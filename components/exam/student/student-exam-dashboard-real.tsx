@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ExamProgress } from "./exam-progress"
-import { ProposalExamTab } from "./proposal-exam-tab"
-import { ResultExamTab } from "./result-exam-tab"
-import { ClosingExamTab } from "./closing-exam-tab"
+import { ProposalExamTab } from "./proposal-exam-tab-new"
+import { ResultExamTab } from "./result-exam-tab-new" 
+import { ClosingExamTab } from "./closing-exam-tab-new"
 import { BookOpen, GraduationCap, Award, BarChart3, Calendar, Clock, MapPin, User, FileText, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -210,7 +210,7 @@ export default function StudentExamDashboard() {
             className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 rounded-lg"
           >
             <Award className="w-4 h-4" />
-            <span>Tertutup</span>
+            <span>Tutup</span>
           </TabsTrigger>
           <TabsTrigger
             value="schedule"
@@ -257,7 +257,7 @@ export default function StudentExamDashboard() {
             />
 
             <ExamProgress
-              title="Ujian Tertutup"
+              title="Ujian Tutup"
               icon={<Award className="w-5 h-5" />}
               progress={getProgressForExam(closingExam)}
               status={closingExam?.status as any || 'pending'}
@@ -298,7 +298,7 @@ export default function StudentExamDashboard() {
                           }`}>
                             {exam.type === 'proposal' ? 'Ujian Proposal' :
                              exam.type === 'result' ? 'Ujian Hasil' :
-                             'Ujian Tertutup'}
+                             'Ujian Tutup'}
                           </h3>
                           <p className="text-sm text-muted-foreground">
                             {exam.scheduledDate ? new Date(exam.scheduledDate).toLocaleDateString('id-ID', {

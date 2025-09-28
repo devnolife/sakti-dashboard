@@ -1,5 +1,5 @@
-import { prisma } from './lib/prisma'
-import { BookStatus, BorrowingStatus, ThesisStatus } from './lib/generated/prisma'
+import { prisma } from '../../lib/prisma'
+import { BookStatus, BorrowingStatus, ThesisStatus } from '../../lib/generated/prisma'
 
 async function seedLibraryData() {
   console.log('🏗️ Starting library data seeding...')
