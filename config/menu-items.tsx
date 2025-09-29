@@ -242,6 +242,16 @@ export const mahasiswaMenuItems = [
         href: "/dashboard/mahasiswa/kkp",
       },
       {
+        id: "kkp-requirements",
+        title: "Persyaratan",
+        href: "/dashboard/mahasiswa/kkp/requirements",
+      },
+      {
+        id: "kkp-locations",
+        title: "Lokasi KKP",
+        href: "/dashboard/mahasiswa/kkp/locations",
+      },
+      {
         id: "kkp-pengajuan",
         title: "Pengajuan",
         href: "/dashboard/mahasiswa/kkp/pengajuan",
@@ -255,11 +265,6 @@ export const mahasiswaMenuItems = [
         id: "kkp-finished",
         title: "Finish KKP",
         href: "/dashboard/mahasiswa/kkp/finished",
-      },
-      {
-        id: "kkp-requirements",
-        title: "Persyaratan",
-        href: "/dashboard/mahasiswa/kkp/requirements",
       },
     ],
   },
