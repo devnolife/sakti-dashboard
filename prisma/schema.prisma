@@ -327,6 +327,7 @@ model Student {
   labSubmissions       LabAssignmentSubmission[]
   examRequirements     ExamStudentRequirement[]
   kkpRequirements      KkpRequirement[]
+  createdKkpLocations  KkpLocation[]
 
   @@map("students")
 }
@@ -428,8 +429,63 @@ model Company {
   isActive        Boolean  @default(true)
 
   kkpApplications KkpApplication[]
+  kkpLocations    KkpLocation[]
 
   @@map("companies")
+}
+
+// Model untuk lokasi KKP yang dapat dibuat oleh mahasiswa
+model KkpLocation {
+  id              String          @id @default(cuid())
+  name            String
+  address         String
+  city            String
+  province        String?
+  industry        String
+  positions       Json            // Array of available positions
+  quota           Int             @default(0)
+  remaining       Int             @default(0)
+  status          String          @default("available") // available, limited, full
+  distance        Float?          // in kilometers
+  contactPerson   String?
+  contactEmail    String?
+  contactPhone    String?
+  description     String?
+  isActive        Boolean         @default(true)
+  
+  // Relations
+  companyId       String?
+  company         Company?        @relation(fields: [companyId], references: [id])
+  
+  createdById     String
+  createdBy       Student         @relation(fields: [createdById], references: [id])
+  
+  subLocations    KkpSubLocation[]
+  documents       KkpDocument[]   @relation("LocationDocuments")
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([name, address]) // Prevent duplicate locations
+  @@map("kkp_locations")
+}
+
+// Model untuk sub-lokasi dalam lokasi KKP
+model KkpSubLocation {
+  id              String      @id @default(cuid())
+  name            String
+  address         String
+  contactPerson   String
+  contactEmail    String?
+  contactPhone    String?
+  
+  locationId      String
+  location        KkpLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("kkp_sub_locations")
 }
 
 model KkpDocument {
@@ -443,8 +499,11 @@ model KkpDocument {
   fileSize       Int?
   mimeType       String?
 
-  applicationId  String
-  application    KkpApplication    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  applicationId  String?
+  application    KkpApplication?   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  
+  locationId     String?
+  location       KkpLocation?      @relation("LocationDocuments", fields: [locationId], references: [id], onDelete: Cascade)
 
   @@map("kkp_documents")
 }
