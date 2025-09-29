@@ -100,7 +100,7 @@ export default function LocationsPage() {
       } else {
         toast({
           title: "Error",
-          description: result.error || "Failed to fetch locations",
+          description: result.error || "Gagal memuat lokasi KKP",
           variant: "destructive",
         })
       }
@@ -108,7 +108,7 @@ export default function LocationsPage() {
       console.error('Error fetching locations:', error)
       toast({
         title: "Error",
-        description: "Failed to fetch locations",
+        description: "Gagal memuat lokasi KKP",
         variant: "destructive",
       })
     } finally {
@@ -131,16 +131,16 @@ export default function LocationsPage() {
       
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Location added successfully",
+          title: "Berhasil",
+          description: "Lokasi KKP berhasil ditambahkan",
         })
         setLocations(prev => [result.data, ...prev])
         setShowAddLocationDialog(false)
         resetNewLocationForm()
       } else {
         toast({
-          title: "Error", 
-          description: result.error || "Failed to add location",
+          title: "Gagal", 
+          description: result.error || "Gagal menambahkan lokasi KKP",
           variant: "destructive",
         })
       }
@@ -156,7 +156,14 @@ export default function LocationsPage() {
     }
   }
 
-  const handleDeleteLocation = async (locationId: string) => {
+  const handleDeleteLocation = async (locationId: string, locationName: string) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Apakah Anda yakin ingin menghapus lokasi "${locationName}"? Tindakan ini tidak dapat dibatalkan.`
+    )
+    
+    if (!confirmed) return
+
     try {
       const response = await fetch(`/api/kkp/locations/${locationId}`, {
         method: 'DELETE',
@@ -166,14 +173,14 @@ export default function LocationsPage() {
       
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Location deleted successfully",
+          title: "Berhasil",
+          description: result.message || "Lokasi KKP berhasil dihapus",
         })
         setLocations(prev => prev.filter(loc => loc.id !== locationId))
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to delete location", 
+          title: "Gagal",
+          description: result.error || "Gagal menghapus lokasi KKP", 
           variant: "destructive",
         })
       }
@@ -181,7 +188,7 @@ export default function LocationsPage() {
       console.error('Error deleting location:', error)
       toast({
         title: "Error",
-        description: "Failed to delete location",
+        description: "Terjadi kesalahan saat menghapus lokasi",
         variant: "destructive",
       })
     }
@@ -354,7 +361,7 @@ export default function LocationsPage() {
         !newLocation.city.trim() || !newLocation.industry.trim()) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Mohon lengkapi semua field yang wajib diisi",
         variant: "destructive",
       })
       return
@@ -596,7 +603,14 @@ export default function LocationsPage() {
                   <CardHeader className="p-6 pb-4">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <CardTitle className="text-xl">{location.name}</CardTitle>
+                        <div className="flex items-center gap-2">
+                          <CardTitle className="text-xl">{location.name}</CardTitle>
+                          {canDeleteLocation(location) && (
+                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                              Dibuat oleh Anda
+                            </Badge>
+                          )}
+                        </div>
                         <CardDescription>{location.industry}</CardDescription>
                       </div>
                       <div className="flex space-x-2">
@@ -604,11 +618,12 @@ export default function LocationsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleDeleteLocation(location.id)}
+                            onClick={() => handleDeleteLocation(location.id, location.name)}
                             className="h-8 w-8 text-red-400 hover:text-red-600"
+                            title="Hapus lokasi yang Anda buat"
                           >
                             <Trash2 className="h-5 w-5" />
-                            <span className="sr-only">Hapus lokasi</span>
+                            <span className="sr-only">Hapus lokasi yang Anda buat</span>
                           </Button>
                         )}
                       </div>
@@ -676,14 +691,22 @@ export default function LocationsPage() {
                           <div className="flex items-center space-x-2">
                             <h3 className="text-lg font-semibold">{location.name}</h3>
                             {canDeleteLocation(location) && (
+                              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-600 border-blue-200">
+                                Dibuat oleh Anda
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {canDeleteLocation(location) && (
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => handleDeleteLocation(location.id)}
+                                onClick={() => handleDeleteLocation(location.id, location.name)}
                                 className="h-6 w-6 text-red-400 hover:text-red-600"
+                                title="Hapus lokasi yang Anda buat"
                               >
                                 <Trash2 className="h-4 w-4" />
-                                <span className="sr-only">Hapus lokasi</span>
+                                <span className="sr-only">Hapus lokasi yang Anda buat</span>
                               </Button>
                             )}
                           </div>

@@ -52,7 +52,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          error: "You can only delete locations you created",
+          error: "Anda tidak dapat menghapus lokasi KKP karena bukan Anda yang membuatnya",
         },
         { status: 403 }
       )
@@ -65,7 +65,7 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: "Location deleted successfully",
+      message: "Lokasi KKP berhasil dihapus",
     })
   } catch (error) {
     console.error("Error deleting KKP location:", error)
