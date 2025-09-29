@@ -1,6 +1,10 @@
+import { getHardcodedUserId } from '@/lib/auth-utils'
 import { PrismaClient, ApprovalRole, LetterStatus } from '@/lib/generated/prisma'
 
+
 export async function seedCorrespondenceData(prisma: PrismaClient) {
+  const userId  = getHardcodedUserId()
+
   try {
     console.log('=== SEEDING CORRESPONDENCE DATA ===\n')
 
@@ -145,7 +149,7 @@ export async function seedCorrespondenceData(prisma: PrismaClient) {
     // 2. Get target student
     console.log('\n2. Finding target student...')
     const targetUser = await prisma.user.findUnique({
-      where: { id: 'cmfz4q41z00019yo0urpkhgyf' },
+      where: { id: userId },
       include: {
         studentProfile: true
       }

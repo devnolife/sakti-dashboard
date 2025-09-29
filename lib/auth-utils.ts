@@ -41,5 +41,5 @@ export async function getCurrentUserFromToken(request?: NextRequest): Promise<st
 // For server actions, we'll use a hardcoded user ID for now
 // In production, this should be replaced with proper session management
 export function getHardcodedUserId(): string {
-  return 'cmg3r0cvr00019yqvo8dqmdmp' // MAHASISWA001 ID
+  return 'cmg4j3mf200019ypx53e5ujp1' // MAHASISWA001 ID
 }
