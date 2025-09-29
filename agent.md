@@ -1,55 +1,22 @@
-# Perbaikan & Penambahan Fitur Sistem Ujian
-## Tujuan
-### Perbaikan Bug Scroll Form
-Pada halaman pendaftaran ujian (/dashboard/mahasiswa/exams/register), form tidak bisa di-scroll ke bawah sehingga hanya terlihat setengah form saja.
+Saya ingin menambahkan fitur baru:
 
-### Perubahan & Penambahan Fitur "Ujian Proposalination Requirements"
-Pada halaman (/dashboard/mahasiswa/exams) ganti seluruh requirement default dengan requirement baru sesuai tahap ujian (Ujian Proposal, Ujian Hasil, Ujian Tutup).
-Tambahkan form upload file untuk setiap requirement. Semua file yang di-upload akan disimpan di folder public/uploads/[jenis-ujian].
+**Nama Fitur**: Unggah file Persyaratan KKP
+**Dashboard**: mahasiswa
+**Path Target**: /app/dashboard/mahasiswa/kkp/requirements
 
-Fitur Baru: Kelengkapan Berkas
-Struktur Tahapan & Persyaratan
-* Ujian Proposal
-- Pembayaran BPP
-- Biaya Komprehensif
-- Surat SK Pembimbing
-- Surat Keterangan Penyelesaian Laporan KKP
-- Transkrip Nilai minimal 145 SKS
+**Deskripsi Fitur**:
+Sistem dapat mengunggah file persyaratan berkas KKP, yang dimana perysaratan berkasnya terdiri dari:
+- Unggah Berkas Persyaratan KKP
+- Syarat berkas KKP terdiri dari:
+- Bukti Pembayaran KKP Plus
+- Transkrip Nilai Minimal 125 SKS
+- Minimal 1 Dokumen Sertifikat Kompetensi sesuai bidang informatika
+- Kartu Kontrol Praktikum
 - Praktikum Ilmu Falaq
-- Surat Pernyataan Publikasi Produk
-- Bukti Publish Produk
 - Surat Keterangan Baca Al-Qur’an
-- Sertifikat DAD
-- Uji Plagiat Skripsi
-- Kartu Kontrol Mengikuti Seminar minimal 10 kali
-- Persetujuan Pembimbing 1 & 2
+- Kartu Kontrol PA dari semester 1 s/d semester berjalan
+- Sertifikat DAD / Keterangan Lulus DAD
+semua berkas tersebut di unggah dalam format PDF, lalu file disimpan ke path public/uploads/persyaratan-kkp. Selanjutnya metadatanya akan di kirim dan disimpan pada database.
 
-* Ujian Hasil
-- Pembayaran BPP
-- Biaya Ujian Seminar (WD2)
-- Transkrip Nilai
-- Sertifikat Praktikum
-- Uji Plagiat Skripsi
-- Persetujuan Pembimbing 1 & 2
-- Skripsi Jilid 6 Rangkap
-
-* Ujian Tutup
-- Pembayaran BPP
-- Pembayaran Ujian
-- Biaya Tambahan ke WD2
-- Pembayaran Wisuda & Perpustakaan
-- Uji Plagiat
-- Persetujuan Pembimbing 1 & 2
-- Skripsi Jilid 1 Rangkap
-- Berkas LoA Submit Jurnal
-- Transkrip Nilai minimal 150 SKS
-- Berkas Persyaratan Yudisium
-
-Validasi: hanya menerima format .pdf
-Simpan metadata (nama file, jenis ujian, tanggal upload, mahasiswa) ke database.
-
-Persyaratan Ujian
-Tambahkan tab 3 bagian: Proposal | Hasil | Tutup.
-Setiap item requirement tampil sebagai card dengan tombol Upload File.
-Tampilkan status ✅ jika file sudah di-upload, ❌ jika belum.
-Semua teks, label, button, notifikasi diganti ke Bahasa Indonesia penuh.
+**User Story**:
+Sebagai mahasiswa yang ingin KKP saya ingin mengunggah berkas persyaratan dimana pada saat unggah menampilkan informasi progress pada halaman Persyaratan KKP, yang dimana saya mengetahui file mana saja yang saya telah unggah dan belum saya unggah. saya juga dapat menghapus file yang di unggah jika salah mengunggahnya.

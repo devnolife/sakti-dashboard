@@ -54,6 +54,26 @@ enum KkpDocumentType {
   supervisor_letter
   report
   evaluation
+  // Menambahkan tipe dokumen persyaratan KKP
+  payment_proof_kkp_plus
+  transcript_125_sks
+  competency_certificate
+  practicum_control_card
+  falaq_practicum
+  quran_reading_certificate
+  academic_advisor_card
+  dad_certificate
+}
+
+enum KkpRequirementType {
+  payment_proof_kkp_plus
+  transcript_125_sks
+  competency_certificate
+  practicum_control_card
+  falaq_practicum
+  quran_reading_certificate
+  academic_advisor_card
+  dad_certificate
 }
 
 enum DocumentStatus {
@@ -306,6 +326,7 @@ model Student {
   labRegistrations     LabRegistration[]
   labSubmissions       LabAssignmentSubmission[]
   examRequirements     ExamStudentRequirement[]
+  kkpRequirements      KkpRequirement[]
 
   @@map("students")
 }
@@ -440,6 +461,33 @@ model KkpApproval {
   application   KkpApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@map("kkp_approvals")
+}
+
+// Model untuk persyaratan KKP
+model KkpRequirement {
+  id                String               @id @default(cuid())
+  studentId         String
+  student           Student              @relation(fields: [studentId], references: [id])
+  
+  requirementType   KkpRequirementType
+  fileName          String
+  originalFileName  String
+  filePath          String               // Path ke file dalam public/uploads/persyaratan-kkp
+  fileSize          Int
+  mimeType          String               @default("application/pdf")
+  
+  status            DocumentStatus       @default(pending)
+  notes             String?
+  
+  uploadedAt        DateTime             @default(now())
+  verifiedAt        DateTime?
+  verifiedBy        String?              // ID pengguna yang memverifikasi
+  
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@unique([studentId, requirementType]) // Satu student hanya bisa upload satu file per tipe
+  @@map("kkp_requirements")
 }
 
 model ExamApplication {
