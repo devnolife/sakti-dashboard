@@ -7,7 +7,7 @@ import { GraduationCap, CheckCircle, AlertCircle, Calendar, User, Lock, Loader2 
 import { RequirementsCard } from "./requirements-card"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
-import { getCurrentStudentId } from "@/lib/mock-config"
+
 
 interface ExamRequirement {
   id: string
@@ -43,8 +43,7 @@ export function ResultExamTab({ examData, proposalStatus, onRefresh }: ResultExa
   const [requirements, setRequirements] = useState<ExamRequirement[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Mock student ID - in real app, get from auth context
-  const studentId = getCurrentStudentId()
+
 
   useEffect(() => {
     fetchRequirements()
@@ -53,7 +52,7 @@ export function ResultExamTab({ examData, proposalStatus, onRefresh }: ResultExa
   const fetchRequirements = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/student/exams/requirements?examType=result&studentId=${studentId}`)
+      const response = await fetch(`/api/student/exams/requirements?examType=result`)
       const result = await response.json()
       
       if (result.success) {
@@ -61,7 +60,7 @@ export function ResultExamTab({ examData, proposalStatus, onRefresh }: ResultExa
       } else {
         toast({
           title: "Error",
-          description: "Gagal memuat data persyaratan",
+          description: result.error || "Gagal memuat data persyaratan",
           variant: "destructive"
         })
       }
@@ -77,13 +76,10 @@ export function ResultExamTab({ examData, proposalStatus, onRefresh }: ResultExa
     }
   }
 
-
-
   const handleFileUpload = async (requirementId: string, file: File) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('requirementId', requirementId)
-    formData.append('studentId', studentId)
 
     const response = await fetch('/api/student/exams/requirements/upload', {
       method: 'POST',
@@ -102,7 +98,7 @@ export function ResultExamTab({ examData, proposalStatus, onRefresh }: ResultExa
   }
 
   const handleFileDelete = async (requirementId: string) => {
-    const response = await fetch(`/api/student/exams/requirements/upload?requirementId=${requirementId}&studentId=${studentId}`, {
+    const response = await fetch(`/api/student/exams/requirements/upload?requirementId=${requirementId}`, {
       method: 'DELETE'
     })
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@/lib/generated/prisma'
+import { getHardcodedUserId } from '@/lib/auth-utils'
 
 const prisma = new PrismaClient()
 
@@ -7,14 +8,30 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const examType = searchParams.get('examType') as 'proposal' | 'result' | 'closing'
-    const studentId = searchParams.get('studentId')
 
-    if (!examType || !studentId) {
+    if (!examType) {
       return NextResponse.json(
-        { success: false, error: 'Missing required parameters' },
+        { success: false, error: 'Missing exam type parameter' },
         { status: 400 }
       )
     }
+
+    // Get studentId from authenticated user
+    const userId = getHardcodedUserId()
+    const student = await prisma.student.findUnique({
+      where: { userId },
+      select: { id: true }
+    })
+
+    if (!student) {
+      return NextResponse.json(
+        { success: false, error: 'Student not found' },
+        { status: 404 }
+      )
+    }
+
+    const studentId = student.id
+    console.log(`📋 Fetching ${examType} requirements for student: ${studentId}`)
 
     // Get requirements for the exam type
     const requirements = await prisma.examRequirement.findMany({
@@ -49,6 +66,8 @@ export async function GET(request: NextRequest) {
         notes: studentRequirement?.notes
       }
     })
+
+    console.log(`✅ Found ${requirements.length} requirements, ${transformedRequirements.filter(r => r.completed).length} completed`)
 
     return NextResponse.json({
       success: true,

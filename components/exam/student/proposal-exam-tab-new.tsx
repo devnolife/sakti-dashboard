@@ -7,7 +7,6 @@ import { BookOpen, CheckCircle, AlertCircle, Calendar, User, Loader2 } from "luc
 import { RequirementsCard } from "./requirements-card"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
-import { getCurrentStudentId } from "@/lib/mock-config"
 
 interface ExamRequirement {
   id: string
@@ -40,9 +39,6 @@ export function ProposalExamTab({ examData, onRefresh }: ProposalExamTabProps) {
   const [requirements, setRequirements] = useState<ExamRequirement[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Mock student ID - in real app, get from auth context
-  const studentId = getCurrentStudentId()
-
   useEffect(() => {
     fetchRequirements()
   }, [])
@@ -50,21 +46,22 @@ export function ProposalExamTab({ examData, onRefresh }: ProposalExamTabProps) {
   const fetchRequirements = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/student/exams/requirements?examType=proposal&studentId=${studentId}`)
+      const response = await fetch(`/api/student/exams/requirements?examType=proposal`)
       const result = await response.json()
       
       if (result.success) {
         console.log('📋 Requirements data received:', result.data)
         setRequirements(result.data)
       } else {
+        console.error('❌ Failed to fetch requirements:', result.error)
         toast({
           title: "Error",
-          description: "Gagal memuat data persyaratan",
+          description: result.error || "Gagal memuat data persyaratan",
           variant: "destructive"
         })
       }
     } catch (error) {
-      console.error('Error fetching requirements:', error)
+      console.error('❌ Error fetching requirements:', error)
       toast({
         title: "Error",
         description: "Gagal terhubung ke server",
@@ -76,10 +73,11 @@ export function ProposalExamTab({ examData, onRefresh }: ProposalExamTabProps) {
   }
 
   const handleFileUpload = async (requirementId: string, file: File) => {
+    console.log(`🔄 Uploading file for requirement: ${requirementId}`)
+    
     const formData = new FormData()
     formData.append('file', file)
     formData.append('requirementId', requirementId)
-    formData.append('studentId', studentId)
 
     const response = await fetch('/api/student/exams/requirements/upload', {
       method: 'POST',
@@ -89,8 +87,11 @@ export function ProposalExamTab({ examData, onRefresh }: ProposalExamTabProps) {
     const result = await response.json()
     
     if (!result.success) {
+      console.error('❌ Upload failed:', result.error)
       throw new Error(result.error)
     }
+
+    console.log('✅ Upload successful:', result.data)
 
     // Refresh requirements data
     await fetchRequirements()
@@ -98,15 +99,20 @@ export function ProposalExamTab({ examData, onRefresh }: ProposalExamTabProps) {
   }
 
   const handleFileDelete = async (requirementId: string) => {
-    const response = await fetch(`/api/student/exams/requirements/upload?requirementId=${requirementId}&studentId=${studentId}`, {
+    console.log(`🗑️ Deleting file for requirement: ${requirementId}`)
+    
+    const response = await fetch(`/api/student/exams/requirements/upload?requirementId=${requirementId}`, {
       method: 'DELETE'
     })
 
     const result = await response.json()
     
     if (!result.success) {
+      console.error('❌ Delete failed:', result.error)
       throw new Error(result.error)
     }
+
+    console.log('✅ Delete successful')
 
     // Refresh requirements data
     await fetchRequirements()

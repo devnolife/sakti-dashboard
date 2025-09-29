@@ -45,7 +45,7 @@ export function RequirementsCard({
   const progressPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
   useEffect(() => {
-    console.log(`📊 ${title} Progress:`, {
+    console.log(`📊 ${title} Progress Update:`, {
       completedCount,
       totalCount,
       progressPercentage,
@@ -53,8 +53,20 @@ export function RequirementsCard({
         id: req.id,
         title: req.title,
         completed: req.completed,
-        hasFile: !!req.fileName
+        hasFile: !!req.fileName,
+        fileName: req.fileName,
+        uploadedAt: req.uploadedAt
       }))
+    })
+
+    // Debug individual requirements
+    requirements.forEach((req, index) => {
+      console.log(`  ${index + 1}. ${req.title}:`, {
+        completed: req.completed,
+        fileName: req.fileName,
+        fileUrl: req.fileUrl,
+        uploadedAt: req.uploadedAt
+      })
     })
   }, [requirements, title, completedCount, totalCount, progressPercentage])
 

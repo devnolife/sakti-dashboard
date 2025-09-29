@@ -81,14 +81,11 @@ export default function StudentExamDashboard() {
   // Fungsi untuk fetch requirements real-time
   const fetchRequirementsForExam = async (examType: 'proposal' | 'result' | 'closing') => {
     try {
-      // Get studentId dari getCurrentStudentId utility
-      const { getCurrentStudentId } = await import('@/lib/mock-config')
-      const studentId = getCurrentStudentId()
-      
-      const response = await fetch(`/api/student/exams/requirements?examType=${examType}&studentId=${studentId}`)
+      const response = await fetch(`/api/student/exams/requirements?examType=${examType}`)
       const result = await response.json()
       
       if (result.success) {
+        console.log(`📊 ${examType} requirements fetched:`, result.data.length, 'items')
         switch (examType) {
           case 'proposal':
             setProposalRequirements(result.data)
@@ -100,9 +97,11 @@ export default function StudentExamDashboard() {
             setClosingRequirements(result.data)
             break
         }
+      } else {
+        console.error(`❌ Failed to fetch ${examType} requirements:`, result.error)
       }
     } catch (error) {
-      console.error(`Error fetching ${examType} requirements:`, error)
+      console.error(`❌ Error fetching ${examType} requirements:`, error)
     }
   }
 

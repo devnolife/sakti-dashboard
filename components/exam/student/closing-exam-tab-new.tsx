@@ -7,7 +7,7 @@ import { Award, CheckCircle, AlertCircle, Calendar, User, Lock, Loader2 } from "
 import { RequirementsCard } from "./requirements-card"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
-import { getCurrentStudentId } from "@/lib/mock-config"
+
 
 interface ExamRequirement {
   id: string
@@ -43,9 +43,6 @@ export function ClosingExamTab({ examData, resultStatus, onRefresh }: ClosingExa
   const [requirements, setRequirements] = useState<ExamRequirement[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Mock student ID - in real app, get from auth context
-  const studentId = getCurrentStudentId()
-
   useEffect(() => {
     fetchRequirements()
   }, [])
@@ -53,7 +50,7 @@ export function ClosingExamTab({ examData, resultStatus, onRefresh }: ClosingExa
   const fetchRequirements = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/student/exams/requirements?examType=closing&studentId=${studentId}`)
+      const response = await fetch(`/api/student/exams/requirements?examType=closing`)
       const result = await response.json()
       
       if (result.success) {
@@ -61,7 +58,7 @@ export function ClosingExamTab({ examData, resultStatus, onRefresh }: ClosingExa
       } else {
         toast({
           title: "Error",
-          description: "Gagal memuat data persyaratan",
+          description: result.error || "Gagal memuat data persyaratan",
           variant: "destructive"
         })
       }
@@ -81,7 +78,6 @@ export function ClosingExamTab({ examData, resultStatus, onRefresh }: ClosingExa
     const formData = new FormData()
     formData.append('file', file)
     formData.append('requirementId', requirementId)
-    formData.append('studentId', studentId)
 
     const response = await fetch('/api/student/exams/requirements/upload', {
       method: 'POST',
@@ -100,7 +96,7 @@ export function ClosingExamTab({ examData, resultStatus, onRefresh }: ClosingExa
   }
 
   const handleFileDelete = async (requirementId: string) => {
-    const response = await fetch(`/api/student/exams/requirements/upload?requirementId=${requirementId}&studentId=${studentId}`, {
+    const response = await fetch(`/api/student/exams/requirements/upload?requirementId=${requirementId}`, {
       method: 'DELETE'
     })
 

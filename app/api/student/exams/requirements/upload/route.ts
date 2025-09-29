@@ -14,10 +14,23 @@ export async function POST(request: NextRequest) {
     const requirementId = formData.get('requirementId') as string
     const userId = getHardcodedUserId()
     
-    const studentId = await prisma.student.findUnique({
+    console.log(`📤 Upload attempt - UserId: ${userId}, RequirementId: ${requirementId}`)
+    
+    const student = await prisma.student.findUnique({
       where: { userId },
-      select: { id: true }
-    }).then(student => student?.id)
+      select: { id: true, nim: true }
+    })
+
+    if (!student) {
+      console.log(`❌ Student not found for userId: ${userId}`)
+      return NextResponse.json(
+        { success: false, error: 'Student not found' },
+        { status: 404 }
+      )
+    }
+
+    const studentId = student.id
+    console.log(`✅ Found student ID: ${studentId} (NIM: ${student.nim})`)
 
     if (!file || !requirementId || !studentId) {
       return NextResponse.json(
@@ -75,6 +88,8 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer)
 
     // Update or create student requirement record
+    console.log(`💾 Upserting student requirement - StudentId: ${studentId}, RequirementId: ${requirementId}`)
+    
     const studentRequirement = await prisma.examStudentRequirement.upsert({
       where: {
         studentId_requirementId: {
@@ -102,6 +117,12 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log(`✅ Student requirement updated successfully:`, {
+      id: studentRequirement.id,
+      completed: studentRequirement.completed,
+      fileName: studentRequirement.fileName
+    })
+
     return NextResponse.json({
       success: true,
       data: {
@@ -125,14 +146,30 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const requirementId = searchParams.get('requirementId')
-    const studentId = searchParams.get('studentId')
 
-    if (!requirementId || !studentId) {
+    if (!requirementId) {
       return NextResponse.json(
-        { success: false, error: 'Missing required parameters' },
+        { success: false, error: 'Missing requirement ID' },
         { status: 400 }
       )
     }
+
+    // Get studentId from authenticated user
+    const userId = getHardcodedUserId()
+    const student = await prisma.student.findUnique({
+      where: { userId },
+      select: { id: true }
+    })
+
+    if (!student) {
+      return NextResponse.json(
+        { success: false, error: 'Student not found' },
+        { status: 404 }
+      )
+    }
+
+    const studentId = student.id
+    console.log(`🗑️ Delete attempt - StudentId: ${studentId}, RequirementId: ${requirementId}`)
 
     // Find the student requirement record
     const studentRequirement = await prisma.examStudentRequirement.findUnique({

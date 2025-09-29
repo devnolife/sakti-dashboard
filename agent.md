@@ -1,22 +1,11 @@
-Saya ingin menambahkan fitur baru:
+Saya ingin memperbaiki bug:
 
-**Nama Fitur**: Unggah file Persyaratan KKP
+**Bug yang Ditemukan**: Tampilan progress input file tidak muncul di frontend saat mengunggah berkas persyaratan Ujian.
 **Dashboard**: mahasiswa
-**Path Target**: /app/dashboard/mahasiswa/kkp/requirements
+**Path Target**: /app/dashboard/mahasiswa/exams (pada sub menu persyaratan ujian)
 
-**Deskripsi Fitur**:
-Sistem dapat mengunggah file persyaratan berkas KKP, yang dimana perysaratan berkasnya terdiri dari:
-- Unggah Berkas Persyaratan KKP
-- Syarat berkas KKP terdiri dari:
-- Bukti Pembayaran KKP Plus
-- Transkrip Nilai Minimal 125 SKS
-- Minimal 1 Dokumen Sertifikat Kompetensi sesuai bidang informatika
-- Kartu Kontrol Praktikum
-- Praktikum Ilmu Falaq
-- Surat Keterangan Baca Al-Qur’an
-- Kartu Kontrol PA dari semester 1 s/d semester berjalan
-- Sertifikat DAD / Keterangan Lulus DAD
-semua berkas tersebut di unggah dalam format PDF, lalu file disimpan ke path public/uploads/persyaratan-kkp. Selanjutnya metadatanya akan di kirim dan disimpan pada database.
+**Deskripsi Bug**:
+Saat berhasil menginput file persyarata ujian yang dimana semua proses upload file sudah berhasil, namun pada tampilan frontend tidak menampilkan progress file yang sudah di upload. Sehingga mahasiswa tidak mengetahui file mana saja yang sudah di upload dan belum di upload.
 
 **User Story**:
-Sebagai mahasiswa yang ingin KKP saya ingin mengunggah berkas persyaratan dimana pada saat unggah menampilkan informasi progress pada halaman Persyaratan KKP, yang dimana saya mengetahui file mana saja yang saya telah unggah dan belum saya unggah. saya juga dapat menghapus file yang di unggah jika salah mengunggahnya.
+Sebagai mahasiswa, saya ingin melihat progress file yang sudah saya upload pada halaman persyaratan ujian agar saya dapat memastikan semua berkas yang diperlukan telah saya unggah dengan benar.
