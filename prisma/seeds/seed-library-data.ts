@@ -1,11 +1,11 @@
-import { prisma } from '../../lib/prisma'
-import { BookStatus, BorrowingStatus, ThesisStatus } from '../../lib/generated/prisma'
+import { getHardcodedUserId } from '@/lib/auth-utils'
+import { PrismaClient, BookStatus, BorrowingStatus, ThesisStatus } from '../../lib/generated/prisma'
 
-async function seedLibraryData() {
+export async function seedLibraryData(prisma: PrismaClient) {
   console.log('🏗️ Starting library data seeding...')
 
-  // Hardcoded student ID (MAHASISWA001)
-  const studentId = 'cmfz4q41z00019yo0urpkhgyf'
+  // Get the hardcoded user ID from auth utils
+  const studentId = getHardcodedUserId()
 
   try {
     // 1. Create Book Categories
@@ -281,36 +281,20 @@ async function seedLibraryData() {
     console.log(`- Created ${borrowings.length} book borrowings for student`)
     console.log(`- Student: ${student.nim}`)
 
-  } catch (error) {
-    console.error('❌ Error seeding library data:', error)
-    throw error
-  }
-}
+    // Thesis data seeding (merged from seedThesisData function)
+    console.log('📝 Starting thesis data seeding...')
 
-async function seedThesisData() {
-  console.log('📝 Starting thesis data seeding...')
-
-  // Hardcoded student ID (MAHASISWA001)
-  const studentId = 'cmfz4q41z00019yo0urpkhgyf'
-
-  try {
-    // Get student profile
-    const student = await prisma.student.findFirst({
-      where: { userId: studentId }
-    })
-
-    if (!student) {
-      throw new Error('Student profile not found for userId: ' + studentId)
-    }
+    // For thesis data, reuse the student found earlier
+    console.log('Using student for thesis:', student.nim)
 
     // Get some lecturers for supervisors
     const lecturers = await prisma.lecturer.findMany({
-      take: 3,
+      take: 5,
       include: { user: true }
     })
 
-    if (lecturers.length === 0) {
-      console.log('⚠️ No lecturers found, skipping thesis seeding')
+    if (lecturers.length < 3) {
+      console.log(`⚠️ Not enough lecturers found (${lecturers.length}/3), skipping thesis seeding`)
       return
     }
 
@@ -427,18 +411,8 @@ async function seedThesisData() {
     console.error('❌ Error seeding thesis data:', error)
     throw error
   }
+
+  console.log('✅ Library and thesis data seeding completed!')
 }
 
-async function main() {
-  try {
-    await seedLibraryData()
-    await seedThesisData()
-  } catch (error) {
-    console.error('❌ Seeding failed:', error)
-    process.exit(1)
-  } finally {
-    await prisma.$disconnect()
-  }
-}
-
-main()
+// This function is now exported and called from the main seed.ts file

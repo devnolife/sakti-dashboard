@@ -123,7 +123,11 @@ export function RequirementsCard({
 
     try {
       setUploadingId(requirementId)
+      console.log(`🔄 Uploading file for requirement: ${requirementId}`)
+      
       await onFileUpload(requirementId, file)
+      
+      console.log(`✅ File uploaded successfully for requirement: ${requirementId}`)
       
       toast({
         title: "File Berhasil Diunggah",
@@ -135,6 +139,7 @@ export function RequirementsCard({
         fileInputRefs.current[requirementId]!.value = ''
       }
     } catch (error) {
+      console.error(`❌ Upload failed for requirement ${requirementId}:`, error)
       toast({
         title: "Gagal Mengunggah File",
         description: error instanceof Error ? error.message : "Terjadi kesalahan saat mengunggah file.",

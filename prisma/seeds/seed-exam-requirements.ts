@@ -1,8 +1,6 @@
 import { PrismaClient } from '../../lib/generated/prisma'
 
-const prisma = new PrismaClient()
-
-async function seedExamRequirements() {
+export async function seedExamRequirements(prisma: PrismaClient) {
   console.log('🌱 Seeding exam requirements...')
 
   // Delete existing requirements
@@ -206,11 +204,4 @@ async function seedExamRequirements() {
   console.log(`   - Closing: ${closingRequirements.length} requirements`)
 }
 
-seedExamRequirements()
-  .catch((e) => {
-    console.error('❌ Error seeding exam requirements:', e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+// This function is now exported and called from the main seed.ts file

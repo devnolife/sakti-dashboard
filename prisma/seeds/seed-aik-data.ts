@@ -1,9 +1,7 @@
 import { PrismaClient } from '../../lib/generated/prisma'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 
-const prisma = new PrismaClient()
-
-async function seedAIKData() {
+export async function seedAIKData(prisma: PrismaClient) {
   try {
     const userId = getHardcodedUserId()
     console.log('Seeding AIK Komfren data for userId:', userId)
@@ -139,4 +137,4 @@ async function seedAIKData() {
   }
 }
 
-seedAIKData()
+// This function is now exported and called from the main seed.ts file

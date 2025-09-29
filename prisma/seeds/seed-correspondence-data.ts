@@ -1,8 +1,6 @@
 import { PrismaClient, ApprovalRole, LetterStatus } from '@/lib/generated/prisma'
 
-const prisma = new PrismaClient()
-
-async function seedCorrespondenceData() {
+export async function seedCorrespondenceData(prisma: PrismaClient) {
   try {
     console.log('=== SEEDING CORRESPONDENCE DATA ===\n')
 
@@ -280,4 +278,4 @@ async function seedCorrespondenceData() {
   }
 }
 
-seedCorrespondenceData()
+// This function is now exported and called from the main seed.ts file

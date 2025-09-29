@@ -1,8 +1,6 @@
 import { PrismaClient } from '../../lib/generated/prisma'
 
-const prisma = new PrismaClient()
-
-async function seedAcademicData() {
+export async function seedAcademicData(prisma: PrismaClient) {
   console.log('🌱 Starting academic data seeding...')
 
   try {
@@ -161,15 +159,4 @@ async function seedAcademicData() {
   }
 }
 
-async function main() {
-  await seedAcademicData()
-}
-
-main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+// This function is now exported and called from the main seed.ts file

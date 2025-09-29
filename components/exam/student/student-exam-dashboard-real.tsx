@@ -72,9 +72,46 @@ export default function StudentExamDashboard() {
   const [loading, setLoading] = useState(true)
   const [selectedSchedule, setSelectedSchedule] = useState<any>(null)
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false)
+  
+  // State untuk requirements real-time
+  const [proposalRequirements, setProposalRequirements] = useState<any[]>([])
+  const [resultRequirements, setResultRequirements] = useState<any[]>([])
+  const [closingRequirements, setClosingRequirements] = useState<any[]>([])
+
+  // Fungsi untuk fetch requirements real-time
+  const fetchRequirementsForExam = async (examType: 'proposal' | 'result' | 'closing') => {
+    try {
+      // Get studentId dari getCurrentStudentId utility
+      const { getCurrentStudentId } = await import('@/lib/mock-config')
+      const studentId = getCurrentStudentId()
+      
+      const response = await fetch(`/api/student/exams/requirements?examType=${examType}&studentId=${studentId}`)
+      const result = await response.json()
+      
+      if (result.success) {
+        switch (examType) {
+          case 'proposal':
+            setProposalRequirements(result.data)
+            break
+          case 'result':
+            setResultRequirements(result.data)
+            break
+          case 'closing':
+            setClosingRequirements(result.data)
+            break
+        }
+      }
+    } catch (error) {
+      console.error(`Error fetching ${examType} requirements:`, error)
+    }
+  }
 
   useEffect(() => {
     fetchExamData()
+    // Fetch requirements saat component mount
+    fetchRequirementsForExam('proposal')
+    fetchRequirementsForExam('result')
+    fetchRequirementsForExam('closing')
   }, [])
 
   const fetchExamData = async () => {
@@ -104,6 +141,15 @@ export default function StudentExamDashboard() {
     }
   }
 
+  // Function to refresh exam data - will be passed to tabs
+  const refreshExamData = async () => {
+    await fetchExamData()
+    // Refresh requirements untuk update progress real-time
+    await fetchRequirementsForExam('proposal')
+    await fetchRequirementsForExam('result') 
+    await fetchRequirementsForExam('closing')
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -130,11 +176,11 @@ export default function StudentExamDashboard() {
 
   const { proposalExam, resultExam, closingExam, allExams } = examData
 
-  // Calculate overall progress
+  // Calculate overall progress berdasarkan requirements real-time
   const allRequirements = [
-    ...(proposalExam?.requirements || []),
-    ...(resultExam?.requirements || []),
-    ...(closingExam?.requirements || [])
+    ...proposalRequirements,
+    ...resultRequirements,
+    ...closingRequirements
   ]
   const completedRequirements = allRequirements.filter(req => req.completed)
   const overallProgress = allRequirements.length > 0 
@@ -146,10 +192,26 @@ export default function StudentExamDashboard() {
     exam.scheduledDate && exam.status === 'scheduled'
   )
 
-  const getProgressForExam = (exam: ExamData | null) => {
-    if (!exam || !exam.requirements || exam.requirements.length === 0) return 0
-    const completed = exam.requirements.filter(req => req.completed).length
-    return Math.round((completed / exam.requirements.length) * 100)
+
+
+  const getProgressForExam = (examType: 'proposal' | 'result' | 'closing') => {
+    let requirements: any[] = []
+    
+    switch (examType) {
+      case 'proposal':
+        requirements = proposalRequirements
+        break
+      case 'result':
+        requirements = resultRequirements
+        break
+      case 'closing':
+        requirements = closingRequirements
+        break
+    }
+    
+    if (requirements.length === 0) return 0
+    const completed = requirements.filter(req => req.completed).length
+    return Math.round((completed / requirements.length) * 100)
   }
 
   const getStatusColor = (status: string) => {
@@ -241,7 +303,7 @@ export default function StudentExamDashboard() {
             <ExamProgress
               title="Ujian Proposal"
               icon={<BookOpen className="w-5 h-5" />}
-              progress={getProgressForExam(proposalExam)}
+              progress={getProgressForExam('proposal')}
               status={proposalExam?.status as any || 'pending'}
               onClick={() => setActiveTab("proposal")}
               colorScheme="blue"
@@ -250,7 +312,7 @@ export default function StudentExamDashboard() {
             <ExamProgress
               title="Ujian Hasil"
               icon={<GraduationCap className="w-5 h-5" />}
-              progress={getProgressForExam(resultExam)}
+              progress={getProgressForExam('result')}
               status={resultExam?.status as any || 'pending'}
               onClick={() => setActiveTab("result")}
               colorScheme="purple"
@@ -259,7 +321,7 @@ export default function StudentExamDashboard() {
             <ExamProgress
               title="Ujian Tutup"
               icon={<Award className="w-5 h-5" />}
-              progress={getProgressForExam(closingExam)}
+              progress={getProgressForExam('closing')}
               status={closingExam?.status as any || 'pending'}
               onClick={() => setActiveTab("closing")}
               colorScheme="teal"
@@ -376,14 +438,14 @@ export default function StudentExamDashboard() {
         </TabsContent>
 
         <TabsContent value="proposal">
-          <ProposalExamTab examData={proposalExam as any} onRefresh={fetchExamData} />
+          <ProposalExamTab examData={proposalExam as any} onRefresh={refreshExamData} />
         </TabsContent>
 
         <TabsContent value="result">
           <ResultExamTab 
             examData={resultExam as any} 
             proposalStatus={proposalExam?.status as any}
-            onRefresh={fetchExamData} 
+            onRefresh={refreshExamData} 
           />
         </TabsContent>
 
@@ -391,7 +453,7 @@ export default function StudentExamDashboard() {
           <ClosingExamTab 
             examData={closingExam as any} 
             resultStatus={resultExam?.status as any}
-            onRefresh={fetchExamData} 
+            onRefresh={refreshExamData} 
           />
         </TabsContent>
 

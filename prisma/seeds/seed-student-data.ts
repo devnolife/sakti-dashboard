@@ -1,8 +1,6 @@
 import { PrismaClient } from '../../lib/generated/prisma'
 
-const prisma = new PrismaClient()
-
-async function main() {
+export async function seedStudentData(prisma: PrismaClient) {
   console.log('🌱 Seeding student data...')
   
   try {
@@ -206,8 +204,20 @@ async function main() {
     }
     
     if (lecturer1) {
-      await prisma.kkpApplication.create({
-        data: {
+      await prisma.kkpApplication.upsert({
+        where: { applicationNumber: 'KKP2023001' },
+        update: {
+          title: 'Pengembangan Sistem Manajemen Inventori',
+          description: 'Mengembangkan sistem manajemen inventori berbasis web untuk meningkatkan efisiensi operasional perusahaan.',
+          status: 'approved',
+          submissionDate: new Date('2023-09-15'),
+          startDate: new Date('2023-10-01'),
+          endDate: new Date('2023-12-31'),
+          studentId: studentProfile.id,
+          companyId: kkpCompany.id,
+          supervisorId: lecturer1.id
+        },
+        create: {
           applicationNumber: 'KKP2023001',
           title: 'Pengembangan Sistem Manajemen Inventori',
           description: 'Mengembangkan sistem manajemen inventori berbasis web untuk meningkatkan efisiensi operasional perusahaan.',
@@ -247,33 +257,55 @@ async function main() {
     ]
     
     for (const payment of paymentTypes) {
-      await prisma.payment.create({
-        data: {
+      const existingPayment = await prisma.payment.findFirst({
+        where: {
           studentId: studentProfile.id,
           description: payment.description,
-          amount: payment.amount,
-          dueDate: payment.dueDate,
-          status: payment.status as any,
           category: payment.category as any,
           semester: payment.semester,
           academicYear: payment.academicYear
         }
       })
+
+      if (!existingPayment) {
+        await prisma.payment.create({
+          data: {
+            studentId: studentProfile.id,
+            description: payment.description,
+            amount: payment.amount,
+            dueDate: payment.dueDate,
+            status: payment.status as any,
+            category: payment.category as any,
+            semester: payment.semester,
+            academicYear: payment.academicYear
+          }
+        })
+      }
     }
     
     console.log('✅ Created sample payments')
     
     // Create sample exam applications
-    await prisma.examApplication.create({
-      data: {
+    const existingExam = await prisma.examApplication.findFirst({
+      where: {
         studentId: studentProfile.id,
         type: 'proposal',
-        title: 'Proposal KKP: Sistem Manajemen Inventori',
-        status: 'scheduled',
-        scheduledDate: new Date('2023-11-15'),
-        abstract: 'Proposal ini membahas pengembangan sistem manajemen inventori berbasis web.'
+        title: 'Proposal KKP: Sistem Manajemen Inventori'
       }
     })
+
+    if (!existingExam) {
+      await prisma.examApplication.create({
+        data: {
+          studentId: studentProfile.id,
+          type: 'proposal',
+          title: 'Proposal KKP: Sistem Manajemen Inventori',
+          status: 'scheduled',
+          scheduledDate: new Date('2023-11-15'),
+          abstract: 'Proposal ini membahas pengembangan sistem manajemen inventori berbasis web.'
+        }
+      })
+    }
     
     console.log('✅ Created exam application')
     
@@ -315,16 +347,26 @@ async function main() {
         }
       })
       
-      // Create borrowing record
-      await prisma.bookBorrowing.create({
-        data: {
+      // Create borrowing record if not exists
+      const existingBorrowing = await prisma.bookBorrowing.findFirst({
+        where: {
           studentId: studentProfile.id,
           bookId: book.id,
-          borrowDate: new Date(),
-          dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
           status: 'active'
         }
       })
+
+      if (!existingBorrowing) {
+        await prisma.bookBorrowing.create({
+          data: {
+            studentId: studentProfile.id,
+            bookId: book.id,
+            borrowDate: new Date(),
+            dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
+            status: 'active'
+          }
+        })
+      }
     }
     
     console.log('✅ Created sample book borrowings')
@@ -354,10 +396,4 @@ function getGradePoints(letterGrade: string): number {
   return gradePoints[letterGrade] || 0.0
 }
 
-main()
-  .catch((e) => {
-    console.error('Error:', e)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+// This function is now exported and called from the main seed.ts file
