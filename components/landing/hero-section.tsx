@@ -26,10 +26,11 @@ const HeroSection: React.FC = () => {
   return (
     <section
       id="home"
-      className="relative overflow-hidden pt-[120px] min-h-[600px] flex items-center bg-gradient-to-br from-[#0451d3] via-[#0451d3]/90 to-[#012c74]"
+      className="relative overflow-hidden pt-[120px] min-h-[600px] flex items-center bg-gradient-to-br from-primary via-brand/60 to-primary-800"
     >
       {/* Background gradient & noise overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(4,81,211,0.25),transparent_65%)] mix-blend-overlay opacity-40" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #ffffff10 0 2px, transparent 2px 6px)' }} />
 
       {/* Floating blurred shapes */}
@@ -78,7 +79,7 @@ const HeroSection: React.FC = () => {
 
             {/* Actions */}
             <div className="flex flex-col w-full gap-3 sm:flex-row sm:items-center">
-              <Button asChild className="rounded-xl px-8 py-6 text-base sm:text-lg font-semibold bg-white text-[#0451d3] hover:bg-white/90 hover:shadow-xl shadow-lg shadow-white/20 transition-all">
+              <Button asChild className="rounded-xl px-8 py-6 text-base sm:text-lg font-semibold bg-white text-primary hover:bg-white/90 hover:shadow-xl shadow-lg shadow-white/20 transition-all">
                 <Link href="/dashboard" className="flex items-center gap-2">
                   <span>Masuk Dashboard</span>
                   <ArrowRight className="w-5 h-5" />
@@ -105,7 +106,7 @@ const HeroSection: React.FC = () => {
             <div className="relative p-2 rounded-3xl bg-gradient-to-br from-white/20 via-white/10 to-transparent backdrop-blur-xl border border-white/30 shadow-2xl shadow-[#102a5a]/40">
               <div className="relative overflow-hidden rounded-[22px] bg-neutral-900/70 aspect-[4/3] flex items-center justify-center">
                 {/* Animated rings */}
-                <div className="absolute w-[140%] h-[140%] rounded-full bg-gradient-to-tr from-[#ffffff18] to-transparent animate-spin-slower" />
+                <div className="absolute w-[140%] h-[140%] rounded-full bg-gradient-to-tr from-[#ffffff18] via-[#0451d3]/20 to-transparent animate-spin-slower" />
                 <div className="absolute w-[120%] h-[120%] rounded-full border border-white/10 animate-spin-slow [animation-direction:reverse]" />
                 <div className="relative z-10 flex flex-col items-center px-8 text-center">
                   <p className="mb-4 text-sm tracking-widest text-white/50">PREVIEW</p>

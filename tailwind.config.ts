@@ -25,6 +25,10 @@ const config: Config = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        // Brand accent (legacy stronger blue kept for highlights / emphasis)
+        brand: {
+          DEFAULT: '#0451d3'
+        },
         primary: {
           DEFAULT: '#3674B5',
           foreground: '#FFFFFF',

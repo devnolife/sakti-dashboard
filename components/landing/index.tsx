@@ -1,3 +1,6 @@
+// ============================================================================
+// ACTIVE LANDING PAGE COMPONENTS - Currently Used in main page
+// ============================================================================
 export { default as Header } from './header'
 export { default as HeroSection } from './hero-section'
 export { default as AboutSection } from './about-section'
@@ -8,8 +11,26 @@ export { default as QuotesSection } from './quotes-section'
 export { default as CTASection } from './cta-section'
 export { default as Footer } from './footer'
 
-// Legacy exports (if still needed)
-export { default as UsefulFeature } from './useful-feature'
-export { default as OurTeam } from './our-team'
-export { default as GetStarted } from './get-started'
-export { default as ContactUs } from './contact-us'
+// ============================================================================
+// NEW ENHANCED COMPONENTS - Modern & Optimized
+// ============================================================================
+export { default as FeaturesSection } from './features-section'    // Enhanced features showcase
+export { default as StatsSection } from './stats-section'          // Faculty statistics
+export { default as NewsSection } from './news-section'            // News & announcements
+
+// ============================================================================
+// LEGACY/UNUSED COMPONENTS - Not used in current main page
+// TODO: Remove or refactor these components after migration complete
+// ============================================================================
+// export { default as UsefulFeature } from './useful-feature'    // REPLACED BY: FeaturesSection
+// export { default as OurTeam } from './our-team'               // REPLACED BY: WakilDekanSection
+// export { default as GetStarted } from './get-started'         // Not used in current layout
+// export { default as ContactUs } from './contact-us'           // Not used in current layout
+
+// ============================================================================
+// FUTURE COMPONENTS (Planned)
+// ============================================================================
+// - ProgramsSection: Detailed study programs info
+// - ResearchSection: Research & publications showcase
+// - FacilitiesSection: Campus facilities virtual tour
+// - PartnershipsSection: Industry partnerships display

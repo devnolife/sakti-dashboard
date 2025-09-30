@@ -7,11 +7,13 @@ const CTASection = () => {
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-[#0451d3] rounded-2xl relative overflow-hidden shadow-lg">
+        <div className="relative overflow-hidden shadow-lg bg-gradient-to-br from-primary via-brand/90 to-primary-700 rounded-2xl">
           {/* Background Image Mask */}
           <div className="absolute top-32 right-0 w-[400px] h-[300px] opacity-20">
             <div className="w-full h-full bg-gradient-to-l from-white/10 to-transparent" />
           </div>
+          {/* Brand accent overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(4,81,211,0.3),transparent_60%)] mix-blend-overlay" />
 
           <div className="grid lg:grid-cols-2 gap-8 p-8">
             {/* Left Content */}
@@ -43,7 +45,7 @@ const CTASection = () => {
                       className="bg-transparent text-white placeholder-white/50 text-sm w-full outline-none"
                     />
                   </div>
-                  <Button className="bg-[#0451d3] hover:bg-[#0451d3]/90 border-2 border-white rounded-full px-6 py-2 text-sm font-semibold shadow-lg">
+                  <Button className="bg-gradient-to-r from-white to-white/95 hover:from-white/95 hover:to-white text-primary hover:text-brand border-2 border-white rounded-full px-6 py-2 text-sm font-semibold shadow-lg transition-all duration-300">
                     Subscribe
                   </Button>
                 </div>

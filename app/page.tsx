@@ -2,9 +2,12 @@ import {
   Header,
   HeroSection,
   AboutSection,
+  FeaturesSection,
   CoursesSection,
   WakilDekanSection,
+  StatsSection,
   TestimonialsSection,
+  NewsSection,
   QuotesSection,
   CTASection,
   Footer
@@ -17,9 +20,12 @@ export default function Home() {
       <main className="min-h-screen">
         <HeroSection />
         <AboutSection />
+        <FeaturesSection />
         <CoursesSection />
         <WakilDekanSection />
+        <StatsSection />
         <TestimonialsSection />
+        <NewsSection />
         <QuotesSection />
         <CTASection />
       </main>

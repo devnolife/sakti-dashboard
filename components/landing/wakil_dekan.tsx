@@ -53,17 +53,19 @@ const WakilDekanSection = () => {
   ]
 
   return (
-    <section id="features" className="py-12 bg-gray-50">
+    <section id="features" className="py-12 bg-gradient-to-b from-gray-50 via-primary/5 to-brand/5 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-80 h-80 bg-gradient-to-br from-brand/10 via-primary/10 to-transparent rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-72 h-72 bg-gradient-to-tr from-primary/10 via-brand/10 to-transparent rounded-full blur-3xl" />
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Clean Header */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-[#0451d3] text-white px-4 py-1.5 rounded-full text-xs font-medium mb-4">
+          <div className="inline-flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded-full text-xs font-medium mb-4">
             <GraduationCap className="w-3 h-3" />
             <span>Tim Kepemimpinan</span>
           </div>
 
           <h2 className="mb-3 text-2xl font-bold text-gray-900 md:text-3xl">
-            Para <span className="text-[#0451d3]">Wakil Dekan</span>
+            Para <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-brand">Wakil Dekan</span>
           </h2>
           <p className="max-w-2xl mx-auto text-sm text-gray-600 md:text-base">
             Kepemimpinan berpengalaman dalam mengembangkan pendidikan teknik berkualitas

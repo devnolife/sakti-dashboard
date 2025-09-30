@@ -28,10 +28,10 @@ const TestimonialsSection = () => {
         {/* Header */}
         <div className="mb-8 grid lg:grid-cols-2 gap-8">
           <div>
-            <Badge className="bg-[#0451d3] text-white px-4 py-1.5 text-sm rounded-full shadow-lg mb-4">
+            <Badge className="bg-primary text-white px-4 py-1.5 text-sm rounded-full shadow-lg mb-4">
               Testimonials
             </Badge>
-            <h2 className="text-2xl md:text-3xl font-medium text-[#0451d3] leading-tight mb-4">
+            <h2 className="text-2xl md:text-3xl font-medium leading-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary via-brand to-primary/80">
               Trusted by Thousands of Learners
             </h2>
             <p className="text-sm md:text-base text-[rgba(16,16,18,0.4)] leading-relaxed mb-6">
@@ -39,7 +39,7 @@ const TestimonialsSection = () => {
             </p>
 
             {/* Navigation Button */}
-            <Button className="bg-[#0451d3] hover:bg-[#0451d3]/90 rounded-full w-12 h-12 p-0 shadow-lg">
+            <Button className="bg-primary hover:bg-primary/90 rounded-full w-12 h-12 p-0 shadow-lg">
               <ChevronLeft className="w-5 h-5 text-white" />
             </Button>
           </div>
@@ -48,7 +48,8 @@ const TestimonialsSection = () => {
         {/* Testimonial Cards */}
         <div className="flex gap-6 justify-center lg:justify-end">
           {/* Main Testimonial */}
-          <div className="bg-black rounded-2xl p-6 max-w-sm relative shadow-lg">
+          <div className="relative p-6 bg-black rounded-2xl max-w-sm shadow-lg overflow-hidden">
+            <span className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brand via-primary to-brand" />
             <div className="text-white space-y-4">
               {/* Client Name */}
               <h3 className="font-bold text-sm leading-normal">
@@ -73,7 +74,8 @@ const TestimonialsSection = () => {
           </div>
 
           {/* Secondary Testimonial */}
-          <div className="bg-black rounded-2xl p-6 max-w-xs relative shadow-lg">
+          <div className="relative p-6 bg-black rounded-2xl max-w-xs shadow-lg overflow-hidden">
+            <span className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary via-brand to-primary" />
             <div className="text-white space-y-4 h-full flex flex-col justify-between">
               {/* Empty space */}
               <div className="flex-1" />
