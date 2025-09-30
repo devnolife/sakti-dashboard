@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { authMiddleware } from "@/lib/auth-middleware"
-import { getHardcodedUserId } from "@/lib/auth-utils"
+import { getServerActionUserId } from "@/lib/auth-utils"
 
 // DELETE - Hapus lokasi KKP (hanya yang dibuat oleh mahasiswa)
 export async function DELETE(
@@ -9,18 +9,16 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // For development: use hardcoded user ID
-    const isDevelopment = process.env.NODE_ENV === 'development'
-    let userId: string
-    
-    if (isDevelopment) {
-      userId = getHardcodedUserId()
-    } else {
-      const token = await authMiddleware(request)
-      if (token instanceof NextResponse) {
-        return token
-      }
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) {
       userId = token.sub
+    }
+    if (!userId) {
+      try { userId = await getServerActionUserId() } catch {}
+    }
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
     const locationId = params.id

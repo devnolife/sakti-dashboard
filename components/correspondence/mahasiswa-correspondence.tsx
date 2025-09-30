@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -9,7 +10,6 @@ import { Input } from "@/components/ui/input"
 import { FileText, Clock, CheckCircle, XCircle, AlertCircle, Eye, Plus, Search, Calendar } from "lucide-react"
 import { getStudentLetterRequests } from "@/app/actions/correspondence-actions"
 import { formatDate } from "@/lib/utils"
-import { getHardcodedUserId } from "@/lib/auth-utils"
 import type { LetterRequest } from "@/types/correspondence"
 import { LetterRequestDetails } from "./letter-request-details"
 import { LetterCreationDialog } from "./letter-creation-dialog"
@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 type MahasiswaCorrespondenceProps = Record<string, never>
 
 export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
+  const { user, isLoading: authLoading } = useAuth()
   const [requests, setRequests] = useState<LetterRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<LetterRequest[]>([])
   const [loading, setLoading] = useState(true)
@@ -31,28 +32,31 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
   const [statusFilter, setStatusFilter] = useState("all")
   const [activeTab, setActiveTab] = useState("all")
 
-  // Get student ID from the hardcoded user ID
-  const userId = getHardcodedUserId()
+  // Removed hardcoded userId
   const [studentId, setStudentId] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchStudentAndRequests() {
       try {
-        // First get the student ID from the user ID
+        if (!user?.id) return
+        // Fetch student profile using authenticated user id
+        const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
         const response = await fetch('/api/student/profile', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId })
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {})
+            },
+          body: JSON.stringify({ userId: user.id })
         })
-        
         if (response.ok) {
           const student = await response.json()
           setStudentId(student.id)
-          
-          // Then fetch letter requests
           const data = await getStudentLetterRequests(student.id)
           setRequests(data)
           setFilteredRequests(data)
+        } else {
+          console.error('Failed to load student profile')
         }
       } catch (error) {
         console.error("Error fetching student and letter requests:", error)
@@ -61,10 +65,14 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
       }
     }
 
-    if (userId) {
-      fetchStudentAndRequests()
+    if (!authLoading) {
+      if (!user?.id) {
+        setLoading(false)
+      } else {
+        fetchStudentAndRequests()
+      }
     }
-  }, [userId])
+  }, [authLoading, user?.id])
 
   useEffect(() => {
     // Apply filters

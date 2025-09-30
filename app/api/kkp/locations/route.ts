@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { authMiddleware } from "@/lib/auth-middleware"
-import { getHardcodedUserId } from "@/lib/auth-utils"
+import { getServerActionUserId } from "@/lib/auth-utils"
 
 // GET - Ambil semua lokasi KKP yang tersedia
 export async function GET() {
@@ -66,19 +66,18 @@ export async function GET() {
 // POST - Tambah lokasi KKP baru
 export async function POST(request: NextRequest) {
   try {
-    // For development: use hardcoded user ID
-    // In production, this should use proper authentication
-    const isDevelopment = process.env.NODE_ENV === 'development'
-    let userId: string
-    
-    if (isDevelopment) {
-      userId = getHardcodedUserId()
-    } else {
-      const token = await authMiddleware(request)
-      if (token instanceof NextResponse) {
-        return token
-      }
+    // Gunakan authMiddleware terlebih dahulu (Bearer / NextAuth)
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) {
       userId = token.sub
+    }
+    // Fallback ke cookie JWT server action helper bila authMiddleware gagal (token adalah NextResponse)
+    if (!userId) {
+      try { userId = await getServerActionUserId() } catch {}
+    }
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     
     // Check if user is a student

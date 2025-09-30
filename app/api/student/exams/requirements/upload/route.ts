@@ -3,7 +3,8 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { PrismaClient } from '@/lib/generated/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
+import { authMiddleware } from '@/lib/auth-middleware'
 
 const prisma = new PrismaClient()
 
@@ -12,7 +13,11 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File
     const requirementId = formData.get('requirementId') as string
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     
     console.log(`📤 Upload attempt - UserId: ${userId}, RequirementId: ${requirementId}`)
     
@@ -155,7 +160,11 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get studentId from authenticated user
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     const student = await prisma.student.findUnique({
       where: { userId },
       select: { id: true }

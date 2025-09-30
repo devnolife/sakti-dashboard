@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
 
 export interface AcademicData {
   student: {
@@ -72,7 +72,7 @@ export interface ControlCardData {
 }
 
 export async function getStudentAcademicData(): Promise<AcademicData> {
-  const userId = getHardcodedUserId()
+  const userId = await getServerActionUserId()
   
   console.log('🔍 Fetching student academic data for user:', userId)
 
@@ -218,7 +218,7 @@ function getGradePoints(letterGrade: string): number {
 
 export async function getControlCardData(): Promise<ControlCardData> {
   try {
-    const userId = getHardcodedUserId()
+    const userId = await getServerActionUserId()
     
     // Get student data with academic advisor and consultations
     const student = await prisma.student.findUnique({

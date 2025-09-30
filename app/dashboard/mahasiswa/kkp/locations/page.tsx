@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useAuth } from "@/context/auth-context"
-import { getHardcodedUserId } from "@/lib/auth-utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -347,11 +346,9 @@ export default function LocationsPage() {
   const canDeleteLocation = (location: Location) => {
     if (!location.createdBy) return false
     
-    // For development: use hardcoded user ID
-    const isDevelopment = process.env.NODE_ENV === 'development'
-    const currentUserId = isDevelopment ? getHardcodedUserId() : user?.id
+    const currentUserId = user?.id
     
-    return location.createdBy.userId === currentUserId
+    return !!currentUserId && location.createdBy.userId === currentUserId
   }
 
   // Handle form submission

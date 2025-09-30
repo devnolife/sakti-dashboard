@@ -1,14 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from "@/hooks/use-toast"
-import { getHardcodedUserId } from "@/lib/auth-utils"
 import {
   CheckCircle2,
   AlertCircle,
@@ -48,22 +46,25 @@ interface KkpRequirement {
 }
 
 export default function RequirementsPage() {
+  const { user, isLoading: authLoading } = useAuth()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [kkpRequirements, setKkpRequirements] = useState<KkpRequirement[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [uploadingType, setUploadingType] = useState<string | null>(null)
   const { toast } = useToast()
   
-  // Get user ID from auth utils
-  const userId = getHardcodedUserId()
-
   // Fetch KKP requirements
   const fetchKkpRequirements = async () => {
+    if (!user?.id) return
     try {
       setIsLoading(true)
-      const response = await fetch(`/api/kkp/requirements?userId=${userId}`)
+      const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
+      const response = await fetch(`/api/kkp/requirements`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      })
       const result = await response.json()
-      
       if (result.success) {
         setKkpRequirements(result.data)
       } else {
@@ -85,9 +86,18 @@ export default function RequirementsPage() {
     }
   }
 
+  useEffect(() => {
+    if (authLoading) return
+    if (!user?.id) {
+      setIsLoading(false)
+      return
+    }
+    fetchKkpRequirements()
+  }, [authLoading, user?.id])
+
   // Upload file
   const handleFileUpload = async (requirementType: string, file: File) => {
-    if (!file) return
+    if (!file || !user?.id) return
 
     // Validasi file
     if (file.type !== "application/pdf") {
@@ -110,14 +120,16 @@ export default function RequirementsPage() {
 
     try {
       setUploadingType(requirementType)
-      
       const formData = new FormData()
       formData.append("file", file)
-      formData.append("userId", userId)
       formData.append("requirementType", requirementType)
 
-      const response = await fetch("/api/kkp/requirements", {
-        method: "POST",
+      const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
+      const response = await fetch('/api/kkp/requirements', {
+        method: 'POST',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
         body: formData,
       })
 
@@ -243,11 +255,6 @@ export default function RequirementsPage() {
     setIsRefreshing(false)
   }
 
-  // Load data on component mount
-  useEffect(() => {
-    fetchKkpRequirements()
-  }, [])
-
   const progress = getProgress()
   const uploadedCount = kkpRequirements.filter(req => req.isUploaded).length
   const totalCount = kkpRequirements.length
@@ -261,6 +268,15 @@ export default function RequirementsPage() {
             <span>Memuat data persyaratan...</span>
           </div>
         </div>
+      </div>
+    )
+  }
+
+  if (!authLoading && !user?.id) {
+    return (
+      <div className="p-8 text-center space-y-4">
+        <h2 className="text-xl font-semibold">Tidak terautentikasi</h2>
+        <p className="text-sm text-muted-foreground">Silakan login kembali untuk mengakses persyaratan KKP.</p>
       </div>
     )
   }

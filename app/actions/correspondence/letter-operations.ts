@@ -2,7 +2,7 @@
 
 import { LetterStatus } from "@/types/correspondence"
 import { prisma } from "@/lib/prisma"
-import { getHardcodedUserId } from "@/lib/auth-utils"
+import { getServerActionUserId } from "@/lib/auth-utils"
 
 // Submit a new letter request
 export async function submitLetterRequest(
@@ -14,8 +14,8 @@ export async function submitLetterRequest(
   attachments?: Array<{ name: string; url: string; mimeType?: string; fileSize?: number }>
 ): Promise<{ success: boolean; message: string; requestId?: string }> {
   try {
-    // Get student ID from hardcoded user ID
-    const userId = getHardcodedUserId()
+    // Get student ID from session
+    const userId = await getServerActionUserId()
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { studentProfile: true }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@/lib/generated/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
+import { authMiddleware } from '@/lib/auth-middleware'
 
 const prisma = new PrismaClient()
 
@@ -17,7 +18,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get studentId from authenticated user
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     const student = await prisma.student.findUnique({
       where: { userId },
       select: { id: true }

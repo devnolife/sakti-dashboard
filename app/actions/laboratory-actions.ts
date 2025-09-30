@@ -1,16 +1,16 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
 
 // Get laboratory data for student dashboard
 export async function getLaboratoryData() {
-  const userId = getHardcodedUserId()
+  const userId = await getServerActionUserId()
 
   try {
     // Get student profile
     const student = await prisma.student.findUnique({
-      where: { userId: userId },
+      where: { userId },
       select: { id: true }
     })
 
@@ -148,16 +148,10 @@ export async function getLaboratoryData() {
 // Register for a laboratory
 export async function registerLaboratory(laboratoryId: string) {
   try {
-    const studentId = getHardcodedUserId()
-    
-    const student = await prisma.student.findUnique({
-      where: { id: studentId },
-      select: { id: true }
-    })
-
-    if (!student) {
-      throw new Error('Student profile not found')
-    }
+    const userId = await getServerActionUserId()
+    // Ambil student berdasarkan userId (bukan langsung studentId karena sebelumnya hardcoded mengacu pada userId mahasiswa)
+    const student = await prisma.student.findUnique({ where: { userId }, select: { id: true } })
+    if (!student) throw new Error('Student profile not found')
 
     // Check if already registered
     const existingRegistration = await prisma.labRegistration.findUnique({
@@ -226,16 +220,11 @@ export async function getLabSessions(laboratoryId: string) {
 // Get laboratory assignments
 export async function getLabAssignments(laboratoryId: string) {
   try {
-    const studentId = getHardcodedUserId()
+    const userId = await getServerActionUserId()
+    const studentRecord = await prisma.student.findUnique({ where: { userId }, select: { id: true } })
+    if (!studentRecord) throw new Error('Student profile not found')
     
-    const student = await prisma.student.findUnique({
-      where: { id: studentId },
-      select: { id: true }
-    })
-
-    if (!student) {
-      throw new Error('Student profile not found')
-    }
+    const student = studentRecord
 
     const assignments = await prisma.labAssignment.findMany({
       where: { laboratoryId },

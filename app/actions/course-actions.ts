@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
 
 export interface CourseData {
   id: string
@@ -33,7 +33,7 @@ export interface CourseData {
 }
 
 export async function getStudentCoursesData(): Promise<CourseData[]> {
-  const userId = getHardcodedUserId()
+  const userId = await getServerActionUserId()
   
   console.log('🔍 Fetching student courses data for user:', userId)
 

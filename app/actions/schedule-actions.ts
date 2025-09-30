@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
 
 export interface ScheduleEvent {
   id: string
@@ -41,7 +41,7 @@ export interface ScheduleData {
 }
 
 export async function getStudentScheduleData(): Promise<ScheduleData> {
-  const userId = getHardcodedUserId()
+  const userId = await getServerActionUserId()
   
   console.log('🔍 Fetching student schedule data for user:', userId)
 

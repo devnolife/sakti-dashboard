@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
-import { getHardcodedUserId } from "@/lib/auth-utils"
 import { submitLetterRequest } from "@/app/actions/correspondence-actions"
 import { toast } from "@/hooks/use-toast"
 import {
@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 
 export default function TransferLetterPage() {
+  const { user, isLoading: authLoading } = useAuth()
   const [studentData, setStudentData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -40,13 +41,13 @@ export default function TransferLetterPage() {
   useEffect(() => {
     async function fetchStudentData() {
       try {
-        const userId = getHardcodedUserId()
+        if (!user?.id) return
+        const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
         const response = await fetch('/api/student/profile', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId })
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ userId: user.id })
         })
-        
         if (response.ok) {
           const student = await response.json()
           setStudentData(student)
@@ -57,9 +58,14 @@ export default function TransferLetterPage() {
         setLoading(false)
       }
     }
-
-    fetchStudentData()
-  }, [])
+    if (!authLoading) {
+      if (!user?.id) {
+        setLoading(false)
+      } else {
+        fetchStudentData()
+      }
+    }
+  }, [authLoading, user?.id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

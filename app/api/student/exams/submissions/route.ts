@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
+import { authMiddleware } from '@/lib/auth-middleware'
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') // all, pending, approved, completed, rejected
     
@@ -116,7 +121,11 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const examId = searchParams.get('id')
 

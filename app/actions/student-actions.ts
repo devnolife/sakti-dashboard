@@ -1,11 +1,11 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
 
 export async function getStudentDashboardData() {
   // Get current student user ID
-  const userId = getHardcodedUserId()
+  const userId = await getServerActionUserId()
   
   console.log('🔍 Fetching student dashboard data for user:', userId)
 
@@ -211,7 +211,7 @@ function getGradePoint(letterGrade: string): number {
 
 export async function getStudentNotifications() {
   // Get current student user ID
-  const userId = getHardcodedUserId()
+  const userId = await getServerActionUserId()
 
   try {
     const notifications = await prisma.notification.findMany({

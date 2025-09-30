@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getHardcodedUserId } from '@/lib/auth-utils'
+import { getServerActionUserId } from '@/lib/auth-utils'
+import { authMiddleware } from '@/lib/auth-middleware'
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
     
     // Get user and student profile
@@ -156,7 +161,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = getHardcodedUserId()
+    let userId: string | null = null
+    const token = await authMiddleware(request)
+    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     
     // Get user and student profile
     const user = await prisma.user.findUnique({
