@@ -5,39 +5,7 @@ import { useAuth } from "@/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect } from "react"
 import { Loader2 } from "lucide-react"
-import { UniversalLayout } from "@/components/shared"
-import { DosenSubRoleProvider } from "@/context/dosen-subrole-context"
-import { Toaster } from "@/components/ui/toaster"
-import { 
-  adminUmumMenuItems,
-  lecturerMenuItems,
-  staffTuMenuItems,
-  dekanMenuItems,
-  mahasiswaMenuItems,
-  financeAdminMenuItems,
-  kepalaTataUsahaMenuItems,
-  prodiMenuItems,
-  gkmMenuItems,
-  laboratoryAdminMenuItems,
-  readingRoomAdminMenuItems,
-  simakMenuItems
-} from "@/config/menu-items"
-
-// Role menu mapping
-const roleMenuMapping = {
-  admin_umum: adminUmumMenuItems,
-  dosen: lecturerMenuItems,
-  staff_tu: staffTuMenuItems,
-  dekan: dekanMenuItems,
-  mahasiswa: mahasiswaMenuItems,
-  admin_keuangan: financeAdminMenuItems,
-  kepala_tata_usaha: kepalaTataUsahaMenuItems,
-  prodi: prodiMenuItems,
-  gkm: gkmMenuItems,
-  laboratory_admin: laboratoryAdminMenuItems,
-  reading_room_admin: readingRoomAdminMenuItems,
-  simak: simakMenuItems
-}
+import { AppLayout } from "@/components/shared"
 
 export default function DashboardLayout({
   children,
@@ -48,7 +16,6 @@ export default function DashboardLayout({
   const router = useRouter()
   const pathname = usePathname()
 
-  // Extract role from pathname
   const roleFromPath = pathname.split('/')[2] // /dashboard/[role]/...
 
   useEffect(() => {
@@ -70,32 +37,12 @@ export default function DashboardLayout({
     return null
   }
 
-  // Get menu items for the current role
-  const menuItems = roleMenuMapping[roleFromPath as keyof typeof roleMenuMapping] || []
-
-  // Special handling for dosen role that needs context provider
-  if (roleFromPath === 'dosen') {
-    return (
-      <DosenSubRoleProvider>
-        <UniversalLayout 
-          role={roleFromPath} 
-          menuItems={menuItems}
-        >
-          {children}
-        </UniversalLayout>
-        <Toaster />
-      </DosenSubRoleProvider>
-    )
-  }
-
-  // Standard layout for all other roles
   return (
-    <UniversalLayout 
-      role={roleFromPath} 
-      menuItems={menuItems}
+    <AppLayout
+      role={roleFromPath}
+      menuItems={[]}
     >
       {children}
-    </UniversalLayout>
+    </AppLayout>
   )
 }
-

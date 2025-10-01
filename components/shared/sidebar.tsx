@@ -27,7 +27,7 @@ import {
 import { NavUser } from "@/components/shared/nav-user"
 import { iconMap, type IconName } from "@/config/role-configs"
 
-interface UniversalSidebarProps extends React.ComponentProps<typeof Sidebar> {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   role: string
   menuItems: any[]
   headerConfig: {
@@ -42,13 +42,13 @@ interface UniversalSidebarProps extends React.ComponentProps<typeof Sidebar> {
   }
 }
 
-export function UniversalSidebar({
+export function AppSidebar({
   role,
   menuItems,
   headerConfig,
   user,
   ...props
-}: UniversalSidebarProps) {
+}: AppSidebarProps) {
   const pathname = usePathname()
   const { title, subtitle, iconName } = headerConfig
   const HeaderIcon = iconMap[iconName]
@@ -60,11 +60,11 @@ export function UniversalSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href={`/dashboard/${role}`}>
-                <div className="flex items-center justify-center rounded-lg aspect-square size-12 bg-primary text-primary-foreground">
+                <div className="flex aspect-square size-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <HeaderIcon className="size-6" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="text-lg font-semibold">{title}</span>
+                  <span className="font-semibold text-lg">{title}</span>
                   <span className="text-sm text-muted-foreground">{subtitle}</span>
                 </div>
               </Link>
@@ -85,7 +85,7 @@ export function UniversalSidebar({
               if (!item.children || item.children.length === 0) {
                 return (
                   <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton asChild isActive={isActive} className="h-auto py-2 text-base">
+                    <SidebarMenuButton asChild isActive={isActive} className="text-base py-2 h-auto">
                       <Link href={item.href}>
                         {Icon && <Icon className="size-6" />}
                         <span className="font-medium">{item.title}</span>
@@ -109,7 +109,7 @@ export function UniversalSidebar({
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton isActive={isActive || hasActiveChild} className="h-auto py-2 text-base">
+                      <SidebarMenuButton isActive={isActive || hasActiveChild} className="text-base py-2 h-auto">
                         {Icon && <Icon className="size-6" />}
                         <span className="font-medium">{item.title}</span>
                         <ChevronRight className="ml-auto size-6 transition-transform group-data-[state=open]/collapsible:rotate-90" />

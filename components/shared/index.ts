@@ -1,4 +1,4 @@
-export { UniversalSidebar } from "./universal-sidebar"
-export { UniversalHeader } from "./universal-header"
+export { AppSidebar } from "./sidebar"
+export { AppHeader } from "./header"
 export { NavUser } from "./nav-user"
-export { UniversalLayout } from "./universal-layout"
+export { AppLayout } from "./layout"

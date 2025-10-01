@@ -1,15 +1,15 @@
 import { cookies } from "next/headers"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { UniversalSidebar, UniversalHeader } from "@/components/shared"
+import { AppSidebar, AppHeader } from "@/components/shared"
 import { roleConfigs } from "@/config/role-configs"
 
-interface UniversalLayoutProps {
+interface AppLayoutProps {
   children: React.ReactNode
   role: string
   menuItems: any[]
 }
 
-async function UniversalLayoutInner({ children, role, menuItems }: UniversalLayoutProps) {
+async function AppLayoutInner({ children, role, menuItems }: AppLayoutProps) {
   const cookieStore = await cookies()
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
 
@@ -20,7 +20,7 @@ async function UniversalLayoutInner({ children, role, menuItems }: UniversalLayo
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <UniversalSidebar
+      <AppSidebar
         role={role}
         menuItems={menuItems}
         headerConfig={config.headerConfig}
@@ -28,7 +28,7 @@ async function UniversalLayoutInner({ children, role, menuItems }: UniversalLayo
         variant="inset"
       />
       <SidebarInset>
-        <UniversalHeader role={role} />
+        <AppHeader role={role} />
         <div
           className="@container/main flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6"
           style={
@@ -45,6 +45,6 @@ async function UniversalLayoutInner({ children, role, menuItems }: UniversalLayo
   )
 }
 
-export function UniversalLayout({ children, role, menuItems }: UniversalLayoutProps) {
-  return <UniversalLayoutInner role={role} menuItems={menuItems}>{children}</UniversalLayoutInner>
+export function AppLayout({ children, role, menuItems }: AppLayoutProps) {
+  return <AppLayoutInner role={role} menuItems={menuItems}>{children}</AppLayoutInner>
 }

@@ -15,12 +15,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-interface UniversalHeaderProps {
+interface AppHeaderProps {
   role: string
   className?: string
 }
 
-export function UniversalHeader({ role, className }: UniversalHeaderProps) {
+export function AppHeader({ role, className }: AppHeaderProps) {
   const pathname = usePathname()
 
   const generateBreadcrumbs = () => {

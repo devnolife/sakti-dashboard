@@ -13,25 +13,41 @@ import {
   School
 } from "lucide-react"
 
+// Icon mapping for string-based resolution
+export const iconMap = {
+  Building2,
+  GraduationCap,
+  BookOpen,
+  Users,
+  DollarSign,
+  ClipboardList,
+  UserCheck,
+  FlaskConical,
+  BookMarked,
+  Microscope,
+  Archive,
+  School
+} as const
+
+export type IconName = keyof typeof iconMap
+
 interface RoleConfig {
   headerConfig: {
     title: string
     subtitle: string
-    icon: React.ComponentType<{ className?: string }>
+    iconName: IconName
   }
   user: {
     name: string
     email: string
     avatar: string
   }
-}
-
-export const roleConfigs: Record<string, RoleConfig> = {
+}export const roleConfigs: Record<string, RoleConfig> = {
   admin_umum: {
     headerConfig: {
       title: "Admin Umum",
       subtitle: "Management System",
-      icon: Building2
+      iconName: "Building2"
     },
     user: {
       name: "Admin Umum",
@@ -43,7 +59,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Dosen",
       subtitle: "Academic Portal",
-      icon: GraduationCap
+      iconName: "GraduationCap"
     },
     user: {
       name: "Dr. Dosen",
@@ -55,7 +71,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Staff TU",
       subtitle: "Administrative Portal",
-      icon: ClipboardList
+      iconName: "ClipboardList"
     },
     user: {
       name: "Staff TU",
@@ -67,7 +83,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Dekan",
       subtitle: "Faculty Management",
-      icon: UserCheck
+      iconName: "UserCheck"
     },
     user: {
       name: "Prof. Dekan",
@@ -79,7 +95,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Mahasiswa",
       subtitle: "Student Portal",
-      icon: BookOpen
+      iconName: "BookOpen"
     },
     user: {
       name: "Mahasiswa",
@@ -91,7 +107,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Admin Keuangan",
       subtitle: "Finance Management",
-      icon: DollarSign
+      iconName: "DollarSign"
     },
     user: {
       name: "Admin Keuangan",
@@ -103,7 +119,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Kepala Tata Usaha",
       subtitle: "Administration Head",
-      icon: Users
+      iconName: "Users"
     },
     user: {
       name: "Kepala TU",
@@ -115,7 +131,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Program Studi",
       subtitle: "Academic Management",
-      icon: School
+      iconName: "School"
     },
     user: {
       name: "Koordinator Prodi",
@@ -127,7 +143,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "GKM",
       subtitle: "Student Affairs",
-      icon: Users
+      iconName: "Users"
     },
     user: {
       name: "Staff GKM",
@@ -139,7 +155,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Laboratory Admin",
       subtitle: "Lab Management",
-      icon: FlaskConical
+      iconName: "FlaskConical"
     },
     user: {
       name: "Lab Admin",
@@ -151,7 +167,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "Reading Room Admin",
       subtitle: "Library Management",
-      icon: BookMarked
+      iconName: "BookMarked"
     },
     user: {
       name: "Reading Room Admin",
@@ -163,7 +179,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     headerConfig: {
       title: "SIMAK",
       subtitle: "Academic Information System",
-      icon: Archive
+      iconName: "Archive"
     },
     user: {
       name: "SIMAK Admin",
