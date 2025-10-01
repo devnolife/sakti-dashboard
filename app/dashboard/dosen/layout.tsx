@@ -2,7 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Toaster } from "@/components/ui/toaster"
 import { DosenSubRoleProvider } from "@/context/dosen-subrole-context"
-import DosenLayoutContent from "@/components/dosen/dosen-layout-content"
+import { UniversalLayout } from "@/components/shared"
+import { lecturerMenuItems } from "@/config/menu-items"
 
 export const metadata: Metadata = {
   title: "Dosen Dashboard | SINTEKMu",
@@ -16,7 +17,12 @@ interface DosenLayoutProps {
 export default function DosenLayout({ children }: DosenLayoutProps) {
   return (
     <DosenSubRoleProvider>
-      <DosenLayoutContent>{children}</DosenLayoutContent>
+      <UniversalLayout
+        role="dosen"
+        menuItems={lecturerMenuItems}
+      >
+        {children}
+      </UniversalLayout>
       <Toaster />
     </DosenSubRoleProvider>
   )

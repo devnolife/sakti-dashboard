@@ -1,4 +1,6 @@
 import { ReactNode } from "react"
+import { UniversalLayout } from "@/components/shared"
+import { simakMenuItems } from "@/config/menu-items"
 
 interface SimakLayoutProps {
   children: ReactNode
@@ -6,8 +8,11 @@ interface SimakLayoutProps {
 
 export default function SimakLayout({ children }: SimakLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <UniversalLayout
+      role="simak"
+      menuItems={simakMenuItems}
+    >
       {children}
-    </div>
+    </UniversalLayout>
   )
 }

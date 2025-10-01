@@ -1,15 +1,43 @@
 "use client"
 
 import type React from "react"
-
 import { useAuth } from "@/context/auth-context"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect } from "react"
-import RoleSidebar from "@/components/role/role-sidebar"
-import RoleMobileMenu from "@/components/role/role-mobile-menu"
-import Header from "@/components/layout/header"
 import { Loader2 } from "lucide-react"
-import { usePathname } from "next/navigation"
+import { UniversalLayout } from "@/components/shared"
+import { DosenSubRoleProvider } from "@/context/dosen-subrole-context"
+import { Toaster } from "@/components/ui/toaster"
+import { 
+  adminUmumMenuItems,
+  lecturerMenuItems,
+  staffTuMenuItems,
+  dekanMenuItems,
+  mahasiswaMenuItems,
+  financeAdminMenuItems,
+  kepalaTataUsahaMenuItems,
+  prodiMenuItems,
+  gkmMenuItems,
+  laboratoryAdminMenuItems,
+  readingRoomAdminMenuItems,
+  simakMenuItems
+} from "@/config/menu-items"
+
+// Role menu mapping
+const roleMenuMapping = {
+  admin_umum: adminUmumMenuItems,
+  dosen: lecturerMenuItems,
+  staff_tu: staffTuMenuItems,
+  dekan: dekanMenuItems,
+  mahasiswa: mahasiswaMenuItems,
+  admin_keuangan: financeAdminMenuItems,
+  kepala_tata_usaha: kepalaTataUsahaMenuItems,
+  prodi: prodiMenuItems,
+  gkm: gkmMenuItems,
+  laboratory_admin: laboratoryAdminMenuItems,
+  reading_room_admin: readingRoomAdminMenuItems,
+  simak: simakMenuItems
+}
 
 export default function DashboardLayout({
   children,
@@ -19,6 +47,9 @@ export default function DashboardLayout({
   const { user, isLoading, isAuthenticated } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+
+  // Extract role from pathname
+  const roleFromPath = pathname.split('/')[2] // /dashboard/[role]/...
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -35,20 +66,36 @@ export default function DashboardLayout({
     )
   }
 
-  if (!user) {
+  if (!user || !roleFromPath) {
     return null
   }
 
-  return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
-      <RoleSidebar role={user.role} />
+  // Get menu items for the current role
+  const menuItems = roleMenuMapping[roleFromPath as keyof typeof roleMenuMapping] || []
 
-      <div className="lg:pl-64">
-        <Header />
-        <main className="px-4 pb-8 md:px-6 lg:px-8">{children}</main>
-      </div>
-      <RoleMobileMenu role={user.role} />
-    </div>
+  // Special handling for dosen role that needs context provider
+  if (roleFromPath === 'dosen') {
+    return (
+      <DosenSubRoleProvider>
+        <UniversalLayout 
+          role={roleFromPath} 
+          menuItems={menuItems}
+        >
+          {children}
+        </UniversalLayout>
+        <Toaster />
+      </DosenSubRoleProvider>
+    )
+  }
+
+  // Standard layout for all other roles
+  return (
+    <UniversalLayout 
+      role={roleFromPath} 
+      menuItems={menuItems}
+    >
+      {children}
+    </UniversalLayout>
   )
 }
 

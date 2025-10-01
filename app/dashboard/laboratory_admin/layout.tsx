@@ -1,4 +1,6 @@
 import type React from "react"
+import { UniversalLayout } from "@/components/shared"
+import { laboratoryAdminMenuItems } from "@/config/menu-items"
 
 export default function LaboratoryAdminLayout({
   children,
@@ -6,9 +8,12 @@ export default function LaboratoryAdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex-1 pt-14">
-      <div className="container p-4 mx-auto md:p-6">{children}</div>
-    </div>
+    <UniversalLayout
+      role="laboratory_admin"
+      menuItems={laboratoryAdminMenuItems}
+    >
+      {children}
+    </UniversalLayout>
   )
 }
 

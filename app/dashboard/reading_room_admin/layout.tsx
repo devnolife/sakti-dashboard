@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import RoleSidebar from "@/components/role/role-sidebar"
-import RoleMobileMenu from "@/components/role/role-mobile-menu"
+import { UniversalLayout } from "@/components/shared"
+import { readingRoomAdminMenuItems } from "@/config/menu-items"
 import { useAuth } from "@/context/auth-context"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -38,13 +38,12 @@ export default function ReadingRoomAdminLayout({
   }
 
   return (
-    <div className="flex-1 pt-16 bg-background/50">
-      <RoleSidebar role="reading_room_admin" />
-      <div>
-        <div className="container px-3 pb-3 mx-auto md:px-6 md:pb-6 md:pt-3 lg:px-8 lg:pb-8 lg:pt-4">{children}</div>
-      </div>
-      <RoleMobileMenu role="reading_room_admin" />
-    </div>
+    <UniversalLayout
+      role="reading_room_admin"
+      menuItems={readingRoomAdminMenuItems}
+    >
+      {children}
+    </UniversalLayout>
   )
 }
 

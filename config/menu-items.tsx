@@ -828,7 +828,6 @@ export const adminUmumMenuItems = [
     title: "Document Generation",
     href: "/dashboard/admin_umum/document-generation",
     icon: FileSignature,
-    badge: { text: "New", variant: "secondary" },
     children: [
       {
         id: "generate-documents",
@@ -862,7 +861,6 @@ export const adminUmumMenuItems = [
     title: "Digital Signatures",
     href: "/dashboard/admin_umum/signatures",
     icon: ScrollText,
-    badge: { text: "Digital", variant: "outline" },
     children: [
       {
         id: "signature-sign",
