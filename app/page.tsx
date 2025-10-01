@@ -21,10 +21,8 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <FeaturesSection />
-        <CoursesSection />
         <WakilDekanSection />
         <StatsSection />
-        <TestimonialsSection />
         <NewsSection />
         <QuotesSection />
         <CTASection />
