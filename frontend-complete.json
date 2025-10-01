@@ -1,0 +1,151 @@
+{
+  "info": {
+    "name": "Generate Document API - Frontend Guide",
+    "version": "1.0.0",
+    "description": "Complete frontend development guide for document generation API"
+  },
+  "api": {
+    "baseUrl": "http://localhost:8080/api/v1",
+    "timeout": 30000,
+    "endpoints": {
+      "health": "GET /health",
+      "documents": {
+        "list": "GET /documents",
+        "generate": "POST /documents/generate",
+        "get": "GET /documents/{id}",
+        "download": "GET /documents/{id}/download",
+        "verify": "GET /documents/{id}/verify",
+        "types": "GET /documents/types",
+        "config": "GET /documents/config/{type}/{prodi}"
+      },
+      "signatures": {
+        "sign": "POST /signatures/sign",
+        "verify": "GET /signatures/verify/{documentId}",
+        "signers": "GET /signatures/signers",
+        "createSigner": "POST /signatures/signers"
+      },
+      "admin": {
+        "stats": "GET /admin/statistics",
+        "health": "GET /admin/health"
+      }
+    },
+    "sampleRequests": {
+      "generateDocument": {
+        "type": "kkp",
+        "prodi": "informatika",
+        "data": {
+          "nim": "123456",
+          "nama": "John Doe",
+          "judul": "My Project",
+          "pembimbing1": "Dr. Jane",
+          "pembimbing2": "Prof. Bob"
+        }
+      },
+      "signDocument": {
+        "documentId": "uuid",
+        "signerId": "uuid"
+      }
+    },
+    "sampleResponses": {
+      "success": {
+        "success": true,
+        "message": "Success",
+        "data": {},
+        "timestamp": "2025-01-01T00:00:00Z"
+      },
+      "error": {
+        "success": false,
+        "message": "Error message",
+        "error": {
+          "code": "ERROR_CODE",
+          "details": null
+        }
+      }
+    }
+  },
+  "mockData": {
+    "document": {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "type": "kkp",
+      "prodi": "informatika",
+      "status": "signed",
+      "metadata": {
+        "nim": "11219001",
+        "nama": "Ahmad Fauzi Rahman",
+        "judul": "Implementasi ML untuk Prediksi Cuaca"
+      },
+      "created_at": "2025-01-01T10:30:00Z"
+    },
+    "signer": {
+      "id": "signer-001",
+      "name": "Dr. Andi Setiawan",
+      "role": "dosen_pembimbing",
+      "prodi": "informatika",
+      "status": "active"
+    },
+    "documentTypes": [
+      {
+        "type": "kkp",
+        "description": "Kerja Praktik",
+        "prodis": ["informatika", "elektro", "arsitektur"]
+      }
+    ],
+    "stats": {
+      "documents": 1247,
+      "signatures": 2184,
+      "signers": 52
+    }
+  },
+  "config": {
+    "ui": {
+      "pageSize": 10,
+      "colors": {
+        "primary": "#3b82f6",
+        "success": "#10b981",
+        "error": "#ef4444"
+      }
+    },
+    "routes": {
+      "home": "/",
+      "documents": "/documents",
+      "generate": "/documents/generate",
+      "signatures": "/signatures",
+      "admin": "/admin"
+    },
+    "validation": {
+      "nim": "^[0-9]{8,10}$",
+      "nama": "^[a-zA-Z\\s\\.]+$",
+      "required": "Field ini wajib diisi"
+    }
+  },
+  "types": {
+    "Document": {
+      "id": "string",
+      "type": "string",
+      "prodi": "string",
+      "status": "pending | signed | rejected",
+      "metadata": "object",
+      "created_at": "string"
+    },
+    "Signer": {
+      "id": "string",
+      "name": "string",
+      "role": "string",
+      "prodi": "string",
+      "status": "active | inactive"
+    },
+    "ApiResponse": {
+      "success": "boolean",
+      "message": "string",
+      "data": "any",
+      "timestamp": "string"
+    }
+  },
+  "quickStart": {
+    "1_setup": "npm install axios react-query",
+    "2_config": "Copy baseUrl dan timeout dari config",
+    "3_api": "Buat axios instance dengan baseUrl",
+    "4_hooks": "Implementasi useDocuments, useSigners, dll",
+    "5_components": "Buat DocumentList, GenerateForm, dll"
+  }
+}

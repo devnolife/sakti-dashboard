@@ -759,7 +759,7 @@ export const readingRoomAdminMenuItems: MenuItem[] = [
   },
 ]
 
-// Menu items for KKP staff
+// Menu items for Admin Umum staff
 export const adminUmumMenuItems = [
   {
     id: "dashboard",
@@ -824,11 +824,107 @@ export const adminUmumMenuItems = [
     ],
   },
   {
+    id: "document-generation",
+    title: "Document Generation",
+    href: "/dashboard/admin_umum/document-generation",
+    icon: FileSignature,
+    badge: { text: "New", variant: "secondary" },
+    children: [
+      {
+        id: "generate-documents",
+        title: "Generate Documents",
+        href: "/dashboard/admin_umum/document-generation",
+      },
+      {
+        id: "document-list",
+        title: "Document List",
+        href: "/dashboard/admin_umum/document-generation/list",
+      },
+      {
+        id: "document-types",
+        title: "Document Types",
+        href: "/dashboard/admin_umum/document-generation/types",
+      },
+      {
+        id: "document-config",
+        title: "Document Config",
+        href: "/dashboard/admin_umum/document-generation/config",
+      },
+      {
+        id: "verification-docs",
+        title: "Document Verification",
+        href: "/dashboard/admin_umum/document-generation/verification",
+      },
+    ],
+  },
+  {
+    id: "signatures",
+    title: "Digital Signatures",
+    href: "/dashboard/admin_umum/signatures",
+    icon: ScrollText,
+    badge: { text: "Digital", variant: "outline" },
+    children: [
+      {
+        id: "signature-sign",
+        title: "Sign Documents",
+        href: "/dashboard/admin_umum/signatures/sign",
+      },
+      {
+        id: "signature-verify",
+        title: "Verify Signatures",
+        href: "/dashboard/admin_umum/signatures/verify",
+      },
+      {
+        id: "signers-management",
+        title: "Manage Signers",
+        href: "/dashboard/admin_umum/signatures/signers",
+      },
+      {
+        id: "signature-status",
+        title: "Signature Status",
+        href: "/dashboard/admin_umum/signatures/status",
+      },
+    ],
+  },
+  {
+    id: "admin-tools",
+    title: "Admin Tools",
+    href: "/dashboard/admin_umum/admin",
+    icon: Database,
+    children: [
+      {
+        id: "system-statistics",
+        title: "System Statistics",
+        href: "/dashboard/admin_umum/admin/statistics",
+      },
+      {
+        id: "system-health",
+        title: "System Health",
+        href: "/dashboard/admin_umum/admin/health",
+      },
+      {
+        id: "api-monitoring",
+        title: "API Monitoring",
+        href: "/dashboard/admin_umum/admin/monitoring",
+      },
+    ],
+  },
+  {
     id: "reports",
     title: "Laporan",
     href: "/dashboard/admin_umum/reports",
     icon: FileSpreadsheet,
     children: [
+      {
+        id: "document-reports",
+        title: "Laporan Dokumen",
+        href: "/dashboard/admin_umum/reports/documents",
+      },
+      {
+        id: "signature-reports",
+        title: "Laporan Tanda Tangan",
+        href: "/dashboard/admin_umum/reports/signatures",
+      },
       {
         id: "payment-reports",
         title: "Laporan Pembayaran",
@@ -847,28 +943,10 @@ export const adminUmumMenuItems = [
     ],
   },
   {
-    id: "document-generation",
-    title: "Document Generation",
-    href: "/dashboard/admin_umum/document-generation",
-    icon: FileSignature,
-    badge: { text: "New", variant: "secondary" },
-    children: [
-      {
-        id: "generate-documents",
-        title: "Generate Documents",
-        href: "/dashboard/admin_umum/document-generation",
-      },
-      {
-        id: "document-templates",
-        title: "Document Templates",
-        href: "/dashboard/admin_umum/document-generation/templates",
-      },
-      {
-        id: "verification-docs",
-        title: "Document Verification",
-        href: "/dashboard/admin_umum/document-generation/verification",
-      },
-    ],
+    id: "role-description",
+    title: "Deskripsi Peran",
+    href: "/dashboard/admin_umum/role-description",
+    icon: UserCheck,
   },
   {
     id: "settings",
