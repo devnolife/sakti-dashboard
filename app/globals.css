@@ -5,32 +5,42 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 210 40% 20%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 40% 20%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 40% 20%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 214 46% 56%; /* #3674B5 */
+    --primary: 214 46% 56%; /* Blue #3674B5 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 45% 56%;
+    --secondary: 0 72% 51%; /* Red #DC2626 */
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 195 91% 80%;
-    --accent-foreground: 210 70% 20%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
-    --muted: 210 20% 96%;
+    /* Extended color palette */
+    --purple: 271 81% 56%; /* Purple #8B5CF6 */
+    --cyan: 189 94% 43%; /* Cyan #06B6D4 */
+    --orange: 25 95% 53%; /* Orange #F97316 */
+    --green: 142 71% 45%; /* Green #10B981 */
+    --indigo: 239 84% 67%; /* Indigo #6366F1 */
+    --pink: 330 81% 60%; /* Pink #EC4899 */
+    --teal: 173 80% 40%; /* Teal #14B8A6 */
+    --amber: 38 92% 50%; /* Amber #F59E0B */
+
+    --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 210 50% 46%;
+    --ring: 214 46% 56%;
 
     --radius: 0.5rem;
   }

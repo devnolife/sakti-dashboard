@@ -155,52 +155,61 @@ const NewsSection = () => {
           </Button>
         </div>
 
-        {/* Pinned News */}
+        {/* Pinned News - Modern elevated style */}
         {pinnedNews.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Pin className="w-4 h-4 text-red-500" />
-              <span className="text-sm font-medium text-gray-700">Pengumuman Penting</span>
+          <div className="mb-10">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-red-500 text-white shadow-lg">
+                <Pin className="w-5 h-5" />
+              </div>
+              <span className="text-base font-bold text-gray-900">Pengumuman Penting</span>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-5">
               {pinnedNews.map((item) => (
-                <Card key={item.id} className="p-6 border-l-4 border-l-red-500 bg-gradient-to-r from-red-50/70 via-white to-brand/5 hover:shadow-md transition-all duration-300 relative overflow-hidden">
-                  <span className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brand via-primary to-brand" />
-                  <div className="flex flex-col lg:flex-row gap-4">
+                <Card key={item.id} className="group p-7 border-l-[6px] border-l-red-500 bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 relative overflow-hidden border-2 border-red-100 rounded-2xl">
+                  <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500" />
+
+                  {/* Background glow */}
+                  <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-red-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                  <div className="relative flex flex-col lg:flex-row gap-6">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Badge className={`px-2 py-1 text-xs rounded-full border ${getCategoryColor(item.category)}`}>
+                      <div className="flex items-center gap-3 mb-3">
+                        <Badge className={`px-3 py-1.5 text-xs font-bold rounded-xl border-2 shadow-md ${getCategoryColor(item.category)}`}>
                           {item.category}
                         </Badge>
-                        <Pin className="w-3 h-3 text-red-500" />
+                        <div className="flex items-center gap-1.5 text-red-600 font-semibold text-xs">
+                          <Pin className="w-4 h-4" />
+                          <span>PINNED</span>
+                        </div>
                       </div>
 
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-primary transition-colors cursor-pointer">
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 hover:text-primary transition-colors cursor-pointer">
                         {item.title}
                       </h3>
 
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">
                         {item.excerpt}
                       </p>
 
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
+                      <div className="flex items-center gap-5 text-xs text-gray-500 font-medium">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4" />
                           {formatDate(item.date)}
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-4 h-4" />
                           {item.readTime}
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
+                        <div className="flex items-center gap-1.5">
+                          <Eye className="w-4 h-4" />
                           {item.views.toLocaleString()}
                         </div>
                       </div>
                     </div>
 
-                    <Button variant="outline" className="rounded-full self-start lg:self-center">
+                    <Button className="rounded-2xl self-start lg:self-center bg-red-500 hover:bg-red-600 text-white px-6 py-3 shadow-lg hover:shadow-xl transition-all hover:scale-105">
                       Baca Selengkapnya
                     </Button>
                   </div>
@@ -210,68 +219,89 @@ const NewsSection = () => {
           </div>
         )}
 
-        {/* Regular News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {regularNews.slice(0, 6).map((item) => (
-            <Card key={item.id} className="group overflow-hidden rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative">
-              <span className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-primary via-brand to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-              {/* Image placeholder - in real implementation, use actual images */}
-              <div className="aspect-[16/10] bg-gradient-to-br from-primary/10 to-secondary/10 relative overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <Newspaper className="w-8 h-8 text-primary/40 mx-auto mb-2" />
-                    <span className="text-xs text-gray-400">{item.category}</span>
-                  </div>
-                </div>
+        {/* Regular News Grid - Modern elevated cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          {regularNews.slice(0, 6).map((item, index) => {
+            const cardColors = [
+              { border: 'border-purple-200', glow: 'hover:shadow-purple-500/20', iconBg: 'bg-purple-500' },
+              { border: 'border-cyan-200', glow: 'hover:shadow-cyan-500/20', iconBg: 'bg-cyan-500' },
+              { border: 'border-orange-200', glow: 'hover:shadow-orange-500/20', iconBg: 'bg-orange-500' },
+              { border: 'border-pink-200', glow: 'hover:shadow-pink-500/20', iconBg: 'bg-pink-500' },
+              { border: 'border-teal-200', glow: 'hover:shadow-teal-500/20', iconBg: 'bg-teal-500' },
+              { border: 'border-indigo-200', glow: 'hover:shadow-indigo-500/20', iconBg: 'bg-indigo-500' }
+            ]
+            const cardColor = cardColors[index % cardColors.length]
 
-                {/* Category Badge */}
-                <div className="absolute top-3 left-3">
-                  <Badge className={`px-2 py-1 text-xs rounded-full border ${getCategoryColor(item.category)}`}>
-                    {item.category}
-                  </Badge>
-                </div>
-              </div>
+            return (
+              <Card key={item.id} className={`group overflow-hidden rounded-3xl border-2 ${cardColor.border} hover:shadow-2xl ${cardColor.glow} transition-all duration-500 hover:-translate-y-3 relative bg-white`}>
+                <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
 
-              <div className="p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                  {item.title}
-                </h3>
-
-                <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                  {item.excerpt}
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {item.tags.slice(0, 2).map((tag, index) => (
-                    <span key={index} className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded-full">
-                      <Tag className="w-2 h-2" />
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Meta Info */}
-                <div className="flex items-center justify-between text-xs text-gray-500 border-t border-gray-100 pt-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(item.date)}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {item.readTime}
+                {/* Image placeholder with modern gradient */}
+                <div className="aspect-[16/10] bg-gradient-to-br from-purple-50 via-white to-cyan-50 relative overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${cardColor.iconBg} text-white shadow-xl mb-3 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12`}>
+                        <Newspaper className="w-8 h-8" />
+                      </div>
+                      <span className="text-sm font-semibold text-gray-600">{item.category}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <Eye className="w-3 h-3" />
-                    {item.views > 1000 ? `${(item.views / 1000).toFixed(1)}k` : item.views}
+                  {/* Animated background glow */}
+                  <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-purple-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                  {/* Category Badge - Modern floating style */}
+                  <div className="absolute top-4 left-4">
+                    <Badge className={`px-3 py-1.5 text-xs font-bold rounded-xl border-2 shadow-lg ${getCategoryColor(item.category)}`}>
+                      {item.category}
+                    </Badge>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                    {item.excerpt}
+                  </p>
+
+                  {/* Tags with modern style */}
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {item.tags.slice(0, 2).map((tag, index) => (
+                      <span key={index} className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-xs font-semibold text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <Tag className="w-3 h-3" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Meta Info with enhanced spacing */}
+                  <div className="flex items-center justify-between text-xs text-gray-500 border-t-2 border-gray-100 pt-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {formatDate(item.date)}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        {item.readTime}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 font-semibold">
+                      <Eye className="w-3.5 h-3.5" />
+                      {item.views > 1000 ? `${(item.views / 1000).toFixed(1)}k` : item.views}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Corner decoration */}
+                <div className="absolute -bottom-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </Card>
+            )
+          })}
         </div>
 
         {/* Load More Button */}
