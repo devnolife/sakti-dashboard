@@ -6,6 +6,7 @@ import { RoleProvider } from "@/context/role-context"
 import { AuthProvider } from "@/context/auth-context"
 import { NotificationProvider } from "@/context/notification-context"
 import { I18nProvider } from "@/components/providers/i18n-provider"
+import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -22,18 +23,25 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <I18nProvider>
-          <RoleProvider>
-            <AuthProvider>
-              <NotificationProvider>
-                {children}
-                <Toaster />
-              </NotificationProvider>
-            </AuthProvider>
-          </RoleProvider>
-        </I18nProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <I18nProvider>
+            <RoleProvider>
+              <AuthProvider>
+                <NotificationProvider>
+                  {children}
+                  <Toaster />
+                </NotificationProvider>
+              </AuthProvider>
+            </RoleProvider>
+          </I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -1,4 +1,5 @@
-import { cookies } from "next/headers"
+"use client"
+
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar, AppHeader } from "@/components/shared"
 import { roleConfigs } from "@/config/role-configs"
@@ -7,11 +8,10 @@ interface AppLayoutProps {
   children: React.ReactNode
   role: string
   menuItems: any[]
+  defaultSidebarOpen?: boolean
 }
 
-async function AppLayoutInner({ children, role, menuItems }: AppLayoutProps) {
-  const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
+export function AppLayout({ children, role, menuItems, defaultSidebarOpen = true }: AppLayoutProps) {
 
   const config = roleConfigs[role]
   if (!config) {
@@ -19,7 +19,7 @@ async function AppLayoutInner({ children, role, menuItems }: AppLayoutProps) {
   }
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
+    <SidebarProvider defaultOpen={defaultSidebarOpen}>
       <AppSidebar
         role={role}
         menuItems={menuItems}
@@ -43,8 +43,4 @@ async function AppLayoutInner({ children, role, menuItems }: AppLayoutProps) {
       </SidebarInset>
     </SidebarProvider>
   )
-}
-
-export function AppLayout({ children, role, menuItems }: AppLayoutProps) {
-  return <AppLayoutInner role={role} menuItems={menuItems}>{children}</AppLayoutInner>
 }
