@@ -98,8 +98,8 @@ const FeaturesSection = () => {
   return (
     <section id="features" className="relative py-20 overflow-hidden bg-gradient-to-br from-purple-50/30 via-white to-cyan-50/30">
       {/* Background Elements - colorful gradient overlays */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-purple-500/8 to-transparent rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-cyan-500/8 to-transparent rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 rounded-full w-96 h-96 bg-gradient-to-br from-purple-500/8 to-transparent blur-3xl" />
+      <div className="absolute bottom-0 left-0 rounded-full w-80 h-80 bg-gradient-to-tr from-cyan-500/8 to-transparent blur-3xl" />
       <div className="absolute top-1/3 right-1/3 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(249,115,22,0.06),transparent_70%)] blur-3xl" />
       <div className="absolute bottom-1/3 left-1/4 w-[450px] h-[450px] bg-[radial-gradient(circle,rgba(20,184,166,0.05),transparent_70%)] blur-3xl" />
 
@@ -107,65 +107,147 @@ const FeaturesSection = () => {
         {/* Header Section */}
         <div className="text-center mb-14">
           <div className="inline-flex items-center mb-6">
-            <Badge className="bg-cyan-600 text-white px-5 py-2 text-sm rounded-full shadow-lg shadow-cyan-500/20">
+            <Badge className="px-5 py-2 text-sm text-white rounded-full shadow-lg bg-cyan-600 shadow-cyan-500/20">
               <Globe className="w-3.5 h-3.5 mr-2" />
               Fitur Unggulan
             </Badge>
           </div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5 text-gray-900">
+          <h2 className="mb-5 text-3xl font-bold leading-tight text-gray-900 md:text-4xl lg:text-5xl">
             Solusi Digital <span className="text-cyan-600">Terpadu</span> untuk Fakultas Teknik
           </h2>
 
-          <p className="max-w-3xl mx-auto text-base md:text-lg text-gray-600 leading-relaxed">
+          <p className="max-w-3xl mx-auto text-base leading-relaxed text-gray-600 md:text-lg">
             Platform komprehensif yang mengintegrasikan seluruh aspek pengelolaan akademik fakultas teknik
             dengan teknologi modern dan user experience yang intuitif.
           </p>
         </div>
 
-        {/* Features Grid with modern 3D cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-          {features.map((feature, index) => {
-            const colors = getColorClasses(feature.color, index)
-            return (
-              <Card
-                key={index}
-                className={`group relative p-7 border-2 border-gray-200 rounded-3xl bg-white shadow-lg transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl ${colors.cardHover} overflow-hidden`}
-              >
-                {/* Animated gradient border on top */}
-                <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-500 via-orange-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        {/* Features Grid with auto-scrolling animation */}
+        <div className="space-y-6 overflow-hidden">
+          {/* First Row - Scroll Left to Right */}
+          <div className="relative">
+            <div className="flex gap-5 animate-scroll-ltr">
+              {[...features.slice(0, 5), ...features.slice(0, 5)].map((feature, index) => {
+                const colors = getColorClasses(feature.color, index % features.length)
+                return (
+                  <Card
+                    key={`row1-${index}`}
+                    className={`group relative p-5 border-2 border-gray-200 rounded-2xl bg-white shadow-lg transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl ${colors.cardHover} overflow-hidden flex-shrink-0 w-[280px]`}
+                  >
+                    {/* Animated gradient border on top */}
+                    <span className="absolute inset-x-0 top-0 h-1 transition-opacity opacity-0 bg-gradient-to-r from-purple-500 via-cyan-500 via-orange-500 to-pink-500 group-hover:opacity-100" />
 
-                {/* Background glow effect */}
-                <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-purple-500/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    {/* Background glow effect */}
+                    <div className="absolute w-32 h-32 transition-opacity duration-700 rounded-full opacity-0 -top-10 -right-10 bg-purple-500/5 blur-2xl group-hover:opacity-100" />
 
-                {/* Icon with 3D effect */}
-                <div className="relative mb-6">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${colors.iconBg} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg`}>
-                    <feature.icon className={`w-8 h-8 ${colors.iconColor}`} />
-                  </div>
-                  {/* Icon shadow */}
-                  <div className={`absolute top-0 left-0 w-16 h-16 rounded-2xl ${colors.iconBg} blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`} />
-                </div>
+                    {/* Icon with 3D effect */}
+                    <div className="relative mb-4">
+                      <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${colors.iconBg} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg`}>
+                        <feature.icon className={`w-6 h-6 ${colors.iconColor}`} />
+                      </div>
+                      {/* Icon shadow */}
+                      <div className={`absolute top-0 left-0 w-12 h-12 rounded-xl ${colors.iconBg} blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`} />
+                    </div>
 
-                {/* Content */}
-                <div className="relative space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
+                    {/* Content */}
+                    <div className="relative space-y-2">
+                      <h3 className="text-lg font-bold text-gray-900 transition-colors duration-300 group-hover:text-primary">
+                        {feature.title}
+                      </h3>
+                      <p className="text-xs leading-relaxed text-gray-600">
+                        {feature.description}
+                      </p>
+                    </div>
 
-                {/* Corner decoration */}
-                <div className="absolute -bottom-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </Card>
-            )
-          })}
+                    {/* Corner decoration */}
+                    <div className="absolute w-20 h-20 transition-opacity duration-500 rounded-full opacity-0 -bottom-6 -right-6 bg-gradient-to-br from-primary/10 to-transparent group-hover:opacity-100" />
+                  </Card>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Second Row - Scroll Right to Left */}
+          <div className="relative">
+            <div className="flex gap-5 animate-scroll-rtl">
+              {[...features.slice(5), ...features.slice(5)].map((feature, index) => {
+                const colors = getColorClasses(feature.color, (index + 5) % features.length)
+                return (
+                  <Card
+                    key={`row2-${index}`}
+                    className={`group relative p-5 border-2 border-gray-200 rounded-2xl bg-white shadow-lg transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl ${colors.cardHover} overflow-hidden flex-shrink-0 w-[280px]`}
+                  >
+                    {/* Animated gradient border on top */}
+                    <span className="absolute inset-x-0 top-0 h-1 transition-opacity opacity-0 bg-gradient-to-r from-purple-500 via-cyan-500 via-orange-500 to-pink-500 group-hover:opacity-100" />
+
+                    {/* Background glow effect */}
+                    <div className="absolute w-32 h-32 transition-opacity duration-700 rounded-full opacity-0 -top-10 -right-10 bg-purple-500/5 blur-2xl group-hover:opacity-100" />
+
+                    {/* Icon with 3D effect */}
+                    <div className="relative mb-4">
+                      <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${colors.iconBg} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg`}>
+                        <feature.icon className={`w-6 h-6 ${colors.iconColor}`} />
+                      </div>
+                      {/* Icon shadow */}
+                      <div className={`absolute top-0 left-0 w-12 h-12 rounded-xl ${colors.iconBg} blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`} />
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative space-y-2">
+                      <h3 className="text-lg font-bold text-gray-900 transition-colors duration-300 group-hover:text-primary">
+                        {feature.title}
+                      </h3>
+                      <p className="text-xs leading-relaxed text-gray-600">
+                        {feature.description}
+                      </p>
+                    </div>
+
+                    {/* Corner decoration */}
+                    <div className="absolute w-20 h-20 transition-opacity duration-500 rounded-full opacity-0 -bottom-6 -right-6 bg-gradient-to-br from-primary/10 to-transparent group-hover:opacity-100" />
+                  </Card>
+                )
+              })}
+            </div>
+          </div>
         </div>
 
+        {/* CSS Animations - Add to global styles or inline */}
+        <style jsx>{`
+          @keyframes scroll-ltr {
+            0% {
+              transform: translateX(0);
+            }
+            100% {
+              transform: translateX(-50%);
+            }
+          }
+
+          @keyframes scroll-rtl {
+            0% {
+              transform: translateX(-50%);
+            }
+            100% {
+              transform: translateX(0);
+            }
+          }
+
+          .animate-scroll-ltr {
+            animation: scroll-ltr 40s linear infinite;
+          }
+
+          .animate-scroll-rtl {
+            animation: scroll-rtl 40s linear infinite;
+          }
+
+          .animate-scroll-ltr:hover,
+          .animate-scroll-rtl:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
+
         {/* CTA Section - Solid background */}
-        <div className="text-center mt-16">
+        <div className="mt-16 text-center">
           <div className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold bg-purple-50 text-purple-700 border-2 border-purple-200">
             <Shield className="w-5 h-5 text-purple-600" />
             <span>Trusted by 5000+ Students & 180+ Faculty Members</span>

@@ -2,6 +2,7 @@
 // ACTIVE LANDING PAGE COMPONENTS - Currently Used in main page
 // ============================================================================
 export { default as Header } from './header'
+export { default as Header2 } from './header-2'
 export { default as HeroSection } from './hero-section'
 export { default as AboutSection } from './about-section'
 export { default as CoursesSection } from './courses-section'

@@ -1,5 +1,6 @@
 import {
   Header,
+  Header2,
   HeroSection,
   AboutSection,
   FeaturesSection,
