@@ -1336,7 +1336,7 @@ export default function GenerateCertificatesPage() {
               )}
             </CardContent>
           </Card>
-          <div className="hidden print:block">
+          <div id="print-area" className="hidden print:block">
             <div className="overflow-hidden bg-white rounded-lg a4-landscape mb-4">
               <div className="relative certificate-content">
                 <div className="absolute border-4 border-black pointer-events-none inset-6 rounded-3xl" />
@@ -1360,7 +1360,22 @@ export default function GenerateCertificatesPage() {
         .preview-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius:4px; }
         .preview-scroll::-webkit-scrollbar-track { background: transparent; }
         @page { size: A4 landscape; margin:0; }
-        @media print { body { margin:0; padding:0; background:white !important; } .a4-landscape { transform:none !important; page-break-after: always; } .a4-landscape:last-child { page-break-after: auto; } .print\\:hidden { display:none !important; } .preview-scroll { overflow:visible; } }
+        /* Improved print rules: only print the two certificate pages */
+        @media print {
+          html, body { margin:0 !important; padding:0 !important; background:#fff !important; }
+          /* First hide everything via visibility so ancestor boxes remain to host #print-area */
+          body * { visibility: hidden !important; }
+          /* Show only the certificate print area */
+            #print-area, #print-area * { visibility: visible !important; }
+          /* Remove any spacing influence */
+          #print-area { position: relative !important; margin:0 !important; padding:0 !important; display:block !important; width:100% !important; }
+          /* Force exact A4 landscape size per page */
+          #print-area .a4-landscape { width:297mm !important; height:210mm !important; max-width:297mm !important; max-height:210mm !important; transform:none !important; page-break-after:always; page-break-inside:avoid; overflow:hidden !important; }
+          #print-area .a4-landscape:last-child { page-break-after:auto; }
+          #print-area .certificate-content { padding:10mm; box-shadow:none !important; }
+          /* Remove scrollbars */
+          ::-webkit-scrollbar { display:none !important; }
+        }
       `}</style>
     </div>
   );
