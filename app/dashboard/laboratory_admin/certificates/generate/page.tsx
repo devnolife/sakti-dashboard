@@ -374,9 +374,9 @@ function CertificateFront({
 }) {
   return (
     <div className="relative z-10 flex flex-col justify-between h-full p-8">
-      <div className="flex flex-col items-center mt-4 ">
+      <div className="flex flex-col items-center mt-4">
         <div className="relative mb-2">
-          <div className="relative w-56 h-40">
+          <div className="relative w-80 h-56">
             <Image
               src="/certificate-badge.png"
               alt="Informatics Laboratory Badge"
@@ -395,7 +395,7 @@ function CertificateFront({
             PROFESSIONAL CERTIFICATION
           </p>
           <h1
-            className={`text-6xl font-black text-gray-900 mb-2 ${montserrat.className}`}
+            className={`text-5xl font-black text-gray-900 mb-2 ${montserrat.className}`}
           >
             {studentData.certificateTitle || studentData.program}
           </h1>
@@ -403,14 +403,14 @@ function CertificateFront({
         <div className="mb-2 text-center">
           <p className="mb-1 text-base text-gray-600">ISSUED TO</p>
           <h2
-            className={`text-5xl font-bold text-gray-900 mb-2 ${montserrat.className}`}
+            className={`text-4xl font-bold text-gray-900 mb-2 ${montserrat.className}`}
           >
             {studentData.name}
           </h2>
         </div>
         <div className="max-w-2xl mx-auto mb-2 text-center">
           <p
-            className={`text-gray-700 text-lg leading-relaxed ${openSans.className}`}
+            className={`text-gray-700 text-base leading-relaxed ${openSans.className}`}
           >
             The bearer of this professional certificate has demonstrated a
             fundamental level of Backend Development mastery and passed the
@@ -1172,6 +1172,7 @@ export default function GenerateCertificatesPage() {
             /* Typography */
             .text-6xl { font-size: 3.75rem; line-height: 1; }
             .text-5xl { font-size: 3rem; line-height: 1; }
+            .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
             .text-2xl { font-size: 1.5rem; line-height: 2rem; }
             .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
             .text-base { font-size: 1rem; line-height: 1.5rem; }
@@ -1248,6 +1249,8 @@ export default function GenerateCertificatesPage() {
             }
             
             /* Width/Height utilities */
+            .w-80 { width: 20rem; }
+            .h-56 { height: 14rem; }
             .w-56 { width: 14rem; }
             .h-40 { height: 10rem; }
             .w-10 { width: 2.5rem; }
@@ -1267,32 +1270,15 @@ export default function GenerateCertificatesPage() {
             .h-full { height: 100%; }
             .w-full { width: 100%; }
             
-            /* Flex wrap */
-            .flex-wrap { flex-wrap: wrap; }
-            
-            /* Font families */
-            .font-montserrat { font-family: 'Montserrat', sans-serif !important; }
-            .font-poppins { font-family: 'Poppins', sans-serif !important; }
-            .font-opensans { font-family: 'Open Sans', sans-serif !important; }
-            
-            /* Image replacement for Next.js Image component */
-            img {
-              max-width: 100%;
-              height: auto;
-              display: block;
-            }
-            
-            .object-contain { object-fit: contain; }
-            .fill { width: 100%; height: 100%; }
-            
-            /* Ensure backgrounds print */
-            @media print {
-              * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-              }
-            }
+            /* Typography - adjusted sizes */
+            .text-6xl { font-size: 3.75rem; line-height: 1; }
+            .text-5xl { font-size: 3rem; line-height: 1; }
+            .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+            .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+            .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+            .text-base { font-size: 1rem; line-height: 1.5rem; }
+            .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+            .text-xs { font-size: 0.75rem; line-height: 1rem; }
           </style>
         </head>
         <body>
