@@ -557,7 +557,6 @@ function CertificateBack({
               >
                 Sertifikat Laboratorium, {studentData.name}
               </h1>
-              <span className="text-lg">🤝</span>
             </div>
             <p
               className={`text-gray-600 text-sm mb-2 ${openSans.className}`}
@@ -664,9 +663,9 @@ function CertificateBack({
             >
               {s.label}
             </p>
-            {s.sparkline && (
+            {/* {s.sparkline && (
               <Sparkline data={studentData.learningTime.weeklyData.slice(0, 5)} />
-            )}
+            )} */}
           </div>
         ))}
       </div>
@@ -1036,7 +1035,283 @@ export default function GenerateCertificatesPage() {
     XLSX.writeFile(wb, "template-sertifikat-lab.xlsx");
   };
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    const printContent = document.getElementById('print-area');
+    if (!printContent) {
+      console.error('Print area not found');
+      return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      console.error('Cannot open print window');
+      return;
+    }
+    
+    // Clone dan proses konten
+    const clonedContent = printContent.cloneNode(true) as HTMLElement;
+    clonedContent.style.display = 'block';
+    
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Print Certificate</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@400;500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              color-adjust: exact;
+            }
+            
+            @page {
+              size: A4 landscape;
+              margin: 0;
+            }
+            
+            body {
+              margin: 0;
+              padding: 0;
+              background: white;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            }
+            
+            .hidden { display: none !important; }
+            .print\\:block { display: block !important; }
+            
+            .a4-landscape {
+              width: 297mm;
+              height: 210mm;
+              position: relative;
+              page-break-after: always;
+              page-break-inside: avoid;
+              background: white;
+              overflow: hidden;
+            }
+            
+            .a4-landscape:last-child {
+              page-break-after: auto;
+            }
+            
+            .certificate-content {
+              width: 100%;
+              height: 100%;
+              padding: 10mm;
+              display: flex;
+              flex-direction: column;
+              position: relative;
+            }
+            
+            /* Layout utilities */
+            .relative { position: relative; }
+            .absolute { position: absolute; }
+            .inset-6 { top: 24px; right: 24px; bottom: 24px; left: 24px; }
+            .z-10 { z-index: 10; }
+            .flex { display: flex; }
+            .flex-col { flex-direction: column; }
+            .items-center { align-items: center; }
+            .items-start { align-items: flex-start; }
+            .items-end { align-items: flex-end; }
+            .justify-center { justify-content: center; }
+            .justify-between { justify-content: space-between; }
+            .flex-grow { flex-grow: 1; }
+            .gap-2 { gap: 0.5rem; }
+            .gap-4 { gap: 1rem; }
+            .gap-5 { gap: 1.25rem; }
+            .grid { display: grid; }
+            .grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+            .grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .col-span-7 { grid-column: span 7 / span 7; }
+            .col-span-3 { grid-column: span 3 / span 3; }
+            .col-span-2 { grid-column: span 2 / span 2; }
+            .space-y-2 > * + * { margin-top: 0.5rem; }
+            .mx-auto { margin-left: auto; margin-right: auto; }
+            .mt-4 { margin-top: 1rem; }
+            .mt-auto { margin-top: auto; }
+            .mt-3 { margin-top: 0.75rem; }
+            .mb-1 { margin-bottom: 0.25rem; }
+            .mb-2 { margin-bottom: 0.5rem; }
+            .mb-4 { margin-bottom: 1rem; }
+            .mb-6 { margin-bottom: 1.5rem; }
+            .p-1 { padding: 0.25rem; }
+            .p-2 { padding: 0.5rem; }
+            .p-4 { padding: 1rem; }
+            .p-8 { padding: 2rem; }
+            .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+            .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .py-0\\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+            .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+            .text-center { text-align: center; }
+            .text-right { text-align: right; }
+            .text-left { text-align: left; }
+            .max-w-2xl { max-width: 42rem; }
+            
+            /* Border utilities */
+            .border-4 { border-width: 4px; }
+            .border { border-width: 1px; }
+            .border-black { border-color: #000; }
+            .rounded-3xl { border-radius: 1.5rem; }
+            .rounded-lg { border-radius: 0.5rem; }
+            .rounded-md { border-radius: 0.375rem; }
+            .rounded-full { border-radius: 9999px; }
+            .rounded { border-radius: 0.25rem; }
+            .overflow-hidden { overflow: hidden; }
+            .overflow-visible { overflow: visible; }
+            .overflow-auto { overflow: auto; }
+            .pointer-events-none { pointer-events: none; }
+            
+            /* Typography */
+            .text-6xl { font-size: 3.75rem; line-height: 1; }
+            .text-5xl { font-size: 3rem; line-height: 1; }
+            .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+            .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+            .text-base { font-size: 1rem; line-height: 1.5rem; }
+            .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+            .text-xs { font-size: 0.75rem; line-height: 1rem; }
+            .text-\\[10px\\] { font-size: 10px; }
+            .text-\\[11px\\] { font-size: 11px; }
+            .font-black { font-weight: 900; }
+            .font-bold { font-weight: 700; }
+            .font-semibold { font-weight: 600; }
+            .font-medium { font-weight: 500; }
+            .font-light { font-weight: 300; }
+            .italic { font-style: italic; }
+            .leading-relaxed { line-height: 1.625; }
+            .tracking-widest { letter-spacing: 0.1em; }
+            .whitespace-nowrap { white-space: nowrap; }
+            
+            /* Colors */
+            .text-gray-900 { color: #111827; }
+            .text-gray-800 { color: #1f2937; }
+            .text-gray-700 { color: #374151; }
+            .text-gray-600 { color: #4b5563; }
+            .text-white { color: #ffffff; }
+            .text-green-700 { color: #15803d; }
+            .text-green-600 { color: #16a34a; }
+            .text-blue-700 { color: #1d4ed8; }
+            .text-blue-600 { color: #2563eb; }
+            .text-purple-700 { color: #6b21a1; }
+            .text-purple-600 { color: #9333ea; }
+            .text-amber-500 { color: #f59e0b; }
+            .text-emerald-600 { color: #059669; }
+            .text-yellow-700 { color: #a16207; }
+            .text-transparent { color: transparent; }
+            
+            .bg-white { background-color: #ffffff; }
+            .bg-gray-900 { background-color: #111827; }
+            .bg-gray-800 { background-color: #1f2937; }
+            .bg-gray-200 { background-color: #e5e7eb; }
+            .bg-gray-50 { background-color: #f9fafb; }
+            .bg-green-500 { background-color: #10b981; }
+            .bg-green-400 { background-color: #4ade80; }
+            .bg-green-100 { background-color: #dcfce7; }
+            .bg-green-50 { background-color: #f0fdf4; }
+            .bg-blue-100 { background-color: #dbeafe; }
+            .bg-blue-50 { background-color: #eff6ff; }
+            .bg-yellow-400 { background-color: #facc15; }
+            .bg-yellow-300 { background-color: #fde047; }
+            .bg-yellow-100 { background-color: #fef3c7; }
+            .bg-purple-50 { background-color: #faf5ff; }
+            .bg-orange-400 { background-color: #fb923c; }
+            .bg-orange-300 { background-color: #fdba74; }
+            .bg-red-400 { background-color: #f87171; }
+            .bg-lime-400 { background-color: #a3e635; }
+            .bg-gray-100 { background-color: #f3f4f6; }
+            .bg-gray-400 { background-color: #9ca3af; }
+            
+            /* Gradient utilities */
+            .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+            .from-emerald-400 { --tw-gradient-from: #34d399; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-emerald-600 { --tw-gradient-to: #059669; }
+            .from-emerald-600 { --tw-gradient-from: #059669; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-blue-600 { --tw-gradient-to: #2563eb; }
+            .from-blue-400 { --tw-gradient-from: #60a5fa; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .from-purple-400 { --tw-gradient-from: #c084fc; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-purple-600 { --tw-gradient-to: #9333ea; }
+            .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
+            
+            /* Specific styles */
+            .opacity-5 { opacity: 0.05; }
+            .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+            @keyframes pulse {
+              0%, 100% { opacity: 1; }
+              50% { opacity: .5; }
+            }
+            
+            /* Width/Height utilities */
+            .w-56 { width: 14rem; }
+            .h-40 { height: 10rem; }
+            .w-10 { width: 2.5rem; }
+            .h-10 { height: 2.5rem; }
+            .w-12 { width: 3rem; }
+            .h-12 { height: 3rem; }
+            .w-8 { width: 2rem; }
+            .h-8 { height: 2rem; }
+            .w-6 { width: 1.5rem; }
+            .h-6 { height: 1.5rem; }
+            .w-16 { width: 4rem; }
+            .h-3 { height: 0.75rem; }
+            .h-2 { height: 0.5rem; }
+            .w-2 { width: 0.5rem; }
+            .w-0\\.5 { width: 0.125rem; }
+            .h-0\\.5 { height: 0.125rem; }
+            .h-full { height: 100%; }
+            .w-full { width: 100%; }
+            
+            /* Flex wrap */
+            .flex-wrap { flex-wrap: wrap; }
+            
+            /* Font families */
+            .font-montserrat { font-family: 'Montserrat', sans-serif !important; }
+            .font-poppins { font-family: 'Poppins', sans-serif !important; }
+            .font-opensans { font-family: 'Open Sans', sans-serif !important; }
+            
+            /* Image replacement for Next.js Image component */
+            img {
+              max-width: 100%;
+              height: auto;
+              display: block;
+            }
+            
+            .object-contain { object-fit: contain; }
+            .fill { width: 100%; height: 100%; }
+            
+            /* Ensure backgrounds print */
+            @media print {
+              * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${clonedContent.innerHTML}
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Wait for fonts and content to load
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    };
+  };
+
   const nextRecord = () =>
     setSelectedIndex((i) => (i + 1) % (records.length || 1));
   const prevRecord = () =>
