@@ -442,7 +442,7 @@ function CertificateFront({
               />
             </svg>
           </div>
-          <p className={`text-xs text-gray-600 ${poppins.className}`}>Founders, Uxcel</p>
+          <p className={`text-xs text-gray-600 ${poppins.className}`}>Muhyiddin A.M Hayat, S.Kom., M.T</p>
         </div>
         <div className="flex flex-col items-center">
           <div className="flex items-center justify-center w-10 h-10 mb-2 bg-gray-900 rounded-full">
