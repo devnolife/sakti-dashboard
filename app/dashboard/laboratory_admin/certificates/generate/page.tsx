@@ -76,7 +76,7 @@ const defaultStudentData = {
   certificateTitle: "Nama Sertifikat",
   name: "Nama Peserta",
   program: "Nama Program",
-  subtitle: "Subjudul Sertifikat",
+  subtitle: "Atas keberhasilan menyelesaikan program pelatihan laboratorium",
   issueDate: "00 Bulan 0000",
   verificationId: "CERT-2024-NJS-001234",
   stats: {
@@ -91,15 +91,15 @@ const defaultStudentData = {
     overall: "A",
     breakdown: [
       { subject: "Praktikum Backend", grade: "A+", score: 95 },
-      { subject: "Database Design", grade: "A", score: 90 },
-      { subject: "API Development", grade: "A-", score: 87 },
-      { subject: "Server Management", grade: "B+", score: 85 },
+      { subject: "Desain Database", grade: "A", score: 90 },
+      { subject: "Pengembangan API", grade: "A-", score: 87 },
+      { subject: "Manajemen Server", grade: "B+", score: 85 },
     ],
   },
   learningTime: {
     hours: 231,
     minutes: 14,
-    total: "231h 14m",
+    total: "231j 14m",
     weeklyData: [45, 52, 38, 61, 47, 55, 43, 38, 52, 45],
   },
   achievements: [],
@@ -114,7 +114,7 @@ const defaultStudentData = {
   },
   competencies: [
     {
-      name: "Keterampilan Pemrograman (KP)",
+      name: "Keterampilan Pemrograman",
       value: 35,
       startColor: "#3b82f6",
       endColor: "#1d4ed8",
@@ -123,7 +123,7 @@ const defaultStudentData = {
       level: "Expert",
     },
     {
-      name: "Kemampuan Analisis dan Evaluasi (KAE)",
+      name: "Analisis dan Evaluasi",
       value: 30,
       startColor: "#06b6d4",
       endColor: "#0891b2",
@@ -132,7 +132,7 @@ const defaultStudentData = {
       level: "Advanced",
     },
     {
-      name: "Kreativitas dalam Pemecahan Masalah (KPM)",
+      name: "Pemecahan Masalah Kreatif",
       value: 25,
       startColor: "#10b981",
       endColor: "#059669",
@@ -141,7 +141,7 @@ const defaultStudentData = {
       level: "Advanced",
     },
     {
-      name: "Keterampilan Komunikasi (KK)",
+      name: "Keterampilan Komunikasi",
       value: 20,
       startColor: "#6b7280",
       endColor: "#4b5563",
@@ -150,7 +150,7 @@ const defaultStudentData = {
       level: "Intermediate",
     },
     {
-      name: "Etika dan Komunikasi Profesional",
+      name: "Etika Profesional",
       value: 15,
       startColor: "#ef4444",
       endColor: "#dc2626",
@@ -170,11 +170,11 @@ const defaultStudentData = {
   ],
   technologies: ["Typescript", "NodeJS", "Docker", "PostgreSQL"],
   instructorFeedback:
-    "Menunjukkan pemahaman yang sangat baik dalam pengembangan backend dan kemampuan problem-solving yang excellent.",
+    "Peserta menunjukkan pemahaman yang sangat baik dalam pengembangan backend dan kemampuan problem-solving yang excellent.",
   futureRecommendations: [
-    "Advanced Microservices",
-    "Cloud Architecture",
-    "DevOps Practices",
+    "Microservices Lanjutan",
+    "Arsitektur Cloud",
+    "Praktik DevOps",
   ],
 };
 
@@ -392,7 +392,7 @@ function CertificateFront({
           <p
             className={`text-gray-600 text-sm font-light tracking-widest mb-1 ${poppins.className}`}
           >
-            PROFESSIONAL CERTIFICATION
+            SERTIFIKASI PROFESIONAL
           </p>
           <h1
             className={`text-5xl font-black text-gray-900 mb-2 ${montserrat.className}`}
@@ -401,7 +401,7 @@ function CertificateFront({
           </h1>
         </div>
         <div className="mb-2 text-center">
-          <p className="mb-1 text-base text-gray-600">ISSUED TO</p>
+          <p className="mb-1 text-base text-gray-600">DIBERIKAN KEPADA</p>
           <h2
             className={`text-4xl font-bold text-gray-900 mb-2 ${montserrat.className}`}
           >
@@ -412,10 +412,10 @@ function CertificateFront({
           <p
             className={`text-gray-700 text-base leading-relaxed ${openSans.className}`}
           >
-            The bearer of this professional certificate has demonstrated a
-            fundamental level of Backend Development mastery and passed the
-            core competencies for each programming specialty in laboratory
-            practices.
+            Telah berhasil menyelesaikan program pelatihan dan memenuhi standar
+            kompetensi profesional dalam bidang pengembangan perangkat lunak
+            sesuai dengan kurikulum yang telah ditetapkan oleh Laboratorium
+            Informatika.
           </p>
         </div>
       </div>
@@ -443,6 +443,7 @@ function CertificateFront({
             </svg>
           </div>
           <p className={`text-xs text-gray-600 ${poppins.className}`}>Muhyiddin A.M Hayat, S.Kom., M.T</p>
+          <p className={`text-[10px] text-gray-500 ${poppins.className}`}>Kepala Laboratorium</p>
         </div>
         <div className="flex flex-col items-center">
           <div className="flex items-center justify-center w-10 h-10 mb-2 bg-gray-900 rounded-full">
@@ -468,7 +469,7 @@ function CertificateFront({
           <div
             className={`text-right text-xs text-gray-600 ${poppins.className}`}
           >
-            <p>Issued: {studentData.issueDate}</p>
+            <p>Diterbitkan: {studentData.issueDate}</p>
             <p>ID: {studentData.verificationId}</p>
           </div>
         </div>
@@ -561,12 +562,12 @@ function CertificateBack({
             <p
               className={`text-gray-600 text-sm mb-2 ${openSans.className}`}
             >
-              {studentData.subtitle}
+              {studentData.subtitle || "Atas keberhasilan menyelesaikan program pelatihan"}
             </p>
             <p
               className={`text-sm font-semibold text-gray-800 ${montserrat.className}`}
             >
-              {studentData.program}
+              Program: {studentData.program}
             </p>
           </div>
           <div className="text-right">
@@ -603,7 +604,7 @@ function CertificateBack({
           </div>
           <div className="flex items-center gap-2">
             <span className={`text-sm text-gray-600 ${poppins.className}`}>
-              Nilai Keseluruhan:
+              Nilai Akhir:
             </span>
             <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
               {studentData.grades.overall}
@@ -619,7 +620,7 @@ function CertificateBack({
             bgColor: "#3b82f6",
           },
           {
-            label: "Nilai",
+            label: "Nilai Total",
             value: studentData.stats.totalScore,
             bgColor: "#06b6d4",
             sparkline: true,
@@ -707,7 +708,9 @@ function CertificateBack({
                           : "bg-gray-100 text-gray-700"
                       } ${poppins.className}`}
                     >
-                      {c.level}
+                      {c.level === "Expert" ? "Mahir" : 
+                       c.level === "Advanced" ? "Lanjutan" :
+                       c.level === "Intermediate" ? "Menengah" : "Pemula"}
                     </span>
                     <span
                       className={`text-xs font-bold text-gray-900 ${montserrat.className}`}
@@ -732,7 +735,7 @@ function CertificateBack({
             <h4
               className={`text-xs font-bold text-gray-800 mb-2 ${montserrat.className}`}
             >
-              Grade Breakdown
+              Rincian Nilai
             </h4>
             <div className="grid grid-cols-2 gap-2">
               {studentData.grades.breakdown.map((g: any, i: number) => (
@@ -771,7 +774,7 @@ function CertificateBack({
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <span className={`text-sm text-gray-600 ${poppins.className}`}>
-                Problem Solving
+                Pemecahan Masalah
               </span>
               <span
                 className={`text-sm font-bold text-blue-600 ${montserrat.className}`}
@@ -866,7 +869,7 @@ function CertificateBack({
             <h4
               className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}
             >
-              Rekomendasi
+              Rekomendasi Lanjutan
             </h4>
             <div className="space-y-2">
               {studentData.futureRecommendations.map((rec, i) => (
@@ -885,12 +888,13 @@ function CertificateBack({
         <h4
           className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}
         >
-          Umpan Balik Instruktur
+          Catatan Instruktur
         </h4>
         <p
           className={`text-sm text-gray-700 italic ${openSans.className}`}
         >
-          {studentData.instructorFeedback}
+          {studentData.instructorFeedback || 
+           "Peserta menunjukkan kemampuan yang baik dalam memahami konsep-konsep dasar dan mampu menerapkannya dalam praktek laboratorium."}
         </p>
       </div>
     </div>
