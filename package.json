@@ -76,6 +76,7 @@
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.149",
     "prisma": "^6.16.2",
+    "qrcode": "^1.5.4",
     "react": "^19",
     "react-chartjs-2": "latest",
     "react-day-picker": "^8.10.1",
@@ -95,6 +96,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/xlsx": "^0.0.36",

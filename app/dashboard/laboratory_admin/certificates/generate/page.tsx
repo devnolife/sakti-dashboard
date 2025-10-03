@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Montserrat, Poppins, Open_Sans } from "next/font/google";
+import QRCode from 'qrcode';
 
 import {
   Card,
@@ -407,6 +408,75 @@ function GradeIndicator({
   );
 }
 
+function CertificateQRCode({ 
+  verificationId, 
+  size = 48 
+}: { 
+  verificationId: string; 
+  size?: number;
+}) {
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+
+  useEffect(() => {
+    // Generate QR Code with verification URL
+    const generateQR = async () => {
+      try {
+        // URL untuk verifikasi sertifikat (sesuaikan dengan domain Anda)
+        const verificationUrl = `https://lab-informatika.id/verify/${verificationId}`;
+        
+        const url = await QRCode.toDataURL(verificationUrl, {
+          width: size * 2, // Higher resolution for print
+          margin: 1,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          },
+          errorCorrectionLevel: 'M'
+        });
+        setQrCodeUrl(url);
+      } catch (err) {
+        console.error('Error generating QR code:', err);
+      }
+    };
+    
+    if (verificationId) {
+      generateQR();
+    }
+  }, [verificationId, size]);
+
+  if (!qrCodeUrl) {
+    // Fallback to pattern if QR generation fails
+    return (
+      <div className={`w-${size/4} h-${size/4} bg-gray-800 rounded`}>
+        <div className="grid grid-cols-4 gap-px p-1">
+          {Array.from({ length: 16 }, (_, i) => (
+            <div
+              key={i}
+              className={`w-0.5 h-0.5 ${
+                Math.random() > 0.5 ? "bg-white" : "bg-gray-800"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="bg-white p-1 rounded" 
+      style={{ width: size, height: size }}
+    >
+      <img 
+        src={qrCodeUrl} 
+        alt="Certificate QR Code" 
+        className="w-full h-full"
+        style={{ imageRendering: 'crisp-edges' }}
+      />
+    </div>
+  );
+}
+
 function CertificateFront({
   studentData,
 }: {
@@ -490,19 +560,8 @@ function CertificateFront({
           <p className={`text-xs text-gray-600 font-medium ${poppins.className}`}>uxcel</p>
         </div>
         <div className="flex flex-col items-end">
-          <div className="flex items-center justify-center w-12 h-12 mb-2 bg-gray-200">
-            <div className="w-10 h-10 bg-gray-800">
-              <div className="grid grid-cols-4 gap-px p-1">
-                {Array.from({ length: 16 }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`w-0.5 h-0.5 ${
-                      Math.random() > 0.5 ? "bg-white" : "bg-gray-800"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
+          <div className="mb-2">
+            <CertificateQRCode verificationId={studentData.verificationId} size={48} />
           </div>
           <div
             className={`text-right text-xs text-gray-600 ${poppins.className}`}
@@ -608,24 +667,15 @@ function CertificateBack({
               Program: {studentData.program}
             </p>
           </div>
-          <div className="text-right">
-            <div className="flex items-center justify-center w-12 h-12 mb-2 bg-gray-800 rounded">
-              <div className="grid grid-cols-4 gap-px p-1">
-                {Array.from({ length: 16 }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`w-0.5 h-0.5 ${
-                      Math.random() > 0.5 ? "bg-white" : "bg-gray-800"
-                    }`}
-                  />
-                ))}
-              </div>
+          <div className="flex flex-col items-end">
+            <div className="mb-2">
+              <CertificateQRCode verificationId={studentData.verificationId} size={44} />
             </div>
             <div
-              className={`text-xs text-gray-600 ${poppins.className}`}
+              className={`text-right text-xs text-gray-600 ${poppins.className}`}
             >
-              <p>Diterbitkan: {studentData.issueDate}</p>
-              <p>ID: {studentData.verificationId}</p>
+              <p className="font-medium">Terbit: {studentData.issueDate}</p>
+              <p className="text-[10px] text-gray-500">{studentData.verificationId}</p>
             </div>
           </div>
         </div>
@@ -1630,6 +1680,7 @@ export default function GenerateCertificatesPage() {
                    disabled={!records.length}
                  >
                    <ChevronLeft className="w-3 h-3" />Prev
+                
                  </Button>
                  <Button
                    type="button"
