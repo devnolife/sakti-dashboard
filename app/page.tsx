@@ -1,16 +1,12 @@
 import {
   Header,
-  Header2,
   HeroSection,
   AboutSection,
   FeaturesSection,
-  CoursesSection,
   WakilDekanSection,
   StatsSection,
-  TestimonialsSection,
   NewsSection,
   QuotesSection,
-  CTASection,
   Footer
 } from '@/components/landing'
 
@@ -26,7 +22,6 @@ export default function Home() {
         <StatsSection />
         <NewsSection />
         <QuotesSection />
-        <CTASection />
       </main>
       <Footer />
     </>
