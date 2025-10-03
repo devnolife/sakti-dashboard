@@ -1,4 +1,4 @@
-import { getStudentDashboardData } from './app/actions/student-actions'
+import { getStudentDashboardData } from '../../app/actions/student-actions'
 
 async function testAction() {
   console.log('🧪 Testing getStudentDashboardData...')

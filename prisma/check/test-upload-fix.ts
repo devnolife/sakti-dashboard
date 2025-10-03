@@ -1,5 +1,5 @@
-import { PrismaClient } from './lib/generated/prisma'
-import { getHardcodedUserId } from './lib/auth-utils'
+import { PrismaClient } from '../../lib/generated/prisma'
+import { getHardcodedUserId } from '../../lib/auth-utils'
 
 const prisma = new PrismaClient()
 
