@@ -44,8 +44,8 @@ const HeroSection: React.FC = () => {
           {/* Text Content */}
           <div className="flex flex-col items-center space-y-6 text-center lg:items-start lg:text-left lg:col-span-7">
             {/* Brand Badge - Prominent */}
-            <div className="inline-flex flex-col items-center lg:items-start gap-3">
-              <div className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl backdrop-blur-xl bg-gradient-to-r from-purple-50 to-cyan-50 border-2 border-purple-200/50 shadow-xl shadow-purple-500/10">
+            <div className="inline-flex flex-col items-center gap-3 lg:items-start">
+              <div className="inline-flex items-center gap-3 px-5 py-3 border-2 shadow-xl rounded-2xl backdrop-blur-xl bg-gradient-to-r from-purple-50 to-cyan-50 border-purple-200/50 shadow-purple-500/10">
                 <Lightbulb className="w-5 h-5 text-purple-600" />
                 <span className="text-sm font-bold tracking-wide text-gray-900">Sistem Informasi Fakultas Teknik</span>
               </div>
@@ -65,7 +65,8 @@ const HeroSection: React.FC = () => {
               {/* Slogan - Clear and Professional */}
               <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-700 leading-relaxed max-w-[700px]">
                 Sistem Informasi Terintegrasi<br />
-                <span className="text-purple-600">Fakultas Teknik Unismuh Makassar</span>
+                <span className="text-red-600">Fakultas Teknik </span>
+                <span className="text-blue-600">Unismuh Makassar</span>
               </p>
             </div>
 
@@ -81,7 +82,7 @@ const HeroSection: React.FC = () => {
                 { text: 'Pengelolaan Dokumen Otomatis', color: 'orange' },
                 { text: 'Notifikasi & Workflow Pintar', color: 'teal' }
               ].map((item, idx) => (
-                <div key={item.text} className="group relative">
+                <div key={item.text} className="relative group">
                   <div className={`flex items-center gap-3 p-3 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-${item.color}-300 transition-all duration-300 hover:shadow-lg hover:shadow-${item.color}-500/10 hover:-translate-y-1`}>
                     <span className={`flex items-center justify-center w-8 h-8 rounded-lg bg-${item.color}-100 text-${item.color}-600 group-hover:scale-110 transition-transform`}>
                       <CheckCircle2 className="w-4 h-4" />
@@ -94,13 +95,13 @@ const HeroSection: React.FC = () => {
 
             {/* Actions - Main button with soft red */}
             <div className="flex flex-col w-full gap-4 sm:flex-row sm:items-center">
-              <Button asChild className="rounded-2xl px-10 py-7 text-base sm:text-lg font-bold bg-red-500 hover:bg-red-600 text-white hover:shadow-xl shadow-lg shadow-red-500/30 transition-all hover:scale-105">
+              <Button asChild className="px-10 text-base font-bold text-white transition-all bg-red-500 shadow-lg rounded-2xl py-7 sm:text-lg hover:bg-red-600 hover:shadow-xl shadow-red-500/30 hover:scale-105">
                 <Link href="/dashboard" className="flex items-center gap-2">
                   <span>Masuk Dashboard</span>
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" asChild className="px-10 py-7 text-base font-semibold text-gray-700 border-2 rounded-2xl sm:text-lg border-gray-300 hover:text-white hover:bg-gray-900 hover:border-gray-900 backdrop-blur-md transition-all">
+              <Button variant="outline" asChild className="px-10 text-base font-semibold text-gray-700 transition-all border-2 border-gray-300 py-7 rounded-2xl sm:text-lg hover:text-white hover:bg-gray-900 hover:border-gray-900 backdrop-blur-md">
                 <Link href="#features">Jelajahi Fitur</Link>
               </Button>
             </div>
@@ -118,14 +119,14 @@ const HeroSection: React.FC = () => {
 
           {/* Visual / Mock dashboard placeholder */}
           <div className="relative lg:col-span-5">
-            <div className="relative p-3 rounded-3xl bg-gradient-to-br from-white via-blue-50/50 to-red-50/30 backdrop-blur-2xl border border-gray-200 shadow-2xl shadow-primary/20">
+            <div className="relative p-3 border border-gray-200 shadow-2xl rounded-3xl bg-gradient-to-br from-white via-blue-50/50 to-red-50/30 backdrop-blur-2xl shadow-primary/20">
               <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-white to-gray-50 aspect-[4/3] flex items-center justify-center border border-gray-100">
                 {/* Animated rings with blue and red */}
                 <div className="absolute w-[140%] h-[140%] rounded-full bg-gradient-to-tr from-primary/10 via-red-500/8 to-transparent animate-spin-slower" />
                 <div className="absolute w-[120%] h-[120%] rounded-full border border-primary/20 animate-spin-slow [animation-direction:reverse]" />
                 <div className="relative z-10 flex flex-col items-center px-8 text-center">
                   <p className="mb-4 text-xs tracking-[0.3em] text-gray-400 font-semibold">PREVIEW</p>
-                  <h3 className="mb-4 text-3xl font-bold bg-gradient-to-r from-primary via-blue-500 to-red-500 bg-clip-text text-transparent">SINTEKMu</h3>
+                  <h3 className="mb-4 text-3xl font-bold text-transparent bg-gradient-to-r from-primary via-blue-500 to-red-500 bg-clip-text">SINTEKMu</h3>
                   <p className="max-w-sm text-sm leading-relaxed text-gray-600">Integrasi sistem akademik untuk efisiensi pengelolaan fakultas dan peningkatan pengalaman belajar.</p>
                 </div>
               </div>
@@ -164,7 +165,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-white to-transparent" />
     </section>
   )
 }

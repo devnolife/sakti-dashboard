@@ -54,10 +54,10 @@ const WakilDekanSection = () => {
   ]
 
   return (
-    <section id="features" className="py-16 bg-gradient-to-b from-white via-purple-50/30 to-cyan-50/30 relative overflow-hidden">
+    <section id="features" className="relative py-16 overflow-hidden bg-gradient-to-b from-white via-purple-50/30 to-cyan-50/30">
       {/* Enhanced animated background */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-500/15 via-cyan-500/10 to-transparent rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tr from-cyan-500/15 via-purple-500/10 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-0 left-0 rounded-full w-96 h-96 bg-gradient-to-br from-purple-500/15 via-cyan-500/10 to-transparent blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 right-0 rounded-full w-80 h-80 bg-gradient-to-tr from-cyan-500/15 via-purple-500/10 to-transparent blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Modern Header */}
@@ -68,16 +68,16 @@ const WakilDekanSection = () => {
           </div>
 
           <h2 className="mb-4 text-3xl font-black text-gray-900 md:text-4xl">
-            Para <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-cyan-600 to-purple-600">Wakil Dekan</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600">Dekan & Wakil Dekan</span>
           </h2>
-          <p className="max-w-2xl mx-auto text-base text-gray-600 leading-relaxed">
+          <p className="max-w-2xl mx-auto text-base leading-relaxed text-gray-600">
             Kepemimpinan berpengalaman dalam mengembangkan pendidikan teknik berkualitas tinggi
           </p>
         </div>
 
         {/* Modern Minimalist Grid Layout - Large Photo Cards with Wider Width */}
         <div className="relative">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
             {wakilDekan.map((wakil, index) => {
               const cardColors = [
                 { gradient: 'from-purple-500 to-pink-500' },
@@ -91,7 +91,7 @@ const WakilDekanSection = () => {
               return (
                 <div
                   key={wakil.id}
-                  className="group relative"
+                  className="relative group"
                 >
                   {/* Modern Minimalist Card - Same size for all */}
                   <div className="relative h-full min-h-[500px] overflow-hidden rounded-[32px] transition-all duration-500 group-hover:-translate-y-4 group-hover:scale-[1.08]">
@@ -110,8 +110,8 @@ const WakilDekanSection = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                       {/* Name and Position - centered text at bottom */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 text-white text-center">
-                        <h3 className="text-sm font-bold mb-1 leading-tight drop-shadow-lg">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 text-center text-white">
+                        <h3 className="mb-1 text-sm font-bold leading-tight drop-shadow-lg">
                           {wakil.name}
                         </h3>
                         <p className="text-base font-bold opacity-95 drop-shadow-md">
