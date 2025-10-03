@@ -138,7 +138,7 @@ export default function DocumentManagementPage() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Missing</span>
-                    <button className="text-red-600 hover:text-red-800 text-sm">Upload</button>
+                    <button className="text-blue-600 hover:text-blue-800 text-sm">Upload</button>
                   </div>
                 </div>
               </div>

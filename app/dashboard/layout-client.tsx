@@ -23,6 +23,7 @@ export function DashboardLayoutClient({
   const pathname = usePathname()
 
   const roleFromPath = pathname.split('/')[2] // /dashboard/[role]/...
+  const userRole = user?.role
 
   // Function to get menu items based on role
   const getMenuItems = (role: string) => {
@@ -35,6 +36,13 @@ export function DashboardLayoutClient({
     }
   }, [isLoading, isAuthenticated, router])
 
+  // Redirect to role-specific dashboard if accessing /dashboard without role
+  useEffect(() => {
+    if (!isLoading && user && pathname === "/dashboard" && userRole) {
+      router.push(`/dashboard/${userRole}`)
+    }
+  }, [isLoading, user, pathname, userRole, router])
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
@@ -44,14 +52,21 @@ export function DashboardLayoutClient({
     )
   }
 
-  if (!user || !roleFromPath) {
+  if (!user) {
+    return null
+  }
+
+  // Use roleFromPath or fallback to user's role
+  const effectiveRole = roleFromPath || userRole
+
+  if (!effectiveRole) {
     return null
   }
 
   return (
     <AppLayout
-      role={roleFromPath}
-      menuItems={getMenuItems(roleFromPath)}
+      role={effectiveRole}
+      menuItems={getMenuItems(effectiveRole)}
       defaultSidebarOpen={defaultSidebarOpen}
     >
       {children}

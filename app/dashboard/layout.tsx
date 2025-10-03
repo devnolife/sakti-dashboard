@@ -8,7 +8,9 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const cookieStore = await cookies()
-  const defaultSidebarOpen = cookieStore.get("sidebar:state")?.value === "true"
+  const sidebarState = cookieStore.get("sidebar:state")?.value
+  // Default to true (open) if no cookie is set
+  const defaultSidebarOpen = sidebarState === undefined ? true : sidebarState === "true"
 
   return (
     <DashboardLayoutClient

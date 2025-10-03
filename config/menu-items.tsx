@@ -63,18 +63,6 @@ export const mahasiswaMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    id: "courses",
-    title: "Mata Kuliah",
-    href: "/dashboard/mahasiswa/courses",
-    icon: BookOpen,
-  },
-  {
-    id: "grades",
-    title: "Nilai",
-    href: "/dashboard/mahasiswa/grades",
-    icon: FileText,
-  },
-  {
     id: "academic",
     title: "Akademik",
     href: "/dashboard/mahasiswa/academic",
@@ -86,17 +74,26 @@ export const mahasiswaMenuItems = [
         href: "/dashboard/mahasiswa/academic",
       },
       {
+        id: "courses",
+        title: "Mata Kuliah",
+        href: "/dashboard/mahasiswa/courses",
+      },
+      {
+        id: "grades",
+        title: "Nilai",
+        href: "/dashboard/mahasiswa/grades",
+      },
+      {
+        id: "schedule",
+        title: "Jadwal",
+        href: "/dashboard/mahasiswa/schedule",
+      },
+      {
         id: "control-card",
         title: "Kartu Kontrol",
         href: "/dashboard/mahasiswa/academic/control-card",
       },
     ],
-  },
-  {
-    id: "schedule",
-    title: "Jadwal",
-    href: "/dashboard/mahasiswa/schedule",
-    icon: Calendar,
   },
   {
     id: "library",
@@ -171,33 +168,24 @@ export const mahasiswaMenuItems = [
         title: "Daftar Ujian",
         href: "/dashboard/mahasiswa/exams/register",
       },
-
-    ],
-  },
-  {
-    id: "aik-komfren",
-    title: "Ujian Komfren AIK",
-    href: "/dashboard/mahasiswa/aik-komfren",
-    icon: BookMarked,
-    children: [
       {
         id: "aik-komfren-dashboard",
-        title: "Dashboard",
+        title: "Ujian Komfren AIK",
         href: "/dashboard/mahasiswa/aik-komfren",
       },
       {
         id: "aik-komfren-registration",
-        title: "Registration & Payment",
+        title: "Registrasi & Pembayaran",
         href: "/dashboard/mahasiswa/aik-komfren/registration",
       },
       {
         id: "aik-komfren-schedule",
-        title: "Schedule & Examiner",
+        title: "Jadwal & Penguji",
         href: "/dashboard/mahasiswa/aik-komfren/schedule",
       },
       {
         id: "aik-komfren-completion",
-        title: "Exam Completion",
+        title: "Penyelesaian Ujian",
         href: "/dashboard/mahasiswa/aik-komfren/completion",
       },
     ],
@@ -261,47 +249,27 @@ export const mahasiswaMenuItems = [
         title: "Persyaratan",
         href: "/dashboard/mahasiswa/kkp/requirements",
       },
-    ],
-  },
-  {
-    id: "kkp-plus",
-    title: "KKP Plus",
-    href: "/dashboard/mahasiswa/kkp-plus",
-    icon: Award,
-    children: [
       {
         id: "kkp-plus-dashboard",
-        title: "Dashboard",
+        title: "KKP Plus",
         href: "/dashboard/mahasiswa/kkp-plus",
       },
       {
         id: "kkp-plus-registration",
-        title: "Pendaftaran",
+        title: "Pendaftaran KKP Plus",
         href: "/dashboard/mahasiswa/kkp-plus/registration",
       },
       {
         id: "kkp-plus-progress",
-        title: "Progress",
+        title: "Progress KKP Plus",
         href: "/dashboard/mahasiswa/kkp-plus/progress",
       },
       {
         id: "kkp-plus-documents",
-        title: "Dokumen",
+        title: "Dokumen KKP Plus",
         href: "/dashboard/mahasiswa/kkp-plus/documents",
       },
     ],
-  },
-  {
-    id: "journal",
-    title: "Jurnal Mahasiswa",
-    href: "/dashboard/mahasiswa/journal",
-    icon: BookOpen,
-  },
-  {
-    id: "certificate-check",
-    title: "Pengecekan Ijazah",
-    href: "/dashboard/mahasiswa/certificate-check",
-    icon: Award,
   },
   {
     id: "settings",

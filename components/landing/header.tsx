@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Menu, X, GraduationCap } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -76,9 +77,14 @@ const Header: React.FC = () => {
         <div className={`flex items-center justify-between ${scrolled ? 'h-16' : 'h-20'} transition-all`}>
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl border overflow-hidden transition-colors duration-500 bg-primary/10 border-primary/30">
-              <GraduationCap className="w-7 h-7 transition-all duration-500 group-hover:rotate-12 text-primary" />
-              <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-primary/20 to-red-500/10" />
+            <div className="relative flex items-center justify-center w-12 h-12 transition-transform duration-500 group-hover:scale-110">
+              <Image
+                src="/logo/logo.png"
+                alt="SintekMu Logo"
+                width={48}
+                height={48}
+                className="object-contain"
+              />
             </div>
             <span className="text-[26px] font-bold leading-none tracking-tight select-none">
               <span className="text-red-600">SINTEK</span>

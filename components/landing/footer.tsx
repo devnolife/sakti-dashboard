@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { GraduationCap, Facebook, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react'
 
 const Footer: React.FC = () => {
@@ -38,14 +39,20 @@ const Footer: React.FC = () => {
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tr from-cyan-500/5 via-purple-500/5 to-transparent rounded-full blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_2fr] gap-16">
 
           {/* Brand Section - Enhanced and Clear */}
           <div className="space-y-5">
             <Link href="/" className="inline-block group">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="bg-gradient-to-br from-purple-600 to-cyan-600 p-3 rounded-2xl shadow-xl group-hover:scale-110 transition-transform duration-300">
-                  <GraduationCap className="w-10 h-10 text-white" />
+                <div className="group-hover:scale-110 transition-transform duration-300">
+                  <Image
+                    src="/logo/logo.png"
+                    alt="SintekMu Logo"
+                    width={56}
+                    height={56}
+                    className="object-contain"
+                  />
                 </div>
                 <div>
                   <div className="text-3xl font-black leading-tight">
@@ -61,8 +68,9 @@ const Footer: React.FC = () => {
               <p className="text-base font-bold text-gray-900 leading-tight">
                 Sistem Informasi Terintegrasi
               </p>
-              <p className="text-sm font-semibold text-purple-600 leading-relaxed">
-                Fakultas Teknik<br />Universitas Muhammadiyah Makassar
+              <p className="text-sm font-semibold leading-relaxed">
+                <span className="text-red-600">Fakultas Teknik</span><br />
+                <span className="text-blue-600">Universitas Muhammadiyah Makassar</span>
               </p>
             </div>
 
@@ -137,6 +145,17 @@ const Footer: React.FC = () => {
               ))}
             </div>
           </div>
+
+          {/* Photo Section - Right Side */}
+          <div className="flex items-end justify-end -mr-8 lg:-mr-12 -mb-12">
+            <Image
+              src="/landing/footer.png"
+              alt="Fakultas Teknik"
+              width={1000}
+              height={1000}
+              className="w-full h-auto max-w-none"
+            />
+          </div>
         </div>
 
         {/* Copyright - Modern with gradient divider */}
@@ -145,9 +164,14 @@ const Footer: React.FC = () => {
             <p className="text-gray-600 text-sm font-medium">
               © 2025 <span className="font-bold"><span className="text-red-600">SINTEK</span><span className="text-blue-600">Mu</span></span>. Semua hak dilindungi.
             </p>
-            <p className="text-gray-500 text-xs">
-              Fakultas Teknik Universitas Muhammadiyah Makassar
-            </p>
+            <div className="flex flex-col items-center md:items-end gap-1">
+              <p className="text-gray-500 text-xs">
+                Fakultas Teknik Universitas Muhammadiyah Makassar
+              </p>
+              <p className="text-gray-500 text-xs">
+                Created by <Link href="https://github.com/devnolife" target="_blank" rel="noopener noreferrer" className="text-blue-900 font-semibold hover:text-blue-700 transition-colors">devnolife</Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>

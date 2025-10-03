@@ -7,7 +7,7 @@ const QuotesSection = () => {
   const leaderBubbles = [
     {
       size: 'w-24 h-24',
-      position: 'top-6 left-12',
+      position: 'top-12 right-72',
       color: 'from-purple-400 to-purple-600',
       delay: '0s',
       role: 'Kaprodi',
@@ -17,7 +17,7 @@ const QuotesSection = () => {
     },
     {
       size: 'w-32 h-32',
-      position: 'top-20 right-16',
+      position: 'bottom-40 left-20',
       color: 'from-cyan-400 to-cyan-600',
       delay: '0.4s',
       role: 'Sekprodi',
@@ -27,7 +27,7 @@ const QuotesSection = () => {
     },
     {
       size: 'w-28 h-28',
-      position: 'top-32 left-64',
+      position: 'top-24 left-40',
       color: 'from-orange-400 to-orange-600',
       delay: '0.8s',
       role: 'Kaprodi',
@@ -37,7 +37,7 @@ const QuotesSection = () => {
     },
     {
       size: 'w-36 h-36',
-      position: 'bottom-32 right-8',
+      position: 'top-48 right-24',
       color: 'from-teal-400 to-teal-600',
       delay: '1.2s',
       role: 'Sekprodi',
@@ -46,8 +46,8 @@ const QuotesSection = () => {
       photo: '/prodi/Sekprodi Elektro Bapak Ir. Andi Abdul Halik Lateko, S.T., M.T., Ph.D..png'
     },
     {
-      size: 'w-20 h-20',
-      position: 'bottom-12 left-32',
+      size: 'w-28 h-28',
+      position: 'bottom-32 right-80',
       color: 'from-pink-400 to-pink-600',
       delay: '1.6s',
       role: 'Kaprodi',
@@ -56,8 +56,8 @@ const QuotesSection = () => {
       photo: '/prodi/Kaprodi Arsitek Ibu Ar. Hj. Citra Amalia, S.T., M.T., IAI..png'
     },
     {
-      size: 'w-30 h-30',
-      position: 'top-8 right-80',
+      size: 'w-28 h-28',
+      position: 'top-8 left-96',
       color: 'from-indigo-400 to-indigo-600',
       delay: '2.0s',
       role: 'Kaprodi',
@@ -66,8 +66,8 @@ const QuotesSection = () => {
       photo: '/prodi/Kaprodi PWK ibu Ir. Nini Apriani Rumata, S.T., M.T., IPM..png'
     },
     {
-      size: 'w-26 h-26',
-      position: 'bottom-8 left-16',
+      size: 'w-24 h-24',
+      position: 'bottom-24 left-80',
       color: 'from-emerald-400 to-emerald-600',
       delay: '2.4s',
       role: 'Kaprodi',
@@ -76,54 +76,14 @@ const QuotesSection = () => {
       photo: '/prodi/Kaprodi pengairan Bapak Ir. Agusalim, S.T., M.T..png'
     },
     {
-      size: 'w-34 h-34',
-      position: 'top-40 left-32',
+      size: 'w-32 h-32',
+      position: 'bottom-52 right-40',
       color: 'from-violet-400 to-violet-600',
       delay: '2.8s',
       role: 'Sekprodi',
       title: 'Pengairan',
       name: 'Sumardi S.T., M.Sc.',
       photo: '/prodi/Sekprodi Pengairan Bapak Sumardi S.T., M.Sc..png'
-    },
-    {
-      size: 'w-22 h-22',
-      position: 'bottom-20 right-48',
-      color: 'from-rose-400 to-rose-600',
-      delay: '3.2s',
-      role: 'Kaprodi',
-      title: 'PWK',
-      name: 'Ir. Nini Apriani Rumata, S.T., M.T., IPM.',
-      photo: '/prodi/Kaprodi PWK ibu Ir. Nini Apriani Rumata, S.T., M.T., IPM..png'
-    },
-    {
-      size: 'w-29 h-29',
-      position: 'top-12 left-80',
-      color: 'from-amber-400 to-amber-600',
-      delay: '3.6s',
-      role: 'Kaprodi',
-      title: 'PWK (Foto Baru)',
-      name: 'Ketua Prodi PWK',
-      photo: '/prodi/Kaprodi PWK - Ketua Prodi PWK.png'
-    },
-    {
-      size: 'w-30 h-30',
-      position: 'bottom-48 left-64',
-      color: 'from-emerald-400 to-emerald-600',
-      delay: '4.0s',
-      role: 'Sekprodi',
-      title: 'Pengairan (Foto Baru)',
-      name: 'Sekretaris Prodi Pengairan',
-      photo: '/prodi/Sekprodi Pengairan - Sekretaris Prodi Pengairan.png'
-    },
-    {
-      size: 'w-26 h-26',
-      position: 'top-52 right-80',
-      color: 'from-violet-400 to-violet-600',
-      delay: '4.4s',
-      role: 'Kaprodi',
-      title: 'Pengairan (Asli)',
-      name: 'Ir. Agusalim, S.T., M.T.',
-      photo: '/prodi/Kaprodi pengairan Bapak Ir. Agusalim, S.T., M.T..png'
     }
   ]
 
@@ -218,7 +178,7 @@ const QuotesSection = () => {
 
       {/* Main Content Card */}
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="pt-16 text-center">
+        <div className="-mt-8 text-center">
           {/* Modern Quote Icon */}
           <div className="inline-flex items-center justify-center w-20 h-20 mb-8 text-white shadow-2xl rounded-3xl bg-gradient-to-br from-purple-500 to-cyan-500 animate-pulse">
             <Quote className="w-10 h-10" />

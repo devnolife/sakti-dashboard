@@ -141,7 +141,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <ChevronDown className="h-4 w-4" />
+                      <ChevronDown className="w-4 h-4" />
                     </motion.div>
                   )}
                 </motion.button>
@@ -160,7 +160,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="mt-3 ml-6 space-y-2 border-l-2 border-blue-200/60 pl-5 py-2 relative"
+                  className="relative py-2 pl-5 mt-3 ml-6 space-y-2 border-l-2 border-blue-200/60"
                   style={{
                     borderImage: "linear-gradient(to bottom, rgba(59, 130, 246, 0.4), rgba(147, 51, 234, 0.3)) 1"
                   }}
@@ -243,7 +243,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
   if (!mounted) return null
 
   const sidebarContent = (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col h-full">
       {/* Header with Logo and Collapse Button */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         {!isCollapsed && (
@@ -253,11 +253,11 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+              <span className="text-sm font-bold text-white">S</span>
             </div>
             <div>
-              <h3 className="font-bold text-gray-900 text-sm">SAKTI</h3>
+              <h3 className="text-sm font-bold text-gray-900">SAKTI</h3>
               <p className="text-xs text-gray-600">Dashboard</p>
             </div>
           </motion.div>
@@ -266,34 +266,34 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
           variant="ghost"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="h-8 w-8 rounded-lg hover:bg-gray-100 hidden lg:flex"
+          className="hidden w-8 h-8 rounded-lg hover:bg-gray-100 lg:flex"
         >
           <motion.div
             animate={{ rotate: isCollapsed ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="w-4 h-4" />
           </motion.div>
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsMobileOpen(false)}
-          className="h-8 w-8 rounded-lg hover:bg-gray-100 lg:hidden"
+          className="w-8 h-8 rounded-lg hover:bg-gray-100 lg:hidden"
         >
-          <X className="h-4 w-4" />
+          <X className="w-4 h-4" />
         </Button>
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
         <TooltipProvider>
           {/* Quick Access */}
           <div>
             {!isCollapsed && (
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600"></div>
-                <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <h4 className="text-xs font-semibold tracking-wider text-gray-600 uppercase">
                   Quick Access
                 </h4>
                 <div className="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
@@ -316,7 +316,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
             {!isCollapsed && (
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-600"></div>
-                <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <h4 className="text-xs font-semibold tracking-wider text-gray-600 uppercase">
                   Management
                 </h4>
                 <div className="flex-1 h-px bg-gradient-to-r from-gray-200 to-transparent"></div>
@@ -330,7 +330,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
       </div>
 
       {/* User Profile */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="p-4 border-t border-gray-200">
         {!isCollapsed ? (
           <motion.div
             className="space-y-3"
@@ -339,9 +339,9 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
-              <Avatar className="h-9 w-9 border-2 border-blue-500/20">
+              <Avatar className="border-2 h-9 w-9 border-blue-500/20">
                 <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />
-                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-xs">
+                <AvatarFallback className="text-xs font-semibold text-white bg-gradient-to-br from-blue-500 to-purple-600">
                   {user?.name?.substring(0, 2).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -353,10 +353,10 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
             <Button
               variant="outline"
               size="sm"
-              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              className="justify-start w-full text-red-600 border-red-200 hover:text-red-700 hover:bg-red-50"
               onClick={logout}
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="w-4 h-4 mr-2" />
               Logout
             </Button>
           </motion.div>
@@ -369,7 +369,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
                 className="w-full h-10 rounded-xl"
                 onClick={logout}
               >
-                <LogOut className="h-4 w-4 text-red-600" />
+                <LogOut className="w-4 h-4 text-red-600" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
@@ -388,9 +388,9 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
         variant="ghost"
         size="icon"
         onClick={() => setIsMobileOpen(true)}
-        className="fixed top-4 left-4 z-sidebar lg:hidden h-10 w-10 rounded-xl bg-white shadow-lg border border-gray-200"
+        className="fixed w-10 h-10 bg-white border border-gray-200 shadow-lg top-4 left-4 z-sidebar lg:hidden rounded-xl"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="w-5 h-5" />
       </Button>
 
       {/* Mobile Sidebar */}
@@ -409,7 +409,7 @@ export default function ModernSidebar({ className }: ModernSidebarProps) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed left-0 top-0 h-full w-80 bg-white shadow-2xl lg:hidden z-mobile-overlay"
+              className="fixed top-0 left-0 h-full bg-white shadow-2xl w-80 lg:hidden z-mobile-overlay"
             >
               {sidebarContent}
             </motion.aside>

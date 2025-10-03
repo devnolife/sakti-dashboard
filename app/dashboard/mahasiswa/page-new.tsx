@@ -73,7 +73,7 @@ export default function MahasiswaPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl font-bold">Aktivitas Akademik</CardTitle>
-              <Button variant="ghost" size="sm" className="h-8 text-red-600 hover:text-red-700 hover:bg-red-50">
+              <Button variant="ghost" size="sm" className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                 Lihat Semua
               </Button>
             </div>
