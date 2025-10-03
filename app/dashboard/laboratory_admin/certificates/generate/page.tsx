@@ -561,7 +561,7 @@ function CertificateFront({
         </div>
         <div className="flex flex-col items-end">
           <div className="mb-2">
-            <CertificateQRCode verificationId={studentData.verificationId} size={48} />
+            <CertificateQRCode verificationId={studentData.verificationId} size={64} />
           </div>
           <div
             className={`text-right text-xs text-gray-600 ${poppins.className}`}
@@ -669,7 +669,7 @@ function CertificateBack({
           </div>
           <div className="flex flex-col items-end">
             <div className="mb-2">
-              <CertificateQRCode verificationId={studentData.verificationId} size={44} />
+              <CertificateQRCode verificationId={studentData.verificationId} size={56} />
             </div>
             <div
               className={`text-right text-xs text-gray-600 ${poppins.className}`}
@@ -752,9 +752,6 @@ function CertificateBack({
             >
               {s.label}
             </p>
-            {/* {s.sparkline && (
-              <Sparkline data={studentData.learningTime.weeklyData.slice(0, 5)} />
-            )} */}
           </div>
         ))}
       </div>
