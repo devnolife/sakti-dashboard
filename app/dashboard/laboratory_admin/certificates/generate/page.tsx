@@ -250,88 +250,128 @@ function safeParseJSONWithWarning<T>(
 
 function buildRowMapper(warningsRef: string[]) {
   return function mapRowToStudentWithWarn(
-    row: StudentRowRaw,
+    row: any,
     rowIdx: number
   ): StudentDataType {
-    const gradesBreakdown = safeParseJSONWithWarning(
-      row.gradesBreakdown,
-      defaultStudentData.grades.breakdown,
-      "gradesBreakdown",
-      rowIdx,
-      warningsRef
-    );
-    const competencies = safeParseJSONWithWarning(
-      row.competencies,
-      defaultStudentData.competencies,
-      "competencies",
-      rowIdx,
-      warningsRef
-    );
-    const weeklyData = safeParseJSONWithWarning(
-      row.weeklyData,
-      defaultStudentData.learningTime.weeklyData,
-      "weeklyData",
-      rowIdx,
-      warningsRef
-    );
-    const technologies =
-      typeof row.technologies === "string"
-        ? row.technologies
-            .split(/[,;]/)
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : defaultStudentData.technologies;
-    const futureRecommendations =
-      typeof row.futureRecommendations === "string"
-        ? row.futureRecommendations
-            .split(/[,;]/)
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : defaultStudentData.futureRecommendations;
+    // Map Indonesian columns to expected fields
+    const mappedRow = {
+      certificateTitle: row["Judul Sertifikat"] || row.certificateTitle,
+      name: row["Nama Peserta"] || row.name,
+      program: row["Nama Program"] || row.program,
+      subtitle: row["Subjudul"] || row.subtitle,
+      meetings: row["Jumlah Pertemuan"] || row.meetings,
+      totalScore: row["Nilai Total"] || row.totalScore,
+      materials: row["Jumlah Materi"] || row.materials,
+      attendanceRate: row["Persentase Kehadiran"] || row.attendanceRate,
+      assignmentCompletion: row["Penyelesaian Tugas"] || row.assignmentCompletion,
+      participationScore: row["Skor Partisipasi"] || row.participationScore,
+      overallGrade: row["Nilai Akhir"] || row.overallGrade,
+      instructorFeedback: row["Catatan Instruktur"] || row.instructorFeedback,
+    };
+    
+    // Build grades breakdown from individual columns
+    const gradesBreakdown = [];
+    for (let i = 1; i <= 4; i++) {
+      const subject = row[`Mata Kuliah ${i}`];
+      const grade = row[`Nilai MK${i}`];
+      const score = row[`Skor MK${i}`];
+      if (subject && grade && score !== undefined) {
+        gradesBreakdown.push({ subject, grade, score: toNumber(score, 0) });
+      }
+    }
+    
+    // Build competencies from individual columns  
+    const competencies = [];
+    const competencyColors = [
+      { startColor: "#3b82f6", endColor: "#1d4ed8", bgColor: "#3b82f6" },
+      { startColor: "#06b6d4", endColor: "#0891b2", bgColor: "#06b6d4" },
+      { startColor: "#10b981", endColor: "#059669", bgColor: "#10b981" },
+      { startColor: "#6b7280", endColor: "#4b5563", bgColor: "#6b7280" },
+      { startColor: "#ef4444", endColor: "#dc2626", bgColor: "#ef4444" },
+      { startColor: "#f97316", endColor: "#ea580c", bgColor: "#f97316" },
+    ];
+    
+    for (let i = 1; i <= 6; i++) {
+      const name = row[`Kompetensi ${i}`];
+      const value = row[`Nilai Kompetensi ${i}`];
+      const level = row[`Level Kompetensi ${i}`];
+      if (name && value !== undefined) {
+        competencies.push({
+          name,
+          value: toNumber(value, 0),
+          level: level || "Beginner",
+          ...competencyColors[i - 1],
+          shadowColor: `rgba(${parseInt(competencyColors[i - 1].bgColor.slice(1, 3), 16)},${parseInt(competencyColors[i - 1].bgColor.slice(3, 5), 16)},${parseInt(competencyColors[i - 1].bgColor.slice(5, 7), 16)},0.4)`
+        });
+      }
+    }
+    
+    // Build weekly data from individual columns
+    const weeklyData = [];
+    for (let i = 1; i <= 10; i++) {
+      const value = row[`Minggu ${i}`];
+      if (value !== undefined) {
+        weeklyData.push(toNumber(value, 0));
+      }
+    }
+    
+    // Build technologies array from individual columns
+    const technologies = [];
+    for (let i = 1; i <= 4; i++) {
+      const tech = row[`Teknologi ${i}`];
+      if (tech) {
+        technologies.push(tech);
+      }
+    }
+    
+    // Build recommendations array from individual columns
+    const futureRecommendations = [];
+    for (let i = 1; i <= 3; i++) {
+      const rec = row[`Rekomendasi ${i}`];
+      if (rec) {
+        futureRecommendations.push(rec);
+      }
+    }
+    
+    // Build analytics from individual columns
+    const learningVelocity = toNumber(row["Kecepatan Belajar"], defaultStudentData.analytics.learningVelocity);
+    const collaborationScore = toNumber(row["Skor Kolaborasi"], defaultStudentData.analytics.collaborationScore);
+    const problemSolvingEfficiency = toNumber(row["Efisiensi Pemecahan Masalah"], defaultStudentData.analytics.problemSolvingEfficiency);
 
     return {
       ...defaultStudentData,
-      certificateTitle:
-        row.certificateTitle || row.program || defaultStudentData.certificateTitle,
-      name: row.name || defaultStudentData.name,
-      program: row.program || defaultStudentData.program,
-      subtitle: row.subtitle || defaultStudentData.subtitle,
-      // System generated (ignore values from Excel)
+      certificateTitle: mappedRow.certificateTitle || defaultStudentData.certificateTitle,
+      name: mappedRow.name || defaultStudentData.name,
+      program: mappedRow.program || defaultStudentData.program,
+      subtitle: mappedRow.subtitle || defaultStudentData.subtitle,
       issueDate: formatIssueDate(),
-      verificationId: generateVerificationId(row.program || row.certificateTitle),
+      verificationId: generateVerificationId(mappedRow.program || mappedRow.certificateTitle),
       stats: {
-        meetings: toNumber(row.meetings, defaultStudentData.stats.meetings),
-        totalScore: toNumber(row.totalScore, defaultStudentData.stats.totalScore),
-        materials: toNumber(row.materials, defaultStudentData.stats.materials),
-        attendanceRate: toNumber(
-          row.attendanceRate,
-          defaultStudentData.stats.attendanceRate
-        ),
-        assignmentCompletion: toNumber(
-          row.assignmentCompletion,
-          defaultStudentData.stats.assignmentCompletion
-        ),
-        participationScore: toNumber(
-          row.participationScore,
-          defaultStudentData.stats.participationScore
-        ),
+        meetings: toNumber(mappedRow.meetings, defaultStudentData.stats.meetings),
+        totalScore: toNumber(mappedRow.totalScore, defaultStudentData.stats.totalScore),
+        materials: toNumber(mappedRow.materials, defaultStudentData.stats.materials),
+        attendanceRate: toNumber(mappedRow.attendanceRate, defaultStudentData.stats.attendanceRate),
+        assignmentCompletion: toNumber(mappedRow.assignmentCompletion, defaultStudentData.stats.assignmentCompletion),
+        participationScore: toNumber(mappedRow.participationScore, defaultStudentData.stats.participationScore),
       },
       grades: {
-        overall: row.overallGrade || defaultStudentData.grades.overall,
-        breakdown: gradesBreakdown as any,
+        overall: mappedRow.overallGrade || defaultStudentData.grades.overall,
+        breakdown: gradesBreakdown.length > 0 ? gradesBreakdown : defaultStudentData.grades.breakdown,
       },
       learningTime: {
         ...defaultStudentData.learningTime,
-        weeklyData: Array.isArray(weeklyData)
-          ? weeklyData
-          : defaultStudentData.learningTime.weeklyData,
-        total: `${defaultStudentData.learningTime.hours}h ${defaultStudentData.learningTime.minutes}m`,
+        weeklyData: weeklyData.length > 0 ? weeklyData : defaultStudentData.learningTime.weeklyData,
       },
-      competencies: competencies as any,
-      technologies,
-      instructorFeedback:
-        row.instructorFeedback || defaultStudentData.instructorFeedback,
-      futureRecommendations,
+      analytics: {
+        ...defaultStudentData.analytics,
+        learningVelocity,
+        collaborationScore,
+        problemSolvingEfficiency,
+      },
+      competencies: competencies.length > 0 ? competencies : defaultStudentData.competencies,
+      technologies: technologies.length > 0 ? technologies : defaultStudentData.technologies,
+      instructorFeedback: mappedRow.instructorFeedback || defaultStudentData.instructorFeedback,
+      futureRecommendations: futureRecommendations.length > 0 ? futureRecommendations : defaultStudentData.futureRecommendations,
     } as StudentDataType;
   };
 }
@@ -412,10 +452,8 @@ function CertificateFront({
           <p
             className={`text-gray-700 text-base leading-relaxed ${openSans.className}`}
           >
-            Telah berhasil menyelesaikan program pelatihan dan memenuhi standar
-            kompetensi profesional dalam bidang pengembangan perangkat lunak
-            sesuai dengan kurikulum yang telah ditetapkan oleh Laboratorium
-            Informatika.
+            {studentData.subtitle || 
+             "Telah berhasil menyelesaikan program pelatihan dan memenuhi standar kompetensi profesional dalam bidang pengembangan perangkat lunak sesuai dengan kurikulum yang telah ditetapkan oleh Laboratorium Informatika."}
           </p>
         </div>
       </div>
@@ -992,51 +1030,239 @@ export default function GenerateCertificatesPage() {
   };
 
   const handleDownloadTemplate = () => {
-    // issueDate & verificationId dihasilkan otomatis oleh sistem (tidak perlu di Excel)
-    const headers = [
-      "certificateTitle",
-      "name",
-      "program",
-      "subtitle",
-      "meetings",
-      "totalScore",
-      "materials",
-      "attendanceRate",
-      "assignmentCompletion",
-      "participationScore",
-      "overallGrade",
-      "gradesBreakdown",
-      "competencies",
-      "weeklyData",
-      "technologies",
-      "instructorFeedback",
-      "futureRecommendations",
-    ];
-    const example = [
+    // Template dengan kolom bahasa Indonesia dan struktur yang diperluas
+    const templateData = [
       {
-        certificateTitle: "Backend Developer I",
-        name: "Nama Mahasiswa",
-        program: "Backend Developer Nest JS",
-        subtitle: "Atas keberhasilan menyelesaikan Laboratorium",
-        meetings: 10,
-        totalScore: 90,
-        materials: 10,
-        attendanceRate: 95,
-        assignmentCompletion: 88,
-        participationScore: 92,
-        overallGrade: "A",
-        gradesBreakdown: JSON.stringify(defaultStudentData.grades.breakdown),
-        competencies: JSON.stringify(defaultStudentData.competencies),
-        weeklyData: JSON.stringify(defaultStudentData.learningTime.weeklyData),
-        technologies: defaultStudentData.technologies.join(","),
-        instructorFeedback: defaultStudentData.instructorFeedback,
-        futureRecommendations: defaultStudentData.futureRecommendations.join(","),
+        // Data Utama Sertifikat
+        "Judul Sertifikat": "Backend Developer I",
+        "Nama Peserta": "Ahmad Rizki Pratama",
+        "Nama Program": "Backend Developer Nest JS",
+        "Subjudul": "Telah berhasil menyelesaikan program pelatihan dan memenuhi standar kompetensi profesional dalam bidang pengembangan perangkat lunak sesuai dengan kurikulum yang telah ditetapkan oleh Laboratorium Informatika.",
+        
+        // Statistik
+        "Jumlah Pertemuan": 10,
+        "Nilai Total": 90,
+        "Jumlah Materi": 10,
+        "Persentase Kehadiran": 95,
+        "Penyelesaian Tugas": 88,
+        "Skor Partisipasi": 92,
+        "Nilai Akhir": "A",
+        
+        // Rincian Nilai (dipecah menjadi kolom terpisah)
+        "Mata Kuliah 1": "Praktikum Backend",
+        "Nilai MK1": "A+",
+        "Skor MK1": 95,
+        "Mata Kuliah 2": "Desain Database",
+        "Nilai MK2": "A",
+        "Skor MK2": 90,
+        "Mata Kuliah 3": "Pengembangan API",
+        "Nilai MK3": "A-",
+        "Skor MK3": 87,
+        "Mata Kuliah 4": "Manajemen Server",
+        "Nilai MK4": "B+",
+        "Skor MK4": 85,
+        
+        // Kompetensi (dipecah menjadi kolom terpisah)
+        "Kompetensi 1": "Keterampilan Pemrograman",
+        "Nilai Kompetensi 1": 35,
+        "Level Kompetensi 1": "Expert",
+        "Kompetensi 2": "Analisis dan Evaluasi",
+        "Nilai Kompetensi 2": 30,
+        "Level Kompetensi 2": "Advanced",
+        "Kompetensi 3": "Pemecahan Masalah Kreatif",
+        "Nilai Kompetensi 3": 25,
+        "Level Kompetensi 3": "Advanced",
+        "Kompetensi 4": "Keterampilan Komunikasi",
+        "Nilai Kompetensi 4": 20,
+        "Level Kompetensi 4": "Intermediate",
+        "Kompetensi 5": "Etika Profesional",
+        "Nilai Kompetensi 5": 15,
+        "Level Kompetensi 5": "Intermediate",
+        "Kompetensi 6": "Kerja Tim",
+        "Nilai Kompetensi 6": 10,
+        "Level Kompetensi 6": "Beginner",
+        
+        // Analitik
+        "Kecepatan Belajar": 85,
+        "Skor Kolaborasi": 78,
+        "Efisiensi Pemecahan Masalah": 92,
+        
+        // Data Mingguan (10 minggu)
+        "Minggu 1": 45,
+        "Minggu 2": 52,
+        "Minggu 3": 38,
+        "Minggu 4": 61,
+        "Minggu 5": 47,
+        "Minggu 6": 55,
+        "Minggu 7": 43,
+        "Minggu 8": 38,
+        "Minggu 9": 52,
+        "Minggu 10": 45,
+        
+        // Teknologi (dipecah jadi kolom terpisah)
+        "Teknologi 1": "TypeScript",
+        "Teknologi 2": "NodeJS",
+        "Teknologi 3": "Docker",
+        "Teknologi 4": "PostgreSQL",
+        
+        // Umpan Balik & Rekomendasi
+        "Catatan Instruktur": "Peserta menunjukkan pemahaman yang sangat baik dalam pengembangan backend dan kemampuan problem-solving yang excellent.",
+        "Rekomendasi 1": "Microservices Lanjutan",
+        "Rekomendasi 2": "Arsitektur Cloud",
+        "Rekomendasi 3": "Praktik DevOps",
       },
+      // Tambahkan baris contoh kedua
+      {
+        "Judul Sertifikat": "Frontend Developer I",
+        "Nama Peserta": "Siti Nurhaliza",
+        "Nama Program": "Frontend Developer React",
+        "Subjudul": "Telah menyelesaikan program pelatihan intensif dan menguasai kompetensi pengembangan aplikasi web modern dengan React dan ekosistemnya.",
+        "Jumlah Pertemuan": 12,
+        "Nilai Total": 88,
+        "Jumlah Materi": 12,
+        "Persentase Kehadiran": 92,
+        "Penyelesaian Tugas": 90,
+        "Skor Partisipasi": 85,
+        "Nilai Akhir": "A-",
+        "Mata Kuliah 1": "React Fundamentals",
+        "Nilai MK1": "A",
+        "Skor MK1": 92,
+        "Mata Kuliah 2": "State Management",
+        "Nilai MK2": "A-",
+        "Skor MK2": 88,
+        "Mata Kuliah 3": "UI/UX Design",
+        "Nilai MK3": "B+",
+        "Skor MK3": 85,
+        "Mata Kuliah 4": "Testing",
+        "Nilai MK4": "A",
+        "Skor MK4": 90,
+        "Kompetensi 1": "React Development",
+        "Nilai Kompetensi 1": 40,
+        "Level Kompetensi 1": "Expert",
+        "Kompetensi 2": "CSS & Styling",
+        "Nilai Kompetensi 2": 35,
+        "Level Kompetensi 2": "Expert",
+        "Kompetensi 3": "JavaScript Modern",
+        "Nilai Kompetensi 3": 30,
+        "Level Kompetensi 3": "Advanced",
+        "Kompetensi 4": "Testing",
+        "Nilai Kompetensi 4": 25,
+        "Level Kompetensi 4": "Advanced",
+        "Kompetensi 5": "Performance",
+        "Nilai Kompetensi 5": 20,
+        "Level Kompetensi 5": "Intermediate",
+        "Kompetensi 6": "Accessibility",
+        "Nilai Kompetensi 6": 15,
+        "Level Kompetensi 6": "Intermediate",
+        "Kecepatan Belajar": 90,
+        "Skor Kolaborasi": 85,
+        "Efisiensi Pemecahan Masalah": 88,
+        "Minggu 1": 50,
+        "Minggu 2": 48,
+        "Minggu 3": 55,
+        "Minggu 4": 60,
+        "Minggu 5": 52,
+        "Minggu 6": 58,
+        "Minggu 7": 45,
+        "Minggu 8": 50,
+        "Minggu 9": 55,
+        "Minggu 10": 48,
+        "Teknologi 1": "React",
+        "Teknologi 2": "TypeScript",
+        "Teknologi 3": "TailwindCSS",
+        "Teknologi 4": "Next.js",
+        "Catatan Instruktur": "Peserta memiliki kemampuan yang baik dalam membangun UI yang responsif dan user-friendly.",
+        "Rekomendasi 1": "Advanced React Patterns",
+        "Rekomendasi 2": "Mobile Development",
+        "Rekomendasi 3": "Web Performance",
+      }
     ];
-    const ws = XLSX.utils.json_to_sheet(example, { header: headers });
+    
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    
+    // Set column widths for better readability
+    const colWidths = [
+      { wch: 20 }, // Judul Sertifikat
+      { wch: 25 }, // Nama Peserta
+      { wch: 25 }, // Nama Program
+      { wch: 60 }, // Subjudul
+      { wch: 15 }, // Stats columns
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 15 },
+      { wch: 12 },
+      // Mata Kuliah columns
+      { wch: 20 }, { wch: 10 }, { wch: 10 },
+      { wch: 20 }, { wch: 10 }, { wch: 10 },
+      { wch: 20 }, { wch: 10 }, { wch: 10 },
+      { wch: 20 }, { wch: 10 }, { wch: 10 },
+      // Kompetensi columns
+      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      // Analytics
+      { wch: 15 }, { wch: 15 }, { wch: 25 },
+      // Weekly data
+      { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+      { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+      // Technologies
+      { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+      // Feedback & Recommendations
+      { wch: 60 },
+      { wch: 25 }, { wch: 25 }, { wch: 25 },
+    ];
+    ws['!cols'] = colWidths;
+    
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Template");
-    XLSX.writeFile(wb, "template-sertifikat-lab.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Data Sertifikat");
+    
+    // Add instruction sheet
+    const instructionData = [
+      { "Petunjuk Pengisian Template Sertifikat": "" },
+      { "": "" },
+      { "Kolom": "Keterangan", "Format": "Contoh" },
+      { "Judul Sertifikat": "Judul yang akan ditampilkan di sertifikat", "Format": "Backend Developer I" },
+      { "Nama Peserta": "Nama lengkap peserta", "Format": "Ahmad Rizki Pratama" },
+      { "Nama Program": "Nama program pelatihan", "Format": "Backend Developer Nest JS" },
+      { "Subjudul": "Deskripsi pencapaian peserta (opsional)", "Format": "Telah berhasil menyelesaikan..." },
+      { "Jumlah Pertemuan": "Total pertemuan yang diikuti", "Format": "10" },
+      { "Nilai Total": "Nilai keseluruhan (0-100)", "Format": "90" },
+      { "Jumlah Materi": "Total materi yang dipelajari", "Format": "10" },
+      { "Persentase Kehadiran": "Persentase kehadiran (0-100)", "Format": "95" },
+      { "Penyelesaian Tugas": "Persentase tugas selesai (0-100)", "Format": "88" },
+      { "Skor Partisipasi": "Skor partisipasi (0-100)", "Format": "92" },
+      { "Nilai Akhir": "Grade akhir", "Format": "A, A-, B+, B, B-, C" },
+      { "": "" },
+      { "Mata Kuliah 1-4": "Nama mata kuliah", "Format": "Praktikum Backend" },
+      { "Nilai MK1-4": "Grade mata kuliah", "Format": "A+, A, A-, B+" },
+      { "Skor MK1-4": "Skor mata kuliah (0-100)", "Format": "95" },
+      { "": "" },
+      { "Kompetensi 1-6": "Nama kompetensi", "Format": "Keterampilan Pemrograman" },
+      { "Nilai Kompetensi 1-6": "Nilai kompetensi (0-100)", "Format": "35" },
+      { "Level Kompetensi 1-6": "Level penguasaan", "Format": "Expert, Advanced, Intermediate, Beginner" },
+      { "": "" },
+      { "Minggu 1-10": "Data progress mingguan", "Format": "45" },
+      { "Teknologi 1-4": "Teknologi yang dipelajari", "Format": "TypeScript, NodeJS, Docker" },
+      { "Catatan Instruktur": "Feedback dari instruktur", "Format": "Teks bebas" },
+      { "Rekomendasi 1-3": "Rekomendasi pembelajaran lanjutan", "Format": "Microservices Lanjutan" },
+      { "": "" },
+      { "CATATAN PENTING:": "" },
+      { "": "• Tanggal terbit dan ID sertifikat akan digenerate otomatis oleh sistem" },
+      { "": "• Kolom yang tidak diisi akan menggunakan nilai default" },
+      { "": "• Pastikan format nilai sesuai dengan contoh yang diberikan" },
+      { "": "• Untuk kolom opsional, kosongkan jika tidak diperlukan" },
+    ];
+    
+    const wsInstruction = XLSX.utils.json_to_sheet(instructionData);
+    wsInstruction['!cols'] = [{ wch: 30 }, { wch: 50 }, { wch: 30 }];
+    XLSX.utils.book_append_sheet(wb, wsInstruction, "Petunjuk");
+    
+    XLSX.writeFile(wb, "template-sertifikat-laboratorium.xlsx");
   };
 
   const handlePrint = () => {
@@ -1520,7 +1746,7 @@ export default function GenerateCertificatesPage() {
                         <TableHead>Nama</TableHead>
                         <TableHead>Program</TableHead>
                         <TableHead>Grade</TableHead>
-                        <TableHead>Hadir</TableHead>
+                        <TableHead>Ahadir</TableHead>
                         <TableHead>Aksi</TableHead>
                       </TableRow>
                     </TableHeader>
