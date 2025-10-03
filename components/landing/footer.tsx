@@ -45,8 +45,14 @@ const Footer: React.FC = () => {
           <div className="space-y-5">
             <Link href="/" className="inline-block group">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="bg-gradient-to-br from-purple-600 to-cyan-600 p-3 rounded-2xl shadow-xl group-hover:scale-110 transition-transform duration-300">
-                  <GraduationCap className="w-10 h-10 text-white" />
+                <div className="group-hover:scale-110 transition-transform duration-300">
+                  <Image
+                    src="/logo/logo.png"
+                    alt="SintekMu Logo"
+                    width={56}
+                    height={56}
+                    className="object-contain"
+                  />
                 </div>
                 <div>
                   <div className="text-3xl font-black leading-tight">
