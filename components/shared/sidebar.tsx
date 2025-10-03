@@ -145,14 +145,20 @@ export function AppSidebar({
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <SidebarMenuSub className="gap-1 px-2 py-2 ml-3 mt-1 border-l-2 border-primary/20 bg-sidebar-accent/30 rounded-md">
+                      <SidebarMenuSub className="gap-1 px-2 py-2 ml-3 mt-1 border-l-2 border-gray-200">
                         {item.children.map((child: any) => {
-                          const isChildActive = pathname === child.href || pathname.startsWith(child.href + "/")
+                          const isChildActive = pathname === child.href
                           return (
                             <SidebarMenuSubItem key={child.id}>
-                              <SidebarMenuSubButton asChild isActive={isChildActive} className="h-8 rounded-md">
-                                <Link href={child.href}>
-                                  <span className="text-sm">• {child.title}</span>
+                              <SidebarMenuSubButton asChild isActive={isChildActive} className="h-8 rounded-md hover:bg-gray-100">
+                                <Link href={child.href} className="flex items-center gap-2">
+                                  {isChildActive && (
+                                    <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                                  )}
+                                  {!isChildActive && (
+                                    <span className="w-2 h-2 rounded-full border border-gray-300 flex-shrink-0" />
+                                  )}
+                                  <span className="text-sm">{child.title}</span>
                                 </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>

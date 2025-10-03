@@ -495,7 +495,7 @@ export default function StudentKkpDashboardPage() {
                 <Clock className="w-4 h-4 mr-2" />
                 Tenggat dalam 2 hari (25 Okt 2023)
               </div>
-              <Button className="w-full mt-4 text-red-700 bg-white border border-red-200 shadow-sm hover:bg-red-50">
+              <Button className="w-full mt-4 text-blue-700 bg-white border border-blue-200 shadow-sm hover:bg-blue-50">
                 Jadwalkan Pertemuan
               </Button>
             </div>

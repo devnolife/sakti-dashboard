@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -82,9 +81,8 @@ export default function LoginPage() {
             {slides.map((slide, index) => (
               <div
                 key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  index === currentSlide ? "opacity-100" : "opacity-0"
-                }`}
+                className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"
+                  }`}
               >
                 {/* Background Image */}
                 <Image
@@ -96,31 +94,10 @@ export default function LoginPage() {
                 />
 
                 {/* Dark Overlay for text readability */}
-                <div className="absolute inset-0 bg-black/30 z-10" />
+                <div className="absolute inset-0 z-10 bg-black/30" />
 
                 {/* Content */}
                 <div className="relative z-30 flex flex-col justify-center h-full p-8 lg:p-16">
-                  {/* Logo */}
-                  <div className="mb-12">
-                    <div className="flex items-center gap-4 mb-8 backdrop-blur-md bg-white/10 p-4 rounded-2xl border border-white/20 w-fit">
-                      <div className="relative flex items-center justify-center rounded-xl h-14 w-14 bg-white p-2">
-                        <Image
-                          src="/logo/logo.png"
-                          alt="SintekMu Logo"
-                          width={56}
-                          height={56}
-                          className="object-contain"
-                        />
-                      </div>
-                      <div>
-                        <h1 className="text-3xl font-bold text-white drop-shadow-lg">
-                          SINTEK<span className="text-blue-200">Mu</span>
-                        </h1>
-                        <p className="text-sm text-white font-semibold drop-shadow">Portal Akademik</p>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Slide Content */}
                   <div className="max-w-xl">
                     <h2 className="mb-4 text-5xl font-black leading-tight text-white lg:text-6xl drop-shadow-lg">
@@ -144,9 +121,9 @@ export default function LoginPage() {
         <div className="flex items-center justify-center p-6 lg:w-2/5 lg:p-12 bg-gradient-to-br from-gray-50 to-blue-50/30">
           <div className="w-full max-w-md">
             {/* Logos Section */}
-            <div className="mb-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-center gap-6 flex-wrap">
-                <div className="transition-transform hover:scale-110 duration-300">
+            <div className="p-6 mb-8">
+              <div className="flex flex-wrap items-center justify-center gap-6">
+                <div className="transition-transform duration-300 hover:scale-110">
                   <Image
                     src="/login/teknik.png"
                     alt="Fakultas Teknik"
@@ -155,7 +132,7 @@ export default function LoginPage() {
                     className="object-contain"
                   />
                 </div>
-                <div className="transition-transform hover:scale-110 duration-300">
+                <div className="transition-transform duration-300 hover:scale-110">
                   <Image
                     src="/login/universitas.png"
                     alt="Universitas Muhammadiyah Makassar"
@@ -164,7 +141,7 @@ export default function LoginPage() {
                     className="object-contain"
                   />
                 </div>
-                <div className="transition-transform hover:scale-110 duration-300">
+                <div className="transition-transform duration-300 hover:scale-110">
                   <Image
                     src="/login/unggul.png"
                     alt="Unggul"
@@ -173,7 +150,7 @@ export default function LoginPage() {
                     className="object-contain"
                   />
                 </div>
-                <div className="transition-transform hover:scale-110 duration-300">
+                <div className="transition-transform duration-300 hover:scale-110">
                   <Image
                     src="/login/GIFt.png"
                     alt="GIFT"
@@ -182,7 +159,7 @@ export default function LoginPage() {
                     className="object-contain"
                   />
                 </div>
-                <div className="transition-transform hover:scale-110 duration-300">
+                <div className="transition-transform duration-300 hover:scale-110">
                   <Image
                     src="/login/logo.png"
                     alt="SintekMu"
@@ -194,20 +171,19 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Login Form Card */}
-            <Card className="bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
-              <CardHeader className="space-y-3 pb-6 bg-gradient-to-br from-white to-gray-50">
-                <CardTitle className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600">
-                  Selamat Datang
-                </CardTitle>
-                <CardDescription className="text-center text-gray-600 text-base">
-                  Masukkan kredensial Anda untuk melanjutkan
-                </CardDescription>
-              </CardHeader>
-            <CardContent className="p-8">
+            {/* Login Form */}
+            <div className="space-y-6">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600">
+                  Halo! Selamat Datang Kembali
+                </h2>
+                <p className="text-base text-gray-600">
+                  Yuk login dulu buat lanjut!
+                </p>
+              </div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="font-semibold text-gray-800 text-sm">Username</Label>
+                  <Label htmlFor="username" className="text-sm font-semibold text-gray-800">Username</Label>
                   <div className="relative group">
                     <Input
                       id="username"
@@ -215,7 +191,7 @@ export default function LoginPage() {
                       placeholder="Masukkan username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="h-12 text-gray-900 transition-all border-gray-300 pl-12 bg-white placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100 rounded-xl"
+                      className="h-12 pl-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100 rounded-xl"
                       required
                     />
                     <div className="absolute text-gray-400 transition-colors -translate-y-1/2 left-4 top-1/2 group-focus-within:text-red-500">
@@ -237,7 +213,7 @@ export default function LoginPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="font-semibold text-gray-800 text-sm">Password</Label>
+                  <Label htmlFor="password" className="text-sm font-semibold text-gray-800">Password</Label>
                   <div className="relative group">
                     <Input
                       id="password"
@@ -245,7 +221,7 @@ export default function LoginPage() {
                       placeholder="Masukkan password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 text-gray-900 transition-all border-gray-300 pl-12 pr-12 bg-white placeholder:text-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl"
+                      className="h-12 pl-12 pr-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl"
                       required
                     />
                     <div className="absolute text-gray-400 transition-colors -translate-y-1/2 left-4 top-1/2 group-focus-within:text-blue-500">
@@ -274,9 +250,9 @@ export default function LoginPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role" className="font-semibold text-gray-800 text-sm">Peran</Label>
+                  <Label htmlFor="role" className="text-sm font-semibold text-gray-800">Peran</Label>
                   <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as Role)}>
-                    <SelectTrigger className="h-12 w-full text-gray-900 transition-all border-gray-300 bg-white focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl">
+                    <SelectTrigger className="w-full h-12 text-gray-900 transition-all bg-white border-none focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl">
                       <SelectValue placeholder="Pilih peran Anda" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-gray-200">
@@ -288,17 +264,17 @@ export default function LoginPage() {
                     </SelectContent>
                   </Select>
                   <p className="mt-2 text-xs text-gray-500">
-                    Untuk demo, username dan password apapun akan berfungsi dengan peran yang dipilih
+                    Psst... ini demo kok, pakai username dan password apa aja bisa!
                   </p>
                 </div>
                 {formError && (
-                  <div className="p-4 border rounded-xl bg-red-50 border-red-200">
+                  <div className="p-4 border border-red-200 rounded-xl bg-red-50">
                     <p className="text-sm font-medium text-center text-red-600">{formError}</p>
                   </div>
                 )}
                 <Button
                   type="submit"
-                  className="w-full h-13 text-base font-bold text-white transition-all shadow-lg bg-gradient-to-r from-red-600 via-red-500 to-blue-600 hover:shadow-2xl hover:scale-[1.02] rounded-xl"
+                  className="w-full h-13 text-base font-bold text-white transition-all shadow-lg bg-blue-600 hover:bg-blue-700 hover:shadow-2xl hover:scale-[1.02] rounded-xl"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -308,7 +284,7 @@ export default function LoginPage() {
                     </>
                   ) : (
                     <>
-                      Masuk Sekarang
+                      Login Yuk!
                       <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -316,18 +292,15 @@ export default function LoginPage() {
                   )}
                 </Button>
               </form>
-            </CardContent>
-            <CardFooter className="flex flex-col space-y-4 pb-8 bg-gradient-to-br from-gray-50 to-white">
-              <div className="text-sm text-center text-gray-600">
-                <Link href="/" className="transition-colors underline-offset-4 text-red-600 hover:text-blue-600 hover:underline font-semibold inline-flex items-center gap-1">
+              <div className="pt-4 text-sm text-center text-gray-600">
+                <Link href="/" className="inline-flex items-center gap-1 font-semibold text-red-600 transition-colors underline-offset-4 hover:text-blue-600 hover:underline">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                   Kembali ke beranda
                 </Link>
               </div>
-            </CardFooter>
-          </Card>
+            </div>
           </div>
         </div>
       </div>
