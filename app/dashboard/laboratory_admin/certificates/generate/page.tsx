@@ -1325,6 +1325,17 @@ export default function GenerateCertificatesPage() {
       return;
     }
     
+    // Generate filename from certificate data
+    const certificateName = activeStudent.certificateTitle || activeStudent.program || 'Sertifikat';
+    const participantName = activeStudent.name || 'Peserta';
+    
+    // Clean filename (remove special characters that might cause issues)
+    const cleanFileName = `${certificateName}-${participantName}`
+      .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim();
+    
     // Clone dan proses konten
     const clonedContent = printContent.cloneNode(true) as HTMLElement;
     clonedContent.style.display = 'block';
@@ -1334,7 +1345,7 @@ export default function GenerateCertificatesPage() {
       <html>
         <head>
           <meta charset="UTF-8">
-          <title>Print Certificate</title>
+          <title>${cleanFileName}</title>
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@400;500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -1472,6 +1483,7 @@ export default function GenerateCertificatesPage() {
             .text-gray-800 { color: #1f2937; }
             .text-gray-700 { color: #374151; }
             .text-gray-600 { color: #4b5563; }
+            .text-gray-500 { color: #9ca3af; }
             .text-white { color: #ffffff; }
             .text-green-700 { color: #15803d; }
             .text-green-600 { color: #16a34a; }
@@ -1547,6 +1559,10 @@ export default function GenerateCertificatesPage() {
             .h-full { height: 100%; }
             .w-full { width: 100%; }
             
+            /* Additional utilities for QR Code */
+            .bg-white { background-color: #ffffff; }
+            .rounded { border-radius: 0.25rem; }
+            
             /* Typography - adjusted sizes */
             .text-6xl { font-size: 3.75rem; line-height: 1; }
             .text-5xl { font-size: 3rem; line-height: 1; }
@@ -1556,6 +1572,18 @@ export default function GenerateCertificatesPage() {
             .text-base { font-size: 1rem; line-height: 1.5rem; }
             .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
             .text-xs { font-size: 0.75rem; line-height: 1rem; }
+            
+            /* Ensure images render properly */
+            img {
+              max-width: 100%;
+              height: auto;
+              display: block;
+            }
+            
+            /* Fix for object-contain */
+            .object-contain {
+              object-fit: contain;
+            }
           </style>
         </head>
         <body>
