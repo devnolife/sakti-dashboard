@@ -259,7 +259,7 @@ function buildRowMapper(warningsRef: string[]) {
       certificateTitle: row["Judul Sertifikat"] || row.certificateTitle,
       name: row["Nama Peserta"] || row.name,
       program: row["Nama Program"] || row.program,
-      subtitle: row["Subjudul"] || row.subtitle,
+      // Remove subtitle mapping - akan menggunakan template universal
       meetings: row["Jumlah Pertemuan"] || row.meetings,
       totalScore: row["Nilai Total"] || row.totalScore,
       materials: row["Jumlah Materi"] || row.materials,
@@ -339,12 +339,16 @@ function buildRowMapper(warningsRef: string[]) {
     const collaborationScore = toNumber(row["Skor Kolaborasi"], defaultStudentData.analytics.collaborationScore);
     const problemSolvingEfficiency = toNumber(row["Efisiensi Pemecahan Masalah"], defaultStudentData.analytics.problemSolvingEfficiency);
 
+    // Generate subtitle using universal template
+    const programName = mappedRow.program || mappedRow.certificateTitle || "Program";
+    const generatedSubtitle = `Telah berhasil menyelesaikan Laboratorium ${programName} yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian.`;
+
     return {
       ...defaultStudentData,
       certificateTitle: mappedRow.certificateTitle || defaultStudentData.certificateTitle,
       name: mappedRow.name || defaultStudentData.name,
       program: mappedRow.program || defaultStudentData.program,
-      subtitle: mappedRow.subtitle || defaultStudentData.subtitle,
+      subtitle: generatedSubtitle, // Use generated subtitle with universal template
       issueDate: formatIssueDate(),
       verificationId: generateVerificationId(mappedRow.program || mappedRow.certificateTitle),
       stats: {
@@ -377,33 +381,417 @@ function buildRowMapper(warningsRef: string[]) {
   };
 }
 
-function GradeIndicator({
-  grade,
-  score,
+function Sparkline({
+  data,
+  color = "#10b981",
 }: {
-  grade: string;
-  score: number;
+  data: number[];
+  color?: string;
 }) {
-  const colors: Record<string, string> = {
-    "A+": "bg-green-500",
-    A: "bg-green-400",
-    "A-": "bg-lime-400",
-    "B+": "bg-yellow-400",
-    B: "bg-yellow-300",
-    "B-": "bg-orange-400",
-    "C+": "bg-orange-300",
-    C: "bg-red-400",
-  };
+  if (!Array.isArray(data) || !data.length) return null;
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  const points = data
+    .map((v, i) => {
+      const x = (i / (data.length - 1)) * 100;
+      const y = 100 - ((v - min) / range) * 100;
+      return `${x},${y}`;
+    })
+    .join(" ");
   return (
-    <div className="flex items-center gap-2">
-      <div
-        className={`w-8 h-8 ${
-          colors[grade] || "bg-gray-400"
-        } rounded-full flex items-center justify-center text-white font-bold text-sm`}
+    <div className="relative w-16 h-8">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 100 100"
+        className="overflow-visible"
       >
-        {grade}
+        <polyline
+          points={points}
+          fill="none"
+          stroke={color}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {data.map((v, i) => {
+          const x = (i / (data.length - 1)) * 100;
+          const y = 100 - ((v - min) / range) * 100;
+          return (
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r="2"
+              fill={color}
+              className="animate-pulse"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            />
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function CertificateBack({
+  studentData,
+}: {
+  studentData: StudentDataType;
+}) {
+  // Generate subtitle using template
+  const generateSubtitle = () => {
+    return `Atas keberhasilan menyelesaikan Laboratorium ${studentData.program || studentData.certificateTitle}`;
+  };
+
+  return (
+    <div className="relative flex flex-col h-full overflow-hidden p-8">
+      <div className="absolute inset-8 opacity-5">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, #6b7280 1px, transparent 0)",
+            backgroundSize: "20px 20px",
+          }}
+        />
       </div>
-      <span className="text-xs text-gray-600">{score}%</span>
+      
+      {/* Header Section */}
+      <div className="relative z-10 mb-8">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h1
+              className={`text-xl font-bold text-gray-900 mb-2 ${montserrat.className}`}
+            >
+              Sertifikat Laboratorium
+            </h1>
+            <p
+              className={`text-gray-700 text-base mb-1 ${openSans.className}`}
+            >
+              {studentData.name}
+            </p>
+            <p
+              className={`text-gray-600 text-sm mb-2 ${openSans.className}`}
+            >
+              {generateSubtitle()}
+            </p>
+            <p
+              className={`text-sm font-semibold text-gray-800 ${montserrat.className}`}
+            >
+              Program: {studentData.program}
+            </p>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="mb-2">
+              <CertificateQRCode verificationId={studentData.verificationId} size={64} />
+            </div>
+            <div
+              className={`text-right text-xs text-gray-600 ${poppins.className}`}
+            >
+              <p className="font-medium">Terbit: {studentData.issueDate}</p>
+              <p className="text-[10px] text-gray-500">{studentData.verificationId}</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Technologies and Overall Grade */}
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 flex-wrap">
+            {studentData.technologies.map((tech, i) => (
+              <div
+                key={i}
+                className={`px-3 py-1 text-sm font-medium rounded-full border ${getRandomBadgeColor()} ${poppins.className}`}
+              >
+                {tech}
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`text-sm text-gray-600 ${poppins.className}`}>
+              Nilai Akhir:
+            </span>
+            <div className="flex items-center justify-center w-8 h-8 text-base font-bold text-white bg-green-500 rounded-full">
+              {studentData.grades.overall}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Statistics Grid */}
+      <div className="relative z-10 grid grid-cols-6 gap-6 mb-8">
+        {[
+          {
+            label: "Pertemuan",
+            value: studentData.stats.meetings,
+            bgColor: "#3b82f6",
+          },
+          {
+            label: "Nilai Total",
+            value: studentData.stats.totalScore,
+            bgColor: "#06b6d4",
+          },
+          { label: "Materi", value: studentData.stats.materials, bgColor: "#f97316" },
+          {
+            label: "Kehadiran",
+            value: `${studentData.stats.attendanceRate}%`,
+            bgColor: "#22c55e",
+          },
+          {
+            label: "Tugas",
+            value: `${studentData.stats.assignmentCompletion}%`,
+            bgColor: "#a855f7",
+          },
+          {
+            label: "Partisipasi",
+            value: `${studentData.stats.participationScore}%`,
+            bgColor: "#ec4899",
+          },
+        ].map((s, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center text-center"
+          >
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center mb-2"
+              style={{ backgroundColor: s.bgColor }}
+            >
+              <span className="text-sm text-white font-semibold">
+                {s.label[0]}
+              </span>
+            </div>
+            <p
+              className={`text-base font-bold text-gray-900 ${montserrat.className}`}
+            >
+              {s.value}
+            </p>
+            <p
+              className={`text-xs text-gray-600 ${poppins.className}`}
+            >
+              {s.label}
+            </p>
+          </div>
+        ))}
+      </div>
+      
+      {/* Main Content Grid */}
+      <div className="relative z-10 grid grid-cols-12 gap-6 flex-grow">
+        {/* Kompetensi Section - Simplified without levels */}
+        <div className="col-span-7">
+          <div className="mb-4">
+            <h3
+              className={`text-lg font-black text-gray-800 mb-4 ${montserrat.className}`}
+            >
+              Penguasaan Kompetensi
+            </h3>
+          </div>
+          <div className="space-y-3">
+            {studentData.competencies.map((c: any, i: number) => (
+              <div key={i}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${c.startColor} 0%, ${c.endColor} 100%)`,
+                      }}
+                    />
+                    <span
+                      className={`text-sm font-medium text-gray-800 ${poppins.className}`}
+                    >
+                      {c.name}
+                    </span>
+                  </div>
+                  <span
+                    className={`text-sm font-bold text-gray-900 ${montserrat.className}`}
+                  >
+                    {c.value}%
+                  </span>
+                </div>
+                <div className="relative h-3 overflow-hidden bg-gray-200 rounded-full">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${c.value}%`,
+                      background: `linear-gradient(90deg, ${c.startColor} 0%, ${c.endColor} 100%)`,
+                      boxShadow: `0 1px 3px ${c.shadowColor}`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Grades Breakdown - Enhanced layout */}
+          <div className="mt-6">
+            <h4
+              className={`text-sm font-bold text-gray-800 mb-3 ${montserrat.className}`}
+            >
+              Rincian Nilai Mata Kuliah
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              {studentData.grades.breakdown.map((g: any, i: number) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200"
+                >
+                  <span className={`text-xs text-gray-700 font-medium ${poppins.className}`}>
+                    {g.subject}
+                  </span>
+                  <GradeIndicator grade={g.grade} score={g.score} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Analytics & Summary Section - Expanded */}
+        <div className="col-span-5">
+          {/* Analytics Bars */}
+          <div className="space-y-4 mb-6">
+            <h3
+              className={`text-lg font-black text-gray-800 mb-4 ${montserrat.className}`}
+            >
+              Analitik Pembelajaran
+            </h3>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-sm text-gray-600 ${poppins.className}`}>
+                  Kecepatan Belajar
+                </span>
+                <span
+                  className={`text-sm font-bold text-emerald-600 ${montserrat.className}`}
+                >
+                  {studentData.analytics.learningVelocity}%
+                </span>
+              </div>
+              <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"
+                  style={{ width: `${studentData.analytics.learningVelocity}%` }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-sm text-gray-600 ${poppins.className}`}>
+                  Pemecahan Masalah
+                </span>
+                <span
+                  className={`text-sm font-bold text-blue-600 ${montserrat.className}`}
+                >
+                  {studentData.analytics.problemSolvingEfficiency}%
+                </span>
+              </div>
+              <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
+                  style={{
+                    width: `${studentData.analytics.problemSolvingEfficiency}%`,
+                  }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-sm text-gray-600 ${poppins.className}`}>
+                  Kolaborasi Tim
+                </span>
+                <span
+                  className={`text-sm font-bold text-purple-600 ${montserrat.className}`}
+                >
+                  {studentData.analytics.collaborationScore}%
+                </span>
+              </div>
+              <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
+                  style={{
+                    width: `${studentData.analytics.collaborationScore}%`,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Learning Time & Sparkline */}
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 mb-6 border border-blue-100">
+            <h4
+              className={`text-sm font-black text-gray-800 mb-3 ${montserrat.className}`}
+            >
+              Waktu Pembelajaran
+            </h4>
+            <div className="flex items-center justify-between">
+              <div>
+                <p
+                  className={`text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent ${montserrat.className}`}
+                >
+                  {studentData.learningTime.total}
+                </p>
+                <p className={`text-xs text-gray-600 mt-1 ${poppins.className}`}>
+                  Total durasi belajar
+                </p>
+              </div>
+              <div className="flex items-center">
+                <Sparkline 
+                  data={studentData.learningTime.weeklyData} 
+                  color="#8b5cf6"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Performance Summary Cards */}
+          <div>
+            <h4
+              className={`text-sm font-bold text-gray-800 mb-3 ${montserrat.className}`}
+            >
+              Ringkasan Performa
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+                <span className={`text-xs text-green-700 mb-2 ${poppins.className}`}>
+                  Nilai Akhir
+                </span>
+                <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white bg-gradient-to-br from-green-500 to-green-600 rounded-full shadow-lg">
+                  {studentData.grades.overall}
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
+                <span className={`text-xs text-blue-700 mb-2 ${poppins.className}`}>
+                  Kehadiran
+                </span>
+                <span
+                  className={`text-2xl font-bold text-blue-600 ${montserrat.className}`}
+                >
+                  {studentData.stats.attendanceRate}%
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                <span className={`text-xs text-purple-700 mb-2 ${poppins.className}`}>
+                  Penyelesaian
+                </span>
+                <span
+                  className={`text-2xl font-bold text-purple-600 ${montserrat.className}`}
+                >
+                  {studentData.stats.assignmentCompletion}%
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200">
+                <span className={`text-xs text-amber-700 mb-2 ${poppins.className}`}>
+                  Partisipasi
+                </span>
+                <span
+                  className={`text-2xl font-bold text-amber-600 ${montserrat.className}`}
+                >
+                  {studentData.stats.participationScore}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -477,11 +865,50 @@ function CertificateQRCode({
   );
 }
 
+function GradeIndicator({
+  grade,
+  score,
+}: {
+  grade: string;
+  score: number;
+}) {
+  const colors: Record<string, string> = {
+    "A+": "bg-green-500",
+    A: "bg-green-400",
+    "A-": "bg-lime-400",
+    "B+": "bg-yellow-400",
+    B: "bg-yellow-300",
+    "B-": "bg-orange-400",
+    "C+": "bg-orange-300",
+    C: "bg-red-400",
+  };
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className={`w-8 h-8 ${
+          colors[grade] || "bg-gray-400"
+        } rounded-full flex items-center justify-center text-white font-bold text-sm`}
+      >
+        {grade}
+      </div>
+      <span className="text-xs text-gray-600">{score}%</span>
+    </div>
+  );
+}
+
 function CertificateFront({
   studentData,
 }: {
   studentData: StudentDataType;
 }) {
+  // Generate subtitle using template if not already in correct format
+  const generateSubtitle = () => {
+    if (studentData.subtitle && studentData.subtitle.includes("Telah berhasil menyelesaikan Laboratorium")) {
+      return studentData.subtitle;
+    }
+    return `Telah berhasil menyelesaikan Laboratorium ${studentData.program || studentData.certificateTitle} yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian.`;
+  };
+
   return (
     <div className="relative z-10 flex flex-col justify-between h-full p-8">
       <div className="flex flex-col items-center mt-4">
@@ -502,7 +929,7 @@ function CertificateFront({
           <p
             className={`text-gray-600 text-sm font-light tracking-widest mb-1 ${poppins.className}`}
           >
-            SERTIFIKASI PROFESIONAL
+            SERTIFIKASI LABORATORIUM
           </p>
           <h1
             className={`text-5xl font-black text-gray-900 mb-2 ${montserrat.className}`}
@@ -522,8 +949,7 @@ function CertificateFront({
           <p
             className={`text-gray-700 text-base leading-relaxed ${openSans.className}`}
           >
-            {studentData.subtitle || 
-             "Telah berhasil menyelesaikan program pelatihan dan memenuhi standar kompetensi profesional dalam bidang pengembangan perangkat lunak sesuai dengan kurikulum yang telah ditetapkan oleh Laboratorium Informatika."}
+            {generateSubtitle()}
           </p>
         </div>
       </div>
@@ -575,418 +1001,7 @@ function CertificateFront({
   );
 }
 
-function Sparkline({
-  data,
-  color = "#10b981",
-}: {
-  data: number[];
-  color?: string;
-}) {
-  if (!Array.isArray(data) || !data.length) return null;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const points = data
-    .map((v, i) => {
-      const x = (i / (data.length - 1)) * 100;
-      const y = 100 - ((v - min) / range) * 100;
-      return `${x},${y}`;
-    })
-    .join(" ");
-  return (
-    <div className="relative w-16 h-8">
-      <svg
-        width="100%"
-        height="100%"
-        viewBox="0 0 100 100"
-        className="overflow-visible"
-      >
-        <polyline
-          points={points}
-          fill="none"
-          stroke={color}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        {data.map((v, i) => {
-          const x = (i / (data.length - 1)) * 100;
-          const y = 100 - ((v - min) / range) * 100;
-          return (
-            <circle
-              key={i}
-              cx={x}
-              cy={y}
-              r="2"
-              fill={color}
-              className="animate-pulse"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            />
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
-
-function CertificateBack({
-  studentData,
-}: {
-  studentData: StudentDataType;
-}) {
-  return (
-    <div className="relative flex flex-col h-full overflow-hidden p-8">
-      <div className="absolute inset-8 opacity-5">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, #6b7280 1px, transparent 0)",
-            backgroundSize: "20px 20px",
-          }}
-        />
-      </div>
-      <div className="relative z-10 mb-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <h1
-                className={`text-lg font-bold text-gray-900 ${montserrat.className}`}
-              >
-                Sertifikat Laboratorium, {studentData.name}
-              </h1>
-            </div>
-            <p
-              className={`text-gray-600 text-sm mb-2 ${openSans.className}`}
-            >
-              {studentData.subtitle || "Atas keberhasilan menyelesaikan program pelatihan"}
-            </p>
-            <p
-              className={`text-sm font-semibold text-gray-800 ${montserrat.className}`}
-            >
-              Program: {studentData.program}
-            </p>
-          </div>
-          <div className="flex flex-col items-end">
-            <div className="mb-2">
-              <CertificateQRCode verificationId={studentData.verificationId} size={56} />
-            </div>
-            <div
-              className={`text-right text-xs text-gray-600 ${poppins.className}`}
-            >
-              <p className="font-medium">Terbit: {studentData.issueDate}</p>
-              <p className="text-[10px] text-gray-500">{studentData.verificationId}</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2 flex-wrap">
-            {studentData.technologies.map((tech, i) => (
-              <div
-                key={i}
-                className={`px-3 py-1 text-sm font-medium rounded-full border ${getRandomBadgeColor()} ${poppins.className}`}
-              >
-                {tech}
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={`text-sm text-gray-600 ${poppins.className}`}>
-              Nilai Akhir:
-            </span>
-            <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
-              {studentData.grades.overall}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="relative z-10 grid grid-cols-6 gap-4 mb-6">
-        {[
-          {
-            label: "Pertemuan",
-            value: studentData.stats.meetings,
-            bgColor: "#3b82f6",
-          },
-          {
-            label: "Nilai Total",
-            value: studentData.stats.totalScore,
-            bgColor: "#06b6d4",
-            sparkline: true,
-          },
-          { label: "Materi", value: studentData.stats.materials, bgColor: "#f97316" },
-          {
-            label: "Kehadiran",
-            value: `${studentData.stats.attendanceRate}%`,
-            bgColor: "#22c55e",
-          },
-            {
-            label: "Tugas",
-            value: `${studentData.stats.assignmentCompletion}%`,
-            bgColor: "#a855f7",
-          },
-          {
-            label: "Partisipasi",
-            value: `${studentData.stats.participationScore}%`,
-            bgColor: "#ec4899",
-          },
-        ].map((s, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center text-center"
-          >
-            <div
-              className="w-6 h-6 rounded-lg flex items-center justify-center mb-1"
-              style={{ backgroundColor: s.bgColor }}
-            >
-              <span className="text-[10px] text-white font-semibold">
-                {s.label[0]}
-              </span>
-            </div>
-            <p
-              className={`text-xs font-bold text-gray-900 ${montserrat.className}`}
-            >
-              {s.value}
-            </p>
-            <p
-              className={`text-[10px] text-gray-600 ${poppins.className}`}
-            >
-              {s.label}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className="relative z-10 grid flex-grow grid-cols-12 gap-5">
-        <div className="col-span-7">
-          <div className="flex items-center gap-2 mb-4">
-            <h3
-              className={`text-base font-black text-gray-800 ${montserrat.className}`}
-            >
-              Penguasaan Kompetensi
-            </h3>
-          </div>
-          <div className="space-y-2">
-            {studentData.competencies.map((c: any, i: number) => (
-              <div key={i}>
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{
-                        background: `linear-gradient(90deg, ${c.startColor} 0%, ${c.endColor} 100%)`,
-                      }}
-                    />
-                    <span
-                      className={`text-xs font-medium text-gray-800 ${poppins.className}`}
-                    >
-                      {c.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        c.level === "Expert"
-                          ? "bg-green-100 text-green-700"
-                          : c.level === "Advanced"
-                          ? "bg-blue-100 text-blue-700"
-                          : c.level === "Intermediate"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-gray-100 text-gray-700"
-                      } ${poppins.className}`}
-                    >
-                      {c.level === "Expert" ? "Mahir" : 
-                       c.level === "Advanced" ? "Lanjutan" :
-                       c.level === "Intermediate" ? "Menengah" : "Pemula"}
-                    </span>
-                    <span
-                      className={`text-xs font-bold text-gray-900 ${montserrat.className}`}
-                    >
-                      {c.value}%
-                    </span>
-                  </div>
-                </div>
-                <div className="relative h-2 overflow-hidden bg-gray-200 rounded-full">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${c.value}%`,
-                      background: `linear-gradient(90deg, ${c.startColor} 0%, ${c.endColor} 100%)`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-3">
-            <h4
-              className={`text-xs font-bold text-gray-800 mb-2 ${montserrat.className}`}
-            >
-              Rincian Nilai
-            </h4>
-            <div className="grid grid-cols-2 gap-2">
-              {studentData.grades.breakdown.map((g: any, i: number) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-2 rounded bg-gray-50"
-                >
-                  <span className={`text-xs text-gray-700 ${poppins.className}`}>
-                    {g.subject}
-                  </span>
-                  <GradeIndicator grade={g.grade} score={g.score} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="col-span-3">
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className={`text-sm text-gray-600 ${poppins.className}`}>
-                Kecepatan Belajar
-              </span>
-              <span
-                className={`text-sm font-bold text-emerald-600 ${montserrat.className}`}
-              >
-                {studentData.analytics.learningVelocity}%
-              </span>
-            </div>
-            <div className="h-3 bg-gray-200 rounded-full">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"
-                style={{ width: `${studentData.analytics.learningVelocity}%` }}
-              />
-            </div>
-          </div>
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className={`text-sm text-gray-600 ${poppins.className}`}>
-                Pemecahan Masalah
-              </span>
-              <span
-                className={`text-sm font-bold text-blue-600 ${montserrat.className}`}
-              >
-                {studentData.analytics.problemSolvingEfficiency}%
-              </span>
-            </div>
-            <div className="h-3 bg-gray-200 rounded-full">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
-                style={{
-                  width: `${studentData.analytics.problemSolvingEfficiency}%`,
-                }}
-              />
-            </div>
-          </div>
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className={`text-sm text-gray-600 ${poppins.className}`}>
-                Kolaborasi
-              </span>
-              <span
-                className={`text-sm font-bold text-purple-600 ${montserrat.className}`}
-              >
-                {studentData.analytics.collaborationScore}%
-              </span>
-            </div>
-            <div className="h-3 bg-gray-200 rounded-full">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
-                style={{
-                  width: `${studentData.analytics.collaborationScore}%`,
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-span-2">
-          <div className="mb-4 text-center">
-            <h3
-              className={`text-sm font-black text-gray-800 mb-2 ${montserrat.className}`}
-            >
-              Waktu Belajar
-            </h3>
-            <div className="flex flex-col items-center">
-              <p
-                className={`text-sm font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent ${montserrat.className}`}
-              >
-                {studentData.learningTime.total}
-              </p>
-              <Sparkline data={studentData.learningTime.weeklyData} />
-            </div>
-          </div>
-          <div className="mb-4">
-            <h4
-              className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}
-            >
-              Ringkasan Performa
-            </h4>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between p-2 rounded bg-green-50">
-                <span className={`text-sm text-green-700 ${poppins.className}`}>
-                  Nilai
-                </span>
-                <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
-                  {studentData.grades.overall}
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded bg-blue-50">
-                <span className={`text-sm text-blue-700 ${poppins.className}`}>
-                  Kehadiran
-                </span>
-                <span
-                  className={`text-sm font-bold text-blue-600 ${montserrat.className}`}
-                >
-                  {studentData.stats.attendanceRate}%
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded bg-purple-50">
-                <span className={`text-sm text-purple-700 ${poppins.className}`}>
-                  Tugas
-                </span>
-                <span
-                  className={`text-sm font-bold text-purple-600 ${montserrat.className}`}
-                >
-                  {studentData.stats.assignmentCompletion}%
-                </span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h4
-              className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}
-            >
-              Rekomendasi Lanjutan
-            </h4>
-            <div className="space-y-2">
-              {studentData.futureRecommendations.map((rec, i) => (
-                <div
-                  key={i}
-                  className={`text-sm p-2 bg-blue-50 rounded text-blue-700 ${poppins.className}`}
-                >
-                  {rec}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="relative z-10 p-4 mt-4 rounded bg-gray-50">
-        <h4
-          className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}
-        >
-          Catatan Instruktur
-        </h4>
-        <p
-          className={`text-sm text-gray-700 italic ${openSans.className}`}
-        >
-          {studentData.instructorFeedback || 
-           "Peserta menunjukkan kemampuan yang baik dalam memahami konsep-konsep dasar dan mampu menerapkannya dalam praktek laboratorium."}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-export default function GenerateCertificatesPage() {
+function GenerateCertificatesPage() {
   const [records, setRecords] = useState<StudentDataType[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showBack, setShowBack] = useState(false);
@@ -1077,14 +1092,13 @@ export default function GenerateCertificatesPage() {
   };
 
   const handleDownloadTemplate = () => {
-    // Template dengan kolom bahasa Indonesia dan struktur yang diperluas
+    // Template dengan kolom bahasa Indonesia tanpa subjudul
     const templateData = [
       {
-        // Data Utama Sertifikat
+        // Data Utama Sertifikat (tanpa subjudul)
         "Judul Sertifikat": "Backend Developer I",
         "Nama Peserta": "Ahmad Rizki Pratama",
-        "Nama Program": "Backend Developer Nest JS",
-        "Subjudul": "Telah berhasil menyelesaikan program pelatihan dan memenuhi standar kompetensi profesional dalam bidang pengembangan perangkat lunak sesuai dengan kurikulum yang telah ditetapkan oleh Laboratorium Informatika.",
+        "Nama Program": "Backend Development dengan NestJS",
         
         // Statistik
         "Jumlah Pertemuan": 10,
@@ -1162,8 +1176,7 @@ export default function GenerateCertificatesPage() {
       {
         "Judul Sertifikat": "Frontend Developer I",
         "Nama Peserta": "Siti Nurhaliza",
-        "Nama Program": "Frontend Developer React",
-        "Subjudul": "Telah menyelesaikan program pelatihan intensif dan menguasai kompetensi pengembangan aplikasi web modern dengan React dan ekosistemnya.",
+        "Nama Program": "Frontend Development dengan React",
         "Jumlah Pertemuan": 12,
         "Nilai Total": 88,
         "Jumlah Materi": 12,
@@ -1231,8 +1244,7 @@ export default function GenerateCertificatesPage() {
     const colWidths = [
       { wch: 20 }, // Judul Sertifikat
       { wch: 25 }, // Nama Peserta
-      { wch: 25 }, // Nama Program
-      { wch: 60 }, // Subjudul
+      { wch: 30 }, // Nama Program (lebih lebar karena tidak ada subjudul)
       { wch: 15 }, // Stats columns
       { wch: 15 },
       { wch: 15 },
@@ -1275,8 +1287,14 @@ export default function GenerateCertificatesPage() {
       { "Kolom": "Keterangan", "Format": "Contoh" },
       { "Judul Sertifikat": "Judul yang akan ditampilkan di sertifikat", "Format": "Backend Developer I" },
       { "Nama Peserta": "Nama lengkap peserta", "Format": "Ahmad Rizki Pratama" },
-      { "Nama Program": "Nama program pelatihan", "Format": "Backend Developer Nest JS" },
-      { "Subjudul": "Deskripsi pencapaian peserta (opsional)", "Format": "Telah berhasil menyelesaikan..." },
+      { "Nama Program": "Nama program laboratorium yang diikuti", "Format": "Backend Development dengan NestJS" },
+      { "": "" },
+      { "CATATAN PENTING:": "" },
+      { "": "• Subjudul akan otomatis digenerate dengan template:" },
+      { "": '  "Telah berhasil menyelesaikan Laboratorium [Nama Program] yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian."' },
+      { "": "• Tanggal terbit dan ID sertifikat akan digenerate otomatis oleh sistem" },
+      { "": "• Kolom yang tidak diisi akan menggunakan nilai default" },
+      { "": "" },
       { "Jumlah Pertemuan": "Total pertemuan yang diikuti", "Format": "10" },
       { "Nilai Total": "Nilai keseluruhan (0-100)", "Format": "90" },
       { "Jumlah Materi": "Total materi yang dipelajari", "Format": "10" },
@@ -1297,12 +1315,6 @@ export default function GenerateCertificatesPage() {
       { "Teknologi 1-4": "Teknologi yang dipelajari", "Format": "TypeScript, NodeJS, Docker" },
       { "Catatan Instruktur": "Feedback dari instruktur", "Format": "Teks bebas" },
       { "Rekomendasi 1-3": "Rekomendasi pembelajaran lanjutan", "Format": "Microservices Lanjutan" },
-      { "": "" },
-      { "CATATAN PENTING:": "" },
-      { "": "• Tanggal terbit dan ID sertifikat akan digenerate otomatis oleh sistem" },
-      { "": "• Kolom yang tidak diisi akan menggunakan nilai default" },
-      { "": "• Pastikan format nilai sesuai dengan contoh yang diberikan" },
-      { "": "• Untuk kolom opsional, kosongkan jika tidak diperlukan" },
     ];
     
     const wsInstruction = XLSX.utils.json_to_sheet(instructionData);
@@ -1401,8 +1413,10 @@ export default function GenerateCertificatesPage() {
             .relative { position: relative; }
             .absolute { position: absolute; }
             .inset-6 { top: 24px; right: 24px; bottom: 24px; left: 24px; }
+            .inset-8 { top: 32px; right: 32px; bottom: 32px; left: 32px; }
             .z-10 { z-index: 10; }
             .flex { display: flex; }
+            .flex-1 { flex: 1; }
             .flex-col { flex-direction: column; }
             .items-center { align-items: center; }
             .items-start { align-items: flex-start; }
@@ -1410,28 +1424,40 @@ export default function GenerateCertificatesPage() {
             .justify-center { justify-content: center; }
             .justify-between { justify-content: space-between; }
             .flex-grow { flex-grow: 1; }
+            .flex-wrap { flex-wrap: wrap; }
             .gap-2 { gap: 0.5rem; }
+            .gap-3 { gap: 0.75rem; }
             .gap-4 { gap: 1rem; }
             .gap-5 { gap: 1.25rem; }
+            .gap-6 { gap: 1.5rem; }
             .grid { display: grid; }
             .grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
             .grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
             .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .col-span-5 { grid-column: span 5 / span 5; }
             .col-span-7 { grid-column: span 7 / span 7; }
             .col-span-3 { grid-column: span 3 / span 3; }
             .col-span-2 { grid-column: span 2 / span 2; }
             .space-y-2 > * + * { margin-top: 0.5rem; }
+            .space-y-3 > * + * { margin-top: 0.75rem; }
+            .space-y-4 > * + * { margin-top: 1rem; }
             .mx-auto { margin-left: auto; margin-right: auto; }
-            .mt-4 { margin-top: 1rem; }
-            .mt-auto { margin-top: auto; }
+            .mt-1 { margin-top: 0.25rem; }
+            .mt-2 { margin-top: 0.5rem; }
             .mt-3 { margin-top: 0.75rem; }
+            .mt-4 { margin-top: 1rem; }
+            .mt-6 { margin-top: 1.5rem; }
+            .mt-auto { margin-top: auto; }
             .mb-1 { margin-bottom: 0.25rem; }
             .mb-2 { margin-bottom: 0.5rem; }
+            .mb-3 { margin-bottom: 0.75rem; }
             .mb-4 { margin-bottom: 1rem; }
             .mb-6 { margin-bottom: 1.5rem; }
+            .mb-8 { margin-bottom: 2rem; }
             .p-1 { padding: 0.25rem; }
             .p-2 { padding: 0.5rem; }
+            .p-3 { padding: 0.75rem; }
             .p-4 { padding: 1rem; }
             .p-8 { padding: 2rem; }
             .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
@@ -1445,9 +1471,17 @@ export default function GenerateCertificatesPage() {
             
             /* Border utilities */
             .border-4 { border-width: 4px; }
+            .border-2 { border-width: 2px; }
             .border { border-width: 1px; }
             .border-black { border-color: #000; }
+            .border-gray-200 { border-color: #e5e7eb; }
+            .border-green-200 { border-color: #bbf7d0; }
+            .border-blue-100 { border-color: #dbeafe; }
+            .border-blue-200 { border-color: #bfdbfe; }
+            .border-purple-200 { border-color: #e9d5ff; }
+            .border-amber-200 { border-color: #fde68a; }
             .rounded-3xl { border-radius: 1.5rem; }
+            .rounded-xl { border-radius: 0.75rem; }
             .rounded-lg { border-radius: 0.5rem; }
             .rounded-md { border-radius: 0.375rem; }
             .rounded-full { border-radius: 9999px; }
@@ -1458,6 +1492,7 @@ export default function GenerateCertificatesPage() {
             .pointer-events-none { pointer-events: none; }
             
             /* Typography */
+            .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
             .text-6xl { font-size: 3.75rem; line-height: 1; }
             .text-5xl { font-size: 3rem; line-height: 1; }
             .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
@@ -1491,6 +1526,8 @@ export default function GenerateCertificatesPage() {
             .text-blue-600 { color: #2563eb; }
             .text-purple-700 { color: #6b21a1; }
             .text-purple-600 { color: #9333ea; }
+            .text-amber-700 { color: #a16207; }
+            .text-amber-600 { color: #d97706; }
             .text-amber-500 { color: #f59e0b; }
             .text-emerald-600 { color: #059669; }
             .text-yellow-700 { color: #a16207; }
@@ -1500,6 +1537,7 @@ export default function GenerateCertificatesPage() {
             .bg-gray-900 { background-color: #111827; }
             .bg-gray-800 { background-color: #1f2937; }
             .bg-gray-200 { background-color: #e5e7eb; }
+            .bg-gray-100 { background-color: #f3f4f6; }
             .bg-gray-50 { background-color: #f9fafb; }
             .bg-green-500 { background-color: #10b981; }
             .bg-green-400 { background-color: #4ade80; }
@@ -1510,37 +1548,104 @@ export default function GenerateCertificatesPage() {
             .bg-yellow-400 { background-color: #facc15; }
             .bg-yellow-300 { background-color: #fde047; }
             .bg-yellow-100 { background-color: #fef3c7; }
+            .bg-purple-100 { background-color: #ede9fe; }
             .bg-purple-50 { background-color: #faf5ff; }
+            .bg-amber-100 { background-color: #fed7aa; }
+            .bg-amber-50 { background-color: #fff7ed; }
             .bg-orange-400 { background-color: #fb923c; }
             .bg-orange-300 { background-color: #fdba74; }
             .bg-red-400 { background-color: #f87171; }
             .bg-lime-400 { background-color: #a3e635; }
-            .bg-gray-100 { background-color: #f3f4f6; }
             .bg-gray-400 { background-color: #9ca3af; }
+            
+            /* Badge colors */
+            .bg-blue-100.text-blue-700.border-blue-200 { 
+              background-color: #dbeafe; 
+              color: #1d4ed8; 
+              border-color: #bfdbfe; 
+            }
+            .bg-green-100.text-green-700.border-green-200 { 
+              background-color: #dcfce7; 
+              color: #15803d; 
+              border-color: #bbf7d0; 
+            }
+            .bg-purple-100.text-purple-700.border-purple-200 { 
+              background-color: #ede9fe; 
+              color: #6b21a1; 
+              border-color: #e9d5ff; 
+            }
+            .bg-pink-100.text-pink-700.border-pink-200 { 
+              background-color: #fce7f3; 
+              color: #be185d; 
+              border-color: #fbcfe8; 
+            }
+            .bg-yellow-100.text-yellow-700.border-yellow-200 { 
+              background-color: #fef3c7; 
+              color: #a16207; 
+              border-color: #fde68a; 
+            }
+            .bg-indigo-100.text-indigo-700.border-indigo-200 { 
+              background-color: #e0e7ff; 
+              color: #4338ca; 
+              border-color: #c7d2fe; 
+            }
+            .bg-red-100.text-red-700.border-red-200 { 
+              background-color: #fee2e2; 
+              color: #b91c1c; 
+              border-color: #fecaca; 
+            }
+            .bg-cyan-100.text-cyan-700.border-cyan-200 { 
+              background-color: #cffafe; 
+              color: #0e7490; 
+              border-color: #a5f3fc; 
+            }
+            .bg-orange-100.text-orange-700.border-orange-200 { 
+              background-color: #fed7aa; 
+              color: #c2410c; 
+              border-color: #fdba74; 
+            }
             
             /* Gradient utilities */
             .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
-            .from-emerald-400 { --tw-gradient-from: #34d399; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-            .to-emerald-600 { --tw-gradient-to: #059669; }
-            .from-emerald-600 { --tw-gradient-from: #059669; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-            .to-blue-600 { --tw-gradient-to: #2563eb; }
+            .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
+            .from-gray-50 { --tw-gradient-from: #f9fafb; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-gray-100 { --tw-gradient-to: #f3f4f6; }
+            .from-green-50 { --tw-gradient-from: #f0fdf4; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-green-100 { --tw-gradient-to: #dcfce7; }
+            .from-green-500 { --tw-gradient-from: #10b981; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-green-600 { --tw-gradient-to: #059669; }
+            .from-blue-50 { --tw-gradient-from: #eff6ff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-blue-100 { --tw-gradient-to: #dbeafe; }
             .from-blue-400 { --tw-gradient-from: #60a5fa; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .from-blue-600 { --tw-gradient-from: #2563eb; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-blue-600 { --tw-gradient-to: #2563eb; }
+            .from-purple-50 { --tw-gradient-from: #faf5ff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-purple-50 { --tw-gradient-to: #faf5ff; }
+            .to-purple-100 { --tw-gradient-to: #ede9fe; }
             .from-purple-400 { --tw-gradient-from: #c084fc; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
             .to-purple-600 { --tw-gradient-to: #9333ea; }
+            .from-amber-50 { --tw-gradient-from: #fff7ed; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-amber-100 { --tw-gradient-to: #fed7aa; }
+            .from-emerald-400 { --tw-gradient-from: #34d399; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+            .to-emerald-600 { --tw-gradient-to: #059669; }
             .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
             
             /* Specific styles */
             .opacity-5 { opacity: 0.05; }
+            .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
             .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
             @keyframes pulse {
               0%, 100% { opacity: 1; }
               50% { opacity: .5; }
             }
+            .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+            .duration-300 { transition-duration: 300ms; }
             
             /* Width/Height utilities */
             .w-80 { width: 20rem; }
             .h-56 { height: 14rem; }
             .w-56 { width: 14rem; }
+           
             .h-40 { height: 10rem; }
             .w-10 { width: 2.5rem; }
             .h-10 { height: 2.5rem; }
@@ -1551,7 +1656,10 @@ export default function GenerateCertificatesPage() {
             .w-6 { width: 1.5rem; }
             .h-6 { height: 1.5rem; }
             .w-16 { width: 4rem; }
+            .h-16 { height: 4rem; }
+            .w-3 { width: 0.75rem; }
             .h-3 { height: 0.75rem; }
+            .h-4 { height: 1rem; }
             .h-2 { height: 0.5rem; }
             .w-2 { width: 0.5rem; }
             .w-0\\.5 { width: 0.125rem; }
@@ -1562,16 +1670,6 @@ export default function GenerateCertificatesPage() {
             /* Additional utilities for QR Code */
             .bg-white { background-color: #ffffff; }
             .rounded { border-radius: 0.25rem; }
-            
-            /* Typography - adjusted sizes */
-            .text-6xl { font-size: 3.75rem; line-height: 1; }
-            .text-5xl { font-size: 3rem; line-height: 1; }
-            .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-            .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-            .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-            .text-base { font-size: 1rem; line-height: 1.5rem; }
-            .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-            .text-xs { font-size: 0.75rem; line-height: 1rem; }
             
             /* Ensure images render properly */
             img {
@@ -1666,22 +1764,28 @@ export default function GenerateCertificatesPage() {
                     {uploadedFileName && (
                       <span className="text-xs font-medium break-all">{uploadedFileName}</span>
                     )}
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleDownloadTemplate}
-                        disabled={uploading}
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDownloadTemplate}
+                      disabled={uploading}
+                    >
+                      <Download className="w-3 h-3 mr-1" />
+                      Template
+                    </Button>
+                    {uploadedFileName && (
+                      <Button 
+                        type="button" 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={reset}
                       >
-                        <Download className="w-3 h-3" />Template
+                        Hapus
                       </Button>
-                      {uploadedFileName && (
-                        <Button type="button" size="sm" variant="destructive" onClick={reset}>
-                          Hapus
-                        </Button>
-                      )}
-                    </div>
+                    )}
                   </div>
                   <p className="mt-3 text-[11px] text-muted-foreground leading-relaxed">
                     Format: .xlsx | Header wajib: name, program (optional lainnya). Kolom JSON: competencies, gradesBreakdown, weeklyData. issueDate & verificationId akan diisi otomatis.
@@ -1947,3 +2051,5 @@ export default function GenerateCertificatesPage() {
     </div>
   );
 }
+
+export default GenerateCertificatesPage;
