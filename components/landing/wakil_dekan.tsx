@@ -103,11 +103,11 @@ const WakilDekanSection = () => {
                         className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
                       />
 
-                      {/* Transparent gradient overlay - subtle color tint */}
-                      <div className={`absolute inset-0 bg-gradient-to-t ${cardColor.gradient} opacity-20 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-30`} />
+                      {/* Transparent gradient overlay - only visible on hover */}
+                      <div className={`absolute inset-0 bg-gradient-to-t ${cardColor.gradient} opacity-0 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-30`} />
 
-                      {/* Transparent dark overlay from bottom - more subtle */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      {/* Transparent dark overlay from bottom - only on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                       {/* Name and Position - centered text at bottom */}
                       <div className="absolute bottom-0 left-0 right-0 p-6 text-center text-white">
