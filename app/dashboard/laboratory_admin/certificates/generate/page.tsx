@@ -810,9 +810,9 @@ function CertificateQRCode({
     const generateQR = async () => {
       try {
         // URL untuk verifikasi sertifikat (sesuaikan dengan domain Anda)
-        const verificationUrl = `https://lab-informatika.id/verify/${verificationId}`;
+        // const verificationUrl = `https://lab-informatika.id/verify/${verificationId}`;
         
-        const url = await QRCode.toDataURL(verificationUrl, {
+        const url = await QRCode.toDataURL(verificationId, {
           width: size * 2, // Higher resolution for print
           margin: 1,
           color: {
@@ -1231,10 +1231,6 @@ function GenerateCertificatesPage() {
         "Teknologi 2": "TypeScript",
         "Teknologi 3": "TailwindCSS",
         "Teknologi 4": "Next.js",
-        "Catatan Instruktur": "Peserta memiliki kemampuan yang baik dalam membangun UI yang responsif dan user-friendly.",
-        "Rekomendasi 1": "Advanced React Patterns",
-        "Rekomendasi 2": "Mobile Development",
-        "Rekomendasi 3": "Web Performance",
       }
     ];
     
@@ -1271,9 +1267,6 @@ function GenerateCertificatesPage() {
       { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
       // Technologies
       { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-      // Feedback & Recommendations
-      { wch: 60 },
-      { wch: 25 }, { wch: 25 }, { wch: 25 },
     ];
     ws['!cols'] = colWidths;
     
@@ -1313,8 +1306,6 @@ function GenerateCertificatesPage() {
       { "": "" },
       { "Minggu 1-10": "Data progress mingguan", "Format": "45" },
       { "Teknologi 1-4": "Teknologi yang dipelajari", "Format": "TypeScript, NodeJS, Docker" },
-      { "Catatan Instruktur": "Feedback dari instruktur", "Format": "Teks bebas" },
-      { "Rekomendasi 1-3": "Rekomendasi pembelajaran lanjutan", "Format": "Microservices Lanjutan" },
     ];
     
     const wsInstruction = XLSX.utils.json_to_sheet(instructionData);
