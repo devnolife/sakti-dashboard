@@ -37,7 +37,7 @@ const CoursesSection = () => {
   ]
 
   return (
-    <section id="courses" className="relative py-20 overflow-hidden bg-white">
+    <section id="courses" className="relative py-12 md:py-16 lg:py-20 overflow-hidden bg-white">
       {/* Colorful background accents */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pink-50/20 to-indigo-50/20" />
@@ -48,48 +48,48 @@ const CoursesSection = () => {
 
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Section label */}
-        <div className="flex flex-col items-center mb-14 text-center">
-          <div className="relative inline-flex items-center gap-2 rounded-full bg-pink-600 px-6 py-2 text-white text-sm font-semibold backdrop-blur-sm shadow-lg shadow-pink-500/20">
+        <div className="flex flex-col items-center mb-10 md:mb-14 text-center">
+          <div className="relative inline-flex items-center gap-2 rounded-full bg-pink-600 px-4 md:px-6 py-1.5 md:py-2 text-white text-xs md:text-sm font-semibold backdrop-blur-sm shadow-lg shadow-pink-500/20">
             <span>Courses</span>
             <span className="absolute inset-0 border-2 rounded-full pointer-events-none border-white/20" />
           </div>
-          <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 max-w-2xl">
+          <h2 className="mt-4 md:mt-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-gray-900 max-w-2xl px-4">
             Discover <span className="text-pink-600">Courses</span> That Fit Your <span className="text-indigo-600">Passion</span>
           </h2>
         </div>
 
         {/* Image rows (static placeholders) */}
-        <div className="relative mb-12 space-y-6">
+        <div className="relative mb-8 md:mb-12 space-y-4 md:space-y-6">
           {/* Row 1: left to right (visual) actual animation scrolls left */}
-          <div className="-ml-6 overflow-hidden marquee-hover-pause md:ml-0">
-            <div className="flex w-[200%] gap-7 animate-marquee-rtl" style={{ ['--marquee-duration' as any]: '45s' }}>
+          <div className="overflow-hidden marquee-hover-pause">
+            <div className="flex w-[200%] gap-4 md:gap-7 animate-marquee-rtl" style={{ ['--marquee-duration' as any]: '45s' }}>
               {[...Array(2)].map((_, loop) => (
-                <div key={loop} className="flex w-1/2 gap-7">
+                <div key={loop} className="flex w-1/2 gap-4 md:gap-7">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={`${loop}-${i}`} className="flex-shrink-0 w-[280px] md:w-[364px] h-[160px] md:h-[186px] rounded-[20px] bg-[#d9d9d9] shadow-sm" />
+                    <div key={`${loop}-${i}`} className="flex-shrink-0 w-[200px] md:w-[280px] lg:w-[364px] h-[120px] md:h-[160px] lg:h-[186px] rounded-[20px] bg-[#d9d9d9] shadow-sm" />
                   ))}
                 </div>
               ))}
             </div>
           </div>
           {/* Row 2: right to left (visual) animation opposite */}
-          <div className="-ml-24 overflow-hidden marquee-hover-pause md:ml-0">
-            <div className="flex w-[200%] gap-7 animate-marquee-ltr" style={{ ['--marquee-duration' as any]: '50s' }}>
+          <div className="overflow-hidden marquee-hover-pause">
+            <div className="flex w-[200%] gap-4 md:gap-7 animate-marquee-ltr" style={{ ['--marquee-duration' as any]: '50s' }}>
               {[...Array(2)].map((_, loop) => (
-                <div key={loop} className="flex justify-end w-1/2 gap-7 md:justify-center">
+                <div key={loop} className="flex justify-center w-1/2 gap-4 md:gap-7">
                   {[1, 2, 3, 4, 5].map(i => (
-                    <div key={`${loop}-${i}`} className="flex-shrink-0 w-[240px] md:w-[364px] h-[150px] md:h-[186px] rounded-[20px] bg-[#d9d9d9] shadow-sm" />
+                    <div key={`${loop}-${i}`} className="flex-shrink-0 w-[180px] md:w-[240px] lg:w-[364px] h-[110px] md:h-[150px] lg:h-[186px] rounded-[20px] bg-[#d9d9d9] shadow-sm" />
                   ))}
                 </div>
               ))}
             </div>
           </div>
           {/* Vertical soft white fade mimic */}
-          <div className="absolute inset-x-0 -translate-y-1/2 pointer-events-none top-1/2 h-72 bg-gradient-to-b from-white/70 via-white/30 to-transparent" />
+          <div className="absolute inset-x-0 -translate-y-1/2 pointer-events-none top-1/2 h-48 md:h-72 bg-gradient-to-b from-white/70 via-white/30 to-transparent" />
         </div>
 
         {/* Course cards grid with modern elevated design */}
-        <div className="grid gap-7 md:grid-cols-2">
+        <div className="grid gap-4 md:gap-7 md:grid-cols-2">
           {courses.map((c, idx) => {
             const darkCard = c.shape.includes('bg-primary ') && c.shape.includes(' text-white')
             const cardColors = [
@@ -103,7 +103,7 @@ const CoursesSection = () => {
             return (
               <div
                 key={c.id}
-                className={`group relative h-[340px] rounded-[36px] p-10 overflow-hidden transition-all duration-500 ${darkCard ? 'bg-primary text-white border-2 border-primary' : `bg-white text-[#101012] border-2 ${cardColor.border}`} shadow-xl hover:shadow-2xl hover:-translate-y-2 ${darkCard ? 'hover:shadow-primary/30' : cardColor.glow} ${c.shape}`}
+                className={`group relative h-[300px] md:h-[340px] rounded-[24px] md:rounded-[36px] p-6 md:p-10 overflow-hidden transition-all duration-500 ${darkCard ? 'bg-primary text-white border-2 border-primary' : `bg-white text-[#101012] border-2 ${cardColor.border}`} shadow-xl hover:shadow-2xl hover:-translate-y-2 ${darkCard ? 'hover:shadow-primary/30' : cardColor.glow} ${c.shape}`}
               >
                 {/* Animated gradient line */}
                 <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -113,34 +113,34 @@ const CoursesSection = () => {
                 <div className="pointer-events-none absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_30%_20%,rgba(54,116,181,1),transparent_60%)]" />
 
                 {/* Rotated label with enhanced 3D effect */}
-                <div className="absolute -top-5 left-10 transition-all duration-500 group-hover:-translate-y-1 group-hover:rotate-3">
-                  <div className={`relative -rotate-2 inline-flex items-center rounded-full px-8 py-3.5 shadow-2xl ${
+                <div className="absolute -top-4 md:-top-5 left-6 md:left-10 transition-all duration-500 group-hover:-translate-y-1 group-hover:rotate-3">
+                  <div className={`relative -rotate-2 inline-flex items-center rounded-full px-4 md:px-8 py-2 md:py-3.5 shadow-2xl ${
                     idx === 0 ? 'bg-purple-600 shadow-purple-500/40' :
                     idx === 1 ? 'bg-teal-600 shadow-teal-500/40' :
                     idx === 2 ? 'bg-orange-600 shadow-orange-500/40' :
                     'bg-indigo-600 shadow-indigo-500/40'
                   } text-white transition-all duration-500 group-hover:scale-110`}>
-                    <span className="font-black text-[18px] whitespace-nowrap">{c.label}</span>
+                    <span className="font-black text-sm md:text-[18px] whitespace-nowrap">{c.label}</span>
                     <span className="absolute inset-0 border-2 rounded-full border-white/30" />
                   </div>
                 </div>
 
                 {/* Main content */}
-                <div className="relative flex flex-col justify-between h-full mt-14">
-                  <p className={`text-[24px] leading-snug font-medium ${darkCard ? 'text-white/95' : 'text-[#101012]/85'}`}>{c.description}</p>
+                <div className="relative flex flex-col justify-between h-full mt-10 md:mt-14">
+                  <p className={`text-base md:text-lg lg:text-[24px] leading-snug font-medium ${darkCard ? 'text-white/95' : 'text-[#101012]/85'}`}>{c.description}</p>
                   <div>
                     <Button
                       variant="ghost"
-                      className={`group/btn mt-6 inline-flex items-center gap-3 rounded-2xl border-[2.5px] px-9 py-4 text-[17px] font-bold shadow-lg transition-all duration-300 ${darkCard ? 'border-white text-white hover:bg-white hover:text-primary hover:scale-105' : 'border-primary text-primary hover:bg-primary hover:text-white hover:scale-105'}`}
+                      className={`group/btn mt-4 md:mt-6 inline-flex items-center gap-2 md:gap-3 rounded-xl md:rounded-2xl border-2 md:border-[2.5px] px-5 md:px-9 py-3 md:py-4 text-sm md:text-base lg:text-[17px] font-bold shadow-lg transition-all duration-300 ${darkCard ? 'border-white text-white hover:bg-white hover:text-primary hover:scale-105' : 'border-primary text-primary hover:bg-primary hover:text-white hover:scale-105'}`}
                     >
-                      <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover/btn:translate-x-2" />
+                      <ArrowRight className="w-4 h-4 md:w-5 md:h-5 transition-transform duration-300 group-hover/btn:translate-x-2" />
                       <span>Start Learning</span>
                     </Button>
                   </div>
                 </div>
 
                 {/* Enhanced corner decoration */}
-                <div className="absolute w-48 -right-8 -bottom-8 h-32 opacity-10 rotate-12 transition-all duration-500 group-hover:opacity-20">
+                <div className="absolute w-32 md:w-48 -right-6 md:-right-8 -bottom-6 md:-bottom-8 h-24 md:h-32 opacity-10 rotate-12 transition-all duration-500 group-hover:opacity-20">
                   <div className="w-full h-full rounded-[40px] bg-gradient-to-r from-purple-500 via-cyan-500 to-orange-500" />
                 </div>
               </div>
