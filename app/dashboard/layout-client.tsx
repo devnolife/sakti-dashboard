@@ -4,10 +4,11 @@ import type React from "react"
 import { useAuth } from "@/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect } from "react"
-import { Loader2 } from "lucide-react"
 import { AppLayout } from "@/components/shared"
 import { menuItems } from "@/config/menu-items"
 import type { Role } from "@/types/role"
+import { DosenSubRoleProvider } from "@/context/dosen-subrole-context"
+import { GlobalLoading } from "@/components/ui/global-loading"
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode
@@ -44,12 +45,7 @@ export function DashboardLayoutClient({
   }, [isLoading, user, pathname, userRole, router])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-2 text-lg">Loading...</span>
-      </div>
-    )
+    return <GlobalLoading text="Loading..." className="h-screen" />
   }
 
   if (!user) {
@@ -64,12 +60,14 @@ export function DashboardLayoutClient({
   }
 
   return (
-    <AppLayout
-      role={effectiveRole}
-      menuItems={getMenuItems(effectiveRole)}
-      defaultSidebarOpen={defaultSidebarOpen}
-    >
-      {children}
-    </AppLayout>
+    <DosenSubRoleProvider>
+      <AppLayout
+        role={effectiveRole}
+        menuItems={getMenuItems(effectiveRole)}
+        defaultSidebarOpen={defaultSidebarOpen}
+      >
+        {children}
+      </AppLayout>
+    </DosenSubRoleProvider>
   )
 }
