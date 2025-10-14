@@ -204,14 +204,6 @@ interface StudentRowRaw {
   futureRecommendations?: string;
 }
 
-function safeParseJSON<T>(value: any, fallback: T): T {
-  if (typeof value !== "string") return fallback;
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
 const toNumber = (v: any, fb = 0) => {
   if (v === undefined || v === null || v === "") return fb;
   const n = Number(v);
@@ -232,22 +224,6 @@ const getRandomBadgeColor = () => {
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 };
-
-function safeParseJSONWithWarning<T>(
-  value: any,
-  fallback: T,
-  field: string,
-  rowIdx: number,
-  warnings: string[]
-): T {
-  if (typeof value !== "string" || value.trim() === "") return fallback;
-  try {
-    return JSON.parse(value);
-  } catch {
-    warnings.push(`Row ${rowIdx + 1}: kolom "${field}" bukan JSON valid.`);
-    return fallback;
-  }
-}
 
 // Update buildRowMapper function - remove grades breakdown mapping
 function buildRowMapper(warningsRef: string[]) {
@@ -826,37 +802,6 @@ function CertificateQRCode({
   );
 }
 
-function GradeIndicator({
-  grade,
-  score,
-}: {
-  grade: string;
-  score: number;
-}) {
-  const colors: Record<string, string> = {
-    "A+": "bg-green-500",
-    A: "bg-green-400",
-    "A-": "bg-lime-400",
-    "B+": "bg-yellow-400",
-    B: "bg-yellow-300",
-    "B-": "bg-orange-400",
-    "C+": "bg-orange-300",
-    C: "bg-red-400",
-  };
-  return (
-    <div className="flex items-center gap-2">
-      <div
-        className={`w-8 h-8 ${
-          colors[grade] || "bg-gray-400"
-        } rounded-full flex items-center justify-center text-white font-bold text-sm`}
-      >
-        {grade}
-      </div>
-      <span className="text-xs text-gray-600">{score}%</span>
-    </div>
-  );
-}
-
 function CertificateFront({
   studentData,
 }: {
@@ -1068,6 +1013,21 @@ function GenerateCertificatesPage() {
         "Persentase Kehadiran": 100,
         "Penyelesaian Tugas": 100,
         "Skor Partisipasi": 98,
+
+        // Data Mingguan (10 minggu)
+        "Minggu 1": 60,
+        "Minggu 2": 65,
+        "Minggu 3": 70,
+        "Minggu 4": 75,
+        "Minggu 5": 72,
+        "Minggu 6": 78,
+        "Minggu 7": 80,
+        "Minggu 8": 82,
+        "Minggu 9": 85,
+        "Minggu 10": 88,
+
+        // Nilai Akhir
+        "Skor Nilai Akhir": 95,
         "Nilai Akhir": "A+",
         
         // Kompetensi (tanpa level)
@@ -1088,18 +1048,6 @@ function GenerateCertificatesPage() {
         "Kecepatan Belajar": 95,
         "Skor Kolaborasi": 92,
         "Efisiensi Pemecahan Masalah": 98,
-        
-        // Data Mingguan (10 minggu)
-        "Minggu 1": 60,
-        "Minggu 2": 65,
-        "Minggu 3": 70,
-        "Minggu 4": 75,
-        "Minggu 5": 72,
-        "Minggu 6": 78,
-        "Minggu 7": 80,
-        "Minggu 8": 82,
-        "Minggu 9": 85,
-        "Minggu 10": 88,
         
         // Teknologi
         "Teknologi 1": "NestJS",
