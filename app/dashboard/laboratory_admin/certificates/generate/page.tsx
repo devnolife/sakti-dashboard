@@ -249,6 +249,7 @@ function safeParseJSONWithWarning<T>(
   }
 }
 
+// Update buildRowMapper function - remove grades breakdown mapping
 function buildRowMapper(warningsRef: string[]) {
   return function mapRowToStudentWithWarn(
     row: any,
@@ -259,7 +260,6 @@ function buildRowMapper(warningsRef: string[]) {
       certificateTitle: row["Judul Sertifikat"] || row.certificateTitle,
       name: row["Nama Peserta"] || row.name,
       program: row["Nama Program"] || row.program,
-      // Remove subtitle mapping - akan menggunakan template universal
       meetings: row["Jumlah Pertemuan"] || row.meetings,
       totalScore: row["Nilai Total"] || row.totalScore,
       materials: row["Jumlah Materi"] || row.materials,
@@ -270,18 +270,9 @@ function buildRowMapper(warningsRef: string[]) {
       instructorFeedback: row["Catatan Instruktur"] || row.instructorFeedback,
     };
     
-    // Build grades breakdown from individual columns
-    const gradesBreakdown = [];
-    for (let i = 1; i <= 4; i++) {
-      const subject = row[`Mata Kuliah ${i}`];
-      const grade = row[`Nilai MK${i}`];
-      const score = row[`Skor MK${i}`];
-      if (subject && grade && score !== undefined) {
-        gradesBreakdown.push({ subject, grade, score: toNumber(score, 0) });
-      }
-    }
+    // Remove grades breakdown - no longer needed
     
-    // Build competencies from individual columns  
+    // Build competencies from individual columns - REMOVE LEVEL
     const competencies = [];
     const competencyColors = [
       { startColor: "#3b82f6", endColor: "#1d4ed8", bgColor: "#3b82f6" },
@@ -295,12 +286,11 @@ function buildRowMapper(warningsRef: string[]) {
     for (let i = 1; i <= 6; i++) {
       const name = row[`Kompetensi ${i}`];
       const value = row[`Nilai Kompetensi ${i}`];
-      const level = row[`Level Kompetensi ${i}`];
+      // Skip level - no longer used
       if (name && value !== undefined) {
         competencies.push({
           name,
           value: toNumber(value, 0),
-          level: level || "Beginner",
           ...competencyColors[i - 1],
           shadowColor: `rgba(${parseInt(competencyColors[i - 1].bgColor.slice(1, 3), 16)},${parseInt(competencyColors[i - 1].bgColor.slice(3, 5), 16)},${parseInt(competencyColors[i - 1].bgColor.slice(5, 7), 16)},0.4)`
         });
@@ -325,14 +315,7 @@ function buildRowMapper(warningsRef: string[]) {
       }
     }
     
-    // Build recommendations array from individual columns
-    const futureRecommendations = [];
-    for (let i = 1; i <= 3; i++) {
-      const rec = row[`Rekomendasi ${i}`];
-      if (rec) {
-        futureRecommendations.push(rec);
-      }
-    }
+    // Remove recommendations and instructor feedback
     
     // Build analytics from individual columns
     const learningVelocity = toNumber(row["Kecepatan Belajar"], defaultStudentData.analytics.learningVelocity);
@@ -348,7 +331,7 @@ function buildRowMapper(warningsRef: string[]) {
       certificateTitle: mappedRow.certificateTitle || defaultStudentData.certificateTitle,
       name: mappedRow.name || defaultStudentData.name,
       program: mappedRow.program || defaultStudentData.program,
-      subtitle: generatedSubtitle, // Use generated subtitle with universal template
+      subtitle: generatedSubtitle,
       issueDate: formatIssueDate(),
       verificationId: generateVerificationId(mappedRow.program || mappedRow.certificateTitle),
       stats: {
@@ -361,7 +344,7 @@ function buildRowMapper(warningsRef: string[]) {
       },
       grades: {
         overall: mappedRow.overallGrade || defaultStudentData.grades.overall,
-        breakdown: gradesBreakdown.length > 0 ? gradesBreakdown : defaultStudentData.grades.breakdown,
+        breakdown: [], // Empty array - no longer used
       },
       learningTime: {
         ...defaultStudentData.learningTime,
@@ -375,8 +358,8 @@ function buildRowMapper(warningsRef: string[]) {
       },
       competencies: competencies.length > 0 ? competencies : defaultStudentData.competencies,
       technologies: technologies.length > 0 ? technologies : defaultStudentData.technologies,
-      instructorFeedback: mappedRow.instructorFeedback || defaultStudentData.instructorFeedback,
-      futureRecommendations: futureRecommendations.length > 0 ? futureRecommendations : defaultStudentData.futureRecommendations,
+      instructorFeedback: "", // Remove instructor feedback
+      futureRecommendations: [], // Remove recommendations
     } as StudentDataType;
   };
 }
@@ -575,10 +558,10 @@ function CertificateBack({
         ))}
       </div>
       
-      {/* Main Content Grid */}
-      <div className="relative z-10 grid grid-cols-12 gap-6 flex-grow">
-        {/* Kompetensi Section - Simplified without levels */}
-        <div className="col-span-7">
+      {/* Main Content Grid - Expanded to full width */}
+      <div className="relative z-10 grid grid-cols-2 gap-8 flex-grow">
+        {/* Kompetensi Section - Now takes half width */}
+        <div>
           <div className="mb-4">
             <h3
               className={`text-lg font-black text-gray-800 mb-4 ${montserrat.className}`}
@@ -586,7 +569,7 @@ function CertificateBack({
               Penguasaan Kompetensi
             </h3>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {studentData.competencies.map((c: any, i: number) => (
               <div key={i}>
                 <div className="flex items-center justify-between mb-2">
@@ -622,32 +605,10 @@ function CertificateBack({
               </div>
             ))}
           </div>
-          
-          {/* Grades Breakdown - Enhanced layout */}
-          <div className="mt-6">
-            <h4
-              className={`text-sm font-bold text-gray-800 mb-3 ${montserrat.className}`}
-            >
-              Rincian Nilai Mata Kuliah
-            </h4>
-            <div className="grid grid-cols-2 gap-3">
-              {studentData.grades.breakdown.map((g: any, i: number) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200"
-                >
-                  <span className={`text-xs text-gray-700 font-medium ${poppins.className}`}>
-                    {g.subject}
-                  </span>
-                  <GradeIndicator grade={g.grade} score={g.score} />
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
         
-        {/* Analytics & Summary Section - Expanded */}
-        <div className="col-span-5">
+        {/* Analytics & Summary Section - Now takes half width */}
+        <div>
           {/* Analytics Bars */}
           <div className="space-y-4 mb-6">
             <h3
@@ -1092,145 +1053,59 @@ function GenerateCertificatesPage() {
   };
 
   const handleDownloadTemplate = () => {
-    // Template dengan kolom bahasa Indonesia tanpa subjudul
+    // Template dengan kolom bahasa Indonesia - TANPA mata kuliah, level, catatan, rekomendasi
     const templateData = [
       {
-        // Data Utama Sertifikat (tanpa subjudul)
-        "Judul Sertifikat": "Backend Developer I",
+        // Data Utama Sertifikat
+        "Judul Sertifikat": "Backend Developer Expert",
         "Nama Peserta": "Ahmad Rizki Pratama",
         "Nama Program": "Backend Development dengan NestJS",
         
         // Statistik
-        "Jumlah Pertemuan": 10,
-        "Nilai Total": 90,
-        "Jumlah Materi": 10,
-        "Persentase Kehadiran": 95,
-        "Penyelesaian Tugas": 88,
-        "Skor Partisipasi": 92,
-        "Nilai Akhir": "A",
+        "Jumlah Pertemuan": 16,
+        "Nilai Total": 98,
+        "Jumlah Materi": 16,
+        "Persentase Kehadiran": 100,
+        "Penyelesaian Tugas": 100,
+        "Skor Partisipasi": 98,
+        "Nilai Akhir": "A+",
         
-        // Rincian Nilai (dipecah menjadi kolom terpisah)
-        "Mata Kuliah 1": "Praktikum Backend",
-        "Nilai MK1": "A+",
-        "Skor MK1": 95,
-        "Mata Kuliah 2": "Desain Database",
-        "Nilai MK2": "A",
-        "Skor MK2": 90,
-        "Mata Kuliah 3": "Pengembangan API",
-        "Nilai MK3": "A-",
-        "Skor MK3": 87,
-        "Mata Kuliah 4": "Manajemen Server",
-        "Nilai MK4": "B+",
-        "Skor MK4": 85,
-        
-        // Kompetensi (dipecah menjadi kolom terpisah)
-        "Kompetensi 1": "Keterampilan Pemrograman",
-        "Nilai Kompetensi 1": 35,
-        "Level Kompetensi 1": "Expert",
-        "Kompetensi 2": "Analisis dan Evaluasi",
-        "Nilai Kompetensi 2": 30,
-        "Level Kompetensi 2": "Advanced",
-        "Kompetensi 3": "Pemecahan Masalah Kreatif",
-        "Nilai Kompetensi 3": 25,
-        "Level Kompetensi 3": "Advanced",
-        "Kompetensi 4": "Keterampilan Komunikasi",
-        "Nilai Kompetensi 4": 20,
-        "Level Kompetensi 4": "Intermediate",
-        "Kompetensi 5": "Etika Profesional",
-        "Nilai Kompetensi 5": 15,
-        "Level Kompetensi 5": "Intermediate",
-        "Kompetensi 6": "Kerja Tim",
-        "Nilai Kompetensi 6": 10,
-        "Level Kompetensi 6": "Beginner",
+        // Kompetensi (tanpa level)
+        "Kompetensi 1": "TypeScript & Node.js",
+        "Nilai Kompetensi 1": 45,
+        "Kompetensi 2": "Database Management",
+        "Nilai Kompetensi 2": 42,
+        "Kompetensi 3": "API Development",
+        "Nilai Kompetensi 3": 40,
+        "Kompetensi 4": "Testing & Debugging",
+        "Nilai Kompetensi 4": 38,
+        "Kompetensi 5": "Security Best Practices",
+        "Nilai Kompetensi 5": 35,
+        "Kompetensi 6": "DevOps & Deployment",
+        "Nilai Kompetensi 6": 30,
         
         // Analitik
-        "Kecepatan Belajar": 85,
-        "Skor Kolaborasi": 78,
-        "Efisiensi Pemecahan Masalah": 92,
+        "Kecepatan Belajar": 95,
+        "Skor Kolaborasi": 92,
+        "Efisiensi Pemecahan Masalah": 98,
         
         // Data Mingguan (10 minggu)
-        "Minggu 1": 45,
-        "Minggu 2": 52,
-        "Minggu 3": 38,
-        "Minggu 4": 61,
-        "Minggu 5": 47,
-        "Minggu 6": 55,
-        "Minggu 7": 43,
-        "Minggu 8": 38,
-        "Minggu 9": 52,
-        "Minggu 10": 45,
+        "Minggu 1": 60,
+        "Minggu 2": 65,
+        "Minggu 3": 70,
+        "Minggu 4": 75,
+        "Minggu 5": 72,
+        "Minggu 6": 78,
+        "Minggu 7": 80,
+        "Minggu 8": 82,
+        "Minggu 9": 85,
+        "Minggu 10": 88,
         
-        // Teknologi (dipecah jadi kolom terpisah)
-        "Teknologi 1": "TypeScript",
-        "Teknologi 2": "NodeJS",
-        "Teknologi 3": "Docker",
-        "Teknologi 4": "PostgreSQL",
-        
-        // Umpan Balik & Rekomendasi
-        "Catatan Instruktur": "Peserta menunjukkan pemahaman yang sangat baik dalam pengembangan backend dan kemampuan problem-solving yang excellent.",
-        "Rekomendasi 1": "Microservices Lanjutan",
-        "Rekomendasi 2": "Arsitektur Cloud",
-        "Rekomendasi 3": "Praktik DevOps",
-      },
-      // Tambahkan baris contoh kedua
-      {
-        "Judul Sertifikat": "Frontend Developer I",
-        "Nama Peserta": "Siti Nurhaliza",
-        "Nama Program": "Frontend Development dengan React",
-        "Jumlah Pertemuan": 12,
-        "Nilai Total": 88,
-        "Jumlah Materi": 12,
-        "Persentase Kehadiran": 92,
-        "Penyelesaian Tugas": 90,
-        "Skor Partisipasi": 85,
-        "Nilai Akhir": "A-",
-        "Mata Kuliah 1": "React Fundamentals",
-        "Nilai MK1": "A",
-        "Skor MK1": 92,
-        "Mata Kuliah 2": "State Management",
-        "Nilai MK2": "A-",
-        "Skor MK2": 88,
-        "Mata Kuliah 3": "UI/UX Design",
-        "Nilai MK3": "B+",
-        "Skor MK3": 85,
-        "Mata Kuliah 4": "Testing",
-        "Nilai MK4": "A",
-        "Skor MK4": 90,
-        "Kompetensi 1": "React Development",
-        "Nilai Kompetensi 1": 40,
-        "Level Kompetensi 1": "Expert",
-        "Kompetensi 2": "CSS & Styling",
-        "Nilai Kompetensi 2": 35,
-        "Level Kompetensi 2": "Expert",
-        "Kompetensi 3": "JavaScript Modern",
-        "Nilai Kompetensi 3": 30,
-        "Level Kompetensi 3": "Advanced",
-        "Kompetensi 4": "Testing",
-        "Nilai Kompetensi 4": 25,
-        "Level Kompetensi 4": "Advanced",
-        "Kompetensi 5": "Performance",
-        "Nilai Kompetensi 5": 20,
-        "Level Kompetensi 5": "Intermediate",
-        "Kompetensi 6": "Accessibility",
-        "Nilai Kompetensi 6": 15,
-        "Level Kompetensi 6": "Intermediate",
-        "Kecepatan Belajar": 90,
-        "Skor Kolaborasi": 85,
-        "Efisiensi Pemecahan Masalah": 88,
-        "Minggu 1": 50,
-        "Minggu 2": 48,
-        "Minggu 3": 55,
-        "Minggu 4": 60,
-        "Minggu 5": 52,
-        "Minggu 6": 58,
-        "Minggu 7": 45,
-        "Minggu 8": 50,
-        "Minggu 9": 55,
-        "Minggu 10": 48,
-        "Teknologi 1": "React",
-        "Teknologi 2": "TypeScript",
-        "Teknologi 3": "TailwindCSS",
-        "Teknologi 4": "Next.js",
+        // Teknologi
+        "Teknologi 1": "NestJS",
+        "Teknologi 2": "TypeORM",
+        "Teknologi 3": "PostgreSQL",
+        "Teknologi 4": "Redis",
       }
     ];
     
@@ -1238,35 +1113,26 @@ function GenerateCertificatesPage() {
     
     // Set column widths for better readability
     const colWidths = [
-      { wch: 20 }, // Judul Sertifikat
-      { wch: 25 }, // Nama Peserta
-      { wch: 30 }, // Nama Program (lebih lebar karena tidak ada subjudul)
-      { wch: 15 }, // Stats columns
-      { wch: 15 },
-      { wch: 15 },
-      { wch: 18 },
-      { wch: 18 },
-      { wch: 15 },
-      { wch: 12 },
-      // Mata Kuliah columns
-      { wch: 20 }, { wch: 10 }, { wch: 10 },
-      { wch: 20 }, { wch: 10 }, { wch: 10 },
-      { wch: 20 }, { wch: 10 }, { wch: 10 },
-      { wch: 20 }, { wch: 10 }, { wch: 10 },
-      // Kompetensi columns
-      { wch: 25 }, { wch: 15 }, { wch: 15 },
-      { wch: 25 }, { wch: 15 }, { wch: 15 },
-      { wch: 25 }, { wch: 15 }, { wch: 15 },
-      { wch: 25 }, { wch: 15 }, { wch: 15 },
-      { wch: 25 }, { wch: 15 }, { wch: 15 },
-      { wch: 25 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, // Judul Sertifikat
+      { wch: 30 }, // Nama Peserta
+      { wch: 35 }, // Nama Program
+      // Stats columns
+      { wch: 15 }, { wch: 15 }, { wch: 15 },
+      { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 12 },
+      // Kompetensi columns (tanpa level)
+      { wch: 28 }, { wch: 18 },
+      { wch: 28 }, { wch: 18 },
+      { wch: 28 }, { wch: 18 },
+      { wch: 28 }, { wch: 18 },
+      { wch: 28 }, { wch: 18 },
+      { wch: 28 }, { wch: 18 },
       // Analytics
-      { wch: 15 }, { wch: 15 }, { wch: 25 },
+      { wch: 18 }, { wch: 18 }, { wch: 28 },
       // Weekly data
       { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
       { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
       // Technologies
-      { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+      { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 },
     ];
     ws['!cols'] = colWidths;
     
@@ -1275,44 +1141,53 @@ function GenerateCertificatesPage() {
     
     // Add instruction sheet
     const instructionData = [
-      { "Petunjuk Pengisian Template Sertifikat": "" },
+      { "PETUNJUK PENGISIAN TEMPLATE SERTIFIKAT": "" },
       { "": "" },
-      { "Kolom": "Keterangan", "Format": "Contoh" },
-      { "Judul Sertifikat": "Judul yang akan ditampilkan di sertifikat", "Format": "Backend Developer I" },
-      { "Nama Peserta": "Nama lengkap peserta", "Format": "Ahmad Rizki Pratama" },
-      { "Nama Program": "Nama program laboratorium yang diikuti", "Format": "Backend Development dengan NestJS" },
+      { "INFO PENTING:": "" },
+      { "1. Subjudul sertifikat akan otomatis digenerate dengan format:": "" },
+      { "   'Telah berhasil menyelesaikan Laboratorium [Nama Program] yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian.'": "" },
+      { "2. Tanggal terbit akan otomatis menggunakan tanggal saat upload": "" },
+      { "3. ID Verifikasi akan digenerate otomatis oleh sistem": "" },
+      { "4. Kolom yang tidak diisi akan menggunakan nilai default": "" },
       { "": "" },
-      { "CATATAN PENTING:": "" },
-      { "": "• Subjudul akan otomatis digenerate dengan template:" },
-      { "": '  "Telah berhasil menyelesaikan Laboratorium [Nama Program] yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian."' },
-      { "": "• Tanggal terbit dan ID sertifikat akan digenerate otomatis oleh sistem" },
-      { "": "• Kolom yang tidak diisi akan menggunakan nilai default" },
+      { "PENJELASAN KOLOM:": "" },
       { "": "" },
-      { "Jumlah Pertemuan": "Total pertemuan yang diikuti", "Format": "10" },
-      { "Nilai Total": "Nilai keseluruhan (0-100)", "Format": "90" },
-      { "Jumlah Materi": "Total materi yang dipelajari", "Format": "10" },
-      { "Persentase Kehadiran": "Persentase kehadiran (0-100)", "Format": "95" },
-      { "Penyelesaian Tugas": "Persentase tugas selesai (0-100)", "Format": "88" },
-      { "Skor Partisipasi": "Skor partisipasi (0-100)", "Format": "92" },
-      { "Nilai Akhir": "Grade akhir", "Format": "A, A-, B+, B, B-, C" },
+      { "Kolom": "Keterangan", "Format/Contoh": "" },
+      { "---": "---"},
+      { "Judul Sertifikat": "Judul yang akan ditampilkan besar di sertifikat", "Backend Developer Expert": "" },
+      { "Nama Peserta": "Nama lengkap peserta program", "Muhammad Rizky Firmansyah": "" },
+      { "Nama Program": "Nama program laboratorium yang diikuti", "Backend Development dengan NestJS": "" },
       { "": "" },
-      { "Mata Kuliah 1-4": "Nama mata kuliah", "Format": "Praktikum Backend" },
-      { "Nilai MK1-4": "Grade mata kuliah", "Format": "A+, A, A-, B+" },
-      { "Skor MK1-4": "Skor mata kuliah (0-100)", "Format": "95" },
+      { "STATISTIK PEMBELAJARAN:": "" },
+      { "Jumlah Pertemuan": "Total pertemuan yang dihadiri", "16": "" },
+      { "Nilai Total": "Nilai keseluruhan (0-100)", "98": "" },
+      { "Jumlah Materi": "Total materi yang dipelajari", "16": "" },
+      { "Persentase Kehadiran": "Persentase kehadiran (0-100)", "100": "" },
+      { "Penyelesaian Tugas": "Persentase tugas yang diselesaikan (0-100)", "98": "" },
+      { "Skor Partisipasi": "Skor keaktifan dan partisipasi (0-100)", "95": "" },
+      { "Nilai Akhir": "Grade akhir", "A+, A, A-, B+, B, B-, C": "" },
       { "": "" },
-      { "Kompetensi 1-6": "Nama kompetensi", "Format": "Keterampilan Pemrograman" },
-      { "Nilai Kompetensi 1-6": "Nilai kompetensi (0-100)", "Format": "35" },
-      { "Level Kompetensi 1-6": "Level penguasaan", "Format": "Expert, Advanced, Intermediate, Beginner" },
+      { "KOMPETENSI (1-6):": "" },
+      { "Kompetensi X": "Nama kompetensi", "TypeScript & Node.js": "" },
+      { "Nilai Kompetensi X": "Progress kompetensi (0-100)", "45": "" },
       { "": "" },
-      { "Minggu 1-10": "Data progress mingguan", "Format": "45" },
-      { "Teknologi 1-4": "Teknologi yang dipelajari", "Format": "TypeScript, NodeJS, Docker" },
+      { "ANALITIK:": "" },
+      { "Kecepatan Belajar": "Learning velocity (0-100)", "95": "" },
+      { "Skor Kolaborasi": "Collaboration score (0-100)", "92": "" },
+      { "Efisiensi Pemecahan Masalah": "Problem solving efficiency (0-100)", "98": "" },
+      { "": "" },
+      { "DATA MINGGUAN (1-10):": "" },
+      { "Minggu X": "Progress pembelajaran per minggu", "60": "" },
+      { "": "" },
+      { "TEKNOLOGI (1-4):": "" },
+      { "Teknologi X": "Tools/teknologi yang dipelajari", "NestJS, TypeORM, PostgreSQL": "" },
     ];
     
     const wsInstruction = XLSX.utils.json_to_sheet(instructionData);
-    wsInstruction['!cols'] = [{ wch: 30 }, { wch: 50 }, { wch: 30 }];
+    wsInstruction['!cols'] = [{ wch: 50 }, { wch: 60 }, { wch: 40 }];
     XLSX.utils.book_append_sheet(wb, wsInstruction, "Petunjuk");
     
-    XLSX.writeFile(wb, "template-sertifikat-laboratorium.xlsx");
+    XLSX.writeFile(wb, "template-sertifikat-laboratorium-simplified.xlsx");
   };
 
   const handlePrint = () => {
@@ -1421,6 +1296,7 @@ function GenerateCertificatesPage() {
             .gap-4 { gap: 1rem; }
             .gap-5 { gap: 1.25rem; }
             .gap-6 { gap: 1.5rem; }
+            .gap-8 { gap: 2rem; }
             .grid { display: grid; }
             .grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
             .grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
@@ -1430,9 +1306,13 @@ function GenerateCertificatesPage() {
             .col-span-7 { grid-column: span 7 / span 7; }
             .col-span-3 { grid-column: span 3 / span 3; }
             .col-span-2 { grid-column: span 2 / span 2; }
-            .space-y-2 > * + * { margin-top: 0.5rem; }
-            .space-y-3 > * + * { margin-top: 0.75rem; }
-            .space-y-4 > * + * { margin-top: 1rem; }
+            
+            /* Space utilities - FIXED for print */
+            .space-y-2 > * + * { margin-top: 0.5rem !important; }
+            .space-y-3 > * + * { margin-top: 0.75rem !important; }
+            .space-y-4 > * + * { margin-top: 1rem !important; }
+            .space-y-6 > * + * { margin-top: 1.5rem !important; }
+            
             .mx-auto { margin-left: auto; margin-right: auto; }
             .mt-1 { margin-top: 0.25rem; }
             .mt-2 { margin-top: 0.5rem; }
@@ -1636,7 +1516,6 @@ function GenerateCertificatesPage() {
             .w-80 { width: 20rem; }
             .h-56 { height: 14rem; }
             .w-56 { width: 14rem; }
-           
             .h-40 { height: 10rem; }
             .w-10 { width: 2.5rem; }
             .h-10 { height: 2.5rem; }
@@ -1672,6 +1551,70 @@ function GenerateCertificatesPage() {
             /* Fix for object-contain */
             .object-contain {
               object-fit: contain;
+            }
+            
+            /* Print-specific fixes for competency and analytics sections */
+            @media print {
+              /* Ensure proper spacing between competency items */
+              .space-y-4 > div {
+                margin-bottom: 1rem !important;
+              }
+              
+              .space-y-4 > div:last-child {
+                margin-bottom: 0 !important;
+              }
+              
+              /* Ensure analytics bars have proper spacing */
+              .space-y-4 > div > div {
+                margin-bottom: 0.5rem;
+              }
+              
+              /* Fix grid gap for main content */
+              .grid.grid-cols-2 {
+                column-gap: 2rem !important;
+              }
+              
+              /* Ensure progress bars render with proper height */
+              .h-3 {
+                height: 0.75rem !important;
+                min-height: 0.75rem !important;
+              }
+              
+              .h-4 {
+                height: 1rem !important;
+                min-height: 1rem !important;
+              }
+              
+              /* Fix competency progress bar container */
+              .relative.h-3.overflow-hidden.bg-gray-200.rounded-full {
+                display: block !important;
+                position: relative !important;
+                height: 0.75rem !important;
+                background-color: #e5e7eb !important;
+                border-radius: 9999px !important;
+                overflow: hidden !important;
+                margin-top: 0.5rem !important;
+              }
+              
+              /* Fix analytics progress bar container */
+              .h-4.bg-gray-200.rounded-full.overflow-hidden {
+                display: block !important;
+                position: relative !important;
+                height: 1rem !important;
+                background-color: #e5e7eb !important;
+                border-radius: 9999px !important;
+                overflow: hidden !important;
+              }
+              
+              /* Ensure filled portion of progress bars render correctly */
+              .h-full.rounded-full {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                height: 100% !important;
+                border-radius: 9999px !important;
+                transition: none !important;
+              }
             }
           </style>
         </head>
