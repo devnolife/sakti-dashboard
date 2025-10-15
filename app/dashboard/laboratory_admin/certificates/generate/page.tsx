@@ -100,7 +100,7 @@ const defaultStudentData = {
   learningTime: {
     hours: 231,
     minutes: 14,
-    total: "231j 14m",
+    total: "231 jam",
     weeklyData: [45, 52, 38, 61, 47, 55, 43, 38, 52, 45],
   },
   achievements: [],
@@ -303,7 +303,7 @@ function buildRowMapper(warningsRef: string[]) {
     // Calculate learning time based on meetings (meetings * 2 hours)
     const meetingsCount = toNumber(mappedRow.meetings, defaultStudentData.stats.meetings);
     const totalHours = meetingsCount * 2;
-    const formattedLearningTime = `${totalHours}j 0m`;
+    const formattedLearningTime = `${totalHours} jam`;
 
     return {
       ...defaultStudentData,
