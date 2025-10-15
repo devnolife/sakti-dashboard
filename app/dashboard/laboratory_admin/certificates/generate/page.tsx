@@ -225,7 +225,7 @@ const getRandomBadgeColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-// Update buildRowMapper function - remove grades breakdown mapping
+// Update buildRowMapper function to calculate learning time
 function buildRowMapper(warningsRef: string[]) {
   return function mapRowToStudentWithWarn(
     row: any,
@@ -291,8 +291,6 @@ function buildRowMapper(warningsRef: string[]) {
       }
     }
     
-    // Remove recommendations and instructor feedback
-    
     // Build analytics from individual columns
     const learningVelocity = toNumber(row["Kecepatan Belajar"], defaultStudentData.analytics.learningVelocity);
     const collaborationScore = toNumber(row["Skor Kolaborasi"], defaultStudentData.analytics.collaborationScore);
@@ -301,6 +299,11 @@ function buildRowMapper(warningsRef: string[]) {
     // Generate subtitle using universal template
     const programName = mappedRow.program || mappedRow.certificateTitle || "Program";
     const generatedSubtitle = `Telah berhasil menyelesaikan Laboratorium ${programName} yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian.`;
+
+    // Calculate learning time based on meetings (meetings * 2 hours)
+    const meetingsCount = toNumber(mappedRow.meetings, defaultStudentData.stats.meetings);
+    const totalHours = meetingsCount * 2;
+    const formattedLearningTime = `${totalHours}j 0m`;
 
     return {
       ...defaultStudentData,
@@ -311,7 +314,7 @@ function buildRowMapper(warningsRef: string[]) {
       issueDate: formatIssueDate(),
       verificationId: generateVerificationId(mappedRow.program || mappedRow.certificateTitle),
       stats: {
-        meetings: toNumber(mappedRow.meetings, defaultStudentData.stats.meetings),
+        meetings: meetingsCount,
         totalScore: toNumber(mappedRow.totalScore, defaultStudentData.stats.totalScore),
         materials: toNumber(mappedRow.materials, defaultStudentData.stats.materials),
         attendanceRate: toNumber(mappedRow.attendanceRate, defaultStudentData.stats.attendanceRate),
@@ -323,7 +326,9 @@ function buildRowMapper(warningsRef: string[]) {
         breakdown: [], // Empty array - no longer used
       },
       learningTime: {
-        ...defaultStudentData.learningTime,
+        hours: totalHours,
+        minutes: 0,
+        total: formattedLearningTime,
         weeklyData: weeklyData.length > 0 ? weeklyData : defaultStudentData.learningTime.weeklyData,
       },
       analytics: {
@@ -1067,6 +1072,11 @@ function GenerateCertificatesPage() {
       // Stats columns
       { wch: 15 }, { wch: 15 }, { wch: 15 },
       { wch: 18 }, { wch: 18 }, { wch: 15 }, { wch: 12 },
+      // Weekly data (10 weeks)
+      { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+      { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+      // Final grade
+      { wch: 15 }, { wch: 12 },
       // Kompetensi columns (tanpa level)
       { wch: 28 }, { wch: 18 },
       { wch: 28 }, { wch: 18 },
@@ -1076,9 +1086,6 @@ function GenerateCertificatesPage() {
       { wch: 28 }, { wch: 18 },
       // Analytics
       { wch: 18 }, { wch: 18 }, { wch: 28 },
-      // Weekly data
-      { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
-      { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
       // Technologies
       { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 },
     ];
@@ -1135,7 +1142,7 @@ function GenerateCertificatesPage() {
     wsInstruction['!cols'] = [{ wch: 50 }, { wch: 60 }, { wch: 40 }];
     XLSX.utils.book_append_sheet(wb, wsInstruction, "Petunjuk");
     
-    XLSX.writeFile(wb, "template-sertifikat-laboratorium-simplified.xlsx");
+    XLSX.writeFile(wb, "template-sertifikat-laboratorium.xlsx");
   };
 
   const handlePrint = () => {
