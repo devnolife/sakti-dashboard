@@ -30,7 +30,7 @@ const HeroSection: React.FC = () => {
   return (
     <section
       id="home"
-      className="relative overflow-hidden pt-[100px] min-h-[90vh] flex items-center bg-white"
+      className="relative overflow-hidden pt-[80px] md:pt-[100px] min-h-[90vh] flex items-center bg-white"
     >
       {/* Background Image - Full visibility */}
       <div className="absolute inset-0 z-0">
@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
           src="/landing/hero.png"
           alt="SINTEKMu Background"
           fill
-          className="object-cover object-right scale-75 translate-x-[15%]"
+          className="object-cover object-right md:scale-75 md:translate-x-[15%] scale-100 translate-x-0"
           priority
         />
         <div className="absolute bottom-0 left-0 right-0 h-[70%] bg-gradient-to-t from-white via-white/60 to-transparent" />
@@ -81,12 +81,12 @@ const HeroSection: React.FC = () => {
             {/* Brand Badge - Compact */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 border-2 shadow-lg rounded-full backdrop-blur-xl bg-white/90 border-purple-200/50">
               <Lightbulb className="w-3.5 h-3.5 text-purple-600" />
-              <span className="text-[10px] font-bold tracking-wide text-gray-900">Sistem Informasi Fakultas Teknik</span>
+              <span className="text-[10px] sm:text-xs font-bold tracking-wide text-gray-900">Sistem Informasi Fakultas Teknik</span>
             </div>
 
             {/* Main Title - Reduced Size */}
             <div className="space-y-3">
-              <h1 className="font-black leading-[1.05] tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+              <h1 className="font-black leading-[1.05] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
                 <span className="relative inline-block">
                   <span className="relative z-10">
                     <span className="text-red-600">SINTEK</span><span className="text-blue-600">Mu</span>
@@ -96,38 +96,38 @@ const HeroSection: React.FC = () => {
               </h1>
 
               {/* Slogan */}
-              <p className="text-lg font-bold leading-tight text-gray-800 sm:text-xl md:text-2xl">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-tight text-gray-800">
                 Sistem Informasi Terintegrasi<br />
                 <span className="text-red-600">Fakultas Teknik </span>
                 <span className="text-blue-600">Unismuh Makassar</span>
               </p>
             </div>
 
-            <p className="max-w-[600px] text-base md:text-lg text-gray-700 leading-relaxed">
+            <p className="max-w-[600px] text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
               Kelola perkuliahan, dokumen, pembayaran, magang, hingga sertifikasi dalam satu platform terpadu yang cepat dan aman.
             </p>
 
             {/* Actions - Smaller Buttons */}
             <div className="flex flex-col w-full gap-4 pt-2 sm:flex-row sm:items-center">
-              <Button asChild className="px-8 py-6 text-base font-bold text-white transition-all bg-red-600 shadow-xl rounded-xl hover:bg-red-700 hover:shadow-red-500/50 hover:scale-105">
-                <Link href="/dashboard" className="flex items-center gap-2">
+              <Button asChild className="px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-bold text-white transition-all bg-red-600 shadow-xl rounded-xl hover:bg-red-700 hover:shadow-red-500/50 hover:scale-105">
+                <Link href="/dashboard" className="flex items-center justify-center gap-2">
                   <span>Masuk Dashboard</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5" />
                 </Link>
               </Button>
-              <Button variant="outline" asChild className="px-8 py-6 text-base font-semibold text-gray-800 transition-all border-2 border-gray-300 shadow-lg bg-white/90 rounded-xl hover:text-white hover:bg-gray-900 hover:border-gray-900 backdrop-blur-md">
+              <Button variant="outline" asChild className="px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-semibold text-gray-800 transition-all border-2 border-gray-300 shadow-lg bg-white/90 rounded-xl hover:text-white hover:bg-gray-900 hover:border-gray-900 backdrop-blur-md">
                 <Link href="#features">Jelajahi Fitur</Link>
               </Button>
             </div>
 
             {/* Small meta bar */}
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-medium text-gray-600">
+            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs sm:text-sm font-medium text-gray-600">
               <div className="flex items-center gap-1.5">
                 <Timer className="w-4 h-4 text-orange-500" />
                 <span>Implementasi Cepat</span>
               </div>
-              <span className="w-px h-3 bg-gray-300" />
-              <span>Teruji dalam operasional akademik harian</span>
+              <span className="hidden sm:inline w-px h-3 bg-gray-300" />
+              <span className="hidden sm:inline">Teruji dalam operasional akademik harian</span>
             </div>
           </div>
 
