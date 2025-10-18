@@ -194,6 +194,7 @@ const StatsSection = () => {
 
   return (
     <section
+      id="stats"
       ref={sectionRef}
       className="relative py-20 overflow-hidden bg-gradient-to-b from-indigo-50/30 via-white to-teal-50/20"
     >
