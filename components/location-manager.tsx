@@ -718,6 +718,3 @@ export default function LocationManager({ userId }: LocationManagerProps) {
 }
 
 export type Location = LocationType
-
-\"\
-

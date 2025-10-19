@@ -42,33 +42,25 @@ export function ViceDean1Dashboard() {
 
   return (
     <div className="pb-5 space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text">
-            Wakil Dekan 1
-          </h2>
-          <p className="text-muted-foreground">Dashboard akademik, mahasiswa, penelitian & PKM, dan kerjasama</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Tambah Program</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
-          >
-            <FileText className="w-4 h-4" />
-            <span>Laporan</span>
-          </Button>
-          <Button className="flex items-center gap-1 transition-all bg-primary hover:bg-primary-600">
-            <Download className="w-4 h-4" />
-            <span>Ekspor Data</span>
-          </Button>
-        </div>
+      <div className="flex flex-wrap gap-2 justify-end">
+        <Button
+          variant="outline"
+          className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Tambah Program</span>
+        </Button>
+        <Button
+          variant="outline"
+          className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
+        >
+          <FileText className="w-4 h-4" />
+          <span>Laporan</span>
+        </Button>
+        <Button className="flex items-center gap-1 transition-all bg-primary hover:bg-primary-600">
+          <Download className="w-4 h-4" />
+          <span>Ekspor Data</span>
+        </Button>
       </div>
 
       {/* Summary Cards */}

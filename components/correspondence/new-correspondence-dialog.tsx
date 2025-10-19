@@ -24,7 +24,8 @@ import { CalendarIcon, FileText, Upload, AlertCircle, CheckCircle, PlusCircle } 
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { LETTER_TYPES, submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { DEFAULT_LETTER_TYPES } from "@/lib/correspondence-constants"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 // Create a schema for the form
@@ -62,7 +63,7 @@ export function NewCorrespondenceDialog({ open, onOpenChange }: NewCorrespondenc
   }
 
   // Get the selected letter type info
-  const selectedTypeInfo = selectedLetterType ? LETTER_TYPES[selectedLetterType] : null
+  const selectedTypeInfo = selectedLetterType ? DEFAULT_LETTER_TYPES[selectedLetterType as keyof typeof DEFAULT_LETTER_TYPES] : null
 
   // Handle form submission
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -159,7 +160,7 @@ export function NewCorrespondenceDialog({ open, onOpenChange }: NewCorrespondenc
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.entries(LETTER_TYPES).map(([key, info]) => (
+                      {Object.entries(DEFAULT_LETTER_TYPES).map(([key, info]) => (
                         <SelectItem key={key} value={key}>
                           {info.title}
                         </SelectItem>

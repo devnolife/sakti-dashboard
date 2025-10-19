@@ -27,28 +27,20 @@ export function ViceDean3Dashboard() {
 
   return (
     <div className="px-1 py-2 space-y-6">
-      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">
-            Wakil Dekan 3 - Kemahasiswaan
-          </h2>
-          <p className="text-muted-foreground">Pantau statistik mahasiswa, distribusi IPK, dan status akademik</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <select
-            className="px-3 py-2 text-sm rounded-md border shadow-sm transition-all duration-200 border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-primary-400 hover:border-primary-300"
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-            title="Pilih Program Studi"
-            aria-label="Pilih Program Studi"
-          >
-            {departments.map((dept) => (
-              <option key={dept.id} value={dept.id}>
-                {dept.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex items-center justify-end space-x-2">
+        <select
+          className="px-3 py-2 text-sm rounded-md border shadow-sm transition-all duration-200 border-input bg-background ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-primary-400 hover:border-primary-300"
+          value={selectedDepartment}
+          onChange={(e) => setSelectedDepartment(e.target.value)}
+          title="Pilih Program Studi"
+          aria-label="Pilih Program Studi"
+        >
+          {departments.map((dept) => (
+            <option key={dept.id} value={dept.id}>
+              {dept.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="space-y-4">

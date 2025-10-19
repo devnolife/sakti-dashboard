@@ -1,20 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import jwt from 'jsonwebtoken'
 import { Role } from './generated/prisma'
+import { prisma } from './prisma'
+
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key'
 
 export async function authMiddleware(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  // First try NextAuth token
+  const nextAuthToken = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  if (nextAuthToken) {
+    return nextAuthToken
+  }
+
+  // Then try custom JWT token from Authorization header
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.replace('Bearer ', '')
 
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  return token
+  try {
+    // Verify JWT token
+    const decoded = jwt.verify(token, JWT_SECRET) as any
+
+    // Check if session exists and is not expired
+    const session = await prisma.session.findUnique({
+      where: { token },
+      include: { user: true }
+    })
+
+    if (!session || session.expiresAt < new Date() || !session.user.isActive) {
+      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
+    }
+
+    return {
+      sub: decoded.userId,
+      username: decoded.username,
+      role: decoded.role,
+      subRole: decoded.subRole
+    }
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+  }
 }
 
 // Permission matrix for role-based access control
 const PERMISSIONS = {
-  admin: ['*'], // Admin has all permissions
+  admin: ['*'], // Admin has all permissions including read:users, create:users, update:users, delete:users
   mahasiswa: ['read:own', 'create:own', 'update:own'],
   dosen: [
     'read:own', 'update:own', 'create:own',
@@ -32,12 +66,14 @@ const PERMISSIONS = {
     'read:applications', 'update:applications', 'approve:applications',
     'read:letters', 'approve:letters',
     'read:courses', 'create:courses', 'update:courses',
-    'read:grades', 'update:grades'
+    'read:grades', 'update:grades',
+    'read:users', 'create:users', 'update:users' // Prodi can manage users
   ],
   dekan: [
     'read:faculty', 'update:faculty',
     'approve:major', 'approve:final',
-    'read:budget', 'approve:budget'
+    'read:budget', 'approve:budget',
+    'read:users', 'create:users', 'update:users', 'delete:users' // Dekan can manage users
   ],
   admin_keuangan: [
     'read:payments', 'update:payments', 'verify:payments',
@@ -152,7 +188,35 @@ export function requireAuth(requiredPermission?: string) {
       id: token.sub,
       role: token.role,
       subRole: token.subRole,
-      nidn: token.nidn
+      username: token.username
+    }
+
+    return null // Continue to handler
+  }
+}
+
+// Helper to require admin role
+export function requireAdmin() {
+  return async (request: NextRequest, context: any) => {
+    const token = await authMiddleware(request)
+
+    if (token instanceof NextResponse) {
+      return token // Return error response
+    }
+
+    // Check if user is admin
+    if (token.role !== 'admin') {
+      return NextResponse.json({
+        error: 'Forbidden - Admin access required'
+      }, { status: 403 })
+    }
+
+    // Add user info to context
+    context.user = {
+      id: token.sub,
+      role: token.role,
+      subRole: token.subRole,
+      username: token.username
     }
 
     return null // Continue to handler

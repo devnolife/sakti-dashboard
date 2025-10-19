@@ -119,7 +119,7 @@ const QuotesSection = () => {
   ]
 
   return (
-    <section className="py-20 relative overflow-hidden min-h-[700px] bg-gradient-to-b from-white via-purple-50/30 to-cyan-50/30">
+    <section id="quotes" className="py-20 relative overflow-hidden min-h-[700px] bg-gradient-to-b from-white via-purple-50/30 to-cyan-50/30">
       {/* Enhanced Background Elements with animation */}
       <div className="absolute top-0 left-0 rounded-full w-96 h-96 bg-gradient-to-br from-purple-500/15 via-cyan-500/10 to-transparent blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-0 rounded-full w-80 h-80 bg-gradient-to-tr from-cyan-500/15 via-purple-500/10 to-transparent blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />

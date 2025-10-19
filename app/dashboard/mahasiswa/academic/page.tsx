@@ -1,11 +1,120 @@
+'use client'
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Award, BookOpen, Calendar, GraduationCap, FileText, Clock, Zap, Star, TrendingUp, Globe } from "lucide-react"
+import { Award, BookOpen, Calendar, GraduationCap, FileText, Clock, Zap, Star, TrendingUp, Globe, Loader2 } from "lucide-react"
 import Link from "next/link"
 
+interface AcademicData {
+  student: {
+    id: string
+    name: string
+    nim: string
+    major: string
+    department: string
+    semester: number
+    academicYear: string
+    gpa: number | null
+    status: string
+  }
+  academicAdvisor: {
+    id: string
+    name: string
+    nip: string
+    position: string
+    department: string
+    phone: string | null
+    office: string | null
+  } | null
+  consultations: {
+    id: string
+    date: Date | string
+    uraian: string
+    keterangan: string
+    paraf: boolean
+    no: number
+  }[]
+  academicProgress: {
+    totalCredits: number
+    completedCredits: number
+    requiredCredits: number
+    progressPercentage: number
+    requiredCoursesProgress: number
+    electiveCoursesProgress: number
+  }
+  currentSemesterStats: {
+    courses: number
+    credits: number
+    gpa: number | null
+  }
+}
+
 export default function AcademicOverviewPage() {
+  const [academicData, setAcademicData] = useState<AcademicData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchAcademicData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        console.log('🚀 Fetching academic data...')
+        const response = await fetch('/api/student/academic')
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch academic data: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('📚 Academic data received:', data)
+        setAcademicData(data)
+      } catch (error) {
+        console.error('❌ Error fetching academic data:', error)
+        setError(error instanceof Error ? error.message : 'Failed to load academic data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAcademicData()
+  }, [])
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading academic data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold mb-2">Error loading academic data</h3>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!academicData) {
+    return null
+  }
   return (
     <div className="space-y-8 min-h-screen bg-gradient-to-br from-purple-50/30 via-blue-50/30 to-pink-50/30 dark:from-purple-950/10 dark:via-blue-950/10 dark:to-pink-950/10">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-8 text-white">
@@ -38,8 +147,8 @@ export default function AcademicOverviewPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-3xl font-black mb-1">3.75</div>
-            <p className="text-sm opacity-80">Semester 7 • On fire! 🔥</p>
+            <div className="text-3xl font-black mb-1">{academicData.student.gpa?.toFixed(2) || 'N/A'}</div>
+            <p className="text-sm opacity-80">Semester {academicData.student.semester} • {academicData.student.gpa && academicData.student.gpa >= 3.5 ? 'On fire! 🔥' : 'Keep going! 💪'}</p>
           </CardContent>
         </Card>
 
@@ -53,8 +162,8 @@ export default function AcademicOverviewPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-3xl font-black mb-1">120</div>
-            <p className="text-sm opacity-80">dari 144 SKS • 83% done! 🚀</p>
+            <div className="text-3xl font-black mb-1">{academicData.academicProgress.totalCredits}</div>
+            <p className="text-sm opacity-80">dari {academicData.academicProgress.requiredCredits} SKS • {academicData.academicProgress.progressPercentage}% done! 🚀</p>
           </CardContent>
         </Card>
 
@@ -68,7 +177,7 @@ export default function AcademicOverviewPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-3xl font-black mb-1">3/5</div>
+            <div className="text-3xl font-black mb-1">{academicData.consultations.filter(c => c.paraf).length}/{academicData.consultations.length}</div>
             <p className="text-sm opacity-80">This semester • Keep going! 💪</p>
           </CardContent>
         </Card>
@@ -83,8 +192,8 @@ export default function AcademicOverviewPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-3xl font-black mb-1">Active</div>
-            <p className="text-sm opacity-80">Ganjil 2023/2024 • Living the dream! ✨</p>
+            <div className="text-3xl font-black mb-1">{academicData.student.status === 'active' ? 'Active' : academicData.student.status}</div>
+            <p className="text-sm opacity-80">{academicData.student.academicYear} • Living the dream! ✨</p>
           </CardContent>
         </Card>
       </div>
@@ -134,30 +243,30 @@ export default function AcademicOverviewPage() {
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20">
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-semibold flex items-center gap-2">✨ Overall Progress</span>
-                    <span className="text-lg font-bold text-indigo-600">83%</span>
+                    <span className="text-lg font-bold text-indigo-600">{academicData.academicProgress.progressPercentage}%</span>
                   </div>
-                  <Progress value={83} className="h-3 rounded-full" />
+                  <Progress value={academicData.academicProgress.progressPercentage} className="h-3 rounded-full" />
                 </div>
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-cyan-50 dark:from-emerald-950/20 dark:to-cyan-950/20">
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-semibold flex items-center gap-2">📚 Required Courses</span>
-                    <span className="text-lg font-bold text-emerald-600">90%</span>
+                    <span className="text-lg font-bold text-emerald-600">{academicData.academicProgress.requiredCoursesProgress}%</span>
                   </div>
-                  <Progress value={90} className="h-3 rounded-full" />
+                  <Progress value={academicData.academicProgress.requiredCoursesProgress} className="h-3 rounded-full" />
                 </div>
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-semibold flex items-center gap-2">🎯 Elective Courses</span>
-                    <span className="text-lg font-bold text-amber-600">75%</span>
+                    <span className="text-lg font-bold text-amber-600">{academicData.academicProgress.electiveCoursesProgress}%</span>
                   </div>
-                  <Progress value={75} className="h-3 rounded-full" />
+                  <Progress value={academicData.academicProgress.electiveCoursesProgress} className="h-3 rounded-full" />
                 </div>
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-950/20 dark:to-rose-950/20">
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-semibold flex items-center gap-2">💬 Academic Consultation</span>
-                    <span className="text-lg font-bold text-pink-600">60%</span>
+                    <span className="text-lg font-bold text-pink-600">{Math.round((academicData.consultations.filter(c => c.paraf).length / academicData.consultations.length) * 100)}%</span>
                   </div>
-                  <Progress value={60} className="h-3 rounded-full" />
+                  <Progress value={Math.round((academicData.consultations.filter(c => c.paraf).length / academicData.consultations.length) * 100)} className="h-3 rounded-full" />
                 </div>
 
                 <div className="pt-4">
@@ -186,44 +295,35 @@ export default function AcademicOverviewPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="group p-5 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold text-gray-800">📝 KRS Consultation</p>
-                      <p className="text-sm text-gray-600 mt-1">10 September 2023</p>
+                {academicData.consultations.slice(0, 3).map((consultation, index) => {
+                  const gradients = [
+                    'from-green-50 to-emerald-50 border-green-200/50',
+                    'from-blue-50 to-cyan-50 border-blue-200/50',
+                    'from-purple-50 to-pink-50 border-purple-200/50'
+                  ]
+                  return (
+                    <div key={consultation.id} className={`group p-5 rounded-2xl bg-gradient-to-r ${gradients[index % 3]} border hover:shadow-lg transition-all`}>
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <p className="font-semibold text-gray-800">📝 {consultation.uraian}</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {new Date(consultation.date).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <div className={`px-3 py-1.5 rounded-full text-white text-xs font-semibold shadow-sm ${
+                          consultation.paraf ? 'bg-green-500' : 'bg-orange-500'
+                        }`}>
+                          {consultation.paraf ? '✅ Approved' : '⏳ Pending'}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl">{consultation.keterangan} 🎯</p>
                     </div>
-                    <div className="px-3 py-1.5 rounded-full bg-green-500 text-white text-xs font-semibold shadow-sm">
-                      ✅ Approved
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl">Taking 21 credits for odd semester 2023/2024 🎯</p>
-                </div>
-
-                <div className="group p-5 rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold text-gray-800">🎓 Thesis Topic Discussion</p>
-                      <p className="text-sm text-gray-600 mt-1">25 September 2023</p>
-                    </div>
-                    <div className="px-3 py-1.5 rounded-full bg-green-500 text-white text-xs font-semibold shadow-sm">
-                      ✅ Approved
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl">Discussing initial ideas for final project 💡</p>
-                </div>
-
-                <div className="group p-5 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold text-gray-800">📊 Study Progress Review</p>
-                      <p className="text-sm text-gray-600 mt-1">10 Oktober 2023</p>
-                    </div>
-                    <div className="px-3 py-1.5 rounded-full bg-green-500 text-white text-xs font-semibold shadow-sm">
-                      ✅ Approved
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl">Mid-semester evaluation and study progress 📈</p>
-                </div>
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
@@ -317,43 +417,46 @@ export default function AcademicOverviewPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="group p-5 rounded-2xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200/50 hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold text-gray-800 flex items-center gap-2">📝 Final Exam Preparation</p>
-                      <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        25 October 2023 - 10:00 AM
+                {academicData.consultations.filter(c => !c.paraf).slice(0, 2).map((consultation, index) => {
+                  const gradients = [
+                    'from-yellow-50 to-orange-50 border-yellow-200/50',
+                    'from-green-50 to-emerald-50 border-green-200/50'
+                  ]
+                  const badgeColors = [
+                    'from-yellow-400 to-orange-400',
+                    'from-green-400 to-emerald-400'
+                  ]
+                  return (
+                    <div key={consultation.id} className={`group p-5 rounded-2xl bg-gradient-to-r ${gradients[index % 2]} border hover:shadow-lg transition-all`}>
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <p className="font-semibold text-gray-800 flex items-center gap-2">� {consultation.uraian}</p>
+                          <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            {new Date(consultation.date).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })} - 10:00 AM
+                          </p>
+                        </div>
+                        <div className={`px-3 py-1.5 rounded-full bg-gradient-to-r ${badgeColors[index % 2]} text-white text-xs font-semibold shadow-sm animate-pulse`}>
+                          ⏰ Scheduled
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl flex items-center gap-2">
+                        <Globe className="h-4 w-4" />
+                        Faculty Room 3rd Floor - {academicData.academicAdvisor?.name || 'Academic Advisor'} 🏫
                       </p>
                     </div>
-                    <div className="px-3 py-1.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-semibold shadow-sm animate-pulse">
-                      ⏰ Upcoming
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
-                    Faculty Room 3rd Floor - Dr. Budi Santoso, M.Kom 🏫
-                  </p>
-                </div>
+                  )
+                })}
 
-                <div className="group p-5 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="font-semibold text-gray-800 flex items-center gap-2">📚 Next Semester Planning</p>
-                      <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        10 November 2023 - 1:00 PM
-                      </p>
-                    </div>
-                    <div className="px-3 py-1.5 rounded-full bg-gradient-to-r from-green-400 to-emerald-400 text-white text-xs font-semibold shadow-sm animate-pulse">
-                      ⏰ Upcoming
-                    </div>
+                {academicData.consultations.filter(c => !c.paraf).length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No upcoming consultations scheduled</p>
                   </div>
-                  <p className="text-sm text-gray-700 bg-white/60 p-3 rounded-xl flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
-                    Faculty Room 3rd Floor - Dr. Budi Santoso, M.Kom 🏫
-                  </p>
-                </div>
+                )}
 
                 <div className="pt-4">
                   <Button className="w-full h-12 rounded-2xl bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all">

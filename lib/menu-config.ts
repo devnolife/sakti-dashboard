@@ -336,10 +336,17 @@ export const menuConfig: MenuItem[] = [
   // System Administration
   {
     id: 'system',
-    label: 'System',
-    icon: 'Settings',
+    label: 'Admin Control',
+    icon: 'Shield',
     roles: ['admin'],
     children: [
+      {
+        id: 'admin-dashboard',
+        label: 'Admin Dashboard',
+        icon: 'LayoutDashboard',
+        href: '/dashboard/admin',
+        roles: ['admin']
+      },
       {
         id: 'user-management',
         label: 'User Management',
@@ -350,15 +357,36 @@ export const menuConfig: MenuItem[] = [
       {
         id: 'system-config',
         label: 'System Config',
-        icon: 'Cog',
+        icon: 'Settings',
         href: '/dashboard/admin/config',
+        roles: ['admin']
+      },
+      {
+        id: 'master-data',
+        label: 'Master Data',
+        icon: 'Database',
+        href: '/dashboard/admin/companies',
+        roles: ['admin']
+      },
+      {
+        id: 'monitoring',
+        label: 'System Monitoring',
+        icon: 'Activity',
+        href: '/dashboard/admin/monitoring',
+        roles: ['admin']
+      },
+      {
+        id: 'approval-override',
+        label: 'Approval Override',
+        icon: 'ShieldCheck',
+        href: '/dashboard/admin/approval-override',
         roles: ['admin']
       },
       {
         id: 'audit-logs',
         label: 'Audit Logs',
         icon: 'FileText',
-        href: '/dashboard/admin/logs',
+        href: '/dashboard/admin/audit-logs',
         roles: ['admin']
       }
     ]

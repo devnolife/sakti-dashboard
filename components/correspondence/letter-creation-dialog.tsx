@@ -7,6 +7,8 @@ import { FileCheck, ArrowLeft, Printer, Download, CheckCircle } from "lucide-rea
 import { LetterPreview } from "./letter-preview"
 import { useRouter } from "next/navigation"
 import { CorrespondenceFormTabs } from "./correspondence-form-tabs"
+import { submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { toast } from "@/hooks/use-toast"
 
 interface LetterCreationDialogProps {
   open: boolean
@@ -31,24 +33,52 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
   }, [open])
 
   const handleFormSubmit = (data: any) => {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setFormData(data)
-      setStep("preview")
-      setIsSubmitting(false)
-    }, 1000)
+    setFormData(data)
+    setStep("preview")
   }
 
-  const handleGenerateLetter = () => {
+  const handleGenerateLetter = async () => {
+    if (!formData) return
+
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSuccess(true)
+    try {
+      const result = await submitLetterRequest(
+        formData.type || 'active_student',
+        formData.title || 'Surat Keterangan Aktif Kuliah',
+        formData.purpose || 'Keperluan administrasi',
+        formData.description || 'Permohonan surat keterangan aktif kuliah',
+        formData
+      )
+
+      if (result.success) {
+        setIsSuccess(true)
+        toast({
+          title: "Berhasil!",
+          description: result.message,
+        })
+        
+        // Refresh the page after a delay
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
+      } else {
+        toast({
+          title: "Gagal",
+          description: result.message,
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting letter request:', error)
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat mengajukan permohonan",
+        variant: "destructive"
+      })
+    } finally {
       setIsSubmitting(false)
-    }, 1500)
+    }
   }
 
   const handleBackToForm = () => {

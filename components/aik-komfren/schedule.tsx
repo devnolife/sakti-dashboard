@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,32 +9,63 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowRight, Calendar, Clock, Info, MapPin, Phone, Mail, BookOpen, AlertCircle } from "lucide-react"
 
+interface AIKData {
+  studentInfo: any
+  currentExam?: {
+    id: string
+    title: string
+    status: string
+    scheduledDate?: string
+    location?: string
+    examiner?: {
+      name: string
+      nip: string
+      position: string
+      department: string
+    }
+  }
+  examStatus: string
+}
+
 export function AIKKomfrenSchedule() {
   const [examStatus, setExamStatus] = useState<
     "not_registered" | "registered" | "scheduled" | "completed" | "passed" | "failed"
   >("scheduled")
+  const [aikData, setAikData] = useState<AIKData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // This would come from an API in a real application
-  const examData = {
-    date: "2025-03-15",
-    time: "10:00 AM - 11:00 AM",
-    location: "Room 301, Islamic Studies Building",
-    examiner: {
-      name: "Dr. Ahmad Fauzi, M.A.",
-      position: "Senior Lecturer",
-      department: "Islamic Studies Department",
-      email: "ahmad.fauzi@university.ac.id",
-      phone: "+62 812-3456-7890",
-      avatarUrl: "/placeholder.svg?height=100&width=100",
-    },
-    materials: [
-      "Al-Qur'an recitation (Surah Al-Baqarah: 1-10)",
-      "Basic Islamic principles",
-      "Islamic ethics and values",
-      "Islamic history",
-    ],
-    notes:
-      "Please arrive 15 minutes before the scheduled time. Bring your student ID card and a copy of the Al-Qur'an.",
+  useEffect(() => {
+    fetchAIKData()
+  }, [])
+
+  const fetchAIKData = async () => {
+    try {
+      const response = await fetch('/api/student/aik-komfren')
+      if (response.ok) {
+        const result = await response.json()
+        setAikData(result.data)
+        setExamStatus(result.data.examStatus as any)
+      }
+    } catch (error) {
+      console.error('Error fetching AIK data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const currentExam = aikData?.currentExam
+  
+  // Default materials for AIK Komfren exam
+  const examMaterials = [
+    "Al-Qur'an recitation (Surah Al-Baqarah: 1-10)",
+    "Basic Islamic principles",
+    "Islamic ethics and values",
+    "Islamic history and philosophy",
+    "Kemuhammadiyahan principles",
+  ]
+
+  if (loading) {
+    return <div>Loading schedule information...</div>
   }
 
   return (
@@ -117,12 +148,14 @@ export function AIKKomfrenSchedule() {
                     <span className="font-medium">Date</span>
                   </div>
                   <p className="text-lg">
-                    {new Date(examData.date).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {currentExam?.scheduledDate 
+                      ? new Date(currentExam.scheduledDate).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "Not scheduled"}
                   </p>
                 </div>
                 <div className="bg-white dark:bg-background rounded-lg p-4 shadow-sm border border-primary-200 dark:border-primary-800/30">
@@ -130,14 +163,18 @@ export function AIKKomfrenSchedule() {
                     <Clock className="h-5 w-5 text-primary" />
                     <span className="font-medium">Time</span>
                   </div>
-                  <p className="text-lg">{examData.time}</p>
+                  <p className="text-lg">
+                    {currentExam?.scheduledDate 
+                      ? new Date(currentExam.scheduledDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + " - " + new Date(new Date(currentExam.scheduledDate).getTime() + 60*60*1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                      : "Not scheduled"}
+                  </p>
                 </div>
                 <div className="bg-white dark:bg-background rounded-lg p-4 shadow-sm border border-primary-200 dark:border-primary-800/30">
                   <div className="flex items-center gap-2 mb-2">
                     <MapPin className="h-5 w-5 text-primary" />
                     <span className="font-medium">Location</span>
                   </div>
-                  <p className="text-lg">{examData.location}</p>
+                  <p className="text-lg">{currentExam?.location || "Not assigned"}</p>
                 </div>
               </div>
 
@@ -146,7 +183,7 @@ export function AIKKomfrenSchedule() {
                   <Info className="h-5 w-5 text-primary" />
                   <span className="font-medium">Important Notes</span>
                 </div>
-                <p>{examData.notes}</p>
+                <p>Please arrive 15 minutes before the scheduled time. Bring your student ID card and a copy of the Al-Qur'an.</p>
               </div>
             </CardContent>
             <CardFooter>
@@ -162,45 +199,52 @@ export function AIKKomfrenSchedule() {
               <CardDescription>Details about your assigned examiner</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex flex-col items-center">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage src={examData.examiner.avatarUrl} alt={examData.examiner.name} />
-                    <AvatarFallback>
-                      {examData.examiner.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <h3 className="font-medium text-lg mt-2">{examData.examiner.name}</h3>
-                  <p className="text-sm text-muted-foreground">{examData.examiner.position}</p>
-                  <p className="text-sm text-muted-foreground">{examData.examiner.department}</p>
-                </div>
-                <div className="flex-1 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-5 w-5 text-muted-foreground" />
-                      <span>{examData.examiner.email}</span>
+              {currentExam?.examiner ? (
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex flex-col items-center">
+                    <Avatar className="h-24 w-24">
+                      <AvatarImage src="/placeholder.svg?height=100&width=100" alt={currentExam.examiner.name} />
+                      <AvatarFallback>
+                        {currentExam.examiner.name
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <h3 className="font-medium text-lg mt-2">{currentExam.examiner.name}</h3>
+                    <p className="text-sm text-muted-foreground">{currentExam.examiner.position}</p>
+                    <p className="text-sm text-muted-foreground">{currentExam.examiner.department}</p>
+                  </div>
+                  <div className="flex-1 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-5 w-5 text-muted-foreground" />
+                        <span>Contact via academic office</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-5 w-5 text-muted-foreground" />
+                        <span>NIP: {currentExam.examiner.nip}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-5 w-5 text-muted-foreground" />
-                      <span>{examData.examiner.phone}</span>
+                    <div className="border-t pt-4">
+                      <h4 className="font-medium mb-2">Exam Materials</h4>
+                      <ul className="space-y-2">
+                        {examMaterials.map((material: string, index: number) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <BookOpen className="h-5 w-5 text-primary mt-0.5" />
+                            <span>{material}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                  <div className="border-t pt-4">
-                    <h4 className="font-medium mb-2">Exam Materials</h4>
-                    <ul className="space-y-2">
-                      {examData.materials.map((material, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <BookOpen className="h-5 w-5 text-primary mt-0.5" />
-                          <span>{material}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Info className="h-12 w-12 mx-auto mb-4" />
+                  <p>Examiner has not been assigned yet.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

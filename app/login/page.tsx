@@ -62,13 +62,13 @@ export default function LoginPage() {
       setFormError("Username and password are required.")
       return
     }
-    await login(username, password, selectedRole)
-      .then(() => {
-        router.push("/dashboard")
-      })
-      .catch(() => {
-        setFormError("Invalid username or password.")
-      })
+
+    try {
+      await login(username, password, selectedRole)
+      router.push("/dashboard")
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Login failed. Please check your credentials.")
+    }
   }
 
   return (
@@ -188,7 +188,7 @@ export default function LoginPage() {
                     <Input
                       id="username"
                       type="text"
-                      placeholder="Masukkan username"
+                      placeholder="Masukkan NIM atau NIDN"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       className="h-12 pl-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100 rounded-xl"
@@ -264,7 +264,7 @@ export default function LoginPage() {
                     </SelectContent>
                   </Select>
                   <p className="mt-2 text-xs text-gray-500">
-                    Psst... ini demo kok, pakai username dan password apa aja bisa!
+                    Masukkan NIM untuk Mahasiswa atau NIDN untuk Dosen
                   </p>
                 </div>
                 {formError && (

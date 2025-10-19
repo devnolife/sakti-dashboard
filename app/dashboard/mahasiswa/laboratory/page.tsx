@@ -4,8 +4,11 @@ import { MyLabsTab } from "@/components/laboratory/tabs/my-labs-tab"
 import { CompletedLabsTab } from "@/components/laboratory/tabs/completed-labs-tab"
 import { RegistrationHistoryTab } from "@/components/laboratory/tabs/registration-history-tab"
 import { BeakerIcon, BookOpenIcon, CheckCircleIcon, ReceiptIcon } from "lucide-react"
+import { getLaboratoryData } from "@/app/actions/laboratory-actions"
 
-export default function LaboratoryPage() {
+export default async function LaboratoryPage() {
+  try {
+    const laboratoryData = await getLaboratoryData()
   return (
     <div className="space-y-8">
       <div className="relative p-8 overflow-hidden dark:from-primary-950/40 dark:to-accent-950/40 dark:border-primary-900/50">
@@ -58,22 +61,35 @@ export default function LaboratoryPage() {
         </div>
 
         <TabsContent value="available" className="mt-0 space-y-8 duration-300 animate-in fade-in-50">
-          <AvailableLabsTab />
+          <AvailableLabsTab labs={laboratoryData.availableLabs} />
         </TabsContent>
 
         <TabsContent value="my-labs" className="mt-0 space-y-8 duration-300 animate-in fade-in-50">
-          <MyLabsTab />
+          <MyLabsTab labs={laboratoryData.myLabs} />
         </TabsContent>
 
         <TabsContent value="completed" className="mt-0 space-y-8 duration-300 animate-in fade-in-50">
-          <CompletedLabsTab />
+          <CompletedLabsTab labs={laboratoryData.completedLabs} />
         </TabsContent>
 
         <TabsContent value="history" className="mt-0 space-y-8 duration-300 animate-in fade-in-50">
-          <RegistrationHistoryTab />
+          <RegistrationHistoryTab registrations={laboratoryData.registrationHistory} />
         </TabsContent>
       </Tabs>
     </div>
   )
+  } catch (error) {
+    console.error('Error loading laboratory data:', error)
+    return (
+      <div className="space-y-8">
+        <div className="p-8 text-center">
+          <h2 className="text-2xl font-bold text-red-600">Error Loading Laboratory Data</h2>
+          <p className="mt-2 text-muted-foreground">
+            Terjadi kesalahan saat memuat data laboratorium. Silakan coba lagi nanti.
+          </p>
+        </div>
+      </div>
+    )
+  }
 }
 

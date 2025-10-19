@@ -43,15 +43,7 @@ export default function SubRoleDashboard() {
   const config = dosenSubRoleConfigs[currentSubRole]
   const IconComponent = iconMap[config.icon as keyof typeof iconMap] || BookOpen
 
-  // Redirect to specific sub-role dashboard
-  useEffect(() => {
-    if (currentSubRole !== 'dosen') {
-      const redirectPath = getSubRoleDashboardPath(currentSubRole)
-      if (redirectPath && window.location.pathname === '/dashboard/dosen') {
-        router.push(redirectPath)
-      }
-    }
-  }, [currentSubRole, router])
+  // Remove auto-redirect logic - let user control navigation via switcher
 
   const getSubRoleDashboardPath = (subRole: string) => {
     switch (subRole) {
@@ -68,6 +60,8 @@ export default function SubRoleDashboard() {
       case 'gkm':
         return '/dashboard/gkm'
       case 'prodi':
+        return '/dashboard/prodi'
+      case 'sekretaris_prodi':
         return '/dashboard/prodi'
       default:
         return null
@@ -401,9 +395,23 @@ export default function SubRoleDashboard() {
               <CardContent>
                 <CardTitle className="text-lg mb-2">{card.title}</CardTitle>
                 <p className="text-sm text-muted-foreground mb-4">{card.description}</p>
-                <Button variant="outline" size="sm" className="w-full">
-                  Lihat Detail
-                </Button>
+                <div className="space-y-2">
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <a href={card.href}>Lihat Detail</a>
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => {
+                      const redirectPath = getSubRoleDashboardPath(currentSubRole)
+                      if (redirectPath) {
+                        router.push(redirectPath)
+                      }
+                    }}
+                  >
+                    Buka Dashboard {config.displayName}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

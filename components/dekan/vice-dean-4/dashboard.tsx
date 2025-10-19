@@ -51,35 +51,27 @@ export function ViceDean4Dashboard() {
 
   return (
     <div className="p-4 space-y-6 rounded-lg bg-gradient-to-b from-background to-background/80">
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text">
-            Kuliah Kerja Profesi Plus
-          </h2>
-          <p className="text-muted-foreground">Dashboard Wakil Dekan 4 untuk pengelolaan kerja profesi plus</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsAddLocationOpen(true)}
-            className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
-          >
-            <MapPin className="w-4 h-4" />
-            <span>Tambah Lokasi</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setIsAddSupervisorOpen(true)}
-            className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
-          >
-            <Users className="w-4 h-4" />
-            <span>Tambah Pembimbing</span>
-          </Button>
-          <Button className="flex items-center gap-1 transition-all bg-primary hover:bg-primary-600">
-            <Download className="w-4 h-4" />
-            <span>Ekspor Data</span>
-          </Button>
-        </div>
+      <div className="flex flex-wrap gap-2 justify-end">
+        <Button
+          variant="outline"
+          onClick={() => setIsAddLocationOpen(true)}
+          className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
+        >
+          <MapPin className="w-4 h-4" />
+          <span>Tambah Lokasi</span>
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => setIsAddSupervisorOpen(true)}
+          className="flex items-center gap-1 transition-all border-primary-100 hover:bg-primary-50 hover:text-primary-700"
+        >
+          <Users className="w-4 h-4" />
+          <span>Tambah Pembimbing</span>
+        </Button>
+        <Button className="flex items-center gap-1 transition-all bg-primary hover:bg-primary-600">
+          <Download className="w-4 h-4" />
+          <span>Ekspor Data</span>
+        </Button>
       </div>
 
       <KkpPlusOverviewStats />

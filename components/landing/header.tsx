@@ -20,7 +20,7 @@ const Header: React.FC = () => {
 
   // Section observer to highlight nav
   useEffect(() => {
-    const ids = ['home', 'about', 'features', 'courses', 'news', 'testimonials']
+    const ids = ['home', 'about', 'features', 'wakil-dekan', 'stats', 'news', 'quotes']
     const obs: IntersectionObserver[] = []
     ids.forEach(id => {
       const el = document.getElementById(id)
@@ -60,9 +60,10 @@ const Header: React.FC = () => {
     { name: 'Beranda', href: '#home' },
     { name: 'Tentang', href: '#about' },
     { name: 'Fitur', href: '#features' },
-    { name: 'Program Studi', href: '#courses' },
+    { name: 'Wakil Dekan', href: '#wakil-dekan' },
+    { name: 'Statistik', href: '#stats' },
     { name: 'Berita', href: '#news' },
-    { name: 'Testimoni', href: '#testimonials' }
+    { name: 'Quotes', href: '#quotes' }
   ]
 
   const headerBase = 'fixed top-0 left-0 right-0 z-50 transition-all duration-500'

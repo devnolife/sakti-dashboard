@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Download, Printer } from "lucide-react"
+import { Download, Printer, Loader2 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 
 interface ControlCardEntry {
@@ -19,10 +19,13 @@ interface ControlCardEntry {
 }
 
 interface StudentInfo {
-  nama: string
+  name: string
   nim: string
-  penasehat_akademik: string
   tahun_akademik: string
+}
+
+interface AcademicAdvisor {
+  name: string
 }
 
 interface SignatureInfo {
@@ -32,62 +35,63 @@ interface SignatureInfo {
   nbm: string
 }
 
+interface ControlCardData {
+  student: StudentInfo
+  academicAdvisor: AcademicAdvisor
+  consultations: ControlCardEntry[]
+  signatureInfo: SignatureInfo
+}
+
 export default function AcademicControlCard() {
   const [showDetail, setShowDetail] = useState(true)
-  //const { toast } = useToast() //Removed this line
+  const [controlCardData, setControlCardData] = useState<ControlCardData | null>(null)
+  const [loading, setLoading] = useState(true)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  const studentInfo: StudentInfo = {
-    nama: "Andi Saputra",
-    nim: "10520001",
-    penasehat_akademik: "Dr. Budi Santoso, M.Kom",
-    tahun_akademik: "2023/2024",
+  useEffect(() => {
+    const fetchControlCardData = async () => {
+      try {
+        const response = await fetch('/api/student/control-card')
+        if (response.ok) {
+          const data = await response.json()
+          setControlCardData(data)
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to fetch control card data",
+            variant: "destructive",
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching control card data:', error)
+        toast({
+          title: "Error",
+          description: "Failed to fetch control card data",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchControlCardData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    )
   }
 
-  const signatureInfo: SignatureInfo = {
-    tanggal: "15 Oktober 2023",
-    namaProdi: "Informatika",
-    namaKetuaProdi: "Dr. Ahmad Dahlan, M.Kom",
-    nbm: "1234567",
+  if (!controlCardData) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p>Failed to load control card data</p>
+      </div>
+    )
   }
-
-  const controlEntries: ControlCardEntry[] = [
-    {
-      no: 1,
-      date: "10 September 2023",
-      uraian: "Konsultasi KRS Semester Ganjil",
-      keterangan: "Pengambilan 21 SKS",
-      paraf: "Sudah",
-    },
-    {
-      no: 2,
-      date: "25 September 2023",
-      uraian: "Konsultasi Topik Tugas Akhir",
-      keterangan: "Pembahasan ide awal",
-      paraf: "Sudah",
-    },
-    {
-      no: 3,
-      date: "10 Oktober 2023",
-      uraian: "Konsultasi Progres Studi",
-      keterangan: "Evaluasi nilai UTS",
-      paraf: "Sudah",
-    },
-    {
-      no: 4,
-      date: "25 Oktober 2023",
-      uraian: "Konsultasi Persiapan UAS",
-      keterangan: "Pembahasan materi ujian",
-      paraf: "Belum",
-    },
-    {
-      no: 5,
-      date: "10 November 2023",
-      uraian: "Konsultasi Rencana Semester Depan",
-      keterangan: "Perencanaan mata kuliah",
-      paraf: "Belum",
-    },
-  ]
 
   const handlePrint = () => {
     toast({
@@ -255,21 +259,21 @@ export default function AcademicControlCard() {
           <div className="flex flex-col items-center justify-center space-y-2">
             {showDetail && <p className="text-xl text-primary">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</p>}
             <h3 className="text-xl font-bold">KARTU KONTROL PENASEHAT AKADEMIK</h3>
-            <h3 className="text-xl font-bold">TAHUN AJARAN: {studentInfo.tahun_akademik}</h3>
+            <h3 className="text-xl font-bold">TAHUN AJARAN: {controlCardData.student.tahun_akademik}</h3>
           </div>
 
           <div className="space-y-2">
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-2 font-bold">Nama</div>
-              <div className="col-span-10">: {studentInfo.nama}</div>
+              <div className="col-span-10">: {controlCardData.student.name}</div>
             </div>
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-2 font-bold">NIM/Stambuk</div>
-              <div className="col-span-10">: {studentInfo.nim}</div>
+              <div className="col-span-10">: {controlCardData.student.nim}</div>
             </div>
             <div className="grid grid-cols-12 gap-2">
               <div className="col-span-2 font-bold">Penasehat Akademik</div>
-              <div className="col-span-10">: {studentInfo.penasehat_akademik}</div>
+              <div className="col-span-10">: {controlCardData.academicAdvisor.name}</div>
             </div>
           </div>
 
@@ -285,7 +289,7 @@ export default function AcademicControlCard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {controlEntries.map((entry) => (
+                {controlCardData.consultations.map((entry) => (
                   <TableRow key={entry.no}>
                     <TableCell className="text-center">{entry.no}</TableCell>
                     <TableCell className="text-center">{entry.date}</TableCell>
@@ -323,11 +327,11 @@ export default function AcademicControlCard() {
               </div>
 
               <div className="mt-6 space-y-1 text-right">
-                <p>Makassar, {signatureInfo.tanggal}</p>
-                <p>Ketua Prodi {signatureInfo.namaProdi}</p>
+                <p>Makassar, {controlCardData.signatureInfo.tanggal}</p>
+                <p>Ketua Prodi {controlCardData.signatureInfo.namaProdi}</p>
                 <div className="h-16"></div>
-                <p>{signatureInfo.namaKetuaProdi}</p>
-                <p>NBM: {signatureInfo.nbm}</p>
+                <p>{controlCardData.signatureInfo.namaKetuaProdi}</p>
+                <p>NBM: {controlCardData.signatureInfo.nbm}</p>
               </div>
 
               <div className="p-4 pt-4 mt-6 border-t-4 rounded-b-lg border-primary bg-muted/30">
