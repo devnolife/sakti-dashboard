@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -41,12 +41,59 @@ const formSchema = z.object({
   }),
 })
 
+interface AIKData {
+  studentInfo: any
+  currentExam?: {
+    id: string
+    title: string
+    status: string
+    scheduledDate?: string
+    completionDate?: string
+    location?: string
+    examiner?: {
+      name: string
+      nip: string
+      position: string
+      department: string
+    }
+  }
+  examStatus: string
+}
+
 export function AIKKomfrenCompletion() {
   const router = useRouter()
   const [examStatus, setExamStatus] = useState<
     "not_registered" | "registered" | "scheduled" | "completed" | "passed" | "failed"
   >("scheduled")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [aikData, setAikData] = useState<AIKData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchAIKData()
+  }, [])
+
+  const fetchAIKData = async () => {
+    try {
+      const response = await fetch('/api/student/aik-komfren')
+      if (response.ok) {
+        const result = await response.json()
+        setAikData(result.data)
+        setExamStatus(result.data.examStatus as any)
+        
+        // Pre-fill form with exam data
+        if (result.data.currentExam) {
+          const exam = result.data.currentExam
+          form.setValue('examDate', exam.scheduledDate ? new Date(exam.scheduledDate).toLocaleDateString() : '')
+          form.setValue('examinerName', exam.examiner?.name || '')
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching AIK data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

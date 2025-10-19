@@ -18,118 +18,32 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 
-const availableLabs = [
-  {
-    id: "lab-1",
-    title: "Laboratorium Jaringan Komputer",
-    description: "Pelajari tentang protokol jaringan, konfigurasi, dan teknik pemecahan masalah.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Dr. Ahmad Dahlan",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Senin & Rabu, 10:00 - 12:00",
-    capacity: 30,
-    enrolled: 18,
-    credits: 2,
-    tags: ["Jaringan", "Cisco", "TCP/IP"],
-    status: "tersedia",
-    semester: "Ganjil 2023/2024",
-    category: "Inti",
-    location: "Gedung A, Ruang 101",
-    color: "blue",
-  },
-  {
-    id: "lab-2",
-    title: "Laboratorium Sistem Basis Data",
-    description: "Implementasi praktis dari desain basis data, kueri SQL, dan manajemen basis data.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Prof. Siti Aminah",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Selasa & Kamis, 13:00 - 15:00",
-    capacity: 25,
-    enrolled: 22,
-    credits: 2,
-    tags: ["SQL", "Desain Basis Data", "PostgreSQL"],
-    status: "tersedia",
-    semester: "Ganjil 2023/2024",
-    category: "Inti",
-    location: "Gedung B, Ruang 203",
-    color: "green",
-  },
-  {
-    id: "lab-3",
-    title: "Laboratorium Kecerdasan Buatan",
-    description: "Pengalaman langsung dengan algoritma pembelajaran mesin dan aplikasi kecerdasan buatan.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Dr. Budi Santoso",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Jumat, 09:00 - 12:00",
-    capacity: 20,
-    enrolled: 15,
-    credits: 3,
-    tags: ["Pembelajaran Mesin", "Python", "TensorFlow"],
-    status: "tersedia",
-    semester: "Ganjil 2023/2024",
-    category: "Pilihan",
-    location: "Gedung C, Ruang 305",
-    color: "purple",
-  },
-  {
-    id: "lab-4",
-    title: "Laboratorium Pengembangan Web",
-    description: "Membangun aplikasi web responsif menggunakan framework dan teknologi modern.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Prof. Joko Widodo",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Senin & Rabu, 15:00 - 17:00",
-    capacity: 30,
-    enrolled: 28,
-    credits: 2,
-    tags: ["React", "Node.js", "JavaScript"],
-    status: "hampir-penuh",
-    semester: "Ganjil 2023/2024",
-    category: "Inti",
-    location: "Gedung A, Ruang 102",
-    color: "orange",
-  },
-  {
-    id: "lab-5",
-    title: "Laboratorium Keamanan Siber",
-    description: "Pelajari tentang kerentanan keamanan, enkripsi, dan teknik peretasan etis.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Dr. Rini Pratiwi",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Selasa & Kamis, 10:00 - 12:00",
-    capacity: 20,
-    enrolled: 20,
-    credits: 3,
-    tags: ["Keamanan", "Kriptografi", "Pengujian Penetrasi"],
-    status: "penuh",
-    semester: "Ganjil 2023/2024",
-    category: "Pilihan",
-    location: "Gedung B, Ruang 204",
-    color: "red",
-  },
-  {
-    id: "lab-6",
-    title: "Laboratorium Pengembangan Aplikasi Mobile",
-    description: "Membuat aplikasi mobile native dan lintas platform untuk iOS dan Android.",
-    image: "/placeholder.svg?height=200&width=400",
-    instructor: "Dr. Hadi Prasetyo",
-    instructorImage: "/placeholder.svg?height=100&width=100",
-    schedule: "Rabu & Jumat, 13:00 - 15:00",
-    capacity: 25,
-    enrolled: 15,
-    credits: 3,
-    tags: ["Android", "iOS", "React Native"],
-    status: "tersedia",
-    semester: "Ganjil 2023/2024",
-    category: "Pilihan",
-    location: "Gedung C, Ruang 306",
-    color: "teal",
-  },
-]
+interface LabData {
+  id: string
+  code: string
+  title: string
+  description: string | null
+  image: string
+  instructor: string
+  instructorImage: string
+  schedule: string
+  capacity: number
+  enrolled: number
+  credits: number
+  tags: string[]
+  status: string
+  semester: string
+  category: string
+  location: string
+  color: string
+  isRegistered: boolean
+}
 
-export function AvailableLabsTab() {
+interface AvailableLabsTabProps {
+  labs?: LabData[]
+}
+
+export function AvailableLabsTab({ labs = [] }: AvailableLabsTabProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [searchText, setSearchText] = useState("") 
   const [selectedLab, setSelectedLab] = useState<any>(null)
@@ -139,19 +53,19 @@ export function AvailableLabsTab() {
     statuses: [] as string[],
   })
   const [activeFilters, setActiveFilters] = useState<string[]>([])
-  const [filteredLabs, setFilteredLabs] = useState(availableLabs)
+  const [filteredLabs, setFilteredLabs] = useState(labs)
   const [isSearching, setIsSearching] = useState(false)
 
   
-  const categories = Array.from(new Set(availableLabs.map((lab) => lab.category)))
-  const statuses = Array.from(new Set(availableLabs.map((lab) => lab.status)))
+  const categories = Array.from(new Set(labs.map((lab) => lab.category)))
+  const statuses = Array.from(new Set(labs.map((lab) => lab.status)))
 
   useEffect(() => {
-    const filtered = availableLabs.filter((lab) => {
+    const filtered = labs.filter((lab) => {
       
       const matchesSearch =
         lab.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        lab.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (lab.description?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
         lab.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
         lab.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
 

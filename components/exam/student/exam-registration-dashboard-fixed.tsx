@@ -18,13 +18,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 
-// Mock data for available exams
+// Available exam types
 const availableExams = [
   {
     id: "proposal-exam",
     title: "Ujian Proposal",
     description: "Ujian untuk mempresentasikan proposal penelitian Anda",
-    icon: FileCheck,
+    icon: Calendar,
     color: "bg-blue-500",
     requirements: [
       "Telah menyelesaikan minimal 100 SKS",
@@ -49,7 +49,7 @@ const availableExams = [
   },
   {
     id: "closing-exam",
-    title: "Ujian Tertutup",
+    title: "Ujian Tutup",
     description: "Ujian akhir untuk menyelesaikan penelitian Anda",
     icon: Users,
     color: "bg-teal-500",
@@ -203,8 +203,8 @@ export function ExamRegistrationDashboard() {
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>Daftar Ujian</DialogTitle>
             <DialogDescription>
               Lengkapi informasi di bawah ini untuk mendaftar ujian. Pastikan semua informasi yang Anda berikan sudah
@@ -212,73 +212,76 @@ export function ExamRegistrationDashboard() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="exam-date">Tanggal Ujian yang Diinginkan</Label>
-              <input
-                id="exam-date"
-                type="date"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-            </div>
+          <div className="flex-1 overflow-y-auto py-4">
+            <div className="grid gap-4 px-1">
+              <div className="grid gap-2">
+                <Label htmlFor="exam-date">Tanggal Ujian yang Diinginkan</Label>
+                <input
+                  id="exam-date"
+                  type="date"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="exam-time">Waktu Ujian yang Diinginkan</Label>
-              <Select value={selectedTime} onValueChange={setSelectedTime}>
-                <SelectTrigger id="exam-time">
-                  <SelectValue placeholder="Pilih waktu" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="08:00">08:00 - 10:00</SelectItem>
-                  <SelectItem value="10:00">10:00 - 12:00</SelectItem>
-                  <SelectItem value="13:00">13:00 - 15:00</SelectItem>
-                  <SelectItem value="15:00">15:00 - 17:00</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="exam-time">Waktu Ujian yang Diinginkan</Label>
+                <Select value={selectedTime} onValueChange={setSelectedTime}>
+                  <SelectTrigger id="exam-time">
+                    <SelectValue placeholder="Pilih waktu" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="08:00">08:00 - 10:00</SelectItem>
+                    <SelectItem value="10:00">10:00 - 12:00</SelectItem>
+                    <SelectItem value="13:00">13:00 - 15:00</SelectItem>
+                    <SelectItem value="15:00">15:00 - 17:00</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="supervisor">Pembimbing</Label>
-              <Select value={selectedSupervisor} onValueChange={setSelectedSupervisor}>
-                <SelectTrigger id="supervisor">
-                  <SelectValue placeholder="Pilih pembimbing" />
-                </SelectTrigger>
-                <SelectContent>
-                  {supervisors.map((supervisor) => (
-                    <SelectItem key={supervisor.id} value={supervisor.id}>
-                      {supervisor.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="supervisor">Pembimbing</Label>
+                <Select value={selectedSupervisor} onValueChange={setSelectedSupervisor}>
+                  <SelectTrigger id="supervisor">
+                    <SelectValue placeholder="Pilih pembimbing" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {supervisors.map((supervisor) => (
+                      <SelectItem key={supervisor.id} value={supervisor.id}>
+                        {supervisor.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="notes">Catatan Tambahan</Label>
-              <Textarea
-                id="notes"
-                placeholder="Tambahkan catatan atau informasi tambahan jika diperlukan"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="notes">Catatan Tambahan</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Tambahkan catatan atau informasi tambahan jika diperlukan"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="min-h-[80px]"
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label>Konfirmasi Persyaratan</Label>
-              <RadioGroup defaultValue="confirm">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="confirm" id="confirm" />
-                  <Label htmlFor="confirm" className="text-sm font-normal">
-                    Saya menyatakan bahwa saya telah memenuhi semua persyaratan untuk ujian ini
-                  </Label>
-                </div>
-              </RadioGroup>
+              <div className="grid gap-2">
+                <Label>Konfirmasi Persyaratan</Label>
+                <RadioGroup defaultValue="confirm">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="confirm" id="confirm" />
+                    <Label htmlFor="confirm" className="text-sm font-normal">
+                      Saya menyatakan bahwa saya telah memenuhi semua persyaratan untuk ujian ini
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Batal
             </Button>
@@ -294,4 +297,3 @@ export function ExamRegistrationDashboard() {
     </div>
   )
 }
-

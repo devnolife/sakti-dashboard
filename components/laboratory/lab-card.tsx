@@ -12,7 +12,7 @@ interface LabCardProps {
   lab: {
     id: string
     title: string
-    description: string
+    description: string | null
     image: string
     instructor: string
     instructorImage?: string
@@ -40,12 +40,12 @@ export function LabCard({ lab, onRegister }: LabCardProps) {
   }
 
   // Helper function to get status badge variant
-  const getStatusVariant = (status: string) => {
+  const getStatusVariant = (status: string): "success" | "destructive" | "outline" | "default" | "secondary" => {
     switch (status) {
       case "open":
         return "success"
       case "almost-full":
-        return "warning"
+        return "secondary"
       case "full":
         return "destructive"
       default:
@@ -122,7 +122,7 @@ export function LabCard({ lab, onRegister }: LabCardProps) {
         </CardHeader>
         <CardContent className="pb-2 flex-grow flex flex-col justify-between">
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground line-clamp-2 h-10">{lab.description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2 h-10">{lab.description || "Tidak ada deskripsi"}</p>
 
             <div className="flex flex-wrap gap-1 min-h-[28px]">
               {lab.tags.slice(0, 3).map((tag, index) => (

@@ -19,11 +19,14 @@ enum Role {
   mahasiswa
   dosen
   staff_tu
+  prodi
+  dekan
   admin
   laboratory_admin
   reading_room_admin
   admin_umum
   admin_keuangan
+  gkm
   kepala_tata_usaha
 }
 
@@ -51,6 +54,26 @@ enum KkpDocumentType {
   supervisor_letter
   report
   evaluation
+  // Menambahkan tipe dokumen persyaratan KKP
+  payment_proof_kkp_plus
+  transcript_125_sks
+  competency_certificate
+  practicum_control_card
+  falaq_practicum
+  quran_reading_certificate
+  academic_advisor_card
+  dad_certificate
+}
+
+enum KkpRequirementType {
+  payment_proof_kkp_plus
+  transcript_125_sks
+  competency_certificate
+  practicum_control_card
+  falaq_practicum
+  quran_reading_certificate
+  academic_advisor_card
+  dad_certificate
 }
 
 enum DocumentStatus {
@@ -69,6 +92,8 @@ enum ExamType {
   proposal
   result
   final
+  closing
+  midterm
   other
 }
 
@@ -87,6 +112,37 @@ enum ExamDocumentType {
   transcript
   proposal
   supervisor_approval
+  // Ujian Proposal
+  pembayaran_bpp
+  biaya_komprehensif
+  surat_sk_pembimbing
+  surat_penyelesaian_kkp
+  transkrip_nilai_145
+  praktikum_ilmu_falaq
+  surat_publikasi_produk
+  bukti_publish_produk
+  surat_baca_alquran
+  sertifikat_dad
+  uji_plagiat_skripsi
+  kartu_kontrol_seminar
+  persetujuan_pembimbing
+  // Ujian Hasil
+  biaya_ujian_seminar
+  transkrip_nilai_hasil
+  sertifikat_praktikum
+  uji_plagiat_hasil
+  persetujuan_pembimbing_hasil
+  skripsi_6_rangkap
+  // Ujian Tutup
+  pembayaran_ujian
+  biaya_tambahan_wd2
+  pembayaran_wisuda_perpustakaan
+  uji_plagiat_tutup
+  persetujuan_pembimbing_tutup
+  skripsi_1_rangkap
+  berkas_loa_jurnal
+  transkrip_nilai_150
+  berkas_persyaratan_yudisium
   other
 }
 
@@ -161,6 +217,28 @@ enum NotificationType {
   success
 }
 
+// Laboratory related enums
+enum LabStatus {
+  active
+  inactive
+  maintenance
+}
+
+enum LabRegistrationStatus {
+  pending
+  approved
+  rejected
+  completed
+  dropped
+}
+
+enum LabSessionStatus {
+  scheduled
+  ongoing
+  completed
+  cancelled
+}
+
 // Models
 model User {
   id          String   @id @default(cuid())
@@ -229,16 +307,27 @@ model Student {
   status        StudentStatus @default(active)
   gpa           Float?
 
+  // Academic Advisor
+  academicAdvisorId String?
+  academicAdvisor   Lecturer? @relation("AcademicAdvisor", fields: [academicAdvisorId], references: [id])
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Relations
-  kkpApplications    KkpApplication[]
-  examApplications   ExamApplication[]
-  letterRequests     LetterRequest[]
-  payments           Payment[]
-  bookBorrowings     BookBorrowing[]
-  thesesAuthored     ThesisTitle[]
-  grades             Grade[]
+  kkpApplications      KkpApplication[]
+  examApplications     ExamApplication[]
+  letterRequests       LetterRequest[]
+  payments             Payment[]
+  bookBorrowings       BookBorrowing[]
+  thesesAuthored       ThesisTitle[]
+  grades               Grade[]
+  academicConsultations AcademicConsultation[]
+  academicEvents       AcademicEvent[]
+  labRegistrations     LabRegistration[]
+  labSubmissions       LabAssignmentSubmission[]
+  examRequirements     ExamStudentRequirement[]
+  kkpRequirements      KkpRequirement[]
+  createdKkpLocations  KkpLocation[]
 
   @@map("students")
 }
@@ -256,12 +345,16 @@ model Lecturer {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Relations
-  supervisedKkp      KkpApplication[] @relation("KkpSupervisor")
-  supervisedTheses   ThesisTitle[]    @relation("ThesisSupervisor")
-  examCommittees     ExamCommittee[]
-  courses            Course[]
-  examAdvisor1       ExamApplication[] @relation("ExamAdvisor1")
-  examAdvisor2       ExamApplication[] @relation("ExamAdvisor2")
+  supervisedKkp         KkpApplication[] @relation("KkpSupervisor")
+  supervisedTheses      ThesisTitle[]    @relation("ThesisSupervisor")
+  examCommittees        ExamCommittee[]
+  courses               Course[]
+  examAdvisor1          ExamApplication[] @relation("ExamAdvisor1")
+  examAdvisor2          ExamApplication[] @relation("ExamAdvisor2")
+  adviseeStudents       Student[] @relation("AcademicAdvisor")
+  academicConsultations AcademicConsultation[]
+  academicEvents        AcademicEvent[]
+  laboratories          Laboratory[]
 
   @@map("lecturers")
 }
@@ -336,8 +429,63 @@ model Company {
   isActive        Boolean  @default(true)
 
   kkpApplications KkpApplication[]
+  kkpLocations    KkpLocation[]
 
   @@map("companies")
+}
+
+// Model untuk lokasi KKP yang dapat dibuat oleh mahasiswa
+model KkpLocation {
+  id              String          @id @default(cuid())
+  name            String
+  address         String
+  city            String
+  province        String?
+  industry        String
+  positions       Json            // Array of available positions
+  quota           Int             @default(0)
+  remaining       Int             @default(0)
+  status          String          @default("available") // available, limited, full
+  distance        Float?          // in kilometers
+  contactPerson   String?
+  contactEmail    String?
+  contactPhone    String?
+  description     String?
+  isActive        Boolean         @default(true)
+  
+  // Relations
+  companyId       String?
+  company         Company?        @relation(fields: [companyId], references: [id])
+  
+  createdById     String
+  createdBy       Student         @relation(fields: [createdById], references: [id])
+  
+  subLocations    KkpSubLocation[]
+  documents       KkpDocument[]   @relation("LocationDocuments")
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([name, address]) // Prevent duplicate locations
+  @@map("kkp_locations")
+}
+
+// Model untuk sub-lokasi dalam lokasi KKP
+model KkpSubLocation {
+  id              String      @id @default(cuid())
+  name            String
+  address         String
+  contactPerson   String
+  contactEmail    String?
+  contactPhone    String?
+  
+  locationId      String
+  location        KkpLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("kkp_sub_locations")
 }
 
 model KkpDocument {
@@ -351,8 +499,11 @@ model KkpDocument {
   fileSize       Int?
   mimeType       String?
 
-  applicationId  String
-  application    KkpApplication    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  applicationId  String?
+  application    KkpApplication?   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  
+  locationId     String?
+  location       KkpLocation?      @relation("LocationDocuments", fields: [locationId], references: [id], onDelete: Cascade)
 
   @@map("kkp_documents")
 }
@@ -369,6 +520,33 @@ model KkpApproval {
   application   KkpApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@map("kkp_approvals")
+}
+
+// Model untuk persyaratan KKP
+model KkpRequirement {
+  id                String               @id @default(cuid())
+  studentId         String
+  student           Student              @relation(fields: [studentId], references: [id])
+  
+  requirementType   KkpRequirementType
+  fileName          String
+  originalFileName  String
+  filePath          String               // Path ke file dalam public/uploads/persyaratan-kkp
+  fileSize          Int
+  mimeType          String               @default("application/pdf")
+  
+  status            DocumentStatus       @default(pending)
+  notes             String?
+  
+  uploadedAt        DateTime             @default(now())
+  verifiedAt        DateTime?
+  verifiedBy        String?              // ID pengguna yang memverifikasi
+  
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@unique([studentId, requirementType]) // Satu student hanya bisa upload satu file per tipe
+  @@map("kkp_requirements")
 }
 
 model ExamApplication {
@@ -429,6 +607,42 @@ model ExamDocument {
   exam      ExamApplication @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@map("exam_documents")
+}
+
+model ExamRequirement {
+  id          String              @id @default(cuid())
+  examType    ExamType           // proposal, result, closing
+  title       String             // e.g., "Pembayaran BPP"
+  description String?            // Description of the requirement
+  required    Boolean            @default(true)
+  order       Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  // Student requirement status
+  studentRequirements ExamStudentRequirement[]
+
+  @@map("exam_requirements")
+}
+
+model ExamStudentRequirement {
+  id            String         @id @default(cuid())
+  studentId     String
+  requirementId String
+  completed     Boolean        @default(false)
+  completedAt   DateTime?
+  fileUrl       String?        // Path to uploaded file
+  fileName      String?        // Original filename
+  fileSize      Int?           // File size in bytes
+  uploadedAt    DateTime?      // When file was uploaded
+  verifiedAt    DateTime?      // When file was verified by admin
+  notes         String?        // Additional notes
+  
+  student       Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  requirement   ExamRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, requirementId])
+  @@map("exam_student_requirements")
 }
 
 model ThesisTitle {
@@ -734,6 +948,7 @@ model Course {
 
   grades      Grade[]
   schedules   CourseSchedule[]
+  academicEvents AcademicEvent[]
 
   @@map("courses")
 }
@@ -836,6 +1051,70 @@ model Account {
   @@map("accounts")
 }
 
+model AcademicConsultation {
+  id          String   @id @default(cuid())
+  date        DateTime
+  uraian      String   // Description of consultation
+  keterangan  String   // Notes/details
+  paraf       Boolean  @default(false) // Whether advisor has signed
+  
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  
+  advisorId   String
+  advisor     Lecturer @relation(fields: [advisorId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("academic_consultations")
+}
+
+model AcademicEvent {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  type        EventType
+  examType    ExamType?   // Only for exam events
+  status      EventStatus @default(confirmed)
+  
+  // Relations
+  studentId   String?     // For student-specific events
+  student     Student?    @relation(fields: [studentId], references: [id])
+  
+  courseId    String?     // For course-related events
+  course      Course?     @relation(fields: [courseId], references: [id])
+  
+  lecturerId  String?     // For lecturer-related events
+  lecturer    Lecturer?   @relation(fields: [lecturerId], references: [id])
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("academic_events")
+}
+
+enum EventType {
+  exam
+  class
+  lab
+  consultation
+  seminar
+  workshop
+  deadline
+  organization
+}
+
+enum EventStatus {
+  confirmed
+  pending
+  cancelled
+  completed
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -843,4 +1122,151 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model Laboratory {
+  id            String     @id @default(cuid())
+  code          String     @unique
+  name          String
+  description   String?
+  image         String?
+  capacity      Int
+  credits       Int
+  semester      String     // "Ganjil 2023/2024"
+  department    String
+  location      String
+  category      String     // "Inti", "Pilihan", etc.
+  status        LabStatus  @default(active)
+  
+  instructorId  String?
+  instructor    Lecturer?  @relation(fields: [instructorId], references: [id])
+  
+  // Relations
+  registrations LabRegistration[]
+  sessions      LabSession[]
+  assignments   LabAssignment[]
+  materials     LabMaterial[]
+  announcements LabAnnouncement[]
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  @@map("laboratories")
+}
+
+model LabRegistration {
+  id            String                @id @default(cuid())
+  status        LabRegistrationStatus @default(pending)
+  registeredAt  DateTime             @default(now())
+  completedAt   DateTime?
+  progress      Float                @default(0)
+  grade         String?              // A, B+, B, etc.
+  
+  studentId     String
+  student       Student              @relation(fields: [studentId], references: [id])
+  
+  laboratoryId  String
+  laboratory    Laboratory           @relation(fields: [laboratoryId], references: [id])
+  
+  // Relations
+  assignments   LabAssignmentSubmission[]
+  
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  
+  @@unique([studentId, laboratoryId])
+  @@map("lab_registrations")
+}
+
+model LabSession {
+  id            String           @id @default(cuid())
+  title         String
+  description   String?
+  sessionDate   DateTime
+  startTime     String           // HH:MM format
+  endTime       String           // HH:MM format
+  location      String?
+  status        LabSessionStatus @default(scheduled)
+  
+  laboratoryId  String
+  laboratory    Laboratory       @relation(fields: [laboratoryId], references: [id])
+  
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  
+  @@map("lab_sessions")
+}
+
+model LabAssignment {
+  id            String       @id @default(cuid())
+  title         String
+  description   String
+  dueDate       DateTime
+  maxScore      Float        @default(100)
+  
+  laboratoryId  String
+  laboratory    Laboratory   @relation(fields: [laboratoryId], references: [id])
+  
+  // Relations
+  submissions   LabAssignmentSubmission[]
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  @@map("lab_assignments")
+}
+
+model LabAssignmentSubmission {
+  id             String          @id @default(cuid())
+  submittedAt    DateTime        @default(now())
+  score          Float?
+  feedback       String?
+  fileUrl        String?
+  
+  studentId      String
+  student        Student         @relation(fields: [studentId], references: [id])
+  
+  assignmentId   String
+  assignment     LabAssignment   @relation(fields: [assignmentId], references: [id])
+  
+  registrationId String
+  registration   LabRegistration @relation(fields: [registrationId], references: [id])
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  
+  @@unique([studentId, assignmentId])
+  @@map("lab_assignment_submissions")
+}
+
+model LabMaterial {
+  id            String      @id @default(cuid())
+  title         String
+  description   String?
+  type          String      // "pdf", "video", "document", etc.
+  fileUrl       String?
+  externalUrl   String?
+  
+  laboratoryId  String
+  laboratory    Laboratory  @relation(fields: [laboratoryId], references: [id])
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@map("lab_materials")
+}
+
+model LabAnnouncement {
+  id            String      @id @default(cuid())
+  title         String
+  content       String
+  isImportant   Boolean     @default(false)
+  
+  laboratoryId  String
+  laboratory    Laboratory  @relation(fields: [laboratoryId], references: [id])
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@map("lab_announcements")
 }

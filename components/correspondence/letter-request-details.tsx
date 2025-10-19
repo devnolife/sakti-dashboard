@@ -27,7 +27,6 @@ import {
   History,
 } from "lucide-react"
 import type { LetterRequest, LetterStatus } from "@/types/correspondence"
-import { LETTER_TYPES } from "@/app/actions/correspondence-actions"
 import { formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -107,13 +106,13 @@ export function LetterRequestDetails({
     }
   }
 
-  // Add a fallback in case the letter type is not found
-  const letterTypeInfo = LETTER_TYPES[request.type] || {
+  // Use request data directly since we're using database now
+  const letterTypeInfo = {
     title: request.title || "Unknown Letter Type",
-    description: "No description available",
-    approvalRole: "none",
+    description: "Letter request details",
+    approvalRole: request.approvalRole,
     estimatedDays: 0,
-    additionalFields: [],
+    additionalFields: [] as any[],
   }
 
   // These functions are only used by staff, not by students

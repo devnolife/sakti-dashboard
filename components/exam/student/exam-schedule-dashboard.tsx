@@ -2,7 +2,7 @@
 
 import { CardFooter } from "@/components/ui/card"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   format,
   addMonths,
@@ -35,8 +35,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
+interface ScheduleEvent {
+  id: string
+  title: string
+  description?: string
+  date: string
+  startDate: string
+  endDate: string
+  location?: string
+  type: 'exam' | 'class' | 'lab' | 'consultation' | 'seminar' | 'workshop' | 'deadline' | 'organization'
+  examType?: 'proposal' | 'result' | 'final' | 'closing' | 'midterm' | 'other'
+  status: 'confirmed' | 'pending' | 'cancelled' | 'completed'
+  lecturer?: string
+  course?: {
+    id: string
+    name: string
+    code: string
+  }
+  committee?: Array<{
+    name: string
+    role: string
+  }>
+}
 
-const academicEvents = [
+interface ScheduleData {
+  events: ScheduleEvent[]
+  weeklySchedule: Array<{
+    id: string
+    day: string
+    startTime: string
+    endTime: string
+    courseName: string
+    courseCode: string
+    location: string
+    lecturer: string
+  }>
+}
+
+// Mock data (will be replaced with real data)
+const mockAcademicEvents = [
   {
     id: "event-1",
     title: "Ujian Proposal Skripsi",
@@ -196,16 +233,49 @@ export const ExamScheduleDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedView, setSelectedView] = useState("month")
-  const [selectedEvent, setSelectedEvent] = useState<any | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch schedule data from API
+  useEffect(() => {
+    const fetchScheduleData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        console.log('🚀 Fetching schedule data...')
+        const response = await fetch('/api/student/schedule')
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch schedule: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('📅 Schedule data received:', data)
+        setScheduleData(data)
+      } catch (error) {
+        console.error('❌ Error fetching schedule:', error)
+        setError(error instanceof Error ? error.message : 'Failed to load schedule')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchScheduleData()
+  }, [])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedFilters, setSelectedFilters] = useState<string[]>(["all"])
 
+  // Use real data from API or fallback to mock data while loading
+  const academicEvents = scheduleData?.events || mockAcademicEvents
   
   const filteredEvents = academicEvents.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (event.description && event.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (event.location && event.location.toLowerCase().includes(searchQuery.toLowerCase()))
 
     const matchesFilter = selectedFilters.includes("all") || selectedFilters.includes(event.type)
@@ -323,6 +393,67 @@ export const ExamScheduleDashboard = () => {
         </div>
       )
     })
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Jadwal Akademik</h1>
+            <p className="text-muted-foreground">Memuat jadwal akademik Anda...</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+          <div className="space-y-6 md:col-span-4">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Memuat jadwal...</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Jadwal Akademik</h1>
+            <p className="text-muted-foreground">Terjadi kesalahan saat memuat jadwal.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+          <div className="space-y-6 md:col-span-4">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-center">
+                    <p className="text-red-600 mb-4">❌ {error}</p>
+                    <Button 
+                      onClick={() => window.location.reload()} 
+                      variant="outline"
+                    >
+                      Coba Lagi
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

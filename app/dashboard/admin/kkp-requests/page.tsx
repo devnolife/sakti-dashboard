@@ -34,8 +34,42 @@ import { Toaster } from "@/components/ui/toaster"
 import { useRole } from "@/context/role-context"
 import { useRouter } from "next/navigation"
 
+interface KKPRequest {
+  id: string
+  student: {
+    id: string
+    name: string
+    avatar: string
+    program: string
+    semester: number
+  }
+  location: {
+    name: string
+    address: string
+    type: string
+  }
+  group: {
+    id: string
+    members: Array<{
+      id: string
+      name: string
+      role: string
+    }>
+  }
+  submissionDate: string
+  status: "pending" | "approved" | "rejected" | "in-review"
+  documents: {
+    proposal: boolean
+    parentalConsent: boolean
+    transcript: boolean
+    applicationLetter: boolean
+  }
+  letterGenerated: boolean
+  rejectionReason?: string
+}
+
 // Mock data for student KKP requests
-const studentRequests = [
+const studentRequests: KKPRequest[] = [
   {
     id: "REQ-2023-001",
     student: {
@@ -100,11 +134,10 @@ const studentRequests = [
     },
     letterGenerated: false,
   },
-  // More mock data...
 ]
 
 export default function KKPRequestsPage() {
-  const [requests, setRequests] = useState(studentRequests)
+  const [requests, setRequests] = useState<KKPRequest[]>(studentRequests)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [activeTab, setActiveTab] = useState("all")
@@ -112,12 +145,12 @@ export default function KKPRequestsPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (role !== "admin" && role !== "department_head") {
+    if (role !== "admin") {
       router.push("/dashboard")
     }
   }, [role, router])
 
-  if (role !== "admin" && role !== "department_head") {
+  if (role !== "admin") {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -148,7 +181,7 @@ export default function KKPRequestsPage() {
   })
 
   // Generate letter function
-  const handleGenerateLetter = (requestId) => {
+  const handleGenerateLetter = (requestId: string) => {
     // Simulate letter generation
     setRequests((prevRequests) =>
       prevRequests.map((request) => (request.id === requestId ? { ...request, letterGenerated: true } : request)),
@@ -163,11 +196,11 @@ export default function KKPRequestsPage() {
   }
 
   // Approve request function
-  const handleApproveRequest = (requestId) => {
+  const handleApproveRequest = (requestId: string) => {
     setRequests((prevRequests) =>
       prevRequests.map((request) =>
         request.id === requestId
-          ? { ...request, status: "approved", documents: { ...request.documents, applicationLetter: true } }
+          ? { ...request, status: "approved" as const, documents: { ...request.documents, applicationLetter: true } }
           : request,
       ),
     )
@@ -180,11 +213,11 @@ export default function KKPRequestsPage() {
   }
 
   // Reject request function
-  const handleRejectRequest = (requestId) => {
+  const handleRejectRequest = (requestId: string) => {
     setRequests((prevRequests) =>
       prevRequests.map((request) =>
         request.id === requestId
-          ? { ...request, status: "rejected", rejectionReason: "Dokumen tidak lengkap" }
+          ? { ...request, status: "rejected" as const, rejectionReason: "Dokumen tidak lengkap" }
           : request,
       ),
     )
@@ -197,7 +230,7 @@ export default function KKPRequestsPage() {
   }
 
   // Get status badge
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: KKPRequest['status']) => {
     switch (status) {
       case "pending":
         return (
@@ -233,7 +266,7 @@ export default function KKPRequestsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-20">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">

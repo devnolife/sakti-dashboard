@@ -1,393 +1,456 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from "@/hooks/use-toast"
 import {
   CheckCircle2,
-  Clock,
   AlertCircle,
-  XCircle,
-  RefreshCw,
+  Clock,
+  Upload,
+  Trash2,
+  Download,
+  Eye,
   FileText,
-  GraduationCap,
-  BookOpen,
-  ClipboardCheck,
-  Building,
+  Info,
+  RefreshCw,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
 
-// Status types
-type RequirementStatus = "complete" | "in-progress" | "pending-review" | "not-started"
-
-// Requirement interface
-interface Requirement {
+// KKP Requirement interfaces
+interface KkpRequirementFile {
   id: string
+  studentId: string
+  requirementType: string
+  fileName: string
+  originalFileName: string
+  filePath: string
+  fileSize: number
+  mimeType: string
+  status: string
+  notes?: string
+  uploadedAt: string
+  verifiedAt?: string
+  verifiedBy?: string
+}
+
+interface KkpRequirement {
+  type: string
   name: string
   description: string
-  category: "document" | "course" | "exam" | "other"
-  status: RequirementStatus
-  dueDate?: string
-  completedDate?: string
-  notes?: string
+  uploaded: KkpRequirementFile | null
+  isUploaded: boolean
 }
 
 export default function RequirementsPage() {
-  const [activeTab, setActiveTab] = useState("semua")
+  const { user, isLoading: authLoading } = useAuth()
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [requirements, setRequirements] = useState<Requirement[]>([
-    {
-      id: "req-001",
-      name: "Transkrip Nilai",
-      description: "Transkrip nilai terbaru yang menunjukkan IPK dan jumlah SKS yang telah diselesaikan",
-      category: "document",
-      status: "complete",
-      completedDate: "15 Agustus 2023",
-    },
-    {
-      id: "req-002",
-      name: "Kartu Rencana Studi (KRS)",
-      description: "KRS semester berjalan yang telah disetujui oleh dosen pembimbing akademik",
-      category: "document",
-      status: "complete",
-      completedDate: "10 Agustus 2023",
-    },
-    {
-      id: "req-003",
-      name: "Surat Keterangan Aktif",
-      description: "Surat keterangan mahasiswa aktif dari universitas",
-      category: "document",
-      status: "complete",
-      completedDate: "12 Agustus 2023",
-    },
-    {
-      id: "req-004",
-      name: "Minimal 110 SKS",
-      description: "Telah menyelesaikan minimal 110 SKS dari total SKS program studi",
-      category: "course",
-      status: "complete",
-      completedDate: "20 Juli 2023",
-    },
-    {
-      id: "req-005",
-      name: "IPK Minimal 2,75",
-      description: "Memiliki Indeks Prestasi Kumulatif (IPK) minimal 2,75",
-      category: "other",
-      status: "complete",
-      completedDate: "20 Juli 2023",
-    },
-    {
-      id: "req-006",
-      name: "Mata Kuliah Prasyarat",
-      description: "Telah lulus semua mata kuliah prasyarat magang",
-      category: "course",
-      status: "in-progress",
-      dueDate: "30 September 2023",
-      notes: "Menunggu nilai akhir untuk 1 mata kuliah",
-    },
-    {
-      id: "req-007",
-      name: "Sertifikat Bahasa Inggris",
-      description: "Sertifikat kemampuan bahasa Inggris (TOEFL/IELTS/setara)",
-      category: "document",
-      status: "pending-review",
-      dueDate: "15 September 2023",
-      notes: "Dokumen telah diunggah, menunggu verifikasi",
-    },
-    {
-      id: "req-008",
-      name: "Proposal KKP",
-      description: "Proposal rencana kegiatan KKP yang telah disetujui oleh dosen pembimbing",
-      category: "document",
-      status: "not-started",
-      dueDate: "5 Oktober 2023",
-    },
-    {
-      id: "req-009",
-      name: "Ujian Kelayakan KKP",
-      description: "Ujian untuk menentukan kelayakan mengikuti KKP",
-      category: "exam",
-      status: "not-started",
-      dueDate: "10 Oktober 2023",
-    },
-  ])
-
-  // Status count for progress bar
-  const total = requirements.length
-  const completed = requirements.filter((r) => r.status === "complete").length
-  const inProgress = requirements.filter((r) => r.status === "in-progress").length
-  const pendingReview = requirements.filter((r) => r.status === "pending-review").length
-  const notStarted = requirements.filter((r) => r.status === "not-started").length
+  const [kkpRequirements, setKkpRequirements] = useState<KkpRequirement[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [uploadingType, setUploadingType] = useState<string | null>(null)
+  const { toast } = useToast()
   
-  // Progress percentage
-  const progress = Math.round((completed / total) * 100)
-
-  // Filter requirements based on active tab
-  const filteredRequirements = requirements.filter((req) => {
-    if (activeTab === "semua") return true
-    if (activeTab === "selesai") return req.status === "complete"
-    if (activeTab === "dalam-proses") return req.status === "in-progress"
-    if (activeTab === "menunggu-verifikasi") return req.status === "pending-review"
-    if (activeTab === "belum-dimulai") return req.status === "not-started"
-    if (activeTab === "dokumen") return req.category === "document"
-    if (activeTab === "mata-kuliah") return req.category === "course"
-    if (activeTab === "ujian") return req.category === "exam"
-    return true
-  })
-
-  // Simulated refresh function
-  const handleRefresh = () => {
-    setIsRefreshing(true)
-    // Simulate API call
-    setTimeout(() => {
-      setIsRefreshing(false)
-    }, 1500)
+  // Fetch KKP requirements
+  const fetchKkpRequirements = async () => {
+    if (!user?.id) return
+    try {
+      setIsLoading(true)
+      const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
+      const response = await fetch(`/api/kkp/requirements`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      })
+      const result = await response.json()
+      if (result.success) {
+        setKkpRequirements(result.data)
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to fetch requirements",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching requirements:", error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch requirements",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  // Get status badge for requirement
-  const getStatusBadge = (status: RequirementStatus) => {
+  useEffect(() => {
+    if (authLoading) return
+    if (!user?.id) {
+      setIsLoading(false)
+      return
+    }
+    fetchKkpRequirements()
+  }, [authLoading, user?.id])
+
+  // Upload file
+  const handleFileUpload = async (requirementType: string, file: File) => {
+    if (!file || !user?.id) return
+
+    // Validasi file
+    if (file.type !== "application/pdf") {
+      toast({
+        title: "Error",
+        description: "Hanya file PDF yang diperbolehkan",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Ukuran file maksimal 5MB",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      setUploadingType(requirementType)
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("requirementType", requirementType)
+
+      const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
+      const response = await fetch('/api/kkp/requirements', {
+        method: 'POST',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: formData,
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        toast({
+          title: "Berhasil",
+          description: "File berhasil diunggah",
+        })
+        await fetchKkpRequirements() // Refresh data
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Gagal mengunggah file",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error)
+      toast({
+        title: "Error",
+        description: "Gagal mengunggah file",
+        variant: "destructive",
+      })
+    } finally {
+      setUploadingType(null)
+    }
+  }
+
+  // Delete file
+  const handleFileDelete = async (requirement: KkpRequirement) => {
+    if (!requirement.uploaded) return
+
+    try {
+      const response = await fetch(`/api/kkp/requirements/${requirement.uploaded.id}`, {
+        method: "DELETE",
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        toast({
+          title: "Berhasil",
+          description: "File berhasil dihapus",
+        })
+        await fetchKkpRequirements() // Refresh data
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Gagal menghapus file",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error)
+      toast({
+        title: "Error",
+        description: "Gagal menghapus file",
+        variant: "destructive",
+      })
+    }
+  }
+
+  // Get progress
+  const getProgress = () => {
+    const uploadedCount = kkpRequirements.filter(req => req.isUploaded).length
+    const totalCount = kkpRequirements.length
+    return totalCount > 0 ? Math.round((uploadedCount / totalCount) * 100) : 0
+  }
+
+  // Get status badge for requirements
+  const getStatusBadge = (requirement: KkpRequirement) => {
+    if (!requirement.isUploaded) {
+      return (
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-amber-500" />
+          <span className="text-sm text-muted-foreground">Belum upload</span>
+        </div>
+      )
+    }
+
+    const status = requirement.uploaded?.status
     switch (status) {
-      case "complete":
+      case "verified":
         return (
-          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
-            <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-            Selesai
-          </Badge>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <span className="text-sm text-green-600">Terverifikasi</span>
+          </div>
         )
-      case "in-progress":
+      case "rejected":
         return (
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200">
-            <Clock className="h-3.5 w-3.5 mr-1" />
-            Dalam Proses
-          </Badge>
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 text-red-500" />
+            <span className="text-sm text-red-600">Ditolak</span>
+          </div>
         )
-      case "pending-review":
-        return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-            <AlertCircle className="h-3.5 w-3.5 mr-1" />
-            Menunggu Verifikasi
-          </Badge>
-        )
-      case "not-started":
-        return (
-          <Badge variant="outline" className="bg-gray-500/10 text-gray-500 border-gray-200">
-            <XCircle className="h-3.5 w-3.5 mr-1" />
-            Belum Dimulai
-          </Badge>
-        )
+      case "pending":
       default:
-        return null
+        return (
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-amber-500" />
+            <span className="text-sm text-amber-600">Menunggu Review</span>
+          </div>
+        )
     }
   }
 
-  // Get category icon for requirement
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "document":
-        return <FileText className="h-4 w-4 text-primary" />
-      case "course":
-        return <BookOpen className="h-4 w-4 text-amber-500" />
-      case "exam":
-        return <ClipboardCheck className="h-4 w-4 text-green-500" />
-      case "other":
-        return <Building className="h-4 w-4 text-blue-500" />
-      default:
-        return null
-    }
+  // Format file size
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  // Handle refresh
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    await fetchKkpRequirements()
+    setIsRefreshing(false)
+  }
+
+  const progress = getProgress()
+  const uploadedCount = kkpRequirements.filter(req => req.isUploaded).length
+  const totalCount = kkpRequirements.length
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="flex items-center space-x-2">
+            <RefreshCw className="h-6 w-6 animate-spin" />
+            <span>Memuat data persyaratan...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!authLoading && !user?.id) {
+    return (
+      <div className="p-8 text-center space-y-4">
+        <h2 className="text-xl font-semibold">Tidak terautentikasi</h2>
+        <p className="text-sm text-muted-foreground">Silakan login kembali untuk mengakses persyaratan KKP.</p>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-              Persyaratan KKP
-            </span>
-          </h1>
-          <p className="text-muted-foreground">
-            Persyaratan wajib untuk mengikuti program Kuliah Kerja Praktik
-          </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-blue-900 mb-2">
+              📄 Persyaratan Berkas KKP
+            </h1>
+            <p className="text-blue-700">
+              Lengkapi semua persyaratan dengan mengunggah dokumen yang diperlukan (format PDF)
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={handleRefresh} 
+            disabled={isRefreshing}
+            className="bg-white hover:bg-blue-50"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
-        <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
-          <RefreshCw className={cn("h-4 w-4 mr-2", isRefreshing && "animate-spin")} />
-          Perbarui
-        </Button>
+
+        {/* Progress Bar */}
+        <div className="mt-6 bg-white rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">Progres Kelengkapan</span>
+            <span className="text-sm font-bold text-blue-600">{uploadedCount}/{totalCount} Selesai</span>
+          </div>
+          <Progress value={progress} className="h-3 bg-gray-200" />
+          <p className="text-xs text-gray-500 mt-1">{progress}%</p>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Progres Persyaratan</CardTitle>
-          <CardDescription>Ringkasan kemajuan persyaratan KKP Anda</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Total Kemajuan</span>
-                <span className="text-sm text-muted-foreground">{progress}%</span>
+      {/* Requirements List */}
+      <div className="space-y-4">
+        {kkpRequirements.map((requirement) => (
+          <Card key={requirement.type} className="transition-all hover:shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    {requirement.isUploaded ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    ) : (
+                      <Clock className="h-5 w-5 text-amber-500 flex-shrink-0" />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{requirement.name}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{requirement.description}</p>
+                    </div>
+                    {getStatusBadge(requirement)}
+                  </div>
+
+                  {requirement.isUploaded && requirement.uploaded ? (
+                    <div className="ml-8 bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-sm text-gray-900">
+                            {requirement.uploaded.originalFileName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {formatFileSize(requirement.uploaded.fileSize)} • 
+                            Diupload {new Date(requirement.uploaded.uploadedAt).toLocaleDateString('id-ID')}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(requirement.uploaded!.filePath, '_blank')}
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Lihat
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const link = document.createElement('a')
+                              link.href = requirement.uploaded!.filePath
+                              link.download = requirement.uploaded!.originalFileName
+                              document.body.appendChild(link)
+                              link.click()
+                              document.body.removeChild(link)
+                            }}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            Download
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleFileDelete(requirement)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Hapus
+                          </Button>
+                        </div>
+                      </div>
+
+                      {requirement.uploaded.notes && (
+                        <Alert className="mt-3">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertDescription>
+                            <strong>Catatan:</strong> {requirement.uploaded.notes}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="ml-8">
+                      <Button
+                        variant="default"
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => {
+                          const input = document.createElement('input')
+                          input.type = 'file'
+                          input.accept = '.pdf'
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0]
+                            if (file) {
+                              handleFileUpload(requirement.type, file)
+                            }
+                          }
+                          input.click()
+                        }}
+                        disabled={uploadingType === requirement.type}
+                      >
+                        {uploadingType === requirement.type ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                            Mengupload...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4 mr-2" />
+                            Unggah File
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <Progress value={progress} className="h-2" />
-            </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <Card className="border border-green-200 bg-green-50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      <span className="text-sm font-medium">Selesai</span>
-                    </div>
-                    <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
-                      {completed}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-blue-200 bg-blue-50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-5 w-5 text-blue-500" />
-                      <span className="text-sm font-medium">Dalam Proses</span>
-                    </div>
-                    <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200">
-                      {inProgress}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-amber-200 bg-amber-50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <AlertCircle className="h-5 w-5 text-amber-500" />
-                      <span className="text-sm font-medium">Menunggu Verifikasi</span>
-                    </div>
-                    <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-                      {pendingReview}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-gray-200 bg-gray-50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <XCircle className="h-5 w-5 text-gray-500" />
-                      <span className="text-sm font-medium">Belum Dimulai</span>
-                    </div>
-                    <Badge variant="outline" className="bg-gray-500/10 text-gray-500 border-gray-200">
-                      {notStarted}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
+      {/* Info Card */}
+      <Card className="border-blue-200 bg-blue-50">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-2">Informasi Penting</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Semua berkas harus dalam format PDF</li>
+                <li>• Ukuran maksimal file adalah 5MB per berkas</li>
+                <li>• Pastikan dokumen terlihat jelas dan dapat dibaca</li>
+                <li>• Berkas yang sudah diupload akan direview oleh admin</li>
+                <li>• Anda dapat mengganti berkas jika diperlukan dengan menghapus dan upload ulang</li>
+              </ul>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Daftar Persyaratan</CardTitle>
-          <CardDescription>Daftar lengkap semua persyaratan KKP</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="semua" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-4 flex h-auto flex-wrap space-x-2">
-              <TabsTrigger value="semua" className="mb-2">
-                Semua
-              </TabsTrigger>
-              <TabsTrigger value="selesai" className="mb-2">
-                Selesai
-              </TabsTrigger>
-              <TabsTrigger value="dalam-proses" className="mb-2">
-                Dalam Proses
-              </TabsTrigger>
-              <TabsTrigger value="menunggu-verifikasi" className="mb-2">
-                Menunggu Verifikasi
-              </TabsTrigger>
-              <TabsTrigger value="belum-dimulai" className="mb-2">
-                Belum Dimulai
-              </TabsTrigger>
-              <TabsTrigger value="dokumen" className="mb-2">
-                Dokumen
-              </TabsTrigger>
-              <TabsTrigger value="mata-kuliah" className="mb-2">
-                Mata Kuliah
-              </TabsTrigger>
-              <TabsTrigger value="ujian" className="mb-2">
-                Ujian
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value={activeTab} className="mt-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[350px]">Persyaratan</TableHead>
-                    <TableHead>Kategori</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Tanggal</TableHead>
-                    <TableHead>Catatan</TableHead>
-                    <TableHead className="text-right">Aksi</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredRequirements.map((req) => (
-                    <TableRow key={req.id}>
-                      <TableCell className="font-medium">{req.name}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getCategoryIcon(req.category)}
-                          <span className="text-sm">
-                            {req.category === "document" && "Dokumen"}
-                            {req.category === "course" && "Mata Kuliah"}
-                            {req.category === "exam" && "Ujian"}
-                            {req.category === "other" && "Lainnya"}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(req.status)}</TableCell>
-                      <TableCell>
-                        {req.completedDate && (
-                          <div className="text-sm text-green-600">
-                            Diselesaikan: {req.completedDate}
-                          </div>
-                        )}
-                        {!req.completedDate && req.dueDate && (
-                          <div className="text-sm text-amber-600">
-                            Batas Waktu: {req.dueDate}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-[200px] truncate text-sm text-muted-foreground">
-                          {req.notes || "-"}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          Lihat Detail
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TabsContent>
-          </Tabs>
         </CardContent>
       </Card>
     </div>
   )
 }
-

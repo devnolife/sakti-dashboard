@@ -1,5 +1,7 @@
 "use client"
 
+import React, { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
+import { submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { toast } from "@/hooks/use-toast"
 import {
   FileText,
   Download,
@@ -22,6 +26,100 @@ import {
 } from "lucide-react"
 
 export default function TransferLetterPage() {
+  const { user, isLoading: authLoading } = useAuth()
+  const [studentData, setStudentData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    targetUniversity: "",
+    targetFaculty: "",
+    targetProdi: "",
+    reason: "",
+    attachments: []
+  })
+
+  useEffect(() => {
+    async function fetchStudentData() {
+      try {
+        if (!user?.id) return
+        const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
+        const response = await fetch('/api/student/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ userId: user.id })
+        })
+        if (response.ok) {
+          const student = await response.json()
+          setStudentData(student)
+        }
+      } catch (error) {
+        console.error("Error fetching student data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    if (!authLoading) {
+      if (!user?.id) {
+        setLoading(false)
+      } else {
+        fetchStudentData()
+      }
+    }
+  }, [authLoading, user?.id])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+
+    try {
+      const result = await submitLetterRequest(
+        'transfer',
+        'Surat Pindah Program Studi',
+        'Permohonan pindah program studi',
+        `Permohonan pindah dari ${studentData?.major || 'Program Studi saat ini'} ke ${formData.targetProdi} di ${formData.targetUniversity}`,
+        {
+          ...formData,
+          currentMajor: studentData?.major,
+          semester: studentData?.semester || '5'
+        }
+      )
+
+      if (result.success) {
+        toast({
+          title: "Berhasil!",
+          description: result.message,
+        })
+        // Reset form
+        setFormData({
+          targetUniversity: "",
+          targetFaculty: "",
+          targetProdi: "",
+          reason: "",
+          attachments: []
+        })
+      } else {
+        toast({
+          title: "Gagal",
+          description: result.message,
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting transfer request:', error)
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat mengajukan permohonan",
+        variant: "destructive"
+      })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 space-y-8">
       {/* Header */}
@@ -63,19 +161,20 @@ export default function TransferLetterPage() {
               </div>
             </CardHeader>
             
-            <CardContent className="space-y-6">
-              {/* Data Mahasiswa */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                  <User className="w-5 h-5 text-blue-500" />
-                  Data Mahasiswa
-                </h3>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Data Mahasiswa */}
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                    <User className="w-5 h-5 text-blue-500" />
+                    Data Mahasiswa
+                  </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="nim">NIM</Label>
                     <Input 
                       id="nim" 
-                      value="2021210001" 
+                      value={studentData?.nim || "-"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -84,7 +183,7 @@ export default function TransferLetterPage() {
                     <Label htmlFor="name">Nama Lengkap</Label>
                     <Input 
                       id="name" 
-                      value="Ahmad Rahman" 
+                      value={studentData?.user?.name || "-"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -93,7 +192,7 @@ export default function TransferLetterPage() {
                     <Label htmlFor="current-prodi">Program Studi Asal</Label>
                     <Input 
                       id="current-prodi" 
-                      value="Teknik Informatika" 
+                      value={studentData?.major || "-"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -102,7 +201,7 @@ export default function TransferLetterPage() {
                     <Label htmlFor="semester">Semester</Label>
                     <Input 
                       id="semester" 
-                      value="5" 
+                      value={studentData?.semester || "5"} 
                       disabled 
                       className="bg-gray-50"
                     />
@@ -122,6 +221,8 @@ export default function TransferLetterPage() {
                     <Input 
                       id="target-university" 
                       placeholder="Masukkan nama universitas tujuan"
+                      value={formData.targetUniversity}
+                      onChange={(e) => setFormData(prev => ({ ...prev, targetUniversity: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-2">
@@ -129,6 +230,8 @@ export default function TransferLetterPage() {
                     <Input 
                       id="target-faculty" 
                       placeholder="Masukkan nama fakultas tujuan"
+                      value={formData.targetFaculty}
+                      onChange={(e) => setFormData(prev => ({ ...prev, targetFaculty: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-2">
@@ -136,6 +239,8 @@ export default function TransferLetterPage() {
                     <Input 
                       id="target-prodi" 
                       placeholder="Masukkan program studi tujuan"
+                      value={formData.targetProdi}
+                      onChange={(e) => setFormData(prev => ({ ...prev, targetProdi: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -168,6 +273,8 @@ export default function TransferLetterPage() {
                     id="detail-reason"
                     placeholder="Jelaskan alasan pindah secara detail..."
                     rows={4}
+                    value={formData.reason}
+                    onChange={(e) => setFormData(prev => ({ ...prev, reason: e.target.value }))}
                   />
                 </div>
               </div>
@@ -191,11 +298,16 @@ export default function TransferLetterPage() {
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600">
-                <FileText className="w-4 h-4 mr-2" />
-                Ajukan Surat Pindah
-              </Button>
+                {/* Submit Button */}
+                <Button 
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  {submitting ? "Mengajukan..." : "Ajukan Surat Pindah"}
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </motion.div>

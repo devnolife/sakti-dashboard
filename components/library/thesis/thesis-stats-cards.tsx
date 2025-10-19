@@ -1,15 +1,17 @@
 import { BookOpen, CheckCircle, Clock, Users } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { mockThesisTitles } from "./mock-thesis-data"
 
-export function ThesisStatsCards() {
-  // Calculate stats from mock data
-  const totalTheses = mockThesisTitles.length
-  const approvedTheses = mockThesisTitles.filter(
-    (thesis) => thesis.status === "approved" || thesis.status === "completed",
-  ).length
-  const pendingTheses = mockThesisTitles.filter((thesis) => thesis.status === "pending").length
-  const uniqueFields = new Set(mockThesisTitles.map((thesis) => thesis.field)).size
+interface ThesisStatsProps {
+  stats: {
+    total: number
+    approved: number
+    pending: number
+    byField: Record<string, number>
+  }
+}
+
+export function ThesisStatsCards({ stats }: ThesisStatsProps) {
+  const uniqueFields = Object.keys(stats.byField).length
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -19,7 +21,7 @@ export function ThesisStatsCards() {
           <BookOpen className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalTheses}</div>
+          <div className="text-2xl font-bold">{stats.total}</div>
           <p className="text-xs text-muted-foreground">Judul skripsi yang telah diajukan</p>
         </CardContent>
       </Card>
@@ -29,7 +31,7 @@ export function ThesisStatsCards() {
           <CheckCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{approvedTheses}</div>
+          <div className="text-2xl font-bold">{stats.approved}</div>
           <p className="text-xs text-muted-foreground">Judul yang telah disetujui</p>
         </CardContent>
       </Card>
@@ -39,7 +41,7 @@ export function ThesisStatsCards() {
           <Clock className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{pendingTheses}</div>
+          <div className="text-2xl font-bold">{stats.pending}</div>
           <p className="text-xs text-muted-foreground">Judul yang sedang diproses</p>
         </CardContent>
       </Card>

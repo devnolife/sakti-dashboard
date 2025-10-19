@@ -10,7 +10,7 @@ import Link from "next/link"
 
 export default function AdminDashboard() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-20">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
