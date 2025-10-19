@@ -216,15 +216,15 @@ export default function AdminDashboard() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Mahasiswa:</span>
-                  <span className="font-semibold">2,845</span>
+                  <span className="font-semibold">{stats.breakdown.students.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Dosen:</span>
-                  <span className="font-semibold">142</span>
+                  <span className="font-semibold">{stats.breakdown.lecturers.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Staff:</span>
-                  <span className="font-semibold">137</span>
+                  <span className="font-semibold">{stats.breakdown.staff.toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>
@@ -274,15 +274,15 @@ export default function AdminDashboard() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Companies:</span>
-                  <span className="font-semibold">87</span>
+                  <span className="font-semibold">{stats.breakdown.companies}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Book Categories:</span>
-                  <span className="font-semibold">24</span>
+                  <span className="text-muted-foreground">Books:</span>
+                  <span className="font-semibold">{stats.breakdown.books}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Letter Types:</span>
-                  <span className="font-semibold">15</span>
+                  <span className="text-muted-foreground">Students:</span>
+                  <span className="font-semibold">{stats.breakdown.students}</span>
                 </div>
               </div>
             </CardContent>
@@ -303,15 +303,15 @@ export default function AdminDashboard() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">KKP Pending:</span>
-                  <span className="font-semibold text-amber-500">12</span>
+                  <span className="font-semibold text-amber-500">{stats.kkpStats.pending}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Exam Requests:</span>
-                  <span className="font-semibold text-blue-500">28</span>
+                  <span className="font-semibold text-blue-500">{stats.pendingApprovals.exams}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Payments Due:</span>
-                  <span className="font-semibold text-red-500">45</span>
+                  <span className="text-muted-foreground">Payments Pending:</span>
+                  <span className="font-semibold text-red-500">{stats.paymentStats.pending}</span>
                 </div>
               </div>
             </CardContent>
@@ -363,27 +363,27 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-start gap-4 text-sm">
-              <div className="h-2 w-2 rounded-full bg-green-500 mt-2"></div>
-              <div className="flex-1">
-                <p className="font-medium">New user registered</p>
-                <p className="text-muted-foreground">John Doe (Mahasiswa) - 2 minutes ago</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 text-sm">
-              <div className="h-2 w-2 rounded-full bg-blue-500 mt-2"></div>
-              <div className="flex-1">
-                <p className="font-medium">KKP Application submitted</p>
-                <p className="text-muted-foreground">Jane Smith - 15 minutes ago</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 text-sm">
-              <div className="h-2 w-2 rounded-full bg-amber-500 mt-2"></div>
-              <div className="flex-1">
-                <p className="font-medium">Payment verified</p>
-                <p className="text-muted-foreground">Admin Keuangan - 1 hour ago</p>
-              </div>
-            </div>
+            {stats.recentActivity.length > 0 ? (
+              stats.recentActivity.slice(0, 10).map((activity) => (
+                <div key={activity.id} className="flex items-start gap-4 text-sm">
+                  <div className={`h-2 w-2 rounded-full mt-2 ${
+                    activity.action === 'login' || activity.action === 'first_login' ? 'bg-green-500' :
+                    activity.action === 'create' ? 'bg-blue-500' :
+                    activity.action === 'update' ? 'bg-amber-500' :
+                    activity.action === 'delete' ? 'bg-red-500' :
+                    'bg-gray-500'
+                  }`}></div>
+                  <div className="flex-1">
+                    <p className="font-medium capitalize">{activity.action} {activity.resource}</p>
+                    <p className="text-muted-foreground">
+                      {activity.user} ({activity.userRole}) - {formatTimestamp(activity.timestamp)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">No recent activity</p>
+            )}
           </div>
         </CardContent>
       </Card>
