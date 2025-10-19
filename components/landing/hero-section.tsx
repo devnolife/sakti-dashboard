@@ -41,7 +41,7 @@ const HeroSection: React.FC = () => {
           className="object-cover object-right md:scale-75 md:translate-x-[15%] scale-100 translate-x-0"
           priority
         />
-        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-white via-white/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-[70%] bg-gradient-to-t from-white via-white/60 to-transparent" />
       </div>
 
       {/* Floating Icon Pattern - More Visible */}

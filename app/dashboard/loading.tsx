@@ -1,11 +1,4 @@
-import { Loader2 } from "lucide-react"
-
+import { GlobalLoading } from "@/components/ui/global-loading"
 export default function DashboardLoading() {
-  return (
-    <div className="flex h-[calc(100vh-3.5rem)] w-full items-center justify-center">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      <span className="ml-2 text-lg">Loading dashboard...</span>
-    </div>
-  )
+  return <GlobalLoading text="Loading dashboard..." />
 }
-
