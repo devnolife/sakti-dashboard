@@ -1,38 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { authMiddleware, hasPermission } from '@/lib/auth-middleware'
+import { requireAdmin } from '@/lib/auth-middleware'
 
 // GET /api/admin/statistics
 export async function GET(request: NextRequest) {
   try {
-    const token = await authMiddleware(request)
-    if (token instanceof NextResponse) return token
+    // Use requireAdmin middleware
+    const context: any = {}
+    const authCheck = await requireAdmin()(request, context)
+    if (authCheck instanceof NextResponse) return authCheck
 
-    // Check admin permission
-    if (!hasPermission(token.role as string, '*')) {
-      return NextResponse.json({ error: 'Forbidden - Admin only' }, { status: 403 })
-    }
-
-    // Get various statistics
+    // Get various statistics in parallel for better performance
     const [
       totalUsers,
       activeUsers,
+      usersByRole,
       totalStudents,
       totalLecturers,
       totalStaff,
       pendingKkpApplications,
+      approvedKkpApplications,
+      completedKkpApplications,
       pendingExamApplications,
       pendingPayments,
+      verifiedPayments,
       activeSessions,
+      totalCompanies,
+      totalBooks,
+      recentAuditLogs,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { isActive: true } }),
+      prisma.user.groupBy({
+        by: ['role'],
+        _count: true,
+      }),
       prisma.student.count(),
       prisma.lecturer.count(),
       prisma.staff.count(),
       prisma.kkpApplication.count({ where: { status: 'pending' } }),
+      prisma.kkpApplication.count({ where: { status: 'approved' } }),
+      prisma.kkpApplication.count({ where: { status: 'completed' } }),
       prisma.examApplication.count({ where: { status: 'pending' } }),
       prisma.payment.count({ where: { status: 'pending' } }),
+      prisma.payment.count({ where: { status: 'verified' } }),
       prisma.session.count({
         where: {
           expiresAt: {
@@ -40,18 +51,41 @@ export async function GET(request: NextRequest) {
           }
         }
       }),
+      prisma.company.count(),
+      prisma.book.count(),
+      prisma.auditLog.findMany({
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          users: {
+            select: {
+              name: true,
+              role: true,
+            }
+          }
+        }
+      }),
     ])
+
+    // Format user breakdown by role
+    const roleBreakdown = usersByRole.reduce((acc, item) => {
+      acc[item.role] = item._count
+      return acc
+    }, {} as Record<string, number>)
 
     return NextResponse.json({
       users: {
         total: totalUsers,
         active: activeUsers,
         inactive: totalUsers - activeUsers,
+        byRole: roleBreakdown,
       },
       breakdown: {
         students: totalStudents,
         lecturers: totalLecturers,
         staff: totalStaff,
+        companies: totalCompanies,
+        books: totalBooks,
       },
       pendingApprovals: {
         kkp: pendingKkpApplications,
@@ -59,7 +93,30 @@ export async function GET(request: NextRequest) {
         payments: pendingPayments,
         total: pendingKkpApplications + pendingExamApplications + pendingPayments,
       },
+      kkpStats: {
+        pending: pendingKkpApplications,
+        approved: approvedKkpApplications,
+        completed: completedKkpApplications,
+      },
+      paymentStats: {
+        pending: pendingPayments,
+        verified: verifiedPayments,
+      },
       activeSessions,
+      systemHealth: {
+        status: 'healthy',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      },
+      recentActivity: recentAuditLogs.map(log => ({
+        id: log.id,
+        action: log.action,
+        resource: log.resource,
+        user: log.users.name,
+        userRole: log.users.role,
+        timestamp: log.createdAt,
+        details: log.details,
+      })),
     })
   } catch (error) {
     console.error('Error fetching admin statistics:', error)

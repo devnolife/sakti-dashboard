@@ -5,7 +5,7 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 
 const updateUserSchema = z.object({
-  nidn: z.string().min(1).optional(),
+  username: z.string().min(1).optional(),
   password: z.string().min(6).optional(),
   name: z.string().min(1).optional(),
   role: z.enum(['mahasiswa', 'dosen', 'prodi', 'staff_tu', 'dekan', 'admin', 'laboratory_admin', 'reading_room_admin', 'admin_umum', 'admin_keuangan', 'gkm', 'kepala_tata_usaha']).optional(),
@@ -36,7 +36,7 @@ export async function GET(
       where: { id },
       select: {
         id: true,
-        nidn: true,
+        username: true,
         name: true,
         role: true,
         subRole: true,
@@ -44,7 +44,7 @@ export async function GET(
         isActive: true,
         createdAt: true,
         updatedAt: true,
-        studentProfile: {
+        students: {
           select: {
             nim: true,
             major: true,
@@ -57,7 +57,7 @@ export async function GET(
             gpa: true
           }
         },
-        lecturerProfile: {
+        lecturers: {
           select: {
             nip: true,
             department: true,
@@ -67,7 +67,7 @@ export async function GET(
             office: true
           }
         },
-        staffProfile: {
+        staff: {
           select: {
             nip: true,
             department: true,
@@ -116,14 +116,14 @@ export async function PUT(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check if NIDN is being changed and if it already exists
-    if (validatedData.nidn && validatedData.nidn !== existingUser.nidn) {
-      const nidnExists = await prisma.user.findUnique({
-        where: { nidn: validatedData.nidn }
+    // Check if username is being changed and if it already exists
+    if (validatedData.username && validatedData.username !== existingUser.username) {
+      const usernameExists = await prisma.user.findUnique({
+        where: { username: validatedData.username }
       })
 
-      if (nidnExists) {
-        return NextResponse.json({ error: 'NIDN already exists' }, { status: 400 })
+      if (usernameExists) {
+        return NextResponse.json({ error: 'Username already exists' }, { status: 400 })
       }
     }
 
@@ -139,7 +139,7 @@ export async function PUT(
       data: updateData,
       select: {
         id: true,
-        nidn: true,
+        username: true,
         name: true,
         role: true,
         subRole: true,

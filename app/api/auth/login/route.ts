@@ -37,13 +37,13 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
 
     // Create or update user
     const user = await prisma.user.upsert({
-      where: { nidn: nim },
+      where: { username: nim },
       update: {
         name: mahasiswaData.nama,
         // Keep existing password in DB if updating
       },
       create: {
-        nidn: nim,
+        username: nim,
         name: mahasiswaData.nama,
         password: hashedPassword,
         role: 'mahasiswa',
@@ -95,13 +95,13 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { nidn, password, selectedRole } = await request.json()
+    const { username, password, selectedRole } = await request.json()
 
-    console.log('Login attempt:', { nidn, selectedRole })
+    console.log('Login attempt:', { username, selectedRole })
 
-    if (!nidn || !password) {
+    if (!username || !password) {
       return NextResponse.json(
-        { error: 'NIDN and password are required' },
+        { error: 'Username and password are required' },
         { status: 400 }
       )
     }
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Try to find user in local database
     user = await prisma.user.findUnique({
-      where: { nidn },
+      where: { username },
       include: {
         studentProfile: true,
         lecturerProfile: true,
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log('User found in local DB:', user ? { nidn: user.nidn, role: user.role } : 'Not found')
+    console.log('User found in local DB:', user ? { username: user.username, role: user.role } : 'Not found')
 
     if (user) {
       // User exists in local DB - verify with bcrypt
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
         // Query GraphQL for mahasiswa user
         const response = await graphqlClient.request<MahasiswaUserResponse>(
           GET_MAHASISWA_USER,
-          { nim: nidn }
+          { nim: username }
         )
 
         const mahasiswaData = response.mahasiswaUser
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
         console.log('GraphQL password verified, syncing to local DB...')
 
         // Password valid - sync to local database
-        user = await syncMahasiswaFromGraphQL(nidn, password)
+        user = await syncMahasiswaFromGraphQL(username, password)
 
         if (!user) {
           console.error('Failed to sync user to local DB')
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
     const token = jwt.sign(
       {
         userId: user.id,
-        nidn: user.nidn,
+        username: user.username,
         role: user.role,
         subRole: user.subRole
       },
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({
       user: {
         id: user.id,
-        nidn: user.nidn,
+        username: user.username,
         name: user.name,
         role: user.role,
         subRole: user.subRole,

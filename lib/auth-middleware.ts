@@ -37,7 +37,7 @@ export async function authMiddleware(request: NextRequest) {
 
     return {
       sub: decoded.userId,
-      nidn: decoded.nidn,
+      username: decoded.username,
       role: decoded.role,
       subRole: decoded.subRole
     }
@@ -188,7 +188,35 @@ export function requireAuth(requiredPermission?: string) {
       id: token.sub,
       role: token.role,
       subRole: token.subRole,
-      nidn: token.nidn
+      username: token.username
+    }
+
+    return null // Continue to handler
+  }
+}
+
+// Helper to require admin role
+export function requireAdmin() {
+  return async (request: NextRequest, context: any) => {
+    const token = await authMiddleware(request)
+
+    if (token instanceof NextResponse) {
+      return token // Return error response
+    }
+
+    // Check if user is admin
+    if (token.role !== 'admin') {
+      return NextResponse.json({
+        error: 'Forbidden - Admin access required'
+      }, { status: 403 })
+    }
+
+    // Add user info to context
+    context.user = {
+      id: token.sub,
+      role: token.role,
+      subRole: token.subRole,
+      username: token.username
     }
 
     return null // Continue to handler

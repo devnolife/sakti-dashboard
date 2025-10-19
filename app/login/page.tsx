@@ -15,7 +15,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
-  const [nidn, setNidn] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [selectedRole, setSelectedRole] = useState<Role>("mahasiswa")
   const [showPassword, setShowPassword] = useState(false)
@@ -58,13 +58,13 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormError("")
-    if (!nidn || !password) {
-      setFormError("NIDN and password are required.")
+    if (!username || !password) {
+      setFormError("Username and password are required.")
       return
     }
 
     try {
-      await login(nidn, password, selectedRole)
+      await login(username, password, selectedRole)
       router.push("/dashboard")
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "Login failed. Please check your credentials.")
@@ -183,14 +183,14 @@ export default function LoginPage() {
               </div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="nidn" className="text-sm font-semibold text-gray-800">NIDN</Label>
+                  <Label htmlFor="username" className="text-sm font-semibold text-gray-800">Username</Label>
                   <div className="relative group">
                     <Input
-                      id="nidn"
+                      id="username"
                       type="text"
-                      placeholder="Masukkan NIDN"
-                      value={nidn}
-                      onChange={(e) => setNidn(e.target.value)}
+                      placeholder="Masukkan NIM atau NIDN"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       className="h-12 pl-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100 rounded-xl"
                       required
                     />
@@ -264,7 +264,7 @@ export default function LoginPage() {
                     </SelectContent>
                   </Select>
                   <p className="mt-2 text-xs text-gray-500">
-                    Psst... ini demo kok, pakai NIDN dan password apa aja bisa!
+                    Masukkan NIM untuk Mahasiswa atau NIDN untuk Dosen
                   </p>
                 </div>
                 {formError && (

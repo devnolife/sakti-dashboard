@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -8,7 +9,127 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
+interface AdminStats {
+  users: {
+    total: number
+    active: number
+    inactive: number
+    byRole: Record<string, number>
+  }
+  breakdown: {
+    students: number
+    lecturers: number
+    staff: number
+    companies: number
+    books: number
+  }
+  pendingApprovals: {
+    kkp: number
+    exams: number
+    payments: number
+    total: number
+  }
+  kkpStats: {
+    pending: number
+    approved: number
+    completed: number
+  }
+  paymentStats: {
+    pending: number
+    verified: number
+  }
+  activeSessions: number
+  systemHealth: {
+    status: string
+    uptime: number
+    timestamp: string
+  }
+  recentActivity: Array<{
+    id: string
+    action: string
+    resource: string
+    user: string
+    userRole: string
+    timestamp: string
+    details: any
+  }>
+}
+
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<AdminStats | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true)
+      const token = localStorage.getItem('session-token')
+      const response = await fetch('/api/admin/statistics', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch statistics')
+      }
+
+      const data = await response.json()
+      setStats(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      console.error('Error fetching admin statistics:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatUptime = (seconds: number) => {
+    const days = Math.floor(seconds / 86400)
+    const hours = Math.floor((seconds % 86400) / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    return `${days}d ${hours}h ${minutes}m`
+  }
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp)
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / 60000)
+    const hours = Math.floor(diff / 3600000)
+    const days = Math.floor(diff / 86400000)
+
+    if (minutes < 1) return 'Just now'
+    if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`
+    return `${days} day${days > 1 ? 's' : ''} ago`
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6 mt-20">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="space-y-6 mt-20">
+        <div className="text-center">
+          <p className="text-red-500">Error: {error || 'Failed to load stats'}</p>
+          <Button onClick={fetchStats} className="mt-4">Retry</Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6 mt-20">
       <div>
@@ -30,8 +151,10 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3,124</div>
-            <div className="text-xs text-muted-foreground mt-1">All roles combined</div>
+            <div className="text-2xl font-bold">{stats.users.total.toLocaleString()}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {stats.users.active} active, {stats.users.inactive} inactive
+            </div>
           </CardContent>
         </Card>
 
@@ -43,8 +166,10 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">47</div>
-            <div className="text-xs text-muted-foreground mt-1">Across all modules</div>
+            <div className="text-2xl font-bold">{stats.pendingApprovals.total}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {stats.pendingApprovals.kkp} KKP, {stats.pendingApprovals.exams} Exams, {stats.pendingApprovals.payments} Payments
+            </div>
           </CardContent>
         </Card>
 
@@ -56,7 +181,7 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">234</div>
+            <div className="text-2xl font-bold">{stats.activeSessions}</div>
             <div className="text-xs text-muted-foreground mt-1">Online users now</div>
           </CardContent>
         </Card>
@@ -69,8 +194,8 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Healthy</div>
-            <div className="text-xs text-muted-foreground mt-1">All systems operational</div>
+            <div className="text-2xl font-bold capitalize">{stats.systemHealth.status}</div>
+            <div className="text-xs text-muted-foreground mt-1">Uptime: {formatUptime(stats.systemHealth.uptime)}</div>
           </CardContent>
         </Card>
       </div>

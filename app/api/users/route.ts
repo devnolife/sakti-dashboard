@@ -5,7 +5,7 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 
 const createUserSchema = z.object({
-  nidn: z.string().min(1),
+  username: z.string().min(1),
   password: z.string().min(6),
   name: z.string().min(1),
   role: z.enum(['mahasiswa', 'dosen', 'prodi', 'staff_tu', 'dekan', 'admin', 'laboratory_admin', 'reading_room_admin', 'admin_umum', 'admin_keuangan', 'gkm', 'kepala_tata_usaha']),
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { nidn: { contains: search, mode: 'insensitive' } }
+        { username: { contains: search, mode: 'insensitive' } }
       ]
     }
 
@@ -64,14 +64,14 @@ export async function GET(request: NextRequest) {
         take: limit,
         select: {
           id: true,
-          nidn: true,
+          username: true,
           name: true,
           role: true,
           subRole: true,
           avatar: true,
           isActive: true,
           createdAt: true,
-          studentProfile: {
+          students: {
             select: {
               nim: true,
               major: true,
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
               semester: true
             }
           },
-          lecturerProfile: {
+          lecturers: {
             select: {
               nip: true,
               department: true,
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
               specialization: true
             }
           },
-          staffProfile: {
+          staff: {
             select: {
               nip: true,
               department: true,
@@ -131,13 +131,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = createUserSchema.parse(body)
 
-    // Check if NIDN already exists
+    // Check if username already exists
     const existingUser = await prisma.user.findUnique({
-      where: { nidn: validatedData.nidn }
+      where: { username: validatedData.username }
     })
 
     if (existingUser) {
-      return NextResponse.json({ error: 'NIDN already exists' }, { status: 400 })
+      return NextResponse.json({ error: 'Username already exists' }, { status: 400 })
     }
 
     // Hash password
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
       },
       select: {
         id: true,
-        nidn: true,
+        username: true,
         name: true,
         role: true,
         subRole: true,

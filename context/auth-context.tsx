@@ -6,7 +6,7 @@ import type { Role } from "@/types/role"
 
 interface User {
   id: string
-  nidn: string
+  username: string
   name: string
   role: Role
   subRole?: string
@@ -17,7 +17,7 @@ interface User {
 interface AuthContextType {
   user: User | null
   isLoading: boolean
-  login: (nidn: string, password: string, selectedRole?: Role) => Promise<void>
+  login: (username: string, password: string, selectedRole?: Role) => Promise<void>
   logout: () => void
   isAuthenticated: boolean
 }
@@ -136,7 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, isLoading, pathname, router])
 
-  const login = async (nidn: string, password: string, selectedRole?: Role) => {
+  const login = async (username: string, password: string, selectedRole?: Role) => {
     setIsLoading(true)
 
     try {
@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nidn, password, selectedRole }),
+        body: JSON.stringify({ username, password, selectedRole }),
       })
 
       if (!response.ok) {
