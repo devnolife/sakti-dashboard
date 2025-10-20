@@ -1,5 +1,5 @@
 import { PrismaClient } from '../lib/generated/prisma'
-import { seedBasicData } from './seeds/basic-seed'
+import { seedComprehensiveData } from './seeds/comprehensive-seed'
 
 const prisma = new PrismaClient()
 
@@ -7,8 +7,7 @@ async function main() {
   console.log('🌱 Starting database seeding...')
 
   try {
-    console.log('👥 Seeding basic users and profiles...')
-    await seedBasicData(prisma)
+    await seedComprehensiveData(prisma)
 
     console.log('✅ Database seeding completed successfully!')
   } catch (error) {
