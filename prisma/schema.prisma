@@ -14,76 +14,76 @@ model academic_consultations {
   uraian     String
   keterangan String
   paraf      Boolean   @default(false)
-  studentId  String
-  advisorId  String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime
-  lecturers  lecturers @relation(fields: [advisorId], references: [id])
-  students   students  @relation(fields: [studentId], references: [id])
+  student_id String
+  advisor_id String
+  created_at DateTime  @default(now())
+  updated_at DateTime
+  lecturers  lecturers @relation(fields: [advisor_id], references: [id])
+  students   students  @relation(fields: [student_id], references: [id])
 }
 
 model academic_events {
   id          String      @id
   title       String
   description String?
-  startDate   DateTime
-  endDate     DateTime
+  start_date  DateTime
+  end_date    DateTime
   location    String?
   type        EventType
-  examType    ExamType?
+  exam_type   ExamType?
   status      EventStatus @default(confirmed)
-  studentId   String?
-  courseId    String?
-  lecturerId  String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime
-  courses     courses?    @relation(fields: [courseId], references: [id])
-  lecturers   lecturers?  @relation(fields: [lecturerId], references: [id])
-  students    students?   @relation(fields: [studentId], references: [id])
+  student_id  String?
+  course_id   String?
+  lecturer_id String?
+  created_at  DateTime    @default(now())
+  updated_at  DateTime
+  courses     courses?    @relation(fields: [course_id], references: [id])
+  lecturers   lecturers?  @relation(fields: [lecturer_id], references: [id])
+  students    students?   @relation(fields: [student_id], references: [id])
 }
 
 model accounts {
-  id                String  @id
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String  @id
+  user_id             String
+  type                String
+  provider            String
+  provider_account_id String
+  refresh_token       String?
+  access_token        String?
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String?
+  session_state       String?
+  users               users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([provider, provider_account_id])
 }
 
 model audit_logs {
-  id        String   @id
-  userId    String
-  action    String
-  resource  String
-  details   Json?
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  users     users    @relation(fields: [userId], references: [id])
+  id         String   @id
+  user_id    String
+  action     String
+  resource   String
+  details    Json?
+  ip_address String?
+  user_agent String?
+  created_at DateTime @default(now())
+  users      users    @relation(fields: [user_id], references: [id])
 }
 
 model book_borrowings {
-  id         String          @id
-  borrowDate DateTime        @default(now())
-  dueDate    DateTime
-  returnDate DateTime?
-  status     BorrowingStatus @default(active)
-  notes      String?
-  fine       Decimal?        @db.Decimal(8, 2)
-  bookId     String
-  studentId  String
-  books      books           @relation(fields: [bookId], references: [id])
-  students   students        @relation(fields: [studentId], references: [id])
+  id          String          @id
+  borrow_date DateTime        @default(now())
+  due_date    DateTime
+  return_date DateTime?
+  status      BorrowingStatus @default(active)
+  notes       String?
+  fine        Decimal?        @db.Decimal(8, 2)
+  book_id     String
+  student_id  String
+  books       books           @relation(fields: [book_id], references: [id])
+  students    students        @relation(fields: [student_id], references: [id])
 }
 
 model book_categories {
@@ -91,51 +91,51 @@ model book_categories {
   code        String  @unique
   name        String
   description String?
-  isActive    Boolean @default(true)
+  is_active   Boolean @default(true)
   books       books[]
 }
 
 model books {
-  id               String            @id
-  title            String
-  author           String
-  publisher        String
-  publicationYear  Int
-  isbn             String            @unique
-  categoryId       String
-  coverImage       String?
-  description      String?
-  pageCount        Int?
-  location         String
-  status           BookStatus        @default(available)
-  addedDate        DateTime          @default(now())
-  lastBorrowedDate DateTime?
-  borrowCount      Int               @default(0)
-  book_borrowings  book_borrowings[]
-  book_categories  book_categories   @relation(fields: [categoryId], references: [id])
+  id                 String            @id
+  title              String
+  author             String
+  publisher          String
+  publication_year   Int
+  isbn               String            @unique
+  category_id        String
+  cover_image        String?
+  description        String?
+  page_count         Int?
+  location           String
+  status             BookStatus        @default(available)
+  added_date         DateTime          @default(now())
+  last_borrowed_date DateTime?
+  borrow_count       Int               @default(0)
+  book_borrowings    book_borrowings[]
+  book_categories    book_categories   @relation(fields: [category_id], references: [id])
 }
 
 model budget_allocations {
   id          String  @id
-  budgetId    String
+  budget_id   String
   department  String
   amount      Decimal @db.Decimal(12, 2)
   description String?
-  budgets     budgets @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgets     budgets @relation(fields: [budget_id], references: [id], onDelete: Cascade)
 }
 
 model budgets {
   id                 String               @id
   name               String
   description        String?
-  totalAmount        Decimal              @db.Decimal(15, 2)
-  usedAmount         Decimal              @default(0) @db.Decimal(15, 2)
+  total_amount       Decimal              @db.Decimal(15, 2)
+  used_amount        Decimal              @default(0) @db.Decimal(15, 2)
   category           String
   department         String?
-  fiscalYear         String
+  fiscal_year        String
   status             BudgetStatus         @default(active)
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime
+  created_at         DateTime             @default(now())
+  updated_at         DateTime
   budget_allocations budget_allocations[]
   expenses           expenses[]
 }
@@ -146,31 +146,31 @@ model companies {
   address          String
   city             String
   province         String?
-  postalCode       String?
-  contactPerson    String
-  contactPosition  String?
-  contactEmail     String?
-  contactPhone     String
+  postal_code      String?
+  contact_person   String
+  contact_position String?
+  contact_email    String?
+  contact_phone    String
   website          String?
   logo             String?
   industry         String
   description      String?
-  isActive         Boolean            @default(true)
+  is_active        Boolean            @default(true)
   kkp_applications kkp_applications[]
   kkp_locations    kkp_locations[]
 }
 
 model course_schedules {
-  id           String  @id
-  courseId     String
-  day          String
-  startTime    String
-  endTime      String
-  room         String
-  building     String?
-  semester     String
-  academicYear String
-  courses      courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id            String  @id
+  course_id     String
+  day           String
+  start_time    String
+  end_time      String
+  room          String
+  building      String?
+  semester      String
+  academic_year String
+  courses       courses @relation(fields: [course_id], references: [id], onDelete: Cascade)
 }
 
 model courses {
@@ -181,45 +181,45 @@ model courses {
   credits          Int
   semester         Int
   department       String
-  isActive         Boolean            @default(true)
-  lecturerId       String?
+  is_active        Boolean            @default(true)
+  lecturer_id      String?
   academic_events  academic_events[]
   course_schedules course_schedules[]
-  lecturers        lecturers?         @relation(fields: [lecturerId], references: [id])
+  lecturers        lecturers?         @relation(fields: [lecturer_id], references: [id])
   grades           grades[]
 }
 
 model exam_applications {
-  id                                                String            @id
-  title                                             String
-  type                                              ExamType
-  status                                            ExamStatus        @default(pending)
-  abstract                                          String?
-  submissionDate                                    DateTime          @default(now())
-  scheduledDate                                     DateTime?
-  completionDate                                    DateTime?
-  location                                          String?
-  studentId                                         String
-  advisor1Id                                        String?
-  advisor2Id                                        String?
-  createdAt                                         DateTime          @default(now())
-  updatedAt                                         DateTime
-  lecturers_exam_applications_advisor1IdTolecturers lecturers?        @relation("exam_applications_advisor1IdTolecturers", fields: [advisor1Id], references: [id])
-  lecturers_exam_applications_advisor2IdTolecturers lecturers?        @relation("exam_applications_advisor2IdTolecturers", fields: [advisor2Id], references: [id])
-  students                                          students          @relation(fields: [studentId], references: [id])
-  exam_committees                                   exam_committees[]
-  exam_documents                                    exam_documents[]
+  id                                                    String            @id
+  title                                                 String
+  type                                                  ExamType
+  status                                                ExamStatus        @default(pending)
+  abstract                                              String?
+  submission_date                                       DateTime          @default(now())
+  scheduled_date                                        DateTime?
+  completion_date                                       DateTime?
+  location                                              String?
+  student_id                                            String
+  advisor_1_id                                          String?
+  advisor_2_id                                          String?
+  created_at                                            DateTime          @default(now())
+  updated_at                                            DateTime
+  lecturers_exam_applications_advisor_1_id_to_lecturers lecturers?        @relation("exam_applications_advisor_1_id_to_lecturers", fields: [advisor_1_id], references: [id])
+  lecturers_exam_applications_advisor_2_id_to_lecturers lecturers?        @relation("exam_applications_advisor_2_id_to_lecturers", fields: [advisor_2_id], references: [id])
+  students                                              students          @relation(fields: [student_id], references: [id])
+  exam_committees                                       exam_committees[]
+  exam_documents                                        exam_documents[]
 }
 
 model exam_committees {
   id                String            @id
-  examId            String
-  lecturerId        String
+  exam_id           String
+  lecturer_id       String
   role              String
-  exam_applications exam_applications @relation(fields: [examId], references: [id], onDelete: Cascade)
-  lecturers         lecturers         @relation(fields: [lecturerId], references: [id])
+  exam_applications exam_applications @relation(fields: [exam_id], references: [id], onDelete: Cascade)
+  lecturers         lecturers         @relation(fields: [lecturer_id], references: [id])
 
-  @@unique([examId, lecturerId])
+  @@unique([exam_id, lecturer_id])
 }
 
 model exam_documents {
@@ -227,119 +227,119 @@ model exam_documents {
   name              String
   type              ExamDocumentType
   status            DocumentStatus    @default(pending)
-  uploadDate        DateTime          @default(now())
-  verificationDate  DateTime?
-  fileUrl           String
-  fileSize          Int?
+  upload_date       DateTime          @default(now())
+  verification_date DateTime?
+  file_url          String
+  file_size         Int?
   notes             String?
-  examId            String
-  exam_applications exam_applications @relation(fields: [examId], references: [id], onDelete: Cascade)
+  exam_id           String
+  exam_applications exam_applications @relation(fields: [exam_id], references: [id], onDelete: Cascade)
 }
 
 model exam_requirements {
   id                        String                      @id
-  examType                  ExamType
+  exam_type                 ExamType
   title                     String
   description               String?
   required                  Boolean                     @default(true)
   order                     Int                         @default(0)
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime
+  created_at                DateTime                    @default(now())
+  updated_at                DateTime
   exam_student_requirements exam_student_requirements[]
 }
 
 model exam_student_requirements {
   id                String            @id
-  studentId         String
-  requirementId     String
+  student_id        String
+  requirement_id    String
   completed         Boolean           @default(false)
-  completedAt       DateTime?
-  fileUrl           String?
-  fileName          String?
-  fileSize          Int?
-  uploadedAt        DateTime?
-  verifiedAt        DateTime?
+  completed_at      DateTime?
+  file_url          String?
+  file_name         String?
+  file_size         Int?
+  uploaded_at       DateTime?
+  verified_at       DateTime?
   notes             String?
-  exam_requirements exam_requirements @relation(fields: [requirementId], references: [id], onDelete: Cascade)
-  students          students          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  exam_requirements exam_requirements @relation(fields: [requirement_id], references: [id], onDelete: Cascade)
+  students          students          @relation(fields: [student_id], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, requirementId])
+  @@unique([student_id, requirement_id])
 }
 
 model expenses {
-  id          String        @id
-  budgetId    String
-  amount      Decimal       @db.Decimal(10, 2)
-  description String
-  category    String
-  expenseDate DateTime
-  receipt     String?
-  status      ExpenseStatus @default(pending)
-  approvedBy  String?
-  approvedAt  DateTime?
-  createdAt   DateTime      @default(now())
-  budgets     budgets       @relation(fields: [budgetId], references: [id])
+  id           String        @id
+  budget_id    String
+  amount       Decimal       @db.Decimal(10, 2)
+  description  String
+  category     String
+  expense_date DateTime
+  receipt      String?
+  status       ExpenseStatus @default(pending)
+  approved_by  String?
+  approved_at  DateTime?
+  created_at   DateTime      @default(now())
+  budgets      budgets       @relation(fields: [budget_id], references: [id])
 }
 
 model file_uploads {
-  id           String   @id
-  filename     String
-  originalName String
-  path         String
-  size         Int
-  mimeType     String
-  uploadedBy   String
-  category     String?
-  createdAt    DateTime @default(now())
+  id            String   @id
+  filename      String
+  original_name String
+  path          String
+  size          Int
+  mime_type     String
+  uploaded_by   String
+  category      String?
+  created_at    DateTime @default(now())
 }
 
 model grades {
-  id           String   @id
-  score        Float
-  letterGrade  String
-  semester     String
-  academicYear String
-  studentId    String
-  courseId     String
-  createdAt    DateTime @default(now())
-  courses      courses  @relation(fields: [courseId], references: [id])
-  students     students @relation(fields: [studentId], references: [id])
+  id            String   @id
+  score         Float
+  letter_grade  String
+  semester      String
+  academic_year String
+  student_id    String
+  course_id     String
+  created_at    DateTime @default(now())
+  courses       courses  @relation(fields: [course_id], references: [id])
+  students      students @relation(fields: [student_id], references: [id])
 
-  @@unique([studentId, courseId, semester, academicYear])
+  @@unique([student_id, course_id, semester, academic_year])
 }
 
 model kkp_applications {
-  id                String          @id
-  applicationNumber String          @unique
-  title             String
-  description       String
-  submissionDate    DateTime        @default(now())
-  startDate         DateTime
-  endDate           DateTime
-  status            KkpStatus       @default(pending)
-  notes             String?
-  studentId         String
-  groupMembers      Json?
-  supervisorId      String?
-  companyId         String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime
-  companies         companies       @relation(fields: [companyId], references: [id])
-  students          students        @relation(fields: [studentId], references: [id])
-  lecturers         lecturers?      @relation(fields: [supervisorId], references: [id])
-  kkp_approvals     kkp_approvals[]
-  kkp_documents     kkp_documents[]
+  id                 String          @id
+  application_number String          @unique
+  title              String
+  description        String
+  submission_date    DateTime        @default(now())
+  start_date         DateTime
+  end_date           DateTime
+  status             KkpStatus       @default(pending)
+  notes              String?
+  student_id         String
+  group_members      Json?
+  supervisor_id      String?
+  company_id         String
+  created_at         DateTime        @default(now())
+  updated_at         DateTime
+  companies          companies       @relation(fields: [company_id], references: [id])
+  students           students        @relation(fields: [student_id], references: [id])
+  lecturers          lecturers?      @relation(fields: [supervisor_id], references: [id])
+  kkp_approvals      kkp_approvals[]
+  kkp_documents      kkp_documents[]
 }
 
 model kkp_approvals {
   id               String           @id
-  applicationId    String
-  approverRole     String
-  approverId       String?
+  application_id   String
+  approver_role    String
+  approver_id      String?
   status           ApprovalStatus
   comments         String?
-  approvedAt       DateTime?
-  kkp_applications kkp_applications @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  approved_at      DateTime?
+  kkp_applications kkp_applications @relation(fields: [application_id], references: [id], onDelete: Cascade)
 }
 
 model kkp_documents {
@@ -347,15 +347,15 @@ model kkp_documents {
   name             String
   type             KkpDocumentType
   url              String
-  uploadDate       DateTime          @default(now())
+  upload_date      DateTime          @default(now())
   status           DocumentStatus    @default(pending)
   notes            String?
-  fileSize         Int?
-  mimeType         String?
-  applicationId    String?
-  locationId       String?
-  kkp_applications kkp_applications? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  kkp_locations    kkp_locations?    @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  file_size        Int?
+  mime_type        String?
+  application_id   String?
+  location_id      String?
+  kkp_applications kkp_applications? @relation(fields: [application_id], references: [id], onDelete: Cascade)
+  kkp_locations    kkp_locations?    @relation(fields: [location_id], references: [id], onDelete: Cascade)
 }
 
 model kkp_locations {
@@ -370,143 +370,143 @@ model kkp_locations {
   remaining         Int                 @default(0)
   status            String              @default("available")
   distance          Float?
-  contactPerson     String?
-  contactEmail      String?
-  contactPhone      String?
+  contact_person    String?
+  contact_email     String?
+  contact_phone     String?
   description       String?
-  isActive          Boolean             @default(true)
-  companyId         String?
-  createdById       String
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime
+  is_active         Boolean             @default(true)
+  company_id        String?
+  created_by_id     String
+  created_at        DateTime            @default(now())
+  updated_at        DateTime
   kkp_documents     kkp_documents[]
-  companies         companies?          @relation(fields: [companyId], references: [id])
-  students          students            @relation(fields: [createdById], references: [id])
+  companies         companies?          @relation(fields: [company_id], references: [id])
+  students          students            @relation(fields: [created_by_id], references: [id])
   kkp_sub_locations kkp_sub_locations[]
 
   @@unique([name, address])
 }
 
 model kkp_requirements {
-  id               String             @id
-  studentId        String
-  requirementType  KkpRequirementType
-  fileName         String
-  originalFileName String
-  filePath         String
-  fileSize         Int
-  mimeType         String             @default("application/pdf")
-  status           DocumentStatus     @default(pending)
-  notes            String?
-  uploadedAt       DateTime           @default(now())
-  verifiedAt       DateTime?
-  verifiedBy       String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime
-  students         students           @relation(fields: [studentId], references: [id])
+  id                 String             @id
+  student_id         String
+  requirement_type   KkpRequirementType
+  file_name          String
+  original_file_name String
+  file_path          String
+  file_size          Int
+  mime_type          String             @default("application/pdf")
+  status             DocumentStatus     @default(pending)
+  notes              String?
+  uploaded_at        DateTime           @default(now())
+  verified_at        DateTime?
+  verified_by        String?
+  created_at         DateTime           @default(now())
+  updated_at         DateTime
+  students           students           @relation(fields: [student_id], references: [id])
 
-  @@unique([studentId, requirementType])
+  @@unique([student_id, requirement_type])
 }
 
 model kkp_sub_locations {
-  id            String        @id
-  name          String
-  address       String
-  contactPerson String
-  contactEmail  String?
-  contactPhone  String?
-  locationId    String
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime
-  kkp_locations kkp_locations @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  id             String        @id
+  name           String
+  address        String
+  contact_person String
+  contact_email  String?
+  contact_phone  String?
+  location_id    String
+  created_at     DateTime      @default(now())
+  updated_at     DateTime
+  kkp_locations  kkp_locations @relation(fields: [location_id], references: [id], onDelete: Cascade)
 }
 
 model lab_announcements {
-  id           String       @id
-  title        String
-  content      String
-  isImportant  Boolean      @default(false)
-  laboratoryId String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime
-  laboratories laboratories @relation(fields: [laboratoryId], references: [id])
+  id            String       @id
+  title         String
+  content       String
+  is_important  Boolean      @default(false)
+  laboratory_id String
+  created_at    DateTime     @default(now())
+  updated_at    DateTime
+  laboratories  laboratories @relation(fields: [laboratory_id], references: [id])
 }
 
 model lab_assignment_submissions {
   id                String            @id
-  submittedAt       DateTime          @default(now())
+  submitted_at      DateTime          @default(now())
   score             Float?
   feedback          String?
-  fileUrl           String?
-  studentId         String
-  assignmentId      String
-  registrationId    String
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime
-  lab_assignments   lab_assignments   @relation(fields: [assignmentId], references: [id])
-  lab_registrations lab_registrations @relation(fields: [registrationId], references: [id])
-  students          students          @relation(fields: [studentId], references: [id])
+  file_url          String?
+  student_id        String
+  assignment_id     String
+  registration_id   String
+  created_at        DateTime          @default(now())
+  updated_at        DateTime
+  lab_assignments   lab_assignments   @relation(fields: [assignment_id], references: [id])
+  lab_registrations lab_registrations @relation(fields: [registration_id], references: [id])
+  students          students          @relation(fields: [student_id], references: [id])
 
-  @@unique([studentId, assignmentId])
+  @@unique([student_id, assignment_id])
 }
 
 model lab_assignments {
   id                         String                       @id
   title                      String
   description                String
-  dueDate                    DateTime
-  maxScore                   Float                        @default(100)
-  laboratoryId               String
-  createdAt                  DateTime                     @default(now())
-  updatedAt                  DateTime
+  due_date                   DateTime
+  max_score                  Float                        @default(100)
+  laboratory_id              String
+  created_at                 DateTime                     @default(now())
+  updated_at                 DateTime
   lab_assignment_submissions lab_assignment_submissions[]
-  laboratories               laboratories                 @relation(fields: [laboratoryId], references: [id])
+  laboratories               laboratories                 @relation(fields: [laboratory_id], references: [id])
 }
 
 model lab_materials {
-  id           String       @id
-  title        String
-  description  String?
-  type         String
-  fileUrl      String?
-  externalUrl  String?
-  laboratoryId String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime
-  laboratories laboratories @relation(fields: [laboratoryId], references: [id])
+  id            String       @id
+  title         String
+  description   String?
+  type          String
+  file_url      String?
+  external_url  String?
+  laboratory_id String
+  created_at    DateTime     @default(now())
+  updated_at    DateTime
+  laboratories  laboratories @relation(fields: [laboratory_id], references: [id])
 }
 
 model lab_registrations {
   id                         String                       @id
   status                     LabRegistrationStatus        @default(pending)
-  registeredAt               DateTime                     @default(now())
-  completedAt                DateTime?
+  registered_at              DateTime                     @default(now())
+  completed_at               DateTime?
   progress                   Float                        @default(0)
   grade                      String?
-  studentId                  String
-  laboratoryId               String
-  createdAt                  DateTime                     @default(now())
-  updatedAt                  DateTime
+  student_id                 String
+  laboratory_id              String
+  created_at                 DateTime                     @default(now())
+  updated_at                 DateTime
   lab_assignment_submissions lab_assignment_submissions[]
-  laboratories               laboratories                 @relation(fields: [laboratoryId], references: [id])
-  students                   students                     @relation(fields: [studentId], references: [id])
+  laboratories               laboratories                 @relation(fields: [laboratory_id], references: [id])
+  students                   students                     @relation(fields: [student_id], references: [id])
 
-  @@unique([studentId, laboratoryId])
+  @@unique([student_id, laboratory_id])
 }
 
 model lab_sessions {
-  id           String           @id
-  title        String
-  description  String?
-  sessionDate  DateTime
-  startTime    String
-  endTime      String
-  location     String?
-  status       LabSessionStatus @default(scheduled)
-  laboratoryId String
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime
-  laboratories laboratories     @relation(fields: [laboratoryId], references: [id])
+  id            String           @id
+  title         String
+  description   String?
+  session_date  DateTime
+  start_time    String
+  end_time      String
+  location      String?
+  status        LabSessionStatus @default(scheduled)
+  laboratory_id String
+  created_at    DateTime         @default(now())
+  updated_at    DateTime
+  laboratories  laboratories     @relation(fields: [laboratory_id], references: [id])
 }
 
 model laboratories {
@@ -522,48 +522,48 @@ model laboratories {
   location          String
   category          String
   status            LabStatus           @default(active)
-  instructorId      String?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime
+  instructor_id     String?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime
   lab_announcements lab_announcements[]
   lab_assignments   lab_assignments[]
   lab_materials     lab_materials[]
   lab_registrations lab_registrations[]
   lab_sessions      lab_sessions[]
-  lecturers         lecturers?          @relation(fields: [instructorId], references: [id])
+  lecturers         lecturers?          @relation(fields: [instructor_id], references: [id])
 }
 
 model lecturers {
-  id                                                        String                   @id
-  userId                                                    String                   @unique
-  nip                                                       String                   @unique
-  department                                                String
-  position                                                  String
-  specialization                                            String?
-  phone                                                     String?
-  office                                                    String?
-  academic_consultations                                    academic_consultations[]
-  academic_events                                           academic_events[]
-  courses                                                   courses[]
-  exam_applications_exam_applications_advisor1IdTolecturers exam_applications[]      @relation("exam_applications_advisor1IdTolecturers")
-  exam_applications_exam_applications_advisor2IdTolecturers exam_applications[]      @relation("exam_applications_advisor2IdTolecturers")
-  exam_committees                                           exam_committees[]
-  kkp_applications                                          kkp_applications[]
-  laboratories                                              laboratories[]
-  users                                                     users                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  students                                                  students[]
-  thesis_titles                                             thesis_titles[]
+  id                                                            String                   @id
+  user_id                                                       String                   @unique
+  nip                                                           String                   @unique
+  department                                                    String
+  position                                                      String
+  specialization                                                String?
+  phone                                                         String?
+  office                                                        String?
+  academic_consultations                                        academic_consultations[]
+  academic_events                                               academic_events[]
+  courses                                                       courses[]
+  exam_applications_exam_applications_advisor_1_id_to_lecturers exam_applications[]      @relation("exam_applications_advisor_1_id_to_lecturers")
+  exam_applications_exam_applications_advisor_2_id_to_lecturers exam_applications[]      @relation("exam_applications_advisor_2_id_to_lecturers")
+  exam_committees                                               exam_committees[]
+  kkp_applications                                              kkp_applications[]
+  laboratories                                                  laboratories[]
+  users                                                         users                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  students                                                      students[]
+  thesis_titles                                                 thesis_titles[]
 }
 
 model letter_attachments {
   id              String          @id
   name            String
-  uploadDate      DateTime        @default(now())
+  upload_date     DateTime        @default(now())
   url             String
-  fileSize        Int?
-  mimeType        String?
-  requestId       String
-  letter_requests letter_requests @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  file_size       Int?
+  mime_type       String?
+  request_id      String
+  letter_requests letter_requests @relation(fields: [request_id], references: [id], onDelete: Cascade)
 }
 
 model letter_requests {
@@ -573,117 +573,117 @@ model letter_requests {
   purpose            String
   description        String
   status             LetterStatus         @default(submitted)
-  requestDate        DateTime             @default(now())
-  approvedDate       DateTime?
-  completedDate      DateTime?
-  rejectedReason     String?
-  additionalInfo     Json?
-  studentId          String
-  approvalRole       ApprovalRole
-  approvedBy         String?
-  generatedLetter    String?
-  letterNumber       String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime
+  request_date       DateTime             @default(now())
+  approved_date      DateTime?
+  completed_date     DateTime?
+  rejected_reason    String?
+  additional_info    Json?
+  student_id         String
+  approval_role      ApprovalRole
+  approved_by        String?
+  generated_letter   String?
+  letter_number      String?
+  created_at         DateTime             @default(now())
+  updated_at         DateTime
   letter_attachments letter_attachments[]
-  students           students             @relation(fields: [studentId], references: [id])
+  students           students             @relation(fields: [student_id], references: [id])
 }
 
 model letter_types {
-  id                String       @id
-  title             String       @unique
-  description       String
-  approvalRole      ApprovalRole
-  estimatedDays     Int
-  requiredDocuments String[]
-  additionalFields  Json?
-  isActive          Boolean      @default(true)
-  template          String?
+  id                 String       @id
+  title              String       @unique
+  description        String
+  approval_role      ApprovalRole
+  estimated_days     Int
+  required_documents String[]
+  additional_fields  Json?
+  is_active          Boolean      @default(true)
+  template           String?
 }
 
 model notifications {
-  id        String           @id
-  userId    String
-  title     String
-  message   String
-  type      NotificationType @default(info)
-  isRead    Boolean          @default(false)
-  data      Json?
-  createdAt DateTime         @default(now())
-  readAt    DateTime?
+  id         String           @id
+  user_id    String
+  title      String
+  message    String
+  type       NotificationType @default(info)
+  is_read    Boolean          @default(false)
+  data       Json?
+  created_at DateTime         @default(now())
+  read_at    DateTime?
 }
 
 model payment_items {
-  id           String          @id
-  name         String
-  description  String?
-  amount       Decimal         @db.Decimal(10, 2)
-  category     PaymentCategory
-  semester     String
-  academicYear String
-  dueDate      DateTime
-  isRequired   Boolean         @default(true)
-  isRecurring  Boolean         @default(false)
-  paymentId    String?
-  createdAt    DateTime        @default(now())
-  payments     payments?       @relation(fields: [paymentId], references: [id])
+  id            String          @id
+  name          String
+  description   String?
+  amount        Decimal         @db.Decimal(10, 2)
+  category      PaymentCategory
+  semester      String
+  academic_year String
+  due_date      DateTime
+  is_required   Boolean         @default(true)
+  is_recurring  Boolean         @default(false)
+  payment_id    String?
+  created_at    DateTime        @default(now())
+  payments      payments?       @relation(fields: [payment_id], references: [id])
 }
 
 model payments {
-  id            String          @id
-  amount        Decimal         @db.Decimal(12, 2)
-  description   String
-  category      PaymentCategory
-  status        PaymentStatus   @default(pending)
-  dueDate       DateTime
-  paidDate      DateTime?
-  semester      String
-  academicYear  String
-  receiptNumber String?
-  paymentMethod String?
-  notes         String?
-  studentId     String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime
-  payment_items payment_items[]
-  students      students        @relation(fields: [studentId], references: [id])
+  id             String          @id
+  amount         Decimal         @db.Decimal(12, 2)
+  description    String
+  category       PaymentCategory
+  status         PaymentStatus   @default(pending)
+  due_date       DateTime
+  paid_date      DateTime?
+  semester       String
+  academic_year  String
+  receipt_number String?
+  payment_method String?
+  notes          String?
+  student_id     String
+  created_at     DateTime        @default(now())
+  updated_at     DateTime
+  payment_items  payment_items[]
+  students       students        @relation(fields: [student_id], references: [id])
 }
 
 model sessions {
-  id        String   @id
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id
+  user_id    String
+  token      String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model staff {
   id         String  @id
-  userId     String  @unique
+  user_id    String  @unique
   nip        String? @unique
   department String
   position   String
   phone      String?
   office     String?
-  users      users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users      users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model students {
   id                         String                       @id
-  userId                     String                       @unique
+  user_id                    String                       @unique
   nim                        String                       @unique
   major                      String
   department                 String
   semester                   Int
-  academicYear               String
+  academic_year              String
   phone                      String?
   address                    String?
   guardian                   Json?
-  enrollDate                 DateTime
+  enroll_date                DateTime
   status                     StudentStatus                @default(active)
   gpa                        Float?
-  academicAdvisorId          String?
+  academic_advisor_id        String?
   academic_consultations     academic_consultations[]
   academic_events            academic_events[]
   book_borrowings            book_borrowings[]
@@ -697,8 +697,8 @@ model students {
   lab_registrations          lab_registrations[]
   letter_requests            letter_requests[]
   payments                   payments[]
-  lecturers                  lecturers?                   @relation(fields: [academicAdvisorId], references: [id])
-  users                      users                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lecturers                  lecturers?                   @relation(fields: [academic_advisor_id], references: [id])
+  users                      users                        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   thesis_titles              thesis_titles[]
 }
 
@@ -708,64 +708,64 @@ model system_configs {
   value       String
   description String?
   category    String?
-  updatedAt   DateTime
+  updated_at  DateTime
 }
 
 model thesis_archives {
   id            String        @id
-  thesisId      String        @unique
-  archiveDate   DateTime      @default(now())
+  thesis_id     String        @unique
+  archive_date  DateTime      @default(now())
   location      String
-  physicalId    String?
-  digitalId     String?
+  physical_id   String?
+  digital_id    String?
   notes         String?
-  thesis_titles thesis_titles @relation(fields: [thesisId], references: [id], onDelete: Cascade)
+  thesis_titles thesis_titles @relation(fields: [thesis_id], references: [id], onDelete: Cascade)
 }
 
 model thesis_reviews {
   id            String        @id
-  thesisId      String
-  reviewerId    String
+  thesis_id     String
+  reviewer_id   String
   action        String
   comments      String?
-  reviewDate    DateTime      @default(now())
-  thesis_titles thesis_titles @relation(fields: [thesisId], references: [id], onDelete: Cascade)
+  review_date   DateTime      @default(now())
+  thesis_titles thesis_titles @relation(fields: [thesis_id], references: [id], onDelete: Cascade)
 }
 
 model thesis_similarities {
-  id                                                              String        @id
-  sourceThesisId                                                  String
-  targetThesisId                                                  String
-  similarityPercentage                                            Float
-  thesis_titles_thesis_similarities_sourceThesisIdTothesis_titles thesis_titles @relation("thesis_similarities_sourceThesisIdTothesis_titles", fields: [sourceThesisId], references: [id], onDelete: Cascade)
-  thesis_titles_thesis_similarities_targetThesisIdTothesis_titles thesis_titles @relation("thesis_similarities_targetThesisIdTothesis_titles", fields: [targetThesisId], references: [id], onDelete: Cascade)
+  id                                                                  String        @id
+  source_thesis_id                                                    String
+  target_thesis_id                                                    String
+  similarity_percentage                                               Float
+  thesis_titles_thesis_similarities_source_thesis_id_to_thesis_titles thesis_titles @relation("thesis_similarities_source_thesis_id_to_thesis_titles", fields: [source_thesis_id], references: [id], onDelete: Cascade)
+  thesis_titles_thesis_similarities_target_thesis_id_to_thesis_titles thesis_titles @relation("thesis_similarities_target_thesis_id_to_thesis_titles", fields: [target_thesis_id], references: [id], onDelete: Cascade)
 
-  @@unique([sourceThesisId, targetThesisId])
+  @@unique([source_thesis_id, target_thesis_id])
 }
 
 model thesis_titles {
-  id                                                                    String                @id
-  title                                                                 String
-  abstract                                                              String
-  keywords                                                              String[]
-  submissionDate                                                        DateTime              @default(now())
-  status                                                                ThesisStatus          @default(pending)
-  year                                                                  Int
-  similarityScore                                                       Float?
-  digitalCopy                                                           Boolean               @default(false)
-  documentUrl                                                           String?
-  externalLink                                                          String?
-  authorId                                                              String
-  supervisorId                                                          String?
-  department                                                            String
-  createdAt                                                             DateTime              @default(now())
-  updatedAt                                                             DateTime
-  thesis_archives                                                       thesis_archives?
-  thesis_reviews                                                        thesis_reviews[]
-  thesis_similarities_thesis_similarities_sourceThesisIdTothesis_titles thesis_similarities[] @relation("thesis_similarities_sourceThesisIdTothesis_titles")
-  thesis_similarities_thesis_similarities_targetThesisIdTothesis_titles thesis_similarities[] @relation("thesis_similarities_targetThesisIdTothesis_titles")
-  students                                                              students              @relation(fields: [authorId], references: [id])
-  lecturers                                                             lecturers?            @relation(fields: [supervisorId], references: [id])
+  id                                                                        String                @id
+  title                                                                     String
+  abstract                                                                  String
+  keywords                                                                  String[]
+  submission_date                                                           DateTime              @default(now())
+  status                                                                    ThesisStatus          @default(pending)
+  year                                                                      Int
+  similarity_score                                                          Float?
+  digital_copy                                                              Boolean               @default(false)
+  document_url                                                              String?
+  external_link                                                             String?
+  author_id                                                                 String
+  supervisor_id                                                             String?
+  department                                                                String
+  created_at                                                                DateTime              @default(now())
+  updated_at                                                                DateTime
+  thesis_archives                                                           thesis_archives?
+  thesis_reviews                                                            thesis_reviews[]
+  thesis_similarities_thesis_similarities_source_thesis_id_to_thesis_titles thesis_similarities[] @relation("thesis_similarities_source_thesis_id_to_thesis_titles")
+  thesis_similarities_thesis_similarities_target_thesis_id_to_thesis_titles thesis_similarities[] @relation("thesis_similarities_target_thesis_id_to_thesis_titles")
+  students                                                                  students              @relation(fields: [author_id], references: [id])
+  lecturers                                                                 lecturers?            @relation(fields: [supervisor_id], references: [id])
 }
 
 model users {
@@ -775,10 +775,10 @@ model users {
   name       String
   avatar     String?
   role       Role         @default(mahasiswa)
-  subRole    String?
-  isActive   Boolean      @default(true)
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime
+  sub_role   String?
+  is_active  Boolean      @default(true)
+  created_at DateTime     @default(now())
+  updated_at DateTime
   accounts   accounts[]
   audit_logs audit_logs[]
   lecturers  lecturers?
