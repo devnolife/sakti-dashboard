@@ -30,13 +30,13 @@ import {
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
-import { 
-  Users, 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Pencil, 
+import {
+  Users,
+  Plus,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Pencil,
   Trash2,
   Eye,
   ChevronLeft,
@@ -58,13 +58,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 interface User {
   id: string
-  nidn: string
+  username: string
   name: string
   role: string
   subRole?: string
   isActive: boolean
   createdAt: string
-  studentProfile?: {
+  students: {
     nim: string
     major: string
     department: string
@@ -82,7 +82,7 @@ interface User {
 }
 
 interface UserFormData {
-  nidn: string
+  username: string
   password: string
   name: string
   role: string
@@ -127,7 +127,7 @@ export default function ManajemenPenggunaPage() {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deletingUser, setDeletingUser] = useState<User | null>(null)
   const [formData, setFormData] = useState<UserFormData>({
-    nidn: '',
+    username: '',
     password: '',
     name: '',
     role: '',
@@ -204,15 +204,15 @@ export default function ManajemenPenggunaPage() {
         },
         credentials: 'include' // Include cookies for session-based auth
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-        
+
         // Handle authentication error
         if (handleAuthError(response)) {
           return
         }
-        
+
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
       }
 
@@ -226,7 +226,7 @@ export default function ManajemenPenggunaPage() {
       setUsers([])
       setTotalPages(1)
       setTotalUsers(0)
-      
+
       if (showToast) {
         toast({
           title: "Error",
@@ -272,7 +272,7 @@ export default function ManajemenPenggunaPage() {
   const handleCreateUser = () => {
     setEditingUser(null)
     setFormData({
-      nidn: '',
+      username: '',
       password: '',
       name: '',
       role: '',
@@ -285,7 +285,7 @@ export default function ManajemenPenggunaPage() {
   const handleEditUser = (user: User) => {
     setEditingUser(user)
     setFormData({
-      nidn: user.nidn,
+      username: user.username,
       password: '',
       name: user.name,
       role: user.role,
@@ -309,7 +309,7 @@ export default function ManajemenPenggunaPage() {
     try {
       const url = editingUser ? `/api/users/${editingUser.id}` : '/api/users'
       const method = editingUser ? 'PUT' : 'POST'
-      
+
       const submitData: any = { ...formData }
       if (editingUser && !submitData.password) {
         delete submitData.password // Don't update password if not provided
@@ -321,7 +321,7 @@ export default function ManajemenPenggunaPage() {
 
       const response = await fetch(url, {
         method,
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -330,12 +330,12 @@ export default function ManajemenPenggunaPage() {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Unknown error' }))
-        
+
         // Handle authentication error
         if (handleAuthError(response)) {
           return
         }
-        
+
         throw new Error(error.error || 'Failed to save user')
       }
 
@@ -375,12 +375,12 @@ export default function ManajemenPenggunaPage() {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Unknown error' }))
-        
+
         // Handle authentication error
         if (handleAuthError(response)) {
           return
         }
-        
+
         throw new Error(error.error || 'Failed to delete user')
       }
 
@@ -427,7 +427,7 @@ export default function ManajemenPenggunaPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <div className="w-8 h-8 mx-auto mb-4 border-b-2 rounded-full animate-spin border-primary"></div>
               <h3 className="text-lg font-medium">Memuat...</h3>
               <p className="text-muted-foreground">Memeriksa otentikasi pengguna.</p>
             </div>
@@ -438,14 +438,14 @@ export default function ManajemenPenggunaPage() {
   }
 
   const canManageUsers = user.role === 'admin' || user.role === 'dekan' || user.role === 'prodi'
-  
+
   if (!canManageUsers) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <UserX className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <UserX className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-medium">Akses Ditolak</h3>
               <p className="text-muted-foreground">Anda tidak memiliki akses ke halaman ini.</p>
             </div>
@@ -456,7 +456,7 @@ export default function ManajemenPenggunaPage() {
   }
 
   return (
-    <div className="space-y-6 mt-20">
+    <div className="mt-20 space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
@@ -466,7 +466,7 @@ export default function ManajemenPenggunaPage() {
           </p>
         </div>
         <Button onClick={handleCreateUser} className="md:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="w-4 h-4 mr-2" />
           Tambah Pengguna
         </Button>
       </div>
@@ -475,7 +475,7 @@ export default function ManajemenPenggunaPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
+            <Users className="w-5 h-5" />
             Data Pengguna
           </CardTitle>
           <CardDescription>
@@ -486,9 +486,9 @@ export default function ManajemenPenggunaPage() {
           <div className="flex flex-col gap-4 mb-6 md:flex-row">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Cari berdasarkan nama atau NIDN..."
+                  placeholder="Cari berdasarkan nama atau Username..."
                   value={search}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10"
@@ -497,7 +497,7 @@ export default function ManajemenPenggunaPage() {
             </div>
             <Select value={roleFilter} onValueChange={handleRoleFilter}>
               <SelectTrigger className="w-full md:w-[200px]">
-                <Filter className="mr-2 h-4 w-4" />
+                <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Filter Role" />
               </SelectTrigger>
               <SelectContent>
@@ -512,12 +512,12 @@ export default function ManajemenPenggunaPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Pengguna</TableHead>
-                  <TableHead>NIDN/NIM/NIP</TableHead>
+                  <TableHead>Username/NIM/NIP</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Sub Role</TableHead>
                   <TableHead>Status</TableHead>
@@ -531,10 +531,10 @@ export default function ManajemenPenggunaPage() {
                     <TableRow key={i}>
                       <TableCell colSpan={7}>
                         <div className="flex items-center space-x-4">
-                          <div className="h-8 w-8 bg-muted rounded-full animate-pulse"></div>
+                          <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
                           <div className="space-y-2">
-                            <div className="h-4 w-32 bg-muted rounded animate-pulse"></div>
-                            <div className="h-3 w-24 bg-muted rounded animate-pulse"></div>
+                            <div className="w-32 h-4 rounded bg-muted animate-pulse"></div>
+                            <div className="w-24 h-3 rounded bg-muted animate-pulse"></div>
                           </div>
                         </div>
                       </TableCell>
@@ -542,19 +542,19 @@ export default function ManajemenPenggunaPage() {
                   ))
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8">
+                    <TableCell colSpan={7} className="py-8 text-center">
                       <div className="flex flex-col items-center space-y-4">
-                        <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-                          <UserX className="h-6 w-6 text-red-600" />
+                        <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full">
+                          <UserX className="w-6 h-6 text-red-600" />
                         </div>
-                        <div className="text-center space-y-2">
+                        <div className="space-y-2 text-center">
                           <h3 className="text-lg font-medium text-red-900">Gagal Memuat Data</h3>
-                          <p className="text-sm text-red-600 max-w-md">
+                          <p className="max-w-md text-sm text-red-600">
                             {error}
                           </p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={retryFetchUsers}
                             disabled={retrying}
                             className="mt-4"
@@ -567,8 +567,8 @@ export default function ManajemenPenggunaPage() {
                   </TableRow>
                 ) : users.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8">
-                      <Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <TableCell colSpan={7} className="py-8 text-center">
+                      <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                       <h3 className="text-lg font-medium">Tidak ada pengguna</h3>
                       <p className="text-muted-foreground">
                         {search || roleFilter !== 'all'
@@ -582,24 +582,24 @@ export default function ManajemenPenggunaPage() {
                     <TableRow key={user.id}>
                       <TableCell>
                         <div className="flex items-center space-x-3">
-                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <UserCheck className="h-4 w-4 text-primary" />
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                            <UserCheck className="w-4 h-4 text-primary" />
                           </div>
                           <div>
                             <div className="font-medium">{user.name}</div>
                             <div className="text-sm text-muted-foreground">
-                              {user.studentProfile ? user.studentProfile.major :
-                               user.lecturerProfile ? user.lecturerProfile.department :
-                               user.staffProfile ? user.staffProfile.department : '-'}
+                              {user.students ? user.studentsmajor :
+                                user.lecturerProfile ? user.lecturerProfile.department :
+                                  user.staffProfile ? user.staffProfile.department : '-'}
                             </div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="font-mono text-sm">
-                          {user.studentProfile ? user.studentProfile.nim :
-                           user.lecturerProfile ? user.lecturerProfile.nip :
-                           user.staffProfile ? user.staffProfile.nip : user.nidn}
+                          {user.students ? user.studentsnim :
+                            user.lecturerProfile ? user.lecturerProfile.nip :
+                              user.staffProfile ? user.staffProfile.nip : user.username}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -625,22 +625,22 @@ export default function ManajemenPenggunaPage() {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
+                            <Button variant="ghost" className="w-8 h-8 p-0">
+                              <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleEditUser(user)}>
-                              <Pencil className="mr-2 h-4 w-4" />
+                              <Pencil className="w-4 h-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleDeleteUser(user)}
                               className="text-red-600"
                             >
-                              <Trash2 className="mr-2 h-4 w-4" />
+                              <Trash2 className="w-4 h-4 mr-2" />
                               Hapus
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -666,7 +666,7 @@ export default function ManajemenPenggunaPage() {
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="w-4 h-4" />
                   Sebelumnya
                 </Button>
                 <Button
@@ -676,7 +676,7 @@ export default function ManajemenPenggunaPage() {
                   disabled={currentPage === totalPages}
                 >
                   Selanjutnya
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -693,12 +693,12 @@ export default function ManajemenPenggunaPage() {
                 {editingUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'}
               </DialogTitle>
               <DialogDescription>
-                {editingUser 
+                {editingUser
                   ? 'Perbarui informasi pengguna. Kosongkan password jika tidak ingin mengubah.'
                   : 'Masukkan informasi untuk pengguna baru.'}
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Nama Lengkap</Label>
@@ -710,18 +710,18 @@ export default function ManajemenPenggunaPage() {
                   required
                 />
               </div>
-              
+
               <div className="grid gap-2">
-                <Label htmlFor="nidn">NIDN</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="nidn"
-                  value={formData.nidn}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nidn: e.target.value }))}
-                  placeholder="Masukkan NIDN"
+                  id="username"
+                  value={formData.username}
+                  onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+                  placeholder="Masukkan Username"
                   required
                 />
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="password">
                   Password {editingUser && '(kosongkan jika tidak ingin mengubah)'}
@@ -736,11 +736,11 @@ export default function ManajemenPenggunaPage() {
                   minLength={6}
                 />
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="role">Role</Label>
-                <Select 
-                  value={formData.role} 
+                <Select
+                  value={formData.role}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
                   required
                 >
@@ -756,12 +756,12 @@ export default function ManajemenPenggunaPage() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {formData.role === 'dosen' && (
                 <div className="grid gap-2">
                   <Label htmlFor="subRole">Sub Role (Opsional)</Label>
-                  <Select 
-                    value={formData.subRole || 'none'} 
+                  <Select
+                    value={formData.subRole || 'none'}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, subRole: value === 'none' ? undefined : value }))}
                   >
                     <SelectTrigger>
@@ -778,7 +778,7 @@ export default function ManajemenPenggunaPage() {
                   </Select>
                 </div>
               )}
-              
+
               <div className="flex items-center space-x-2">
                 <Switch
                   id="isActive"
@@ -788,7 +788,7 @@ export default function ManajemenPenggunaPage() {
                 <Label htmlFor="isActive">Pengguna Aktif</Label>
               </div>
             </div>
-            
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                 Batal
@@ -807,7 +807,7 @@ export default function ManajemenPenggunaPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah Anda yakin ingin menghapus pengguna <strong>{deletingUser?.name}</strong>? 
+              Apakah Anda yakin ingin menghapus pengguna <strong>{deletingUser?.name}</strong>?
               Tindakan ini tidak dapat dibatalkan.
             </AlertDialogDescription>
           </AlertDialogHeader>

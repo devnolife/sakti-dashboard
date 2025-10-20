@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, hasPermission } from '@/lib/auth-middleware'
 import { z } from 'zod'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 const createStudentSchema = z.object({
   userId: z.string(),
@@ -118,16 +119,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists and doesn't already have a student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: validatedData.userId },
-      include: { studentProfile: true }
+      include: { students: true }
     })
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    if (user.studentProfile) {
+    if (user.students) {
       return NextResponse.json({ error: 'User already has a student profile' }, { status: 400 })
     }
 

@@ -8,25 +8,25 @@ export async function GET(request: NextRequest) {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    
+
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Get student's exam history to determine available exams
     const examHistory = await prisma.examApplication.findMany({
@@ -51,11 +51,11 @@ export async function GET(request: NextRequest) {
     })
 
     // Determine available exam types based on student's progress
-    const hasPassedProposal = examHistory.some(exam => 
+    const hasPassedProposal = examHistory.some(exam =>
       exam.type === 'proposal' && (exam.status === 'passed' || exam.status === 'completed')
     )
-    
-    const hasPassedResult = examHistory.some(exam => 
+
+    const hasPassedResult = examHistory.some(exam =>
       exam.type === 'result' && (exam.status === 'passed' || exam.status === 'completed')
     )
 
@@ -131,28 +131,28 @@ export async function POST(request: NextRequest) {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
-    
+
     const { examType, title, abstract, preferredDate, preferredTime, supervisorId, notes } = body
 
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Validate exam type
     const validExamTypes = ['proposal', 'result', 'closing', 'final']
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the exam application
-    const scheduledDate = preferredDate && preferredTime 
+    const scheduledDate = preferredDate && preferredTime
       ? new Date(`${preferredDate}T${preferredTime}:00Z`)
       : null
 

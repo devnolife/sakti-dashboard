@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getServerActionUserId } from '@/lib/auth-utils'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export interface GradeData {
   id: string
@@ -24,15 +25,15 @@ export interface GradeData {
 
 export async function getStudentGradesData(): Promise<GradeData[]> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching student grades data for user:', userId)
 
   try {
     // Get user with student profile and grades
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             grades: {
               include: {
@@ -57,14 +58,14 @@ export async function getStudentGradesData(): Promise<GradeData[]> {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
-    
+    const student = user.students
+
     // Transform grades data
-    const grades: GradeData[] = student.grades.map((grade) => ({
+    const grades: GradeData[] = students?.grades.map((grade) => ({
       id: grade.id,
       score: grade.score,
       letterGrade: grade.letterGrade,

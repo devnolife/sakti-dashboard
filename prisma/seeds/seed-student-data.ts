@@ -2,18 +2,18 @@ import { PrismaClient } from '../../lib/generated/prisma'
 
 export async function seedStudentData(prisma: PrismaClient) {
   console.log('🌱 Seeding student data...')
-  
+
   try {
     // Find the student user
-    const studentUser = await prisma.user.findUnique({
+    const studentUser = await prisma.users.findUnique({
       where: { nidn: 'MAHASISWA001' }
     })
-    
+
     if (!studentUser) {
       console.error('❌ Student user MAHASISWA001 not found')
       return
     }
-    
+
     // Create or update student profile
     const studentProfile = await prisma.student.upsert({
       where: { userId: studentUser.id },
@@ -39,14 +39,14 @@ export async function seedStudentData(prisma: PrismaClient) {
         gpa: 3.75
       }
     })
-    
+
     console.log('✅ Created/Updated student profile for:', studentUser.name)
-    
+
     // Create some sample courses and lecturers
-    const dosen1 = await prisma.user.findUnique({
+    const dosen1 = await prisma.users.findUnique({
       where: { nidn: 'DOSEN001' }
     })
-    
+
     let lecturer1 = null
     if (dosen1) {
       lecturer1 = await prisma.lecturer.upsert({
@@ -65,7 +65,7 @@ export async function seedStudentData(prisma: PrismaClient) {
           specialization: 'Machine Learning'
         }
       })
-      
+
       // Create sample courses
       const courses = [
         {
@@ -101,7 +101,7 @@ export async function seedStudentData(prisma: PrismaClient) {
           description: 'Mata kuliah tentang sistem operasi komputer'
         }
       ]
-      
+
       for (const courseData of courses) {
         const course = await prisma.course.upsert({
           where: { code: courseData.code },
@@ -123,7 +123,7 @@ export async function seedStudentData(prisma: PrismaClient) {
             lecturerId: lecturer1.id
           }
         })
-        
+
         // Create course schedules
         const schedules = [
           { day: 'Senin', startTime: '08:00', endTime: '10:30', room: 'Lab-101', building: 'Gedung A', semester: 'Ganjil', academicYear: '2023' },
@@ -131,7 +131,7 @@ export async function seedStudentData(prisma: PrismaClient) {
           { day: 'Jumat', startTime: '13:00', endTime: '15:30', room: 'Lab-102', building: 'Gedung A', semester: 'Ganjil', academicYear: '2023' },
           { day: 'Selasa', startTime: '15:30', endTime: '18:00', room: 'Ruang-301', building: 'Gedung C', semester: 'Ganjil', academicYear: '2023' }
         ]
-        
+
         const scheduleIndex = courses.indexOf(courseData)
         if (scheduleIndex < schedules.length) {
           const scheduleData = schedules[scheduleIndex]
@@ -148,14 +148,14 @@ export async function seedStudentData(prisma: PrismaClient) {
             }
           })
         }
-        
+
         // Create grades for the student
         const grades = ['A', 'B+', 'A-', 'B']
         const scores = [4.0, 3.3, 3.7, 3.0]
         const gradeIndex = courses.indexOf(courseData)
         const grade = grades[gradeIndex]
         const score = scores[gradeIndex]
-        
+
         await prisma.grade.upsert({
           where: {
             studentId_courseId_semester_academicYear: {
@@ -178,16 +178,16 @@ export async function seedStudentData(prisma: PrismaClient) {
             score: score
           }
         })
-        
+
         console.log(`✅ Created course: ${courseData.code} - ${courseData.name} (Grade: ${grade})`)
       }
     }
-    
+
     // Create sample KKP application
     let kkpCompany = await prisma.company.findFirst({
       where: { name: 'PT Tech Innovation' }
     })
-    
+
     if (!kkpCompany) {
       kkpCompany = await prisma.company.create({
         data: {
@@ -202,7 +202,7 @@ export async function seedStudentData(prisma: PrismaClient) {
         }
       })
     }
-    
+
     if (lecturer1) {
       await prisma.kkpApplication.upsert({
         where: { applicationNumber: 'KKP2023001' },
@@ -231,31 +231,31 @@ export async function seedStudentData(prisma: PrismaClient) {
         }
       })
     }
-    
+
     console.log('✅ Created KKP application')
-    
+
     // Create sample payments
     const paymentTypes = [
-      { 
-        description: 'SPP Semester Ganjil 2023/2024', 
-        amount: 5000000, 
-        dueDate: new Date('2023-12-31'), 
+      {
+        description: 'SPP Semester Ganjil 2023/2024',
+        amount: 5000000,
+        dueDate: new Date('2023-12-31'),
         status: 'pending',
         category: 'tuition',
         semester: 'Ganjil',
         academicYear: '2023'
       },
-      { 
-        description: 'Biaya Praktikum', 
-        amount: 500000, 
-        dueDate: new Date('2023-11-30'), 
+      {
+        description: 'Biaya Praktikum',
+        amount: 500000,
+        dueDate: new Date('2023-11-30'),
         status: 'pending',
         category: 'laboratory',
         semester: 'Ganjil',
         academicYear: '2023'
       }
     ]
-    
+
     for (const payment of paymentTypes) {
       const existingPayment = await prisma.payment.findFirst({
         where: {
@@ -282,9 +282,9 @@ export async function seedStudentData(prisma: PrismaClient) {
         })
       }
     }
-    
+
     console.log('✅ Created sample payments')
-    
+
     // Create sample exam applications
     const existingExam = await prisma.examApplication.findFirst({
       where: {
@@ -306,9 +306,9 @@ export async function seedStudentData(prisma: PrismaClient) {
         }
       })
     }
-    
+
     console.log('✅ Created exam application')
-    
+
     // Create sample book category and books
     const bookCategory = await prisma.bookCategory.upsert({
       where: { code: 'CS' },
@@ -322,12 +322,12 @@ export async function seedStudentData(prisma: PrismaClient) {
         description: 'Buku-buku tentang ilmu komputer'
       }
     })
-    
+
     const books = [
       { title: 'Pemrograman Web dengan PHP', author: 'John Doe', isbn: '978-1234567890' },
       { title: 'Database Systems Concepts', author: 'Abraham Silberschatz', isbn: '978-0987654321' }
     ]
-    
+
     for (const bookData of books) {
       const book = await prisma.book.upsert({
         where: { isbn: bookData.isbn },
@@ -346,7 +346,7 @@ export async function seedStudentData(prisma: PrismaClient) {
           status: 'available'
         }
       })
-      
+
       // Create borrowing record if not exists
       const existingBorrowing = await prisma.bookBorrowing.findFirst({
         where: {
@@ -368,11 +368,11 @@ export async function seedStudentData(prisma: PrismaClient) {
         })
       }
     }
-    
+
     console.log('✅ Created sample book borrowings')
-    
+
     console.log('🎉 Student data seeding completed!')
-    
+
   } catch (error) {
     console.error('❌ Error seeding student data:', error)
     throw error

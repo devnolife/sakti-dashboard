@@ -1,3 +1,4 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { PrismaClient } from '@/lib/generated/prisma'
 
 const prisma = new PrismaClient()
@@ -46,10 +47,10 @@ async function checkCorrespondenceData() {
     console.log(`   Found ${attachmentsCount} letter attachments`)
 
     console.log('\n4. Checking Student table for user: cmfz4q41z00019yo0urpkhgyf')
-    const targetUser = await prisma.user.findUnique({
+    const targetUser = await prisma.users.findUnique({
       where: { id: 'cmfz4q41z00019yo0urpkhgyf' },
       include: {
-        studentProfile: {
+        students: {
           include: {
             letterRequests: {
               include: {
@@ -61,16 +62,16 @@ async function checkCorrespondenceData() {
       }
     })
 
-    if (targetUser && targetUser.studentProfile) {
+    if (targetUser && targetUser.students) {
       console.log(`   User found: ${targetUser.name} (${targetUser.nidn})`)
-      console.log(`   Student ID: ${targetUser.studentProfile.id}`)
-      console.log(`   Student NIM: ${targetUser.studentProfile.nim}`)
-      console.log(`   Student Major: ${targetUser.studentProfile.major}`)
-      console.log(`   Letter requests count: ${targetUser.studentProfile.letterRequests.length}`)
-      
-      if (targetUser.studentProfile.letterRequests.length > 0) {
+      console.log(`   Student ID: ${targetUser.students.id}`)
+      console.log(`   Student NIM: ${targetUser.students.nim}`)
+      console.log(`   Student Major: ${targetUser.students.major}`)
+      console.log(`   Letter requests count: ${targetUser.students.letterRequests.length}`)
+
+      if (targetUser.students.letterRequests.length > 0) {
         console.log('   Letter requests:')
-        targetUser.studentProfile.letterRequests.forEach((req: any) => {
+        targetUser.students.letterRequests.forEach((req: any) => {
           console.log(`   - ${req.id}: ${req.title} (${req.status})`)
         })
       }

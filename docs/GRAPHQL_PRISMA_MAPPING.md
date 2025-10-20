@@ -403,7 +403,7 @@ export async function syncStudent(nim: string) {
   ])
 
   // 2. Find or create User
-  const user = await prisma.user.upsert({
+  const user = await prisma.users.upsert({
     where: { nidn: nim },
     update: { name: data.nama },
     create: {

@@ -4,26 +4,26 @@ const prisma = new PrismaClient()
 
 async function addMockData() {
   console.log('📝 Adding mock data for student dashboard...')
-  
+
   // Get student
   const student = await prisma.student.findFirst({
     where: { nim: '2021010001' }
   })
-  
+
   if (!student) {
     console.error('Student not found')
     return
   }
-  
-  const user = await prisma.user.findUnique({
+
+  const user = await prisma.users.findUnique({
     where: { id: student.userId }
   })
-  
+
   if (!user) {
     console.error('User not found')
     return
   }
-  
+
   // Add some payments
   const payments = [
     {
@@ -45,7 +45,7 @@ async function addMockData() {
       academicYear: '2025'
     }
   ]
-  
+
   for (const payment of payments) {
     // Check if payment exists
     const existingPayment = await prisma.payment.findFirst({
@@ -56,7 +56,7 @@ async function addMockData() {
         semester: payment.semester
       }
     })
-    
+
     if (!existingPayment) {
       await prisma.payment.create({
         data: {
@@ -67,7 +67,7 @@ async function addMockData() {
     }
   }
   console.log('✅ Added payment data')
-  
+
   // Add notifications
   const notifications = [
     {
@@ -79,7 +79,7 @@ async function addMockData() {
     {
       title: 'Jadwal Ujian Tengah Semester',
       message: 'Jadwal UTS telah dipublikasikan. Silakan cek portal akademik',
-      type: 'info' as const, 
+      type: 'info' as const,
       userId: user.id
     },
     {
@@ -89,14 +89,14 @@ async function addMockData() {
       userId: user.id
     }
   ]
-  
+
   for (const notif of notifications) {
     await prisma.notification.create({
       data: notif
     })
   }
   console.log('✅ Added notification data')
-  
+
   // Add exam application
   await prisma.examApplication.create({
     data: {
@@ -109,7 +109,7 @@ async function addMockData() {
     }
   })
   console.log('✅ Added exam application')
-  
+
   console.log('🎉 Mock data added successfully!')
 }
 

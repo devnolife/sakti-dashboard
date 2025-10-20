@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader2, Eye, EyeOff } from "lucide-react"
+import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
@@ -188,7 +188,7 @@ export default function LoginPage() {
                     <Input
                       id="username"
                       type="text"
-                      placeholder="Masukkan NIM atau NIDN"
+                      placeholder="Masukkan Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       className="h-12 pl-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100 rounded-xl"
@@ -264,12 +264,13 @@ export default function LoginPage() {
                     </SelectContent>
                   </Select>
                   <p className="mt-2 text-xs text-gray-500">
-                    Masukkan NIM untuk Mahasiswa atau NIDN untuk Dosen
+                    Masukkan Username Anda
                   </p>
                 </div>
                 {formError && (
-                  <div className="p-4 border border-red-200 rounded-xl bg-red-50">
-                    <p className="text-sm font-medium text-center text-red-600">{formError}</p>
+                  <div className="flex items-start gap-3 p-4 border border-red-200 rounded-xl bg-red-50">
+                    <AlertCircle className="w-5 h-5 mt-0.5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm font-medium text-red-600">{formError}</p>
                   </div>
                 )}
                 <Button

@@ -1,3 +1,4 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { PrismaClient } from '../../lib/generated/prisma'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 
@@ -9,14 +10,14 @@ async function checkExamData() {
 
   try {
     // First, check if user exists and get student data
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       console.log('❌ User or student not found')
       return
     }
@@ -24,14 +25,14 @@ async function checkExamData() {
     console.log('✅ User found:', {
       name: user.name,
       nidn: user.nidn,
-      studentId: user.studentProfile.id,
-      nim: user.studentProfile.nim
+      studentId: user.students.id,
+      nim: user.students.nim
     })
 
     // Check exam applications
     const examApplications = await prisma.examApplication.findMany({
       where: {
-        studentId: user.studentProfile.id
+        studentId: user.students.id
       },
       include: {
         advisor1: {
@@ -61,7 +62,7 @@ async function checkExamData() {
     })
 
     console.log('\n📋 Exam Applications:', examApplications.length)
-    
+
     if (examApplications.length === 0) {
       console.log('   No exam applications found')
     } else {

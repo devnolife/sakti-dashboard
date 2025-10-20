@@ -3,6 +3,7 @@
 import { LetterStatus } from "@/types/correspondence"
 import { prisma } from "@/lib/prisma"
 import { getServerActionUserId } from "@/lib/auth-utils"
+import { students } from "@/components/dekan/vice-dean-4/mock-data";
 
 // Submit a new letter request
 export async function submitLetterRequest(
@@ -16,12 +17,12 @@ export async function submitLetterRequest(
   try {
     // Get student ID from session
     const userId = await getServerActionUserId()
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
-      include: { studentProfile: true }
+      include: { students: true }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return {
         success: false,
         message: "Student profile not found"
@@ -42,7 +43,7 @@ export async function submitLetterRequest(
         title,
         purpose,
         description,
-        studentId: user.studentProfile.id,
+        studentId: user.students.id,
         approvalRole: approvalRole as any,
         additionalInfo: additionalInfo || {},
         status: 'submitted'

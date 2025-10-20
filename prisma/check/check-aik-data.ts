@@ -1,3 +1,4 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { PrismaClient } from '../../lib/generated/prisma'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 
@@ -9,28 +10,28 @@ async function checkAIKData() {
     console.log('Checking AIK Komfren data for userId:', userId)
 
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       console.log('❌ Student not found')
       return
     }
 
     console.log('✅ Student found:', {
       name: user.name,
-      nim: user.studentProfile.nim,
-      studentId: user.studentProfile.id
+      nim: user.students.nim,
+      studentId: user.students.id
     })
 
     // Check for AIK Komfren exam applications (using ExamType.other)
     const aikExams = await prisma.examApplication.findMany({
       where: {
-        studentId: user.studentProfile.id,
+        studentId: user.students.id,
         type: 'other',  // AIK Komfren menggunakan 'other' type
         title: {
           contains: 'AIK',
@@ -57,7 +58,7 @@ async function checkAIKData() {
     })
 
     console.log(`\n📋 Found ${aikExams.length} AIK Komfren exam applications`)
-    
+
     if (aikExams.length === 0) {
       console.log('❌ No AIK Komfren exams found - need to seed data')
     } else {

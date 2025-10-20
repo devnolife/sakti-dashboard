@@ -73,15 +73,15 @@ export interface ControlCardData {
 
 export async function getStudentAcademicData(): Promise<AcademicData> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching student academic data for user:', userId)
 
   try {
     // Get user with student profile, grades, and consultations
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             academicAdvisor: {
               include: {
@@ -109,17 +109,17 @@ export async function getStudentAcademicData(): Promise<AcademicData> {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
-    
+    const student = user.students
+
     // Calculate academic progress
     const totalCredits = student.grades.reduce((sum, grade) => sum + grade.course.credits, 0)
     const requiredCredits = 144 // Standard S1 requirement
     const progressPercentage = Math.round((totalCredits / requiredCredits) * 100)
-    
+
     // Mock required vs elective courses progress (can be enhanced later)
     const requiredCoursesProgress = Math.min(90, progressPercentage + Math.floor(Math.random() * 10))
     const electiveCoursesProgress = Math.max(60, progressPercentage - Math.floor(Math.random() * 20))
@@ -127,17 +127,17 @@ export async function getStudentAcademicData(): Promise<AcademicData> {
     // Current semester stats
     const currentYear = new Date().getFullYear().toString()
     const currentSemester = new Date().getMonth() < 6 ? 'genap' : 'ganjil'
-    
+
     const currentSemesterGrades = student.grades.filter(
       grade => grade.academicYear === currentYear && grade.semester.toLowerCase() === currentSemester.toLowerCase()
     )
-    
+
     const currentSemesterCredits = currentSemesterGrades.reduce((sum, grade) => sum + grade.course.credits, 0)
-    const currentSemesterGPA = currentSemesterGrades.length > 0 
+    const currentSemesterGPA = currentSemesterGrades.length > 0
       ? currentSemesterGrades.reduce((sum, grade) => {
-          const points = getGradePoints(grade.letterGrade)
-          return sum + (points * grade.course.credits)
-        }, 0) / currentSemesterCredits
+        const points = getGradePoints(grade.letterGrade)
+        return sum + (points * grade.course.credits)
+      }, 0) / currentSemesterCredits
       : null
 
     // Transform consultations data
@@ -219,7 +219,7 @@ function getGradePoints(letterGrade: string): number {
 export async function getControlCardData(): Promise<ControlCardData> {
   try {
     const userId = await getServerActionUserId()
-    
+
     // Get student data with academic advisor and consultations
     const student = await prisma.student.findUnique({
       where: {
@@ -249,7 +249,7 @@ export async function getControlCardData(): Promise<ControlCardData> {
       no: index + 1,
       date: consultation.date.toLocaleDateString('id-ID', {
         day: 'numeric',
-        month: 'long', 
+        month: 'long',
         year: 'numeric'
       }),
       uraian: consultation.uraian,

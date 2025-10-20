@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getServerActionUserId } from '@/lib/auth-utils'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export interface Book {
   id: string
@@ -49,15 +50,15 @@ export interface LibraryData {
 
 export async function getLibraryData(): Promise<LibraryData> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching library data for user:', userId)
 
   try {
     // Get user with student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             bookBorrowings: {
               include: {
@@ -74,11 +75,11 @@ export async function getLibraryData(): Promise<LibraryData> {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
+    const student = user.students
 
     // Get all books with categories
     const allBooks = await prisma.book.findMany({
@@ -104,7 +105,7 @@ export async function getLibraryData(): Promise<LibraryData> {
       const activeBorrowings = book.borrowings.length
       const totalCopies = 5 // Mock total copies, can be made dynamic
       const availableCopies = Math.max(0, totalCopies - activeBorrowings)
-      
+
       return {
         id: book.id,
         title: book.title,
@@ -140,11 +141,11 @@ export async function getLibraryData(): Promise<LibraryData> {
     const totalBooks = allBooks.length
     const availableBooks = books.filter(book => book.isAvailable).length
     const borrowedByStudent = borrowedBooks.length
-    
+
     // Get recent returns (last 7 days)
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-    
+
     const recentReturns = await prisma.bookBorrowing.count({
       where: {
         studentId: student.id,
@@ -219,7 +220,7 @@ export interface ThesisData {
 
 export async function getThesisTitlesData(): Promise<ThesisData> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching thesis titles data for user:', userId)
 
   try {
@@ -266,7 +267,7 @@ export async function getThesisTitlesData(): Promise<ThesisData> {
     const total = theses.length
     const approved = theses.filter(t => t.status === 'approved').length
     const pending = theses.filter(t => t.status === 'pending').length
-    
+
     const byField = theses.reduce((acc, thesis) => {
       acc[thesis.field] = (acc[thesis.field] || 0) + 1
       return acc
@@ -313,15 +314,15 @@ export interface ThesisSubmissionData {
 
 export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching thesis submission data for user:', userId)
 
   try {
     // Get user with student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             thesesAuthored: {
               include: {
@@ -338,11 +339,11 @@ export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
+    const student = user.students
 
     // Transform submission data
     const submissions: StudentThesisSubmission[] = student.thesesAuthored.map(thesis => ({
@@ -385,15 +386,15 @@ export async function submitThesisTitle(data: {
   supervisorId?: string
 }): Promise<{ success: boolean; message: string; thesisId?: string }> {
   const userId = await getServerActionUserId()
-  
+
   console.log('📝 Submitting thesis title for user:', userId)
 
   try {
     // Get user with student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             thesesAuthored: {
               where: {
@@ -408,11 +409,11 @@ export async function submitThesisTitle(data: {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
+    const student = user.students
 
     // Check if student can submit
     const hasPendingSubmission = student.thesesAuthored.some(t => t.status === 'pending')

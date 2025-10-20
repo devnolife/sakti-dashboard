@@ -2,33 +2,34 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getServerActionUserId } from '@/lib/auth-utils'
 import { authMiddleware } from '@/lib/auth-middleware'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export async function GET(request: NextRequest) {
   try {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') // all, pending, approved, completed, rejected
-    
+
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Build where clause based on status filter
     let whereClause: any = {
@@ -80,20 +81,20 @@ export async function GET(request: NextRequest) {
     // Transform data for frontend
     const transformedSubmissions = examSubmissions.map(exam => ({
       id: exam.id,
-      examType: exam.type === 'proposal' ? 'Ujian Proposal' : 
-                exam.type === 'result' ? 'Ujian Hasil' :
-                exam.type === 'closing' ? 'Ujian Tertutup' : 'Ujian Lainnya',
+      examType: exam.type === 'proposal' ? 'Ujian Proposal' :
+        exam.type === 'result' ? 'Ujian Hasil' :
+          exam.type === 'closing' ? 'Ujian Tertutup' : 'Ujian Lainnya',
       title: exam.title,
       submittedDate: exam.submissionDate.toISOString().split('T')[0],
       scheduledDate: exam.scheduledDate ? exam.scheduledDate.toISOString().split('T')[0] : null,
-      scheduledTime: exam.scheduledDate ? 
+      scheduledTime: exam.scheduledDate ?
         `${exam.scheduledDate.getHours().toString().padStart(2, '0')}:${exam.scheduledDate.getMinutes().toString().padStart(2, '0')} - ${(exam.scheduledDate.getHours() + 2).toString().padStart(2, '0')}:${exam.scheduledDate.getMinutes().toString().padStart(2, '0')}` : null,
       status: mapStatus(exam.status),
       location: exam.location,
       committee: exam.committees.map(committee => ({
         name: committee.lecturer.user.name,
-        role: committee.role === 'chairman' ? 'Ketua' : 
-              committee.role === 'secretary' ? 'Sekretaris' : 'Anggota'
+        role: committee.role === 'chairman' ? 'Ketua' :
+          committee.role === 'secretary' ? 'Sekretaris' : 'Anggota'
       })),
       notes: generateNotes(exam.status, exam.type),
       result: exam.status === 'completed' || exam.status === 'passed' ? {
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
         grade: 'A',
         feedback: 'Presentasi sangat baik dengan metodologi yang jelas. Penelitian menunjukkan hasil yang signifikan.'
       } : null,
-      reason: exam.status === 'cancelled' ? 
+      reason: exam.status === 'cancelled' ?
         'Dokumen yang diajukan perlu perbaikan. Silakan hubungi pembimbing untuk revisi.' : null
     }))
 
@@ -124,7 +125,7 @@ export async function DELETE(request: NextRequest) {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const examId = searchParams.get('id')
@@ -137,21 +138,21 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Check if exam belongs to student and is cancellable
     const exam = await prisma.examApplication.findFirst({

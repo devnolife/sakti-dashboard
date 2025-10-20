@@ -10,22 +10,22 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        nidn: { label: 'NIDN', type: 'text' },
+        username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.nidn || !credentials?.password) {
+        if (!credentials?.username || !credentials?.password) {
           return null
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
           where: {
-            nidn: credentials.nidn
+            username: credentials.username
           },
           include: {
-            studentProfile: true,
-            lecturerProfile: true,
-            staffProfile: true
+            students: true,
+            lecturers: true,
+            staff: true
           }
         })
 
@@ -41,12 +41,12 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: user.id,
-          nidn: user.nidn,
+          username: user.username,
           name: user.name,
           role: user.role,
-          subRole: user.subRole,
-          avatar: user.avatar,
-          profile: user.studentProfile || user.lecturerProfile || user.staffProfile
+          subRole: user.subRole || undefined,
+          avatar: user.avatar || undefined,
+          profile: user.students || user.lecturers || user.staff
         }
       }
     })
@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = user.role
         token.subRole = user.subRole
-        token.nidn = user.nidn
+        token.username = user.username
         token.profile = user.profile
       }
       return token
@@ -68,7 +68,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.sub!
       session.user.role = token.role as string
       session.user.subRole = token.subRole as string
-      session.user.nidn = token.nidn as string
+      session.user.username = token.username as string
       session.user.profile = token.profile
       return session
     }

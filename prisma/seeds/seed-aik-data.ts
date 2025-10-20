@@ -1,3 +1,4 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { PrismaClient } from '../../lib/generated/prisma'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 
@@ -7,20 +8,20 @@ export async function seedAIKData(prisma: PrismaClient) {
     console.log('Seeding AIK Komfren data for userId:', userId)
 
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       console.log('❌ Student not found')
       return
     }
 
-    const studentId = user.studentProfile.id
-    console.log('✅ Student found:', user.name, 'NIM:', user.studentProfile.nim)
+    const studentId = user.students.id
+    console.log('✅ Student found:', user.name, 'NIM:', user.students.nim)
 
     // Get a lecturer to be the examiner (preferably from Islamic Studies)
     // We'll use the first available lecturer as the examiner

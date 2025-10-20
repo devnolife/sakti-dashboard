@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     console.log('Querying database with where clause:', where)
 
     const [users, total] = await Promise.all([
-      prisma.user.findMany({
+      prisma.users.findMany({
         where,
         skip,
         take: limit,
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: 'desc' }
       }),
-      prisma.user.count({ where })
+      prisma.users.count({ where })
     ])
 
     console.log(`Found ${users.length} users, total: ${total}`)
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     const validatedData = createUserSchema.parse(body)
 
     // Check if username already exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { username: validatedData.username }
     })
 
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10)
 
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
         ...validatedData,
         password: hashedPassword

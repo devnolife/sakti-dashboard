@@ -33,12 +33,12 @@ export async function getCurrentUserFromToken(request?: NextRequest): Promise<st
     const decoded = jwt.verify(token, JWT_SECRET) as any
 
     // Check if session exists and is not expired
-    const session = await prisma.session.findUnique({
+    const session = await prisma.sessions.findUnique({
       where: { token },
-      include: { user: true }
+      include: { users: true }
     })
 
-    if (!session || session.expiresAt < new Date() || !session.user.isActive) {
+    if (!session || session.expiresAt < new Date() || !session.users.isActive) {
       return null
     }
 
@@ -82,15 +82,15 @@ export async function getServerActionUserId(): Promise<string> {
     }
 
     // Validate against session table & user status
-    const sessionRecord = await prisma.session.findUnique({
+    const sessionRecord = await prisma.sessions.findUnique({
       where: { token },
-      include: { user: true }
+      include: { users: true }
     })
 
     if (!sessionRecord || sessionRecord.expiresAt < new Date()) {
       throw new Error('Unauthorized: session expired')
     }
-    if (!sessionRecord.user.isActive) {
+    if (!sessionRecord.users.isActive) {
       throw new Error('Unauthorized: user inactive')
     }
 

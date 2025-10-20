@@ -1,3 +1,4 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { PrismaClient } from '../../lib/generated/prisma'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 
@@ -9,20 +10,20 @@ async function clearAIKData() {
     console.log('Clearing AIK Komfren data for userId:', userId)
 
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       console.log('❌ Student not found')
       return
     }
 
-    const studentId = user.studentProfile.id
-    console.log('✅ Student found:', user.name, 'NIM:', user.studentProfile.nim)
+    const studentId = user.students.id
+    console.log('✅ Student found:', user.name, 'NIM:', user.students.nim)
 
     // Find all AIK exams for this student
     const aikExams = await prisma.examApplication.findMany({
@@ -44,7 +45,7 @@ async function clearAIKData() {
 
     for (const exam of aikExams) {
       console.log(`\n🗑️  Deleting AIK Exam: ${exam.title} (${exam.status})`)
-      
+
       // Delete related documents first
       await prisma.examDocument.deleteMany({
         where: { examId: exam.id }

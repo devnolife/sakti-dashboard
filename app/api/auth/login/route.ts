@@ -2,13 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
 import { graphqlClient } from '@/lib/graphql/client'
 import { GET_MAHASISWA_USER, type MahasiswaUserResponse } from '@/lib/graphql/queries'
 import { md5Hash, verifyMd5Password } from '@/lib/utils/md5'
+import { randomBytes } from 'crypto'
 
 const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key'
 
-console.log('Auth API loaded, bcrypt available:', !!bcrypt)
+// Helper function to generate ID similar to cuid
+function generateId(): string {
+  return `c${randomBytes(12).toString('base64url')}`
+}
 
 /**
  * Sync mahasiswa from GraphQL to local database
@@ -36,27 +41,29 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
     const hashedPassword = await bcrypt.hash(graphqlPassword, 10)
 
     // Create or update user
-    const user = await prisma.user.upsert({
+    const user = await prisma.users.upsert({
       where: { username: nim },
       update: {
         name: mahasiswaData.nama,
         // Keep existing password in DB if updating
       },
       create: {
+        id: generateId(),
         username: nim,
         name: mahasiswaData.nama,
         password: hashedPassword,
         role: 'mahasiswa',
         isActive: true,
         avatar: mahasiswaData.foto || null,
+        updatedAt: new Date(),
       },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
     // Create or update student profile
-    const student = await prisma.student.upsert({
+    const student = await prisma.students.upsert({
       where: { nim },
       update: {
         phone: mahasiswaData.hp,
@@ -64,6 +71,7 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
         department: 'Fakultas Teknik', // Default, will be updated from full sync
       },
       create: {
+        id: generateId(),
         userId: user.id,
         nim,
         phone: mahasiswaData.hp,
@@ -79,12 +87,12 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
     console.log('Mahasiswa synced to local DB:', { nim, userId: user.id, studentId: student.id })
 
     // Return user with profile
-    return await prisma.user.findUnique({
+    return await prisma.users.findUnique({
       where: { id: user.id },
       include: {
-        studentProfile: true,
-        lecturerProfile: true,
-        staffProfile: true
+        students: true,
+        lecturers: true,
+        staff: true
       }
     })
   } catch (error) {
@@ -97,7 +105,14 @@ export async function POST(request: NextRequest) {
   try {
     const { username, password, selectedRole } = await request.json()
 
-    console.log('Login attempt:', { username, selectedRole })
+    console.log('========================================')
+    console.log('🔐 Login attempt:', { username, selectedRole })
+    console.log('========================================')
+
+    // Debug: Hash password dengan MD5 untuk melihat hasilnya
+    const hashedPassword = crypto.createHash("md5").update(password).digest("hex")
+    console.log('Password (plain):', password)
+    console.log('Password (MD5 hash):', hashedPassword)
 
     if (!username || !password) {
       return NextResponse.json(
@@ -110,42 +125,58 @@ export async function POST(request: NextRequest) {
     let isNewUser = false
 
     // Step 1: Try to find user in local database
-    user = await prisma.user.findUnique({
+    user = await prisma.users.findUnique({
       where: { username },
       include: {
-        studentProfile: true,
-        lecturerProfile: true,
-        staffProfile: true
+        students: true,
+        lecturers: true,
+        staff: true
       }
     })
 
     console.log('User found in local DB:', user ? { username: user.username, role: user.role } : 'Not found')
 
     if (user) {
-      // User exists in local DB - verify with bcrypt
-      console.log('Verifying password with bcrypt...')
+      // User exists in local DB - verify password
+      console.log('Verifying password...')
 
       let isValidPassword = false
-      try {
-        isValidPassword = await bcrypt.compare(password, user.password)
-        console.log('Password valid:', isValidPassword)
-      } catch (bcryptError) {
-        console.error('Bcrypt comparison error:', bcryptError)
-        return NextResponse.json(
-          { error: 'Authentication error' },
-          { status: 500 }
-        )
+
+      // Check if password is bcrypt (starts with $2a$, $2b$, or $2y$) or MD5 (32 hex chars)
+      const isBcrypt = user.password.startsWith('$2a$') || user.password.startsWith('$2b$') || user.password.startsWith('$2y$')
+
+      if (isBcrypt) {
+        console.log('Password format: bcrypt')
+        try {
+          isValidPassword = await bcrypt.compare(password, user.password)
+          console.log('Bcrypt verification:', isValidPassword)
+        } catch (bcryptError) {
+          console.error('Bcrypt comparison error:', bcryptError)
+          return NextResponse.json(
+            { error: 'Authentication error' },
+            { status: 500 }
+          )
+        }
+      } else {
+        console.log('Password format: MD5')
+        // Verify with MD5
+        isValidPassword = hashedPassword === user.password
+        console.log('MD5 verification:', isValidPassword)
+        console.log('Input hash:', hashedPassword)
+        console.log('DB hash:', user.password)
       }
 
       if (!isValidPassword) {
-        console.log('Password comparison failed')
+        console.log('❌ Password comparison failed - Invalid credentials')
+        console.log('Returning 401 error...')
         return NextResponse.json(
-          { error: 'Invalid credentials' },
+          { error: 'Password salah. Silakan coba lagi.' },
           { status: 401 }
         )
       }
+
+      console.log('✅ Password verification successful')
     } else {
-      // Step 2: User not in local DB - try GraphQL for mahasiswa
       console.log('User not in local DB, checking GraphQL...')
 
       try {
@@ -158,27 +189,30 @@ export async function POST(request: NextRequest) {
         const mahasiswaData = response.mahasiswaUser
 
         if (!mahasiswaData) {
-          console.log('User not found in GraphQL either')
+          console.log('❌ User not found in GraphQL')
           return NextResponse.json(
-            { error: 'Invalid credentials' },
+            { error: 'Akun tidak ditemukan. Periksa kembali username Anda.' },
             { status: 401 }
           )
         }
 
         console.log('Mahasiswa found in GraphQL, verifying password with MD5...')
+        console.log('Input MD5 hash:', hashedPassword)
+        console.log('GraphQL password hash:', mahasiswaData.passwd)
 
         // Verify password using MD5 (GraphQL uses MD5)
-        const isValidPassword = verifyMd5Password(password, mahasiswaData.passwd)
-
-        if (!isValidPassword) {
-          console.log('GraphQL password verification failed')
+        // Langsung bandingkan hash MD5 dari input dengan hash dari GraphQL
+        if (hashedPassword !== mahasiswaData.passwd) {
+          console.log('❌ Password mismatch - Invalid credentials')
+          console.log('Hash tidak sama, password salah!')
           return NextResponse.json(
-            { error: 'Invalid credentials' },
+            { error: 'Password salah. Silakan coba lagi.' },
             { status: 401 }
           )
         }
 
-        console.log('GraphQL password verified, syncing to local DB...')
+        console.log('✅ Password matched!')
+        console.log('Syncing user to local DB...')
 
         // Password valid - sync to local database
         user = await syncMahasiswaFromGraphQL(username, password)
@@ -197,7 +231,7 @@ export async function POST(request: NextRequest) {
       } catch (graphqlError: any) {
         console.error('GraphQL error:', graphqlError)
         return NextResponse.json(
-          { error: 'Invalid credentials' },
+          { error: 'Akun tidak ditemukan atau terjadi kesalahan sistem. Silakan hubungi administrator.' },
           { status: 401 }
         )
       }
@@ -232,8 +266,9 @@ export async function POST(request: NextRequest) {
     )
 
     // Create session record
-    const session = await prisma.session.create({
+    const session = await prisma.sessions.create({
       data: {
+        id: generateId(),
         userId: user.id,
         token,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
@@ -241,8 +276,9 @@ export async function POST(request: NextRequest) {
     })
 
     // Log audit
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
+        id: generateId(),
         userId: user.id,
         action: isNewUser ? 'first_login' : 'login',
         resource: 'auth',
@@ -264,7 +300,7 @@ export async function POST(request: NextRequest) {
         role: user.role,
         subRole: user.subRole,
         avatar: user.avatar,
-        profile: user.studentProfile || user.lecturerProfile || user.staffProfile,
+        profile: user.students || user.lecturers || user.staff,
         isNewUser
       },
       token

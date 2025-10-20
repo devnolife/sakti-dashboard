@@ -29,9 +29,9 @@ export async function GET(request: NextRequest) {
       totalBooks,
       recentAuditLogs,
     ] = await Promise.all([
-      prisma.user.count(),
-      prisma.user.count({ where: { isActive: true } }),
-      prisma.user.groupBy({
+      prisma.users.count(),
+      prisma.users.count({ where: { isActive: true } }),
+      prisma.users.groupBy({
         by: ['role'],
         _count: true,
       }),

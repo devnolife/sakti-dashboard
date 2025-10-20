@@ -34,15 +34,15 @@ export interface CourseData {
 
 export async function getStudentCoursesData(): Promise<CourseData[]> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching student courses data for user:', userId)
 
   try {
     // Get user with student profile and courses
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             grades: {
               include: {
@@ -64,12 +64,12 @@ export async function getStudentCoursesData(): Promise<CourseData[]> {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
-    
+    const student = user.students
+
     // Current academic year and semester
     const currentAcademicYear = new Date().getFullYear().toString()
     const currentSemester = new Date().getMonth() < 6 ? 'genap' : 'ganjil'
@@ -98,13 +98,13 @@ export async function getStudentCoursesData(): Promise<CourseData[]> {
       else level = 'expert'
 
       // Calculate progress (mock for now, could be based on actual completion data)
-      const progress = status === 'completed' ? 100 : 
-                      status === 'ongoing' ? Math.floor(Math.random() * 40) + 50 : 0
+      const progress = status === 'completed' ? 100 :
+        status === 'ongoing' ? Math.floor(Math.random() * 40) + 50 : 0
 
       // Generate color schemes
       const colors = [
         'from-blue-500 to-purple-600',
-        'from-green-500 to-teal-600', 
+        'from-green-500 to-teal-600',
         'from-orange-500 to-red-600',
         'from-pink-500 to-rose-600',
         'from-yellow-500 to-orange-600',
@@ -128,8 +128,8 @@ export async function getStudentCoursesData(): Promise<CourseData[]> {
         instructor: course.lecturer?.user.name || 'TBA',
         credits: course.credits,
         currentGrade: grade.letterGrade,
-        attendance: status === 'completed' ? '100%' : 
-                   status === 'ongoing' ? `${Math.floor(Math.random() * 20) + 80}%` : '0%',
+        attendance: status === 'completed' ? '100%' :
+          status === 'ongoing' ? `${Math.floor(Math.random() * 20) + 80}%` : '0%',
         progress,
         status,
         level,
@@ -139,7 +139,7 @@ export async function getStudentCoursesData(): Promise<CourseData[]> {
         description: course.description || `Mata kuliah ${course.name} untuk ${course.department}`,
         modules: Math.floor(Math.random() * 8) + 8, // 8-15 modules
         completedModules: Math.floor(progress / 100 * (Math.floor(Math.random() * 8) + 8)),
-        nextClass: status === 'ongoing' && schedules.length > 0 ? 
+        nextClass: status === 'ongoing' && schedules.length > 0 ?
           new Date(Date.now() + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000) : undefined,
         color: colors[index % colors.length],
         tags: tags.length > 0 ? tags : ['Academic'],

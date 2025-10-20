@@ -26,7 +26,7 @@ export async function authMiddleware(request: NextRequest) {
     const decoded = jwt.verify(token, JWT_SECRET) as any
 
     // Check if session exists and is not expired
-    const session = await prisma.session.findUnique({
+    const session = await prisma.sessions.findUnique({
       where: { token },
       include: { users: true }
     })

@@ -42,15 +42,15 @@ export interface ScheduleData {
 
 export async function getStudentScheduleData(): Promise<ScheduleData> {
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching student schedule data for user:', userId)
 
   try {
     // Get user with student profile and academic events
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             academicEvents: {
               include: {
@@ -86,11 +86,11 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
+    const student = user.students
 
     // Transform academic events
     const events: ScheduleEvent[] = student.academicEvents.map((event) => ({
@@ -120,7 +120,7 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
 
     // Transform weekly schedule from course schedules
     const weeklySchedule: ScheduleData['weeklySchedule'] = []
-    
+
     for (const grade of student.grades) {
       const course = grade.course
       if (course.schedules && course.schedules.length > 0) {
@@ -148,7 +148,7 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
     console.log(`- Total Academic Events: ${events.length}`)
     console.log(`- Weekly Schedule Items: ${weeklySchedule.length}`)
     console.log(`- Events by type:`)
-    
+
     const eventsByType = events.reduce((acc, event) => {
       acc[event.type] = (acc[event.type] || 0) + 1
       return acc

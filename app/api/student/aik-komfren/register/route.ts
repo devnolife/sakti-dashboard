@@ -8,29 +8,29 @@ export async function POST(request: NextRequest) {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
-    
+
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Check if student already has an active AIK exam
-    const existingAIKExam = await prisma.examApplication.findFirst({
+    const existingAIKExam = await prisma.exam_applications.findFirst({
       where: {
         studentId: studentId,
         type: 'other',
@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
         default:
           statusMessage = 'You already have an active AIK Komfren exam application.'
       }
-      
+
       return NextResponse.json(
-        { 
+        {
           error: 'Registration not allowed',
           message: statusMessage,
           existingExam: {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Additional validation: Check if student has passed AIK exam before
-    const passedAIKExam = await prisma.examApplication.findFirst({
+    const passedAIKExam = await prisma.exam_applications.findFirst({
       where: {
         studentId: studentId,
         type: 'other',
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
     if (passedAIKExam) {
       return NextResponse.json(
-        { 
+        {
           error: 'Registration not allowed',
           message: 'You have already passed the AIK Komfren exam. No need to register again.',
           passedExam: {
@@ -114,14 +114,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create AIK Komfren exam application
-    const aikExam = await prisma.examApplication.create({
+    const aikExam = await prisma.exam_applications.create({
       data: {
+        id: `AIK-${Date.now()}-${studentId.substring(0, 8)}`,
         title: 'AIK Komfren Examination',
         type: 'other',
         status: 'applicant',
         abstract: 'Ujian AIK (Al-Islam dan Kemuhammadiyahan) dan Komfren (Kemuhammadiyahan dan Profesi) sebagai syarat kelulusan mahasiswa.',
         submissionDate: new Date(),
         studentId: studentId,
+        updatedAt: new Date(),
         // Note: examiner will be assigned later by admin
       }
     })
@@ -133,7 +135,7 @@ export async function POST(request: NextRequest) {
     if (notes) examNotes.push(`Student Notes: ${notes}`)
 
     if (examNotes.length > 0) {
-      await prisma.examApplication.update({
+      await prisma.exam_applications.update({
         where: { id: aikExam.id },
         data: {
           abstract: `${aikExam.abstract}\n\nPreferences:\n${examNotes.join('\n')}`
@@ -164,18 +166,18 @@ export async function GET(request: NextRequest) {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    
+
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
@@ -185,12 +187,12 @@ export async function GET(request: NextRequest) {
     // Return pre-filled form data
     const formData = {
       name: user.name,
-      nim: user.studentProfile.nim,
-      email: user.nidn, // Using nidn as email placeholder (this might need adjustment)
-      phone: user.studentProfile.phone || '',
-      semester: user.studentProfile.semester.toString(),
+      nim: user.students.nim,
+      email: user.username, // Using username as email placeholder (this might need adjustment)
+      phone: user.students.phone || '',
+      semester: user.students.semester.toString(),
       canRegister: true, // For now, allow all students to register
-      registrationFee: 50000, // 50,000 IDR consumption fee
+      registrationFee: 50000, // 50,000 IDR consumption fee,
     }
 
     return NextResponse.json({

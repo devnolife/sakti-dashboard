@@ -26,7 +26,7 @@ interface UserFormDialogProps {
   onOpenChange: (open: boolean) => void
   user?: {
     id: string
-    nidn: string
+    username: string
     name: string
     role: string
     subRole?: string | null
@@ -42,7 +42,7 @@ export default function UserFormDialog({
   onSubmit
 }: UserFormDialogProps) {
   const [formData, setFormData] = useState({
-    nidn: user?.nidn || "",
+    username: user?.username || "",
     name: user?.name || "",
     role: user?.role || "mahasiswa",
     subRole: user?.subRole || "",
@@ -96,17 +96,17 @@ export default function UserFormDialog({
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="nidn">NIDN *</Label>
+              <Label htmlFor="username">Username *</Label>
               <Input
-                id="nidn"
-                value={formData.nidn}
-                onChange={(e) => setFormData({ ...formData, nidn: e.target.value })}
-                placeholder="1234567890"
+                id="username"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                placeholder="username123"
                 required
                 disabled={isEditMode}
               />
               <p className="text-xs text-muted-foreground">
-                10-digit unique identifier
+                Unique identifier for login
               </p>
             </div>
 

@@ -42,7 +42,7 @@ export default function UserManagement() {
   const users = [
     {
       id: "1",
-      nidn: "1234567890",
+      username: "1234567890",
       name: "John Doe",
       role: "mahasiswa",
       subRole: null,
@@ -51,7 +51,7 @@ export default function UserManagement() {
     },
     {
       id: "2",
-      nidn: "0987654321",
+      username: "0987654321",
       name: "Jane Smith",
       role: "dosen",
       subRole: "prodi",
@@ -60,7 +60,7 @@ export default function UserManagement() {
     },
     {
       id: "3",
-      nidn: "1122334455",
+      username: "1122334455",
       name: "Bob Wilson",
       role: "staff_tu",
       subRole: null,
@@ -169,7 +169,7 @@ export default function UserManagement() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, NIDN..."
+                placeholder="Search by name, username..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -206,7 +206,7 @@ export default function UserManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>NIDN</TableHead>
+                  <TableHead>Username</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Sub Role</TableHead>
@@ -219,7 +219,7 @@ export default function UserManagement() {
                 {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-mono text-sm">
-                      {user.nidn}
+                      {user.username}
                     </TableCell>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>

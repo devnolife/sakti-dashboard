@@ -2,31 +2,32 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getServerActionUserId } from '@/lib/auth-utils'
 import { authMiddleware } from '@/lib/auth-middleware'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export async function GET(request: NextRequest) {
   try {
     let userId: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    
+
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Get all exam applications for the student
     const examApplications = await prisma.examApplication.findMany({

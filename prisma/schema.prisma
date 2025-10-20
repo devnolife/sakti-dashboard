@@ -8,252 +8,387 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         String     @id @default(cuid()) @map("id")
-  username   String     @unique @map("username")
-  password   String     @map("password")
-  name       String     @map("name")
-  avatar     String?    @map("avatar")
-  role       Role       @default(mahasiswa) @map("role")
-  subRole    String?
-  isActive   Boolean    @default(true)
-  createdAt  DateTime   @default(now())
+model academic_consultations {
+  id         String    @id
+  date       DateTime
+  uraian     String
+  keterangan String
+  paraf      Boolean   @default(false)
+  studentId  String
+  advisorId  String
+  createdAt  DateTime  @default(now())
   updatedAt  DateTime
-  accounts   Account[]
-  audit_logs AuditLog[]
-  lecturers  Lecturer?
-  sessions   Session[]
-  staff      Staff?
-  students   Student?
-
-  @@map("users")
+  lecturers  lecturers @relation(fields: [advisorId], references: [id])
+  students   students  @relation(fields: [studentId], references: [id])
 }
 
-model Session {
-  id        String   @id @default(cuid()) @map("id")
-  userId    String
-  token     String   @unique @map("token")
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  users     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
+model academic_events {
+  id          String      @id
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  type        EventType
+  examType    ExamType?
+  status      EventStatus @default(confirmed)
+  studentId   String?
+  courseId    String?
+  lecturerId  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  courses     courses?    @relation(fields: [courseId], references: [id])
+  lecturers   lecturers?  @relation(fields: [lecturerId], references: [id])
+  students    students?   @relation(fields: [studentId], references: [id])
 }
 
-model AuditLog {
-  id        String   @id @default(cuid()) @map("id")
+model accounts {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model audit_logs {
+  id        String   @id
   userId    String
-  action    String   @map("action")
-  resource  String   @map("resource")
-  details   Json?    @map("details")
+  action    String
+  resource  String
+  details   Json?
   ipAddress String?
   userAgent String?
   createdAt DateTime @default(now())
-  users     User     @relation(fields: [userId], references: [id])
-
-  @@map("audit_logs")
+  users     users    @relation(fields: [userId], references: [id])
 }
 
-model Student {
-  id                         String                    @id @default(cuid()) @map("id")
-  userId                     String                    @unique
-  nim                        String                    @unique @map("nim")
-  major                      String                    @map("major")
-  department                 String                    @map("department")
-  semester                   Int                       @map("semester")
-  academicYear               String
-  phone                      String?                   @map("phone")
-  address                    String?                   @map("address")
-  guardian                   Json?                     @map("guardian")
-  enrollDate                 DateTime
-  status                     StudentStatus             @default(active) @map("status")
-  gpa                        Float?                    @map("gpa")
-  academicAdvisorId          String?
-  lastSyncAt                 DateTime?                 @map("last_sync_at")
-  academic_consultations     AcademicConsultation[]
-  academic_events            AcademicEvent[]
-  book_borrowings            BookBorrowing[]
-  exam_applications          ExamApplication[]
-  exam_student_requirements  ExamStudentRequirement[]
-  grades                     Grade[]
-  kkp_applications           KkpApplication[]
-  kkp_locations              KkpLocation[]
-  kkp_requirements           KkpRequirement[]
-  lab_assignment_submissions LabAssignmentSubmission[]
-  lab_registrations          LabRegistration[]
-  letter_requests            LetterRequest[]
-  payments                   Payment[]
-  lecturers                  Lecturer?                 @relation(fields: [academicAdvisorId], references: [id])
-  users                      User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  thesis_titles              ThesisTitle[]
-
-  @@map("students")
+model book_borrowings {
+  id         String          @id
+  borrowDate DateTime        @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+  status     BorrowingStatus @default(active)
+  notes      String?
+  fine       Decimal?        @db.Decimal(8, 2)
+  bookId     String
+  studentId  String
+  books      books           @relation(fields: [bookId], references: [id])
+  students   students        @relation(fields: [studentId], references: [id])
 }
 
-model Lecturer {
-  id                                                        String                 @id @default(cuid()) @map("id")
-  userId                                                    String                 @unique
-  nip                                                       String                 @unique @map("nip")
-  department                                                String                 @map("department")
-  position                                                  String                 @map("position")
-  specialization                                            String?                @map("specialization")
-  phone                                                     String?                @map("phone")
-  office                                                    String?                @map("office")
-  email                                                     String?                @map("email")
-  lastSyncAt                                                DateTime?              @map("last_sync_at")
-  academic_consultations                                    AcademicConsultation[]
-  academic_events                                           AcademicEvent[]
-  courses                                                   Course[]
-  exam_applications_exam_applications_advisor1IdTolecturers ExamApplication[]      @relation("exam_applications_advisor1IdTolecturers")
-  exam_applications_exam_applications_advisor2IdTolecturers ExamApplication[]      @relation("exam_applications_advisor2IdTolecturers")
-  exam_committees                                           ExamCommittee[]
-  kkp_applications                                          KkpApplication[]
-  laboratories                                              Laboratory[]
-  users                                                     User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  students                                                  Student[]
-  thesis_titles                                             ThesisTitle[]
-
-  @@map("lecturers")
+model book_categories {
+  id          String  @id
+  code        String  @unique
+  name        String
+  description String?
+  isActive    Boolean @default(true)
+  books       books[]
 }
 
-model Staff {
-  id         String  @id @default(cuid()) @map("id")
-  userId     String  @unique
-  nip        String? @unique @map("nip")
-  department String  @map("department")
-  position   String  @map("position")
-  phone      String? @map("phone")
-  office     String? @map("office")
-  users      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("staff")
+model books {
+  id               String            @id
+  title            String
+  author           String
+  publisher        String
+  publicationYear  Int
+  isbn             String            @unique
+  categoryId       String
+  coverImage       String?
+  description      String?
+  pageCount        Int?
+  location         String
+  status           BookStatus        @default(available)
+  addedDate        DateTime          @default(now())
+  lastBorrowedDate DateTime?
+  borrowCount      Int               @default(0)
+  book_borrowings  book_borrowings[]
+  book_categories  book_categories   @relation(fields: [categoryId], references: [id])
 }
 
-model KkpApplication {
-  id                String        @id @default(cuid()) @map("id")
-  applicationNumber String        @unique
-  title             String        @map("title")
-  description       String        @map("description")
-  submissionDate    DateTime      @default(now())
-  startDate         DateTime
-  endDate           DateTime
-  status            KkpStatus     @default(pending) @map("status")
-  notes             String?       @map("notes")
-  studentId         String
-  groupMembers      Json?
-  supervisorId      String?
-  companyId         String
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime
-  companies         Company       @relation(fields: [companyId], references: [id])
-  students          Student       @relation(fields: [studentId], references: [id])
-  lecturers         Lecturer?     @relation(fields: [supervisorId], references: [id])
-  kkp_approvals     KkpApproval[]
-  kkp_documents     KkpDocument[]
-
-  @@map("kkp_applications")
+model budget_allocations {
+  id          String  @id
+  budgetId    String
+  department  String
+  amount      Decimal @db.Decimal(12, 2)
+  description String?
+  budgets     budgets @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 }
 
-model Company {
-  id               String           @id @default(cuid()) @map("id")
-  name             String           @map("name")
-  address          String           @map("address")
-  city             String           @map("city")
-  province         String?          @map("province")
+model budgets {
+  id                 String               @id
+  name               String
+  description        String?
+  totalAmount        Decimal              @db.Decimal(15, 2)
+  usedAmount         Decimal              @default(0) @db.Decimal(15, 2)
+  category           String
+  department         String?
+  fiscalYear         String
+  status             BudgetStatus         @default(active)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  budget_allocations budget_allocations[]
+  expenses           expenses[]
+}
+
+model companies {
+  id               String             @id
+  name             String
+  address          String
+  city             String
+  province         String?
   postalCode       String?
   contactPerson    String
   contactPosition  String?
   contactEmail     String?
   contactPhone     String
-  website          String?          @map("website")
-  logo             String?          @map("logo")
-  industry         String           @map("industry")
-  description      String?          @map("description")
-  isActive         Boolean          @default(true)
-  kkp_applications KkpApplication[]
-  kkp_locations    KkpLocation[]
-
-  @@map("companies")
+  website          String?
+  logo             String?
+  industry         String
+  description      String?
+  isActive         Boolean            @default(true)
+  kkp_applications kkp_applications[]
+  kkp_locations    kkp_locations[]
 }
 
-model KkpLocation {
-  id                String           @id @default(cuid()) @map("id")
-  name              String           @map("name")
-  address           String           @map("address")
-  city              String           @map("city")
-  province          String?          @map("province")
-  industry          String           @map("industry")
-  positions         Json             @map("positions")
-  quota             Int              @default(0) @map("quota")
-  remaining         Int              @default(0) @map("remaining")
-  status            String           @default("available") @map("status")
-  distance          Float?           @map("distance")
-  contactPerson     String?
-  contactEmail      String?
-  contactPhone      String?
-  description       String?          @map("description")
-  isActive          Boolean          @default(true)
-  companyId         String?
-  createdById       String
-  createdAt         DateTime         @default(now())
+model course_schedules {
+  id           String  @id
+  courseId     String
+  day          String
+  startTime    String
+  endTime      String
+  room         String
+  building     String?
+  semester     String
+  academicYear String
+  courses      courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model courses {
+  id               String             @id
+  code             String             @unique
+  name             String
+  description      String?
+  credits          Int
+  semester         Int
+  department       String
+  isActive         Boolean            @default(true)
+  lecturerId       String?
+  academic_events  academic_events[]
+  course_schedules course_schedules[]
+  lecturers        lecturers?         @relation(fields: [lecturerId], references: [id])
+  grades           grades[]
+}
+
+model exam_applications {
+  id                                                String            @id
+  title                                             String
+  type                                              ExamType
+  status                                            ExamStatus        @default(pending)
+  abstract                                          String?
+  submissionDate                                    DateTime          @default(now())
+  scheduledDate                                     DateTime?
+  completionDate                                    DateTime?
+  location                                          String?
+  studentId                                         String
+  advisor1Id                                        String?
+  advisor2Id                                        String?
+  createdAt                                         DateTime          @default(now())
+  updatedAt                                         DateTime
+  lecturers_exam_applications_advisor1IdTolecturers lecturers?        @relation("exam_applications_advisor1IdTolecturers", fields: [advisor1Id], references: [id])
+  lecturers_exam_applications_advisor2IdTolecturers lecturers?        @relation("exam_applications_advisor2IdTolecturers", fields: [advisor2Id], references: [id])
+  students                                          students          @relation(fields: [studentId], references: [id])
+  exam_committees                                   exam_committees[]
+  exam_documents                                    exam_documents[]
+}
+
+model exam_committees {
+  id                String            @id
+  examId            String
+  lecturerId        String
+  role              String
+  exam_applications exam_applications @relation(fields: [examId], references: [id], onDelete: Cascade)
+  lecturers         lecturers         @relation(fields: [lecturerId], references: [id])
+
+  @@unique([examId, lecturerId])
+}
+
+model exam_documents {
+  id                String            @id
+  name              String
+  type              ExamDocumentType
+  status            DocumentStatus    @default(pending)
+  uploadDate        DateTime          @default(now())
+  verificationDate  DateTime?
+  fileUrl           String
+  fileSize          Int?
+  notes             String?
+  examId            String
+  exam_applications exam_applications @relation(fields: [examId], references: [id], onDelete: Cascade)
+}
+
+model exam_requirements {
+  id                        String                      @id
+  examType                  ExamType
+  title                     String
+  description               String?
+  required                  Boolean                     @default(true)
+  order                     Int                         @default(0)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime
+  exam_student_requirements exam_student_requirements[]
+}
+
+model exam_student_requirements {
+  id                String            @id
+  studentId         String
+  requirementId     String
+  completed         Boolean           @default(false)
+  completedAt       DateTime?
+  fileUrl           String?
+  fileName          String?
+  fileSize          Int?
+  uploadedAt        DateTime?
+  verifiedAt        DateTime?
+  notes             String?
+  exam_requirements exam_requirements @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  students          students          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, requirementId])
+}
+
+model expenses {
+  id          String        @id
+  budgetId    String
+  amount      Decimal       @db.Decimal(10, 2)
+  description String
+  category    String
+  expenseDate DateTime
+  receipt     String?
+  status      ExpenseStatus @default(pending)
+  approvedBy  String?
+  approvedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  budgets     budgets       @relation(fields: [budgetId], references: [id])
+}
+
+model file_uploads {
+  id           String   @id
+  filename     String
+  originalName String
+  path         String
+  size         Int
+  mimeType     String
+  uploadedBy   String
+  category     String?
+  createdAt    DateTime @default(now())
+}
+
+model grades {
+  id           String   @id
+  score        Float
+  letterGrade  String
+  semester     String
+  academicYear String
+  studentId    String
+  courseId     String
+  createdAt    DateTime @default(now())
+  courses      courses  @relation(fields: [courseId], references: [id])
+  students     students @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, courseId, semester, academicYear])
+}
+
+model kkp_applications {
+  id                String          @id
+  applicationNumber String          @unique
+  title             String
+  description       String
+  submissionDate    DateTime        @default(now())
+  startDate         DateTime
+  endDate           DateTime
+  status            KkpStatus       @default(pending)
+  notes             String?
+  studentId         String
+  groupMembers      Json?
+  supervisorId      String?
+  companyId         String
+  createdAt         DateTime        @default(now())
   updatedAt         DateTime
-  kkp_documents     KkpDocument[]
-  companies         Company?         @relation(fields: [companyId], references: [id])
-  students          Student          @relation(fields: [createdById], references: [id])
-  kkp_sub_locations KkpSubLocation[]
-
-  @@unique([name, address])
-  @@map("kkp_locations")
+  companies         companies       @relation(fields: [companyId], references: [id])
+  students          students        @relation(fields: [studentId], references: [id])
+  lecturers         lecturers?      @relation(fields: [supervisorId], references: [id])
+  kkp_approvals     kkp_approvals[]
+  kkp_documents     kkp_documents[]
 }
 
-model KkpSubLocation {
-  id            String      @id @default(cuid()) @map("id")
-  name          String      @map("name")
-  address       String      @map("address")
-  contactPerson String
-  contactEmail  String?
-  contactPhone  String?
-  locationId    String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime
-  kkp_locations KkpLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
-  @@map("kkp_sub_locations")
+model kkp_approvals {
+  id               String           @id
+  applicationId    String
+  approverRole     String
+  approverId       String?
+  status           ApprovalStatus
+  comments         String?
+  approvedAt       DateTime?
+  kkp_applications kkp_applications @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 }
 
-model KkpDocument {
-  id               String          @id @default(cuid()) @map("id")
-  name             String          @map("name")
-  type             KkpDocumentType @map("type")
-  url              String          @map("url")
-  uploadDate       DateTime        @default(now())
-  status           DocumentStatus  @default(pending) @map("status")
-  notes            String?         @map("notes")
+model kkp_documents {
+  id               String            @id
+  name             String
+  type             KkpDocumentType
+  url              String
+  uploadDate       DateTime          @default(now())
+  status           DocumentStatus    @default(pending)
+  notes            String?
   fileSize         Int?
   mimeType         String?
   applicationId    String?
   locationId       String?
-  kkp_applications KkpApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  kkp_locations    KkpLocation?    @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
-  @@map("kkp_documents")
+  kkp_applications kkp_applications? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  kkp_locations    kkp_locations?    @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
-model KkpApproval {
-  id               String         @id @default(cuid()) @map("id")
-  applicationId    String
-  approverRole     String
-  approverId       String?
-  status           ApprovalStatus @map("status")
-  comments         String?        @map("comments")
-  approvedAt       DateTime?
-  kkp_applications KkpApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+model kkp_locations {
+  id                String              @id
+  name              String
+  address           String
+  city              String
+  province          String?
+  industry          String
+  positions         Json
+  quota             Int                 @default(0)
+  remaining         Int                 @default(0)
+  status            String              @default("available")
+  distance          Float?
+  contactPerson     String?
+  contactEmail      String?
+  contactPhone      String?
+  description       String?
+  isActive          Boolean             @default(true)
+  companyId         String?
+  createdById       String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  kkp_documents     kkp_documents[]
+  companies         companies?          @relation(fields: [companyId], references: [id])
+  students          students            @relation(fields: [createdById], references: [id])
+  kkp_sub_locations kkp_sub_locations[]
 
-  @@map("kkp_approvals")
+  @@unique([name, address])
 }
 
-model KkpRequirement {
-  id               String             @id @default(cuid()) @map("id")
+model kkp_requirements {
+  id               String             @id
   studentId        String
   requirementType  KkpRequirementType
   fileName         String
@@ -261,262 +396,184 @@ model KkpRequirement {
   filePath         String
   fileSize         Int
   mimeType         String             @default("application/pdf")
-  status           DocumentStatus     @default(pending) @map("status")
-  notes            String?            @map("notes")
+  status           DocumentStatus     @default(pending)
+  notes            String?
   uploadedAt       DateTime           @default(now())
   verifiedAt       DateTime?
   verifiedBy       String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime
-  students         Student            @relation(fields: [studentId], references: [id])
+  students         students           @relation(fields: [studentId], references: [id])
 
   @@unique([studentId, requirementType])
-  @@map("kkp_requirements")
 }
 
-model ExamApplication {
-  id                                                String          @id @default(cuid()) @map("id")
-  title                                             String          @map("title")
-  type                                              ExamType        @map("type")
-  status                                            ExamStatus      @default(pending) @map("status")
-  abstract                                          String?         @map("abstract")
-  submissionDate                                    DateTime        @default(now())
-  scheduledDate                                     DateTime?
-  completionDate                                    DateTime?
-  location                                          String?         @map("location")
-  studentId                                         String
-  advisor1Id                                        String?
-  advisor2Id                                        String?
-  createdAt                                         DateTime        @default(now())
-  updatedAt                                         DateTime
-  lecturers_exam_applications_advisor1IdTolecturers Lecturer?       @relation("exam_applications_advisor1IdTolecturers", fields: [advisor1Id], references: [id])
-  lecturers_exam_applications_advisor2IdTolecturers Lecturer?       @relation("exam_applications_advisor2IdTolecturers", fields: [advisor2Id], references: [id])
-  students                                          Student         @relation(fields: [studentId], references: [id])
-  exam_committees                                   ExamCommittee[]
-  exam_documents                                    ExamDocument[]
-
-  @@map("exam_applications")
-}
-
-model ExamCommittee {
-  id                String          @id @default(cuid()) @map("id")
-  examId            String
-  lecturerId        String
-  role              String          @map("role")
-  exam_applications ExamApplication @relation(fields: [examId], references: [id], onDelete: Cascade)
-  lecturers         Lecturer        @relation(fields: [lecturerId], references: [id])
-
-  @@unique([examId, lecturerId])
-  @@map("exam_committees")
-}
-
-model ExamDocument {
-  id                String           @id @default(cuid()) @map("id")
-  name              String           @map("name")
-  type              ExamDocumentType @map("type")
-  status            DocumentStatus   @default(pending) @map("status")
-  uploadDate        DateTime         @default(now())
-  verificationDate  DateTime?
-  fileUrl           String
-  fileSize          Int?
-  notes             String?          @map("notes")
-  examId            String
-  exam_applications ExamApplication  @relation(fields: [examId], references: [id], onDelete: Cascade)
-
-  @@map("exam_documents")
-}
-
-model ExamRequirement {
-  id                        String                   @id @default(cuid()) @map("id")
-  examType                  ExamType
-  title                     String                   @map("title")
-  description               String?                  @map("description")
-  required                  Boolean                  @default(true) @map("required")
-  order                     Int                      @default(0) @map("order")
-  createdAt                 DateTime                 @default(now())
-  updatedAt                 DateTime
-  exam_student_requirements ExamStudentRequirement[]
-
-  @@map("exam_requirements")
-}
-
-model ExamStudentRequirement {
-  id                String          @id @default(cuid()) @map("id")
-  studentId         String
-  requirementId     String
-  completed         Boolean         @default(false) @map("completed")
-  completedAt       DateTime?
-  fileUrl           String?
-  fileName          String?
-  fileSize          Int?
-  uploadedAt        DateTime?
-  verifiedAt        DateTime?
-  notes             String?         @map("notes")
-  exam_requirements ExamRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
-  students          Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@unique([studentId, requirementId])
-  @@map("exam_student_requirements")
-}
-
-model ThesisTitle {
-  id                                                                    String             @id @default(cuid()) @map("id")
-  title                                                                 String             @map("title")
-  abstract                                                              String             @map("abstract")
-  keywords                                                              String[]           @map("keywords")
-  submissionDate                                                        DateTime           @default(now())
-  status                                                                ThesisStatus       @default(pending) @map("status")
-  year                                                                  Int                @map("year")
-  similarityScore                                                       Float?
-  digitalCopy                                                           Boolean            @default(false)
-  documentUrl                                                           String?
-  externalLink                                                          String?
-  authorId                                                              String
-  supervisorId                                                          String?
-  department                                                            String             @map("department")
-  createdAt                                                             DateTime           @default(now())
-  updatedAt                                                             DateTime
-  thesis_archives                                                       ThesisArchive?
-  thesis_reviews                                                        ThesisReview[]
-  thesis_similarities_thesis_similarities_sourceThesisIdTothesis_titles ThesisSimilarity[] @relation("thesis_similarities_sourceThesisIdTothesis_titles")
-  thesis_similarities_thesis_similarities_targetThesisIdTothesis_titles ThesisSimilarity[] @relation("thesis_similarities_targetThesisIdTothesis_titles")
-  students                                                              Student            @relation(fields: [authorId], references: [id])
-  lecturers                                                             Lecturer?          @relation(fields: [supervisorId], references: [id])
-
-  @@map("thesis_titles")
-}
-
-model ThesisSimilarity {
-  id                                                              String      @id @default(cuid()) @map("id")
-  sourceThesisId                                                  String
-  targetThesisId                                                  String
-  similarityPercentage                                            Float
-  thesis_titles_thesis_similarities_sourceThesisIdTothesis_titles ThesisTitle @relation("thesis_similarities_sourceThesisIdTothesis_titles", fields: [sourceThesisId], references: [id], onDelete: Cascade)
-  thesis_titles_thesis_similarities_targetThesisIdTothesis_titles ThesisTitle @relation("thesis_similarities_targetThesisIdTothesis_titles", fields: [targetThesisId], references: [id], onDelete: Cascade)
-
-  @@unique([sourceThesisId, targetThesisId])
-  @@map("thesis_similarities")
-}
-
-model ThesisReview {
-  id            String      @id @default(cuid()) @map("id")
-  thesisId      String
-  reviewerId    String
-  action        String      @map("action")
-  comments      String?     @map("comments")
-  reviewDate    DateTime    @default(now())
-  thesis_titles ThesisTitle @relation(fields: [thesisId], references: [id], onDelete: Cascade)
-
-  @@map("thesis_reviews")
-}
-
-model ThesisArchive {
-  id            String      @id @default(cuid()) @map("id")
-  thesisId      String      @unique
-  archiveDate   DateTime    @default(now())
-  location      String      @map("location")
-  physicalId    String?
-  digitalId     String?
-  notes         String?     @map("notes")
-  thesis_titles ThesisTitle @relation(fields: [thesisId], references: [id], onDelete: Cascade)
-
-  @@map("thesis_archives")
-}
-
-model Payment {
-  id            String          @id @default(cuid()) @map("id")
-  amount        Decimal         @map("amount") @db.Decimal(12, 2)
-  description   String          @map("description")
-  category      PaymentCategory @map("category")
-  status        PaymentStatus   @default(pending) @map("status")
-  dueDate       DateTime
-  paidDate      DateTime?
-  semester      String          @map("semester")
-  academicYear  String
-  receiptNumber String?
-  paymentMethod String?
-  notes         String?         @map("notes")
-  studentId     String
-  createdAt     DateTime        @default(now())
+model kkp_sub_locations {
+  id            String        @id
+  name          String
+  address       String
+  contactPerson String
+  contactEmail  String?
+  contactPhone  String?
+  locationId    String
+  createdAt     DateTime      @default(now())
   updatedAt     DateTime
-  payment_items PaymentItem[]
-  students      Student         @relation(fields: [studentId], references: [id])
-
-  @@map("payments")
+  kkp_locations kkp_locations @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
-model PaymentItem {
-  id           String          @id @default(cuid()) @map("id")
-  name         String          @map("name")
-  description  String?         @map("description")
-  amount       Decimal         @map("amount") @db.Decimal(10, 2)
-  category     PaymentCategory @map("category")
-  semester     String          @map("semester")
-  academicYear String
-  dueDate      DateTime
-  isRequired   Boolean         @default(true)
-  isRecurring  Boolean         @default(false)
-  paymentId    String?
-  createdAt    DateTime        @default(now())
-  payments     Payment?        @relation(fields: [paymentId], references: [id])
-
-  @@map("payment_items")
+model lab_announcements {
+  id           String       @id
+  title        String
+  content      String
+  isImportant  Boolean      @default(false)
+  laboratoryId String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime
+  laboratories laboratories @relation(fields: [laboratoryId], references: [id])
 }
 
-model Budget {
-  id                 String             @id @default(cuid()) @map("id")
-  name               String             @map("name")
-  description        String?            @map("description")
-  totalAmount        Decimal            @db.Decimal(15, 2)
-  usedAmount         Decimal            @default(0) @db.Decimal(15, 2)
-  category           String             @map("category")
-  department         String?            @map("department")
-  fiscalYear         String
-  status             BudgetStatus       @default(active) @map("status")
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime
-  budget_allocations BudgetAllocation[]
-  expenses           Expense[]
+model lab_assignment_submissions {
+  id                String            @id
+  submittedAt       DateTime          @default(now())
+  score             Float?
+  feedback          String?
+  fileUrl           String?
+  studentId         String
+  assignmentId      String
+  registrationId    String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  lab_assignments   lab_assignments   @relation(fields: [assignmentId], references: [id])
+  lab_registrations lab_registrations @relation(fields: [registrationId], references: [id])
+  students          students          @relation(fields: [studentId], references: [id])
 
-  @@map("budgets")
+  @@unique([studentId, assignmentId])
 }
 
-model BudgetAllocation {
-  id          String  @id @default(cuid()) @map("id")
-  budgetId    String
-  department  String  @map("department")
-  amount      Decimal @map("amount") @db.Decimal(12, 2)
-  description String? @map("description")
-  budgets     Budget  @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-
-  @@map("budget_allocations")
+model lab_assignments {
+  id                         String                       @id
+  title                      String
+  description                String
+  dueDate                    DateTime
+  maxScore                   Float                        @default(100)
+  laboratoryId               String
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime
+  lab_assignment_submissions lab_assignment_submissions[]
+  laboratories               laboratories                 @relation(fields: [laboratoryId], references: [id])
 }
 
-model Expense {
-  id          String        @id @default(cuid()) @map("id")
-  budgetId    String
-  amount      Decimal       @map("amount") @db.Decimal(10, 2)
-  description String        @map("description")
-  category    String        @map("category")
-  expenseDate DateTime
-  receipt     String?       @map("receipt")
-  status      ExpenseStatus @default(pending) @map("status")
-  approvedBy  String?
-  approvedAt  DateTime?
-  createdAt   DateTime      @default(now())
-  budgets     Budget        @relation(fields: [budgetId], references: [id])
-
-  @@map("expenses")
+model lab_materials {
+  id           String       @id
+  title        String
+  description  String?
+  type         String
+  fileUrl      String?
+  externalUrl  String?
+  laboratoryId String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime
+  laboratories laboratories @relation(fields: [laboratoryId], references: [id])
 }
 
-model LetterRequest {
-  id                 String             @id @default(cuid()) @map("id")
-  type               String             @map("type")
-  title              String             @map("title")
-  purpose            String             @map("purpose")
-  description        String             @map("description")
-  status             LetterStatus       @default(submitted) @map("status")
-  requestDate        DateTime           @default(now())
+model lab_registrations {
+  id                         String                       @id
+  status                     LabRegistrationStatus        @default(pending)
+  registeredAt               DateTime                     @default(now())
+  completedAt                DateTime?
+  progress                   Float                        @default(0)
+  grade                      String?
+  studentId                  String
+  laboratoryId               String
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime
+  lab_assignment_submissions lab_assignment_submissions[]
+  laboratories               laboratories                 @relation(fields: [laboratoryId], references: [id])
+  students                   students                     @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, laboratoryId])
+}
+
+model lab_sessions {
+  id           String           @id
+  title        String
+  description  String?
+  sessionDate  DateTime
+  startTime    String
+  endTime      String
+  location     String?
+  status       LabSessionStatus @default(scheduled)
+  laboratoryId String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime
+  laboratories laboratories     @relation(fields: [laboratoryId], references: [id])
+}
+
+model laboratories {
+  id                String              @id
+  code              String              @unique
+  name              String
+  description       String?
+  image             String?
+  capacity          Int
+  credits           Int
+  semester          String
+  department        String
+  location          String
+  category          String
+  status            LabStatus           @default(active)
+  instructorId      String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  lab_announcements lab_announcements[]
+  lab_assignments   lab_assignments[]
+  lab_materials     lab_materials[]
+  lab_registrations lab_registrations[]
+  lab_sessions      lab_sessions[]
+  lecturers         lecturers?          @relation(fields: [instructorId], references: [id])
+}
+
+model lecturers {
+  id                                                        String                   @id
+  userId                                                    String                   @unique
+  nip                                                       String                   @unique
+  department                                                String
+  position                                                  String
+  specialization                                            String?
+  phone                                                     String?
+  office                                                    String?
+  academic_consultations                                    academic_consultations[]
+  academic_events                                           academic_events[]
+  courses                                                   courses[]
+  exam_applications_exam_applications_advisor1IdTolecturers exam_applications[]      @relation("exam_applications_advisor1IdTolecturers")
+  exam_applications_exam_applications_advisor2IdTolecturers exam_applications[]      @relation("exam_applications_advisor2IdTolecturers")
+  exam_committees                                           exam_committees[]
+  kkp_applications                                          kkp_applications[]
+  laboratories                                              laboratories[]
+  users                                                     users                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students                                                  students[]
+  thesis_titles                                             thesis_titles[]
+}
+
+model letter_attachments {
+  id              String          @id
+  name            String
+  uploadDate      DateTime        @default(now())
+  url             String
+  fileSize        Int?
+  mimeType        String?
+  requestId       String
+  letter_requests letter_requests @relation(fields: [requestId], references: [id], onDelete: Cascade)
+}
+
+model letter_requests {
+  id                 String               @id
+  type               String
+  title              String
+  purpose            String
+  description        String
+  status             LetterStatus         @default(submitted)
+  requestDate        DateTime             @default(now())
   approvedDate       DateTime?
   completedDate      DateTime?
   rejectedReason     String?
@@ -526,432 +583,223 @@ model LetterRequest {
   approvedBy         String?
   generatedLetter    String?
   letterNumber       String?
-  createdAt          DateTime           @default(now())
+  createdAt          DateTime             @default(now())
   updatedAt          DateTime
-  letter_attachments LetterAttachment[]
-  students           Student            @relation(fields: [studentId], references: [id])
-
-  @@map("letter_requests")
+  letter_attachments letter_attachments[]
+  students           students             @relation(fields: [studentId], references: [id])
 }
 
-model LetterAttachment {
-  id              String        @id @default(cuid()) @map("id")
-  name            String        @map("name")
-  uploadDate      DateTime      @default(now())
-  url             String        @map("url")
-  fileSize        Int?
-  mimeType        String?
-  requestId       String
-  letter_requests LetterRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-
-  @@map("letter_attachments")
-}
-
-model LetterType {
-  id                String       @id @default(cuid()) @map("id")
-  title             String       @unique @map("title")
-  description       String       @map("description")
+model letter_types {
+  id                String       @id
+  title             String       @unique
+  description       String
   approvalRole      ApprovalRole
   estimatedDays     Int
   requiredDocuments String[]
   additionalFields  Json?
   isActive          Boolean      @default(true)
-  template          String?      @map("template")
-
-  @@map("letter_types")
+  template          String?
 }
 
-model Book {
-  id               String          @id @default(cuid()) @map("id")
-  title            String          @map("title")
-  author           String          @map("author")
-  publisher        String          @map("publisher")
-  publicationYear  Int
-  isbn             String          @unique @map("isbn")
-  categoryId       String
-  coverImage       String?
-  description      String?         @map("description")
-  pageCount        Int?
-  location         String          @map("location")
-  status           BookStatus      @default(available) @map("status")
-  addedDate        DateTime        @default(now())
-  lastBorrowedDate DateTime?
-  borrowCount      Int             @default(0)
-  book_borrowings  BookBorrowing[]
-  book_categories  BookCategory    @relation(fields: [categoryId], references: [id])
-
-  @@map("books")
-}
-
-model BookCategory {
-  id          String  @id @default(cuid()) @map("id")
-  code        String  @unique @map("code")
-  name        String  @map("name")
-  description String? @map("description")
-  isActive    Boolean @default(true)
-  books       Book[]
-
-  @@map("book_categories")
-}
-
-model BookBorrowing {
-  id         String          @id @default(cuid()) @map("id")
-  borrowDate DateTime        @default(now())
-  dueDate    DateTime
-  returnDate DateTime?
-  status     BorrowingStatus @default(active) @map("status")
-  notes      String?         @map("notes")
-  fine       Decimal?        @map("fine") @db.Decimal(8, 2)
-  bookId     String
-  studentId  String
-  books      Book            @relation(fields: [bookId], references: [id])
-  students   Student         @relation(fields: [studentId], references: [id])
-
-  @@map("book_borrowings")
-}
-
-model Course {
-  id               String           @id @default(cuid()) @map("id")
-  code             String           @unique @map("code")
-  name             String           @map("name")
-  description      String?          @map("description")
-  credits          Int              @map("credits")
-  semester         Int              @map("semester")
-  department       String           @map("department")
-  isActive         Boolean          @default(true)
-  lecturerId       String?
-  academic_events  AcademicEvent[]
-  course_schedules CourseSchedule[]
-  lecturers        Lecturer?        @relation(fields: [lecturerId], references: [id])
-  grades           Grade[]
-
-  @@map("courses")
-}
-
-model Grade {
-  id           String   @id @default(cuid()) @map("id")
-  score        Float    @map("score")
-  letterGrade  String
-  semester     String   @map("semester")
-  academicYear String
-  studentId    String
-  courseId     String
-  createdAt    DateTime @default(now())
-  courses      Course   @relation(fields: [courseId], references: [id])
-  students     Student  @relation(fields: [studentId], references: [id])
-
-  @@unique([studentId, courseId, semester, academicYear])
-  @@map("grades")
-}
-
-model CourseSchedule {
-  id           String  @id @default(cuid()) @map("id")
-  courseId     String
-  day          String  @map("day")
-  startTime    String
-  endTime      String
-  room         String  @map("room")
-  building     String? @map("building")
-  semester     String  @map("semester")
-  academicYear String
-  courses      Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@map("course_schedules")
-}
-
-model SystemConfig {
-  id          String   @id @default(cuid()) @map("id")
-  key         String   @unique @map("key")
-  value       String   @map("value")
-  description String?  @map("description")
-  category    String?  @map("category")
-  updatedAt   DateTime
-
-  @@map("system_configs")
-}
-
-model Notification {
-  id        String           @id @default(cuid()) @map("id")
+model notifications {
+  id        String           @id
   userId    String
-  title     String           @map("title")
-  message   String           @map("message")
-  type      NotificationType @default(info) @map("type")
+  title     String
+  message   String
+  type      NotificationType @default(info)
   isRead    Boolean          @default(false)
-  data      Json?            @map("data")
+  data      Json?
   createdAt DateTime         @default(now())
   readAt    DateTime?
-
-  @@map("notifications")
 }
 
-model FileUpload {
-  id           String   @id @default(cuid()) @map("id")
-  filename     String   @map("filename")
-  originalName String
-  path         String   @map("path")
-  size         Int      @map("size")
-  mimeType     String
-  uploadedBy   String
-  category     String?  @map("category")
-  createdAt    DateTime @default(now())
-
-  @@map("file_uploads")
+model payment_items {
+  id           String          @id
+  name         String
+  description  String?
+  amount       Decimal         @db.Decimal(10, 2)
+  category     PaymentCategory
+  semester     String
+  academicYear String
+  dueDate      DateTime
+  isRequired   Boolean         @default(true)
+  isRecurring  Boolean         @default(false)
+  paymentId    String?
+  createdAt    DateTime        @default(now())
+  payments     payments?       @relation(fields: [paymentId], references: [id])
 }
 
-model Account {
-  id                String  @id @default(cuid()) @map("id")
-  userId            String
-  type              String  @map("type")
-  provider          String  @map("provider")
-  providerAccountId String
-  refresh_token     String? @map("refresh_token")
-  access_token      String? @map("access_token")
-  expires_at        Int?    @map("expires_at")
-  token_type        String? @map("token_type")
-  scope             String? @map("scope")
-  id_token          String? @map("id_token")
-  session_state     String? @map("session_state")
-  users             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
+model payments {
+  id            String          @id
+  amount        Decimal         @db.Decimal(12, 2)
+  description   String
+  category      PaymentCategory
+  status        PaymentStatus   @default(pending)
+  dueDate       DateTime
+  paidDate      DateTime?
+  semester      String
+  academicYear  String
+  receiptNumber String?
+  paymentMethod String?
+  notes         String?
+  studentId     String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  payment_items payment_items[]
+  students      students        @relation(fields: [studentId], references: [id])
 }
 
-model AcademicConsultation {
-  id         String   @id @default(cuid()) @map("id")
-  date       DateTime @map("date")
-  uraian     String   @map("uraian")
-  keterangan String   @map("keterangan")
-  paraf      Boolean  @default(false) @map("paraf")
-  studentId  String
-  advisorId  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime
-  lecturers  Lecturer @relation(fields: [advisorId], references: [id])
-  students   Student  @relation(fields: [studentId], references: [id])
-
-  @@map("academic_consultations")
+model sessions {
+  id        String   @id
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model AcademicEvent {
-  id          String      @id @default(cuid()) @map("id")
-  title       String      @map("title")
-  description String?     @map("description")
-  startDate   DateTime
-  endDate     DateTime
-  location    String?     @map("location")
-  type        EventType   @map("type")
-  examType    ExamType?
-  status      EventStatus @default(confirmed) @map("status")
-  studentId   String?
-  courseId    String?
-  lecturerId  String?
-  createdAt   DateTime    @default(now())
+model staff {
+  id         String  @id
+  userId     String  @unique
+  nip        String? @unique
+  department String
+  position   String
+  phone      String?
+  office     String?
+  users      users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model students {
+  id                         String                       @id
+  userId                     String                       @unique
+  nim                        String                       @unique
+  major                      String
+  department                 String
+  semester                   Int
+  academicYear               String
+  phone                      String?
+  address                    String?
+  guardian                   Json?
+  enrollDate                 DateTime
+  status                     StudentStatus                @default(active)
+  gpa                        Float?
+  academicAdvisorId          String?
+  academic_consultations     academic_consultations[]
+  academic_events            academic_events[]
+  book_borrowings            book_borrowings[]
+  exam_applications          exam_applications[]
+  exam_student_requirements  exam_student_requirements[]
+  grades                     grades[]
+  kkp_applications           kkp_applications[]
+  kkp_locations              kkp_locations[]
+  kkp_requirements           kkp_requirements[]
+  lab_assignment_submissions lab_assignment_submissions[]
+  lab_registrations          lab_registrations[]
+  letter_requests            letter_requests[]
+  payments                   payments[]
+  lecturers                  lecturers?                   @relation(fields: [academicAdvisorId], references: [id])
+  users                      users                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thesis_titles              thesis_titles[]
+}
+
+model system_configs {
+  id          String   @id
+  key         String   @unique
+  value       String
+  description String?
+  category    String?
   updatedAt   DateTime
-  courses     Course?     @relation(fields: [courseId], references: [id])
-  lecturers   Lecturer?   @relation(fields: [lecturerId], references: [id])
-  students    Student?    @relation(fields: [studentId], references: [id])
-
-  @@map("academic_events")
 }
 
-model VerificationToken {
-  identifier String   @map("identifier")
-  token      String   @unique @map("token")
-  expires    DateTime @map("expires")
+model thesis_archives {
+  id            String        @id
+  thesisId      String        @unique
+  archiveDate   DateTime      @default(now())
+  location      String
+  physicalId    String?
+  digitalId     String?
+  notes         String?
+  thesis_titles thesis_titles @relation(fields: [thesisId], references: [id], onDelete: Cascade)
+}
+
+model thesis_reviews {
+  id            String        @id
+  thesisId      String
+  reviewerId    String
+  action        String
+  comments      String?
+  reviewDate    DateTime      @default(now())
+  thesis_titles thesis_titles @relation(fields: [thesisId], references: [id], onDelete: Cascade)
+}
+
+model thesis_similarities {
+  id                                                              String        @id
+  sourceThesisId                                                  String
+  targetThesisId                                                  String
+  similarityPercentage                                            Float
+  thesis_titles_thesis_similarities_sourceThesisIdTothesis_titles thesis_titles @relation("thesis_similarities_sourceThesisIdTothesis_titles", fields: [sourceThesisId], references: [id], onDelete: Cascade)
+  thesis_titles_thesis_similarities_targetThesisIdTothesis_titles thesis_titles @relation("thesis_similarities_targetThesisIdTothesis_titles", fields: [targetThesisId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceThesisId, targetThesisId])
+}
+
+model thesis_titles {
+  id                                                                    String                @id
+  title                                                                 String
+  abstract                                                              String
+  keywords                                                              String[]
+  submissionDate                                                        DateTime              @default(now())
+  status                                                                ThesisStatus          @default(pending)
+  year                                                                  Int
+  similarityScore                                                       Float?
+  digitalCopy                                                           Boolean               @default(false)
+  documentUrl                                                           String?
+  externalLink                                                          String?
+  authorId                                                              String
+  supervisorId                                                          String?
+  department                                                            String
+  createdAt                                                             DateTime              @default(now())
+  updatedAt                                                             DateTime
+  thesis_archives                                                       thesis_archives?
+  thesis_reviews                                                        thesis_reviews[]
+  thesis_similarities_thesis_similarities_sourceThesisIdTothesis_titles thesis_similarities[] @relation("thesis_similarities_sourceThesisIdTothesis_titles")
+  thesis_similarities_thesis_similarities_targetThesisIdTothesis_titles thesis_similarities[] @relation("thesis_similarities_targetThesisIdTothesis_titles")
+  students                                                              students              @relation(fields: [authorId], references: [id])
+  lecturers                                                             lecturers?            @relation(fields: [supervisorId], references: [id])
+}
+
+model users {
+  id         String       @id
+  username   String       @unique(map: "users_nidn_key")
+  password   String
+  name       String
+  avatar     String?
+  role       Role         @default(mahasiswa)
+  subRole    String?
+  isActive   Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime
+  accounts   accounts[]
+  audit_logs audit_logs[]
+  lecturers  lecturers?
+  sessions   sessions[]
+  staff      staff?
+  students   students?
+}
+
+model verification_tokens {
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
   @@unique([identifier, token])
-  @@map("verification_tokens")
 }
 
-model Laboratory {
-  id                String            @id @default(cuid()) @map("id")
-  code              String            @unique @map("code")
-  name              String            @map("name")
-  description       String?           @map("description")
-  image             String?           @map("image")
-  capacity          Int               @map("capacity")
-  credits           Int               @map("credits")
-  semester          String            @map("semester")
-  department        String            @map("department")
-  location          String            @map("location")
-  category          String            @map("category")
-  status            LabStatus         @default(active) @map("status")
-  instructorId      String?
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime
-  lab_announcements LabAnnouncement[]
-  lab_assignments   LabAssignment[]
-  lab_materials     LabMaterial[]
-  lab_registrations LabRegistration[]
-  lab_sessions      LabSession[]
-  lecturers         Lecturer?         @relation(fields: [instructorId], references: [id])
-
-  @@map("laboratories")
-}
-
-model LabRegistration {
-  id                         String                    @id @default(cuid()) @map("id")
-  status                     LabRegistrationStatus     @default(pending) @map("status")
-  registeredAt               DateTime                  @default(now())
-  completedAt                DateTime?
-  progress                   Float                     @default(0) @map("progress")
-  grade                      String?                   @map("grade")
-  studentId                  String
-  laboratoryId               String
-  createdAt                  DateTime                  @default(now())
-  updatedAt                  DateTime
-  lab_assignment_submissions LabAssignmentSubmission[]
-  laboratories               Laboratory                @relation(fields: [laboratoryId], references: [id])
-  students                   Student                   @relation(fields: [studentId], references: [id])
-
-  @@unique([studentId, laboratoryId])
-  @@map("lab_registrations")
-}
-
-model LabSession {
-  id           String           @id @default(cuid()) @map("id")
-  title        String           @map("title")
-  description  String?          @map("description")
-  sessionDate  DateTime
-  startTime    String
-  endTime      String
-  location     String?          @map("location")
-  status       LabSessionStatus @default(scheduled) @map("status")
-  laboratoryId String
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime
-  laboratories Laboratory       @relation(fields: [laboratoryId], references: [id])
-
-  @@map("lab_sessions")
-}
-
-model LabAssignment {
-  id                         String                    @id @default(cuid()) @map("id")
-  title                      String                    @map("title")
-  description                String                    @map("description")
-  dueDate                    DateTime
-  maxScore                   Float                     @default(100)
-  laboratoryId               String
-  createdAt                  DateTime                  @default(now())
-  updatedAt                  DateTime
-  lab_assignment_submissions LabAssignmentSubmission[]
-  laboratories               Laboratory                @relation(fields: [laboratoryId], references: [id])
-
-  @@map("lab_assignments")
-}
-
-model LabAssignmentSubmission {
-  id                String          @id @default(cuid()) @map("id")
-  submittedAt       DateTime        @default(now())
-  score             Float?          @map("score")
-  feedback          String?         @map("feedback")
-  fileUrl           String?
-  studentId         String
-  assignmentId      String
-  registrationId    String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime
-  lab_assignments   LabAssignment   @relation(fields: [assignmentId], references: [id])
-  lab_registrations LabRegistration @relation(fields: [registrationId], references: [id])
-  students          Student         @relation(fields: [studentId], references: [id])
-
-  @@unique([studentId, assignmentId])
-  @@map("lab_assignment_submissions")
-}
-
-model LabMaterial {
-  id           String     @id @default(cuid()) @map("id")
-  title        String     @map("title")
-  description  String?    @map("description")
-  type         String     @map("type")
-  fileUrl      String?
-  externalUrl  String?
-  laboratoryId String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime
-  laboratories Laboratory @relation(fields: [laboratoryId], references: [id])
-
-  @@map("lab_materials")
-}
-
-model LabAnnouncement {
-  id           String     @id @default(cuid()) @map("id")
-  title        String     @map("title")
-  content      String     @map("content")
-  isImportant  Boolean    @default(false)
-  laboratoryId String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime
-  laboratories Laboratory @relation(fields: [laboratoryId], references: [id])
-
-  @@map("lab_announcements")
-}
-
-enum Role {
-  mahasiswa
-  dosen
+enum ApprovalRole {
   staff_tu
   prodi
   dekan
-  admin
-  laboratory_admin
-  reading_room_admin
-  admin_umum
-  admin_keuangan
-  gkm
-  kepala_tata_usaha
-}
-
-enum StudentStatus {
-  active
-  inactive
-  graduated
-  dropped_out
-  suspended
-}
-
-enum KkpStatus {
-  pending
-  approved
-  rejected
-  in_progress
-  completed
-}
-
-enum KkpDocumentType {
-  application_letter
-  proposal
-  transcript
-  acceptance_letter
-  supervisor_letter
-  report
-  evaluation
-  payment_proof_kkp_plus
-  transcript_125_sks
-  competency_certificate
-  practicum_control_card
-  falaq_practicum
-  quran_reading_certificate
-  academic_advisor_card
-  dad_certificate
-}
-
-enum KkpRequirementType {
-  payment_proof_kkp_plus
-  transcript_125_sks
-  competency_certificate
-  practicum_control_card
-  falaq_practicum
-  quran_reading_certificate
-  academic_advisor_card
-  dad_certificate
-}
-
-enum DocumentStatus {
-  pending
-  verified
-  rejected
+  none
 }
 
 enum ApprovalStatus {
@@ -960,23 +808,48 @@ enum ApprovalStatus {
   rejected
 }
 
-enum ExamType {
-  proposal
-  result
-  final
-  closing
-  midterm
-  other
+enum BookStatus {
+  available
+  borrowed
+  reserved
+  maintenance
 }
 
-enum ExamStatus {
-  applicant
+enum BorrowingStatus {
+  active
+  returned
+  overdue
+  lost
+}
+
+enum BudgetStatus {
+  active
+  inactive
+  closed
+}
+
+enum DocumentStatus {
   pending
-  scheduled
-  completed
-  passed
-  failed
+  verified
+  rejected
+}
+
+enum EventStatus {
+  confirmed
+  pending
   cancelled
+  completed
+}
+
+enum EventType {
+  exam
+  class
+  lab
+  consultation
+  seminar
+  workshop
+  deadline
+  organization
 }
 
 enum ExamDocumentType {
@@ -1015,32 +888,23 @@ enum ExamDocumentType {
   other
 }
 
-enum ThesisStatus {
+enum ExamStatus {
+  applicant
   pending
-  approved
-  rejected
-  archived
-}
-
-enum PaymentCategory {
-  laboratory
-  exam
-  kkp
-  tuition
-  other
-}
-
-enum PaymentStatus {
-  pending
+  scheduled
   completed
+  passed
   failed
-  refunded
+  cancelled
 }
 
-enum BudgetStatus {
-  active
-  inactive
-  closed
+enum ExamType {
+  proposal
+  result
+  final
+  closing
+  midterm
+  other
 }
 
 enum ExpenseStatus {
@@ -1050,46 +914,41 @@ enum ExpenseStatus {
   paid
 }
 
-enum LetterStatus {
-  submitted
-  in_review
+enum KkpDocumentType {
+  application_letter
+  proposal
+  transcript
+  acceptance_letter
+  supervisor_letter
+  report
+  evaluation
+  payment_proof_kkp_plus
+  transcript_125_sks
+  competency_certificate
+  practicum_control_card
+  falaq_practicum
+  quran_reading_certificate
+  academic_advisor_card
+  dad_certificate
+}
+
+enum KkpRequirementType {
+  payment_proof_kkp_plus
+  transcript_125_sks
+  competency_certificate
+  practicum_control_card
+  falaq_practicum
+  quran_reading_certificate
+  academic_advisor_card
+  dad_certificate
+}
+
+enum KkpStatus {
+  pending
   approved
-  completed
   rejected
-}
-
-enum ApprovalRole {
-  staff_tu
-  prodi
-  dekan
-  none
-}
-
-enum BookStatus {
-  available
-  borrowed
-  reserved
-  maintenance
-}
-
-enum BorrowingStatus {
-  active
-  returned
-  overdue
-  lost
-}
-
-enum NotificationType {
-  info
-  warning
-  error
-  success
-}
-
-enum LabStatus {
-  active
-  inactive
-  maintenance
+  in_progress
+  completed
 }
 
 enum LabRegistrationStatus {
@@ -1107,20 +966,68 @@ enum LabSessionStatus {
   cancelled
 }
 
-enum EventType {
-  exam
-  class
-  lab
-  consultation
-  seminar
-  workshop
-  deadline
-  organization
+enum LabStatus {
+  active
+  inactive
+  maintenance
 }
 
-enum EventStatus {
-  confirmed
-  pending
-  cancelled
+enum LetterStatus {
+  submitted
+  in_review
+  approved
   completed
+  rejected
+}
+
+enum NotificationType {
+  info
+  warning
+  error
+  success
+}
+
+enum PaymentCategory {
+  laboratory
+  exam
+  kkp
+  tuition
+  other
+}
+
+enum PaymentStatus {
+  pending
+  completed
+  failed
+  refunded
+}
+
+enum Role {
+  mahasiswa
+  dosen
+  staff_tu
+  prodi
+  dekan
+  admin
+  laboratory_admin
+  reading_room_admin
+  admin_umum
+  admin_keuangan
+  gkm
+  kepala_tata_usaha
+}
+
+enum StudentStatus {
+  active
+  inactive
+  graduated
+  dropped_out
+  suspended
+}
+
+enum ThesisStatus {
+  pending
+  approved
+  rejected
+  archived
 }

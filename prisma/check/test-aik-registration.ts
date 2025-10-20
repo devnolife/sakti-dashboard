@@ -10,20 +10,20 @@ async function testAIKRegistration() {
     console.log('👤 User ID:', userId)
 
     // 1. Verify no existing AIK exams
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       console.log('❌ Student not found')
       return
     }
 
-    const studentId = user.studentProfile.id
-    console.log('✅ Student found:', user.name, 'NIM:', user.studentProfile.nim)
+    const studentId = user.students.id
+    console.log('✅ Student found:', user.name, 'NIM:', user.students.nim)
 
     const existingAIKExams = await prisma.examApplication.findMany({
       where: {
@@ -37,7 +37,7 @@ async function testAIKRegistration() {
     })
 
     console.log(`\n📋 Found ${existingAIKExams.length} existing AIK exams`)
-    
+
     if (existingAIKExams.length === 0) {
       console.log('✅ No existing AIK exams - ready for registration test')
     } else {
@@ -49,14 +49,14 @@ async function testAIKRegistration() {
 
     // 2. Test registration data endpoint (GET)
     console.log('\n🔍 Testing registration data endpoint...')
-    
+
     // Simulate the GET request data
     const registrationData = {
       name: user.name,
-      nim: user.studentProfile.nim,
-      email: user.nidn || `${user.studentProfile.nim}@student.university.ac.id`,
-      phone: user.studentProfile.phone || '',
-      semester: user.studentProfile.semester.toString(),
+      nim: user.students.nim,
+      email: user.nidn || `${user.students.nim}@student.university.ac.id`,
+      phone: user.students.phone || '',
+      semester: user.students.semester.toString(),
       canRegister: existingAIKExams.length === 0,
       registrationFee: 50000,
     }
@@ -72,12 +72,12 @@ async function testAIKRegistration() {
 
     // 3. Test validation logic
     console.log('\n🛡️  Testing validation logic...')
-    
+
     if (existingAIKExams.length > 0) {
-      const activeExam = existingAIKExams.find(exam => 
+      const activeExam = existingAIKExams.find(exam =>
         ['applicant', 'pending', 'scheduled', 'completed'].includes(exam.status)
       )
-      
+
       if (activeExam) {
         console.log('❌ Validation: Should prevent registration - Active exam found')
         console.log(`   Active exam: ${activeExam.title} (${activeExam.status})`)
@@ -89,16 +89,16 @@ async function testAIKRegistration() {
     }
 
     // 4. Simulate registration attempt (if no active exam)
-    const hasActiveExam = existingAIKExams.some(exam => 
+    const hasActiveExam = existingAIKExams.some(exam =>
       ['applicant', 'pending', 'scheduled', 'completed'].includes(exam.status)
     )
 
     if (!hasActiveExam) {
       console.log('\n📝 Simulating successful registration...')
-      
+
       const mockRegistrationData = {
         name: user.name,
-        nim: user.studentProfile.nim,
+        nim: user.students.nim,
         email: registrationData.email,
         phone: registrationData.phone || '081234567890',
         semester: registrationData.semester,
@@ -110,7 +110,7 @@ async function testAIKRegistration() {
 
       console.log('📤 Mock registration payload:')
       console.log(JSON.stringify(mockRegistrationData, null, 2))
-      
+
       console.log('\n✅ Registration validation passed!')
       console.log('💡 You can now test the registration through the UI')
     } else {

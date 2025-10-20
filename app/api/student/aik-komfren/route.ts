@@ -9,28 +9,28 @@ export async function GET(request: NextRequest) {
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) userId = token.sub
     if (!userId) {
-      try { userId = await getServerActionUserId() } catch {}
+      try { userId = await getServerActionUserId() } catch { }
     }
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
+
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       return NextResponse.json(
         { error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
 
     // Get AIK Komfren exam applications
     const aikExams = await prisma.examApplication.findMany({
@@ -65,9 +65,9 @@ export async function GET(request: NextRequest) {
     })
 
     // Get the most recent/active AIK exam
-    const currentAIKExam = aikExams.find(exam => 
-      exam.status === 'scheduled' || 
-      exam.status === 'pending' || 
+    const currentAIKExam = aikExams.find(exam =>
+      exam.status === 'scheduled' ||
+      exam.status === 'pending' ||
       exam.status === 'applicant'
     ) || aikExams[0] // fallback to most recent
 
@@ -75,10 +75,10 @@ export async function GET(request: NextRequest) {
     const aikData = {
       studentInfo: {
         name: user.name,
-        nim: user.studentProfile.nim,
-        faculty: user.studentProfile.department || 'Faculty of Computer Science',
-        program: user.studentProfile.major || 'Computer Science',
-        semester: user.studentProfile.semester || 6,
+        nim: user.students.nim,
+        faculty: user.students.department || 'Faculty of Computer Science',
+        program: user.students.major || 'Computer Science',
+        semester: user.students.semester || 6,
       },
       currentExam: currentAIKExam ? {
         id: currentAIKExam.id,
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
           id: currentAIKExam.advisor1.id,
           name: currentAIKExam.advisor1.user.name,
           nip: currentAIKExam.advisor1.nip,
-          nidn: currentAIKExam.advisor1.user.nidn,
+          username: currentAIKExam.advisor1.user.username,
           position: 'Senior Lecturer',
           department: 'Islamic Studies Department'
         } : null,
@@ -141,7 +141,7 @@ function determineExamStatus(exams: any[]): string {
   }
 
   const latestExam = exams[0]
-  
+
   // Map database status to frontend status
   switch (latestExam.status) {
     case 'applicant':

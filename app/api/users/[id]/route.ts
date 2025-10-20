@@ -32,7 +32,7 @@ export async function GET(
     }
 
     const { id } = params
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id },
       select: {
         id: true,
@@ -108,7 +108,7 @@ export async function PUT(
     const validatedData = updateUserSchema.parse(body)
 
     // Check if user exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { id }
     })
 
@@ -118,7 +118,7 @@ export async function PUT(
 
     // Check if username is being changed and if it already exists
     if (validatedData.username && validatedData.username !== existingUser.username) {
-      const usernameExists = await prisma.user.findUnique({
+      const usernameExists = await prisma.users.findUnique({
         where: { username: validatedData.username }
       })
 
@@ -134,7 +134,7 @@ export async function PUT(
       updateData.password = await bcrypt.hash(validatedData.password, 10)
     }
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id },
       data: updateData,
       select: {
@@ -176,7 +176,7 @@ export async function DELETE(
     const { id } = params
 
     // Check if user exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { id }
     })
 
@@ -189,7 +189,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Cannot delete your own account' }, { status: 400 })
     }
 
-    await prisma.user.delete({
+    await prisma.users.delete({
       where: { id }
     })
 

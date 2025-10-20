@@ -51,7 +51,7 @@ export function downloadFile(content: string, filename: string, contentType: str
  */
 export function exportUsers(users: any[], format: ExportFormat = 'csv') {
   const exportData = users.map(user => ({
-    NIDN: user.nidn,
+    Username: user.username,
     Name: user.name,
     Role: user.role,
     'Sub Role': user.subRole || '-',

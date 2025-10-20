@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authMiddleware } from '@/lib/auth-middleware'
 import { prisma } from '@/lib/prisma'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,18 +9,18 @@ export async function GET(request: NextRequest) {
     if (token instanceof NextResponse) return token
 
     // Get user with full profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: token.sub },
       select: {
         id: true,
-        nidn: true,
+        username: true,
         name: true,
         role: true,
         subRole: true,
         avatar: true,
         isActive: true,
         createdAt: true,
-        studentProfile: {
+        students: {
           select: {
             id: true,
             nim: true,
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       user: {
         ...user,
-        profile: user.studentProfile || user.lecturerProfile || user.staffProfile
+        profile: user.students || user.lecturerProfile || user.staffProfile
       }
     })
   } catch (error) {

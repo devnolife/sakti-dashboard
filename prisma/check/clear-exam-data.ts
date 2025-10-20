@@ -1,3 +1,4 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { PrismaClient } from '../../lib/generated/prisma'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 
@@ -9,19 +10,19 @@ async function clearExamData() {
 
   try {
     // Get user and student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!user || !user.studentProfile) {
+    if (!user || !user.students) {
       console.log('❌ User or student not found')
       return
     }
 
-    const studentId = user.studentProfile.id
+    const studentId = user.students.id
     console.log('👤 Student ID:', studentId)
 
     // Get all exam applications for this student

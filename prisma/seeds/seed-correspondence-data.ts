@@ -1,9 +1,10 @@
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 import { getHardcodedUserId } from '@/lib/auth-utils'
 import { PrismaClient, ApprovalRole, LetterStatus } from '@/lib/generated/prisma'
 
 
 export async function seedCorrespondenceData(prisma: PrismaClient) {
-  const userId  = getHardcodedUserId()
+  const userId = getHardcodedUserId()
 
   try {
     console.log('=== SEEDING CORRESPONDENCE DATA ===\n')
@@ -148,18 +149,18 @@ export async function seedCorrespondenceData(prisma: PrismaClient) {
 
     // 2. Get target student
     console.log('\n2. Finding target student...')
-    const targetUser = await prisma.user.findUnique({
+    const targetUser = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: true
+        students: true
       }
     })
 
-    if (!targetUser || !targetUser.studentProfile) {
+    if (!targetUser || !targetUser.students) {
       throw new Error('Target user or student profile not found')
     }
 
-    console.log(`   Found student: ${targetUser.name} (${targetUser.studentProfile.nim})`)
+    console.log(`   Found student: ${targetUser.name} (${targetUser.students.nim})`)
 
     // 3. Seed Sample Letter Requests
     console.log('\n3. Seeding Letter Requests...')
@@ -174,7 +175,7 @@ export async function seedCorrespondenceData(prisma: PrismaClient) {
         requestDate: new Date('2024-08-15T09:30:00Z'),
         approvedDate: new Date('2024-08-17T14:20:00Z'),
         completedDate: new Date('2024-08-18T10:15:00Z'),
-        studentId: targetUser.studentProfile.id,
+        studentId: targetUser.students.id,
         approvalRole: ApprovalRole.staff_tu,
         approvedBy: 'Budi Santoso, S.Kom.',
         additionalInfo: {
@@ -192,7 +193,7 @@ export async function seedCorrespondenceData(prisma: PrismaClient) {
         description: 'Surat keterangan aktif kuliah untuk keperluan administrasi keluarga (asuransi)',
         status: LetterStatus.in_review,
         requestDate: new Date('2024-09-20T13:45:00Z'),
-        studentId: targetUser.studentProfile.id,
+        studentId: targetUser.students.id,
         approvalRole: ApprovalRole.staff_tu,
         additionalInfo: {
           semester: 5,
@@ -207,7 +208,7 @@ export async function seedCorrespondenceData(prisma: PrismaClient) {
         description: 'Surat pengantar untuk survey penelitian skripsi tentang implementasi sistem informasi',
         status: LetterStatus.submitted,
         requestDate: new Date('2024-09-25T10:30:00Z'),
-        studentId: targetUser.studentProfile.id,
+        studentId: targetUser.students.id,
         approvalRole: ApprovalRole.staff_tu,
         additionalInfo: {
           surveyLocation: 'PT. Technology Solutions Indonesia',

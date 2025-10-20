@@ -32,7 +32,7 @@ export async function seedAcademicData(prisma: PrismaClient) {
 
     if (!advisor) {
       // Create academic advisor user
-      const advisorUser = await prisma.user.create({
+      const advisorUser = await prisma.users.create({
         data: {
           nidn: 'DOSEN001',
           name: 'Dr. Budi Santoso, M.Kom',

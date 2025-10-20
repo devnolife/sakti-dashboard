@@ -2,19 +2,20 @@
 
 import { prisma } from '@/lib/prisma'
 import { getServerActionUserId } from '@/lib/auth-utils'
+import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export async function getStudentDashboardData() {
   // Get current student user ID
   const userId = await getServerActionUserId()
-  
+
   console.log('🔍 Fetching student dashboard data for user:', userId)
 
   try {
     // Get user with student profile
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       include: {
-        studentProfile: {
+        students: {
           include: {
             kkpApplications: {
               include: {
@@ -73,18 +74,18 @@ export async function getStudentDashboardData() {
       }
     })
 
-    if (!user?.studentProfile) {
+    if (!user?.students) {
       throw new Error('Student profile not found')
     }
 
-    const student = user.studentProfile
+    const student = user.students
 
     // Calculate current semester courses
     const currentAcademicYear = new Date().getFullYear().toString()
     const currentSemester = new Date().getMonth() < 6 ? 'genap' : 'ganjil'
-    
-    const currentCourses = student.grades.filter(grade => 
-      grade.academicYear === currentAcademicYear && 
+
+    const currentCourses = student.grades.filter(grade =>
+      grade.academicYear === currentAcademicYear &&
       grade.semester.toLowerCase().includes(currentSemester)
     )
 

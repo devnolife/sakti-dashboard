@@ -29,7 +29,7 @@ export async function syncDosenFromGraphQL(nidn: string, token: string) {
     })
 
     // Find existing user by username (nidn is username for dosen)
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { username: nidn },
       include: { lecturers: true }
     })
@@ -48,7 +48,7 @@ export async function syncDosenFromGraphQL(nidn: string, token: string) {
 
     // Update user name if different
     if (existingUser.name !== fullName) {
-      await prisma.user.update({
+      await prisma.users.update({
         where: { id: existingUser.id },
         data: { name: fullName }
       })
@@ -114,7 +114,7 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
     console.log(`Found ${students.length} mahasiswa PA from GraphQL`)
 
     // Get the dosen user from token
-    const dosenUser = await prisma.user.findFirst({
+    const dosenUser = await prisma.users.findFirst({
       where: { role: 'dosen' },
       include: { lecturers: true }
     })
@@ -129,7 +129,7 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
     for (const mahasiswa of students) {
       try {
         // Find or create user
-        const user = await prisma.user.upsert({
+        const user = await prisma.users.upsert({
           where: { username: mahasiswa.nim },
           update: {
             name: mahasiswa.nama,
