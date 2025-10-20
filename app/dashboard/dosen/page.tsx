@@ -1,6 +1,6 @@
-import SubRoleDashboard from "@/components/dosen/sub-role-dashboard"
+import DosenPageClient from "./page-client"
 
 export default function DosenDashboardPage() {
-  return <SubRoleDashboard />
+  return <DosenPageClient />
 }
 

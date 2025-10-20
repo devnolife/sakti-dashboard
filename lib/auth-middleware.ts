@@ -28,10 +28,10 @@ export async function authMiddleware(request: NextRequest) {
     // Check if session exists and is not expired
     const session = await prisma.session.findUnique({
       where: { token },
-      include: { user: true }
+      include: { users: true }
     })
 
-    if (!session || session.expiresAt < new Date() || !session.user.isActive) {
+    if (!session || session.expiresAt < new Date() || !session.users.isActive) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
     }
 
