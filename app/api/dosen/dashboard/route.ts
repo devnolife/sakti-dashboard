@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, hasPermission } from '@/lib/auth-middleware'
+import { syncDosenFromGraphQL, getMahasiswaPaWithSync } from '@/lib/sync/dosen-sync'
 
 // GET /api/dosen/dashboard
 export async function GET(request: NextRequest) {
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    let lecturer = await prisma.lecturer.findFirst({
       where: {
         users: {
           id: token.sub
@@ -34,6 +35,23 @@ export async function GET(request: NextRequest) {
 
     if (!lecturer) {
       return NextResponse.json({ error: 'Lecturer profile not found' }, { status: 404 })
+    }
+
+    // Sync dosen data from GraphQL if needed
+    const authHeader = request.headers.get('authorization')
+    const sessionToken = authHeader?.replace('Bearer ', '')
+    if (sessionToken && token.username) {
+      console.log('Syncing dosen data from GraphQL...')
+      const syncResult = await syncDosenFromGraphQL(token.username, sessionToken)
+      if (syncResult) {
+        lecturer = syncResult.lecturer
+      }
+    }
+
+    // Sync mahasiswa PA from GraphQL
+    if (sessionToken) {
+      console.log('Syncing mahasiswa PA from GraphQL...')
+      await getMahasiswaPaWithSync(lecturer.id, sessionToken)
     }
 
     // Get statistics in parallel

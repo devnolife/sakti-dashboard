@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware } from '@/lib/auth-middleware'
+import { getMahasiswaPaWithSync } from '@/lib/sync/dosen-sync'
 
 // GET /api/dosen/students - Get mahasiswa bimbingan (PA students)
 export async function GET(request: NextRequest) {
@@ -23,6 +24,14 @@ export async function GET(request: NextRequest) {
 
     if (!lecturer) {
       return NextResponse.json({ error: 'Lecturer profile not found' }, { status: 404 })
+    }
+
+    // Sync mahasiswa PA from GraphQL
+    const authHeader = request.headers.get('authorization')
+    const sessionToken = authHeader?.replace('Bearer ', '')
+    if (sessionToken) {
+      console.log('Syncing mahasiswa PA from GraphQL in students endpoint...')
+      await getMahasiswaPaWithSync(lecturer.id, sessionToken)
     }
 
     const { searchParams } = new URL(request.url)

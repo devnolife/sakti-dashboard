@@ -69,6 +69,7 @@ model Student {
   status                     StudentStatus             @default(active) @map("status")
   gpa                        Float?                    @map("gpa")
   academicAdvisorId          String?
+  lastSyncAt                 DateTime?                 @map("last_sync_at")
   academic_consultations     AcademicConsultation[]
   academic_events            AcademicEvent[]
   book_borrowings            BookBorrowing[]
@@ -98,6 +99,8 @@ model Lecturer {
   specialization                                            String?                @map("specialization")
   phone                                                     String?                @map("phone")
   office                                                    String?                @map("office")
+  email                                                     String?                @map("email")
+  lastSyncAt                                                DateTime?              @map("last_sync_at")
   academic_consultations                                    AcademicConsultation[]
   academic_events                                           AcademicEvent[]
   courses                                                   Course[]
