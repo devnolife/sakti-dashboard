@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -37,17 +37,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') // 'pending', 'graded'
 
-    const exams = await prisma.examApplication.findMany({
+    const exams = await prisma.exam_applications.findMany({
       where: {
         OR: [
-          { mainExaminerId: lecturer.id },
-          { coExaminer1Id: lecturer.id },
-          { coExaminer2Id: lecturer.id },
+          { main_examiner_id: lecturer.id },
+          { co_examiner_1_id: lecturer.id },
+          { co_examiner_2_id: lecturer.id },
         ],
         status: status === 'graded' ? 'completed' : {
           in: ['scheduled', 'in_progress']
         },
-        examDate: {
+        exam_date: {
           lte: new Date() // Only past exams for grading
         }
       },
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
           }
         }
       },
-      orderBy: { examDate: 'desc' }
+      orderBy: { exam_date: 'desc' }
     })
 
     const formattedExams = exams.map(exam => ({
@@ -83,8 +83,8 @@ export async function GET(request: NextRequest) {
         major: exam.students.major
       },
       title: exam.title,
-      examType: exam.examType,
-      examDate: exam.examDate,
+      exam_type: exam.examType,
+      exam_date: exam.examDate,
       examTime: exam.examTime,
       location: exam.location,
       score: exam.score,
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     const validatedData = gradingSchema.parse(body)
 
     // Check if lecturer is examiner for this exam
-    const exam = await prisma.examApplication.findUnique({
+    const exam = await prisma.exam_applications.findUnique({
       where: { id: validatedData.examId }
     })
 
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update exam with grade
-    const updatedExam = await prisma.examApplication.update({
+    const updatedExam = await prisma.exam_applications.update({
       where: { id: validatedData.examId },
       data: {
         score: validatedData.score,
@@ -181,9 +181,9 @@ export async function POST(request: NextRequest) {
     })
 
     // Log audit
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub,
+        user_id: token.sub,
         action: 'grade_exam',
         resource: 'exam',
         details: {

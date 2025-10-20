@@ -31,7 +31,7 @@ export async function authMiddleware(request: NextRequest) {
       include: { users: true }
     })
 
-    if (!session || session.expiresAt < new Date() || !session.users.isActive) {
+    if (!session || session.expires_at < new Date() || !session.users.is_active) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
     }
 
@@ -39,7 +39,7 @@ export async function authMiddleware(request: NextRequest) {
       sub: decoded.userId,
       username: decoded.username,
       role: decoded.role,
-      subRole: decoded.subRole
+      sub_role: decoded.subRole
     }
   } catch (error) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
@@ -187,7 +187,7 @@ export function requireAuth(requiredPermission?: string) {
     context.user = {
       id: token.sub,
       role: token.role,
-      subRole: token.subRole,
+      sub_role: token.subRole,
       username: token.username
     }
 
@@ -215,7 +215,7 @@ export function requireAdmin() {
     context.user = {
       id: token.sub,
       role: token.role,
-      subRole: token.subRole,
+      sub_role: token.subRole,
       username: token.username
     }
 

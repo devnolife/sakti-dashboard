@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const role = searchParams.get('role') // 'supervisor', 'examiner', 'all'
     const status = searchParams.get('status') // 'pending', 'scheduled', 'completed'
-    const examType = searchParams.get('examType') // 'proposal', 'result', 'comprehensive'
+    const exam_type = searchParams.get('examType') // 'proposal', 'result', 'comprehensive'
 
     const whereClause: any = {
       OR: [
         { mainSupervisorId: lecturer.id },
-        { mainExaminerId: lecturer.id },
-        { coExaminer1Id: lecturer.id },
-        { coExaminer2Id: lecturer.id },
+        { main_examiner_id: lecturer.id },
+        { co_examiner_1_id: lecturer.id },
+        { co_examiner_2_id: lecturer.id },
       ]
     }
 
@@ -44,9 +44,9 @@ export async function GET(request: NextRequest) {
       whereClause.OR = [{ mainSupervisorId: lecturer.id }]
     } else if (role === 'examiner') {
       whereClause.OR = [
-        { mainExaminerId: lecturer.id },
-        { coExaminer1Id: lecturer.id },
-        { coExaminer2Id: lecturer.id },
+        { main_examiner_id: lecturer.id },
+        { co_examiner_1_id: lecturer.id },
+        { co_examiner_2_id: lecturer.id },
       ]
     }
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       whereClause.examType = examType
     }
 
-    const exams = await prisma.examApplication.findMany({
+    const exams = await prisma.exam_applications.findMany({
       where: whereClause,
       include: {
         students: {
@@ -103,8 +103,8 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { examDate: 'asc' },
-        { createdAt: 'desc' }
+        { exam_date: 'asc' },
+        { created_at: 'desc' }
       ]
     })
 
@@ -126,9 +126,9 @@ export async function GET(request: NextRequest) {
           major: exam.students.major
         },
         title: exam.title,
-        examType: exam.examType,
+        exam_type: exam.examType,
         status: exam.status,
-        examDate: exam.examDate,
+        exam_date: exam.examDate,
         examTime: exam.examTime,
         location: exam.location,
         score: exam.score,
@@ -151,8 +151,8 @@ export async function GET(request: NextRequest) {
           id: exam.coExaminer2.id,
           name: exam.coExaminer2.users.name
         } : null,
-        createdAt: exam.createdAt,
-        updatedAt: exam.updatedAt
+        created_at: exam.createdAt,
+        updated_at: exam.updatedAt
       }
     })
 
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
       filters: {
         role: role || 'all',
         status: status || 'all',
-        examType: examType || 'all'
+        exam_type: exam_type || 'all'
       }
     })
   } catch (error) {

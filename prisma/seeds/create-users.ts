@@ -22,7 +22,7 @@ async function main() {
       nidn: 'ADMIN001',
       name: 'Administrator System',
       role: 'admin' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Mahasiswa role
@@ -30,7 +30,7 @@ async function main() {
       nidn: 'MAHASISWA001',
       name: 'Ahmad Fauzi',
       role: 'mahasiswa' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Dosen role with subroles
@@ -38,55 +38,55 @@ async function main() {
       nidn: 'DOSEN001',
       name: 'Dr. Siti Rahayu',
       role: 'dosen' as const,
-      subRole: 'dosen',
+      sub_role: 'dosen',
     },
     {
       nidn: 'DEKAN001',
       name: 'Prof. Dr. Ahmad Susanto, M.T.',
       role: 'dosen' as const,
-      subRole: 'dekan',
+      sub_role: 'dekan',
     },
     {
       nidn: 'WD001',
       name: 'Dr. Budiman Santoso, M.T.',
       role: 'dosen' as const,
-      subRole: 'wakil_dekan_1',
+      sub_role: 'wakil_dekan_1',
     },
     {
       nidn: 'WD002',
       name: 'Dr. Sari Mulyani, M.M.',
       role: 'dosen' as const,
-      subRole: 'wakil_dekan_2',
+      sub_role: 'wakil_dekan_2',
     },
     {
       nidn: 'WD003',
       name: 'Dr. Indra Wijaya, M.Pd.',
       role: 'dosen' as const,
-      subRole: 'wakil_dekan_3',
+      sub_role: 'wakil_dekan_3',
     },
     {
       nidn: 'WD004',
       name: 'Dr. Maya Kartika, M.Sc.',
       role: 'dosen' as const,
-      subRole: 'wakil_dekan_4',
+      sub_role: 'wakil_dekan_4',
     },
     {
       nidn: 'PRODI001',
       name: 'Dr. Rudi Hartono, M.T.',
       role: 'dosen' as const,
-      subRole: 'prodi',
+      sub_role: 'prodi',
     },
     {
       nidn: 'SEKPRODI001',
       name: 'Dr. Fitri Rahmawati, M.Kom.',
       role: 'dosen' as const,
-      subRole: 'sekretaris_prodi',
+      sub_role: 'sekretaris_prodi',
     },
     {
       nidn: 'GKM001',
       name: 'Dr. Hasan Basri, M.T.',
       role: 'dosen' as const,
-      subRole: 'gkm',
+      sub_role: 'gkm',
     },
 
     // Test user with multiple subroles (dosen + dekan)
@@ -94,7 +94,7 @@ async function main() {
       nidn: 'MULTISUBROLE001',
       name: 'Prof. Dr. Bambang Sutrisno, M.T.',
       role: 'dosen' as const,
-      subRole: 'dekan,wakil_dekan_1',
+      sub_role: 'dekan,wakil_dekan_1',
     },
 
     // Test user with dosen + prodi subroles
@@ -102,7 +102,7 @@ async function main() {
       nidn: 'MULTISUBROLE002',
       name: 'Dr. Ani Setiawati, M.Kom.',
       role: 'dosen' as const,
-      subRole: 'prodi,gkm',
+      sub_role: 'prodi,gkm',
     },
 
     // Staff TU role
@@ -110,7 +110,7 @@ async function main() {
       nidn: 'STAFFTU001',
       name: 'Siti Aminah, S.Pd.',
       role: 'staff_tu' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Laboratory Admin role
@@ -118,7 +118,7 @@ async function main() {
       nidn: 'LABADMIN001',
       name: 'Bambang Suryadi, S.T.',
       role: 'laboratory_admin' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Reading Room Admin role
@@ -126,7 +126,7 @@ async function main() {
       nidn: 'PERPUS001',
       name: 'Dewi Kusuma, S.I.Pust.',
       role: 'reading_room_admin' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Admin Umum role
@@ -134,7 +134,7 @@ async function main() {
       nidn: 'ADMINUMUM001',
       name: 'Agus Setiawan, S.E.',
       role: 'admin_umum' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Admin Keuangan role
@@ -142,7 +142,7 @@ async function main() {
       nidn: 'ADMINKEU001',
       name: 'Ratna Sari, S.E., M.M.',
       role: 'admin_keuangan' as const,
-      subRole: null,
+      sub_role: null,
     },
 
     // Kepala Tata Usaha role
@@ -150,7 +150,7 @@ async function main() {
       nidn: 'KEPALA001',
       name: 'Drs. Supriyanto, M.M.',
       role: 'kepala_tata_usaha' as const,
-      subRole: null,
+      sub_role: null,
     }
   ]
 
@@ -162,16 +162,16 @@ async function main() {
           password: hashedPassword,
           name: userData.name,
           role: userData.role,
-          subRole: userData.subRole,
-          isActive: true
+          sub_role: userData.subRole,
+          is_active: true
         },
         create: {
           nidn: userData.nidn,
           password: hashedPassword,
           name: userData.name,
           role: userData.role,
-          subRole: userData.subRole,
-          isActive: true
+          sub_role: userData.subRole,
+          is_active: true
         }
       })
       const roleInfo = userData.subRole ? `${userData.role} (${userData.subRole})` : userData.role

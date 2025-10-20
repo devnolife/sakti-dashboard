@@ -5,16 +5,16 @@ import { z } from 'zod'
 import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 const createStudentSchema = z.object({
-  userId: z.string(),
+  user_id: z.string(),
   nim: z.string(),
   major: z.string(),
   department: z.string(),
   semester: z.number().int().min(1).max(14),
-  academicYear: z.string(),
+  academic_year: z.string(),
   phone: z.string().optional(),
   address: z.string().optional(),
   guardian: z.any().optional(),
-  enrollDate: z.string().datetime(),
+  enroll_date: z.string().datetime(),
   gpa: z.number().min(0).max(4).optional()
 })
 
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [students, total] = await Promise.all([
-      prisma.student.findMany({
+      prisma.students.findMany({
         where,
         skip,
         take: limit,
@@ -71,13 +71,13 @@ export async function GET(request: NextRequest) {
               id: true,
               name: true,
               avatar: true,
-              isActive: true
+              is_active: true
             }
           }
         },
-        orderBy: { enrollDate: 'desc' }
+        orderBy: { enroll_date: 'desc' }
       }),
-      prisma.student.count({ where })
+      prisma.students.count({ where })
     ])
 
     return NextResponse.json({
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     const validatedData = createStudentSchema.parse(body)
 
     // Check if NIM already exists
-    const existingStudent = await prisma.student.findUnique({
+    const existingStudent = await prisma.students.findUnique({
       where: { nim: validatedData.nim }
     })
 
@@ -132,10 +132,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User already has a student profile' }, { status: 400 })
     }
 
-    const student = await prisma.student.create({
+    const student = await prisma.students.create({
       data: {
         ...validatedData,
-        enrollDate: new Date(validatedData.enrollDate)
+        enroll_date: new Date(validatedData.enrollDate)
       },
       include: {
         user: {
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
             avatar: true,
-            isActive: true
+            is_active: true
           }
         }
       }

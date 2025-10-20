@@ -4,7 +4,7 @@ export interface BookCategory {
   name: string
   description?: string
   bookCount: number
-  isActive: boolean
+  is_active: boolean
 }
 
 export interface Book {
@@ -30,7 +30,7 @@ export interface BookBorrowing {
   id: string
   bookId: string
   bookTitle: string
-  studentId: string
+  student_id: string
   studentName: string
   borrowDate: string
   dueDate: string

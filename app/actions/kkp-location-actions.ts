@@ -26,7 +26,7 @@ const MOCK_KKP_LOCATION_REQUESTS: KkpLocationRequest[] = [
       major: "Informatika",
       email: "ahmad.fauzi@example.com",
     },
-    submissionDate: new Date("2023-09-01"),
+    submission_date: new Date("2023-09-01"),
     status: "pending",
     documents: [
       {
@@ -66,7 +66,7 @@ const MOCK_KKP_LOCATION_REQUESTS: KkpLocationRequest[] = [
       major: "Sistem Informasi",
       email: "dewi.lestari@example.com",
     },
-    submissionDate: new Date("2023-09-02"),
+    submission_date: new Date("2023-09-02"),
     status: "approved",
     reviewedBy: "Dr. Hadi Santoso",
     reviewDate: new Date("2023-09-05"),
@@ -109,7 +109,7 @@ const MOCK_KKP_LOCATION_REQUESTS: KkpLocationRequest[] = [
       major: "Sistem Informasi",
       email: "rini.susanti@example.com",
     },
-    submissionDate: new Date("2023-09-03"),
+    submission_date: new Date("2023-09-03"),
     status: "rejected",
     reviewedBy: "Dr. Hadi Santoso",
     reviewDate: new Date("2023-09-06"),
@@ -148,7 +148,7 @@ const MOCK_KKP_LOCATION_REQUESTS: KkpLocationRequest[] = [
       major: "Informatika",
       email: "budi.santoso@example.com",
     },
-    submissionDate: new Date("2023-09-04"),
+    submission_date: new Date("2023-09-04"),
     status: "pending",
     documents: [
       {
@@ -188,7 +188,7 @@ const MOCK_KKP_LOCATION_REQUESTS: KkpLocationRequest[] = [
       major: "Sistem Informasi",
       email: "siti.nurhaliza@example.com",
     },
-    submissionDate: new Date("2023-09-05"),
+    submission_date: new Date("2023-09-05"),
     status: "pending",
     documents: [
       {
@@ -286,7 +286,7 @@ export async function submitKkpLocationRequest(requestData: Partial<KkpLocationR
       contactEmail: requestData.contactEmail || "",
       contactPhone: requestData.contactPhone || "",
       proposedBy: requestData.proposedBy!,
-      submissionDate: new Date(),
+      submission_date: new Date(),
       status: "pending",
       documents: requestData.documents || [],
       availablePositions: requestData.availablePositions || [],

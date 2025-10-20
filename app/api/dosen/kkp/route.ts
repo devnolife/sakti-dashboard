@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
 
     const whereClause: any = {
-      supervisorId: lecturer.id
+      supervisor_id: lecturer.id
     }
 
     if (status) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    const kkpApplications = await prisma.kkpApplication.findMany({
+    const kkpApplications = await prisma.kkp_applications.findMany({
       where: whereClause,
       include: {
         students: {
@@ -61,12 +61,12 @@ export async function GET(request: NextRequest) {
         companies: true,
         kkpLocations: true,
         kkpRequirements: {
-          orderBy: { createdAt: 'desc' }
+          orderBy: { created_at: 'desc' }
         }
       },
       orderBy: [
         { status: 'asc' },
-        { createdAt: 'desc' }
+        { created_at: 'desc' }
       ]
     })
 
@@ -105,15 +105,15 @@ export async function GET(request: NextRequest) {
           city: kkp.kkpLocations[0].city
         } : null,
         status: kkp.status,
-        startDate: kkp.startDate,
-        endDate: kkp.endDate,
+        start_date: kkp.startDate,
+        end_date: kkp.endDate,
         progress,
         totalRequirements,
         completedRequirements,
         pendingRequirements: totalRequirements - completedRequirements,
         lastActivity: kkp.updatedAt,
-        createdAt: kkp.createdAt,
-        updatedAt: kkp.updatedAt
+        created_at: kkp.createdAt,
+        updated_at: kkp.updatedAt
       }
     })
 

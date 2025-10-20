@@ -24,7 +24,7 @@
 //       password: defaultPassword,
 //       name: 'Administrator',
 //       role: Role.admin,
-//       isActive: true
+//       is_active: true
 //     }
 //   })
 
@@ -50,13 +50,13 @@
 //           password: defaultPassword,
 //           name: indonesianNames[staffIndex % indonesianNames.length],
 //           role: staffRole.role,
-//           isActive: true
+//           is_active: true
 //         }
 //       })
 
 //       await prisma.staff.create({
 //         data: {
-//           userId: user.id,
+//           user_id: user.id,
 //           nip,
 //           department: departments[staffIndex % departments.length],
 //           position: getPositionByRole(staffRole.role),
@@ -70,19 +70,19 @@
 
 //   // Create dosen with leadership sub-roles (Dekan, Wakil Dekan, Prodi, Sekretaris, GKM)
 //   const dosenLeadership = [
-//     { username: 'DEKAN001', name: 'Prof. Dr. Ahmad Dekan', subRole: 'dekan', position: 'Dekan', department: 'Fakultas Teknik' },
-//     { username: 'WD1001', name: 'Dr. Budi Wakil Dekan I', subRole: 'wakil_dekan_1', position: 'Wakil Dekan I', department: 'Fakultas Teknik' },
-//     { username: 'WD2001', name: 'Dr. Siti Wakil Dekan II', subRole: 'wakil_dekan_2', position: 'Wakil Dekan II', department: 'Fakultas Teknik' },
-//     { username: 'WD3001', name: 'Dr. Eko Wakil Dekan III', subRole: 'wakil_dekan_3', position: 'Wakil Dekan III', department: 'Fakultas Teknik' },
-//     { username: 'WD4001', name: 'Dr. Rina Wakil Dekan IV', subRole: 'wakil_dekan_4', position: 'Wakil Dekan IV', department: 'Fakultas Teknik' },
-//     { username: 'PRODI001', name: 'Dr. Joko Prodi Informatika', subRole: 'prodi', position: 'Kepala Prodi', department: 'Informatika' },
-//     { username: 'PRODI002', name: 'Dr. Dewi Prodi Elektro', subRole: 'prodi', position: 'Kepala Prodi', department: 'Elektro' },
-//     { username: 'PRODI003', name: 'Dr. Bambang Prodi Pengairan', subRole: 'prodi', position: 'Kepala Prodi', department: 'Pengairan' },
-//     { username: 'PRODI004', name: 'Dr. Lina Prodi Arsitektur', subRole: 'prodi', position: 'Kepala Prodi', department: 'Arsitektur' },
-//     { username: 'PRODI005', name: 'Dr. Agus Prodi PWK', subRole: 'prodi', position: 'Kepala Prodi', department: 'PWK' },
-//     { username: 'SEKPRODI001', name: 'Dr. Maya Sekretaris Prodi Informatika', subRole: 'sekretaris_prodi', position: 'Sekretaris Prodi', department: 'Informatika' },
-//     { username: 'SEKPRODI002', name: 'Dr. Rudi Sekretaris Prodi Elektro', subRole: 'sekretaris_prodi', position: 'Sekretaris Prodi', department: 'Elektro' },
-//     { username: 'GKM001', name: 'Dr. Indra GKM', subRole: 'gkm', position: 'Gugus Kendali Mutu', department: 'Fakultas Teknik' }
+//     { username: 'DEKAN001', name: 'Prof. Dr. Ahmad Dekan', sub_role: 'dekan', position: 'Dekan', department: 'Fakultas Teknik' },
+//     { username: 'WD1001', name: 'Dr. Budi Wakil Dekan I', sub_role: 'wakil_dekan_1', position: 'Wakil Dekan I', department: 'Fakultas Teknik' },
+//     { username: 'WD2001', name: 'Dr. Siti Wakil Dekan II', sub_role: 'wakil_dekan_2', position: 'Wakil Dekan II', department: 'Fakultas Teknik' },
+//     { username: 'WD3001', name: 'Dr. Eko Wakil Dekan III', sub_role: 'wakil_dekan_3', position: 'Wakil Dekan III', department: 'Fakultas Teknik' },
+//     { username: 'WD4001', name: 'Dr. Rina Wakil Dekan IV', sub_role: 'wakil_dekan_4', position: 'Wakil Dekan IV', department: 'Fakultas Teknik' },
+//     { username: 'PRODI001', name: 'Dr. Joko Prodi Informatika', sub_role: 'prodi', position: 'Kepala Prodi', department: 'Informatika' },
+//     { username: 'PRODI002', name: 'Dr. Dewi Prodi Elektro', sub_role: 'prodi', position: 'Kepala Prodi', department: 'Elektro' },
+//     { username: 'PRODI003', name: 'Dr. Bambang Prodi Pengairan', sub_role: 'prodi', position: 'Kepala Prodi', department: 'Pengairan' },
+//     { username: 'PRODI004', name: 'Dr. Lina Prodi Arsitektur', sub_role: 'prodi', position: 'Kepala Prodi', department: 'Arsitektur' },
+//     { username: 'PRODI005', name: 'Dr. Agus Prodi PWK', sub_role: 'prodi', position: 'Kepala Prodi', department: 'PWK' },
+//     { username: 'SEKPRODI001', name: 'Dr. Maya Sekretaris Prodi Informatika', sub_role: 'sekretaris_prodi', position: 'Sekretaris Prodi', department: 'Informatika' },
+//     { username: 'SEKPRODI002', name: 'Dr. Rudi Sekretaris Prodi Elektro', sub_role: 'sekretaris_prodi', position: 'Sekretaris Prodi', department: 'Elektro' },
+//     { username: 'GKM001', name: 'Dr. Indra GKM', sub_role: 'gkm', position: 'Gugus Kendali Mutu', department: 'Fakultas Teknik' }
 //   ]
 
 //   for (const dosenData of dosenLeadership) {
@@ -92,14 +92,14 @@
 //         password: defaultPassword,
 //         name: dosenData.name,
 //         role: Role.dosen, // All are dosen with different sub-roles
-//         subRole: dosenData.subRole,
-//         isActive: true
+//         sub_role: dosenData.subRole,
+//         is_active: true
 //       }
 //     })
 
-//     await prisma.lecturer.create({
+//     await prisma.lecturers.create({
 //       data: {
-//         userId: user.id,
+//         user_id: user.id,
 //         nip: `NIP${dosenData.username}`,
 //         department: dosenData.department,
 //         position: dosenData.position,
@@ -121,14 +121,14 @@
 //         password: defaultPassword,
 //         name: indonesianNames[(i + 10) % indonesianNames.length], // Offset to avoid duplicate names
 //         role: Role.dosen,
-//         subRole: 'dosen',
-//         isActive: true
+//         sub_role: 'dosen',
+//         is_active: true
 //       }
 //     })
 
-//     await prisma.lecturer.create({
+//     await prisma.lecturers.create({
 //       data: {
-//         userId: user.id,
+//         user_id: user.id,
 //         nip,
 //         department: departments[i % departments.length],
 //         position: getLecturerPosition(),
@@ -152,21 +152,21 @@
 //         password: defaultPassword,
 //         name: indonesianNames[i % indonesianNames.length],
 //         role: Role.mahasiswa,
-//         isActive: true
+//         is_active: true
 //       }
 //     })
 
-//     await prisma.student.create({
+//     await prisma.students.create({
 //       data: {
-//         userId: user.id,
+//         user_id: user.id,
 //         nim,
 //         major: majors[deptIndex],
 //         department: departments[deptIndex],
 //         semester: Math.floor(Math.random() * 8) + 1,
-//         academicYear: `${year}/${year + 1}`,
+//         academic_year: `${year}/${year + 1}`,
 //         phone: `+62814${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`,
 //         address: `Jl. Example Street No. ${i + 1}, Jakarta`,
-//         enrollDate: new Date(year, 8, 1), // September 1st
+//         enroll_date: new Date(year, 8, 1), // September 1st
 //         gpa: Math.random() * 1.5 + 2.5, // GPA between 2.5 - 4.0
 //         guardian: {
 //           name: `Guardian of ${indonesianNames[i % indonesianNames.length]}`,

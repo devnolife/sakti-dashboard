@@ -5,7 +5,7 @@ import type { PracticumSchedule } from "./types"
 export const mockPracticumEnrollments: PracticumEnrollment[] = [
   {
     id: "enr-001",
-    studentId: "2020-CS-001",
+    student_id: "2020-CS-001",
     studentName: "Ahmad Fauzi",
     courseName: "Computer Networks Laboratory",
     courseCode: "CSL-301",
@@ -36,7 +36,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-002",
-    studentId: "2020-CS-045",
+    student_id: "2020-CS-045",
     studentName: "Siti Rahayu",
     courseName: "Database Systems Laboratory",
     courseCode: "CSL-302",
@@ -67,7 +67,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-003",
-    studentId: "2021-CS-078",
+    student_id: "2021-CS-078",
     studentName: "Reza Pratama",
     courseName: "Operating Systems Laboratory",
     courseCode: "CSL-303",
@@ -98,7 +98,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-004",
-    studentId: "2021-CS-102",
+    student_id: "2021-CS-102",
     studentName: "Anisa Putri",
     courseName: "Computer Networks Laboratory",
     courseCode: "CSL-301",
@@ -120,7 +120,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-005",
-    studentId: "2022-CS-056",
+    student_id: "2022-CS-056",
     studentName: "Dimas Ardianto",
     courseName: "Database Systems Laboratory",
     courseCode: "CSL-302",
@@ -142,7 +142,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-006",
-    studentId: "2022-CS-089",
+    student_id: "2022-CS-089",
     studentName: "Maya Indah",
     courseName: "Operating Systems Laboratory",
     courseCode: "CSL-303",
@@ -165,7 +165,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-007",
-    studentId: "2020-CS-123",
+    student_id: "2020-CS-123",
     studentName: "Farhan Rizki",
     courseName: "Digital Electronics Laboratory",
     courseCode: "CSL-304",
@@ -197,7 +197,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-008",
-    studentId: "2021-CS-145",
+    student_id: "2021-CS-145",
     studentName: "Putri Wulandari",
     courseName: "Computer Networks Laboratory",
     courseCode: "CSL-301",
@@ -228,7 +228,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-009",
-    studentId: "2022-CS-167",
+    student_id: "2022-CS-167",
     studentName: "Andi Firmansyah",
     courseName: "Database Systems Laboratory",
     courseCode: "CSL-302",
@@ -250,7 +250,7 @@ export const mockPracticumEnrollments: PracticumEnrollment[] = [
   },
   {
     id: "enr-010",
-    studentId: "2020-CS-189",
+    student_id: "2020-CS-189",
     studentName: "Rina Fitriani",
     courseName: "Operating Systems Laboratory",
     courseCode: "CSL-303",
@@ -288,7 +288,7 @@ export const mockPracticumCourses: PracticumCourse[] = [
     name: "Computer Networks Laboratory",
     code: "CSL-301",
     semester: "Fall",
-    academicYear: "2023/2024",
+    academic_year: "2023/2024",
     credits: 2,
     description:
       "Practical implementation of computer networking concepts including configuration, troubleshooting, and analysis of network protocols.",
@@ -313,7 +313,7 @@ export const mockPracticumCourses: PracticumCourse[] = [
     name: "Database Systems Laboratory",
     code: "CSL-302",
     semester: "Fall",
-    academicYear: "2023/2024",
+    academic_year: "2023/2024",
     credits: 2,
     description:
       "Hands-on experience with database management systems, SQL programming, database design, and implementation of database applications.",
@@ -337,7 +337,7 @@ export const mockPracticumCourses: PracticumCourse[] = [
     name: "Operating Systems Laboratory",
     code: "CSL-303",
     semester: "Fall",
-    academicYear: "2023/2024",
+    academic_year: "2023/2024",
     credits: 2,
     description:
       "Practical implementation of operating system concepts including process management, memory management, file systems, and system programming.",
@@ -362,7 +362,7 @@ export const mockPracticumCourses: PracticumCourse[] = [
     name: "Digital Electronics Laboratory",
     code: "CSL-304",
     semester: "Fall",
-    academicYear: "2023/2024",
+    academic_year: "2023/2024",
     credits: 2,
     description:
       "Hands-on experience with digital circuits, logic gates, flip-flops, counters, and digital system design.",
@@ -384,7 +384,7 @@ export const mockPracticumCourses: PracticumCourse[] = [
     name: "Microprocessors Laboratory",
     code: "CSL-305",
     semester: "Spring",
-    academicYear: "2023/2024",
+    academic_year: "2023/2024",
     credits: 2,
     description: "Practical implementation of microprocessor programming, interfacing, and applications.",
     maxCapacity: 20,

@@ -2,14 +2,14 @@ export type InternshipStatus = "pending" | "approved" | "rejected" | "in_progres
 
 export interface InternshipApplication {
   id: string
-  studentId: string
+  student_id: string
   studentName: string
   studentNIM: string
   companyName: string
   companyAddress: string
   position: string
-  startDate: Date
-  endDate: Date
+  start_date: Date
+  end_date: Date
   status: InternshipStatus
   applicationDate: Date
   documents: {

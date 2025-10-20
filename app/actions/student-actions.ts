@@ -6,67 +6,67 @@ import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export async function getStudentDashboardData() {
   // Get current student user ID
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
-  console.log('🔍 Fetching student dashboard data for user:', userId)
+  console.log('🔍 Fetching student dashboard data for user:', user_id)
 
   try {
     // Get user with student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
-            kkpApplications: {
+            kkp_applications: {
               include: {
-                company: true,
-                supervisor: {
+                companies: true,
+                lecturers: {
                   include: {
-                    user: true
+                    users: true
                   }
                 }
               },
-              orderBy: { createdAt: 'desc' },
+              orderBy: { created_at: 'desc' },
               take: 1
             },
-            examApplications: {
-              orderBy: { createdAt: 'desc' },
+            exam_applications: {
+              orderBy: { created_at: 'desc' },
               take: 5
             },
-            letterRequests: {
-              orderBy: { createdAt: 'desc' },
+            letter_requests: {
+              orderBy: { created_at: 'desc' },
               take: 5
             },
             payments: {
               where: {
                 status: { in: ['pending', 'failed'] }
               },
-              orderBy: { dueDate: 'asc' },
+              orderBy: { due_date: 'asc' },
               take: 5
             },
             grades: {
               include: {
-                course: {
+                courses: {
                   include: {
-                    lecturer: {
+                    lecturers: {
                       include: {
-                        user: true
+                        users: true
                       }
                     },
-                    schedules: true
+                    course_schedules: true
                   }
                 }
               },
-              orderBy: { createdAt: 'desc' }
+              orderBy: { created_at: 'desc' }
             },
-            bookBorrowings: {
+            book_borrowings: {
               where: {
                 status: { in: ['active', 'overdue'] }
               },
               include: {
-                book: true
+                books: true
               },
-              orderBy: { borrowDate: 'desc' },
+              orderBy: { borrow_date: 'desc' },
               take: 5
             }
           }
@@ -85,44 +85,44 @@ export async function getStudentDashboardData() {
     const currentSemester = new Date().getMonth() < 6 ? 'genap' : 'ganjil'
 
     const currentCourses = student.grades.filter(grade =>
-      grade.academicYear === currentAcademicYear &&
+      grade.academic_year === currentAcademicYear &&
       grade.semester.toLowerCase().includes(currentSemester)
     )
 
     // Get current semester credits
-    const currentCredits = currentCourses.reduce((sum, grade) => sum + grade.course.credits, 0)
+    const currentCredits = currentCourses.reduce((sum, grade) => sum + grade.courses.credits, 0)
 
     // Get active KKP application
-    const activeKkp = student.kkpApplications.length > 0 ? student.kkpApplications[0] : null
+    const activeKkp = student.kkp_applications.length > 0 ? student.kkp_applications[0] : null
 
     // Get upcoming deadlines (combine different sources)
     const upcomingDeadlines = [
-      ...student.examApplications
-        .filter(exam => exam.scheduledDate && new Date(exam.scheduledDate) > new Date())
+      ...student.exam_applications
+        .filter(exam => exam.scheduled_date && new Date(exam.scheduled_date) > new Date())
         .map(exam => ({
           id: exam.id,
           title: `${exam.type === 'proposal' ? 'Ujian Proposal' : exam.type === 'result' ? 'Ujian Hasil' : 'Ujian Akhir'} - ${exam.title}`,
-          date: exam.scheduledDate,
+          date: exam.scheduled_date,
           type: 'exam',
-          urgent: new Date(exam.scheduledDate!).getTime() - new Date().getTime() < 7 * 24 * 60 * 60 * 1000 // 7 days
+          urgent: new Date(exam.scheduled_date!).getTime() - new Date().getTime() < 7 * 24 * 60 * 60 * 1000 // 7 days
         })),
       ...student.payments
-        .filter(payment => payment.dueDate && new Date(payment.dueDate) > new Date())
+        .filter(payment => payment.due_date && new Date(payment.due_date) > new Date())
         .map(payment => ({
           id: payment.id,
           title: `Pembayaran ${payment.description}`,
-          date: payment.dueDate,
+          date: payment.due_date,
           type: 'payment',
-          urgent: new Date(payment.dueDate).getTime() - new Date().getTime() < 3 * 24 * 60 * 60 * 1000 // 3 days
+          urgent: new Date(payment.due_date).getTime() - new Date().getTime() < 3 * 24 * 60 * 60 * 1000 // 3 days
         })),
-      ...student.bookBorrowings
-        .filter(borrowing => borrowing.dueDate && new Date(borrowing.dueDate) > new Date())
+      ...student.book_borrowings
+        .filter(borrowing => borrowing.due_date && new Date(borrowing.due_date) > new Date())
         .map(borrowing => ({
           id: borrowing.id,
-          title: `Pengembalian Buku: ${borrowing.book.title}`,
-          date: borrowing.dueDate,
+          title: `Pengembalian Buku: ${borrowing.books.title}`,
+          date: borrowing.due_date,
           type: 'library',
-          urgent: new Date(borrowing.dueDate).getTime() - new Date().getTime() < 2 * 24 * 60 * 60 * 1000 // 2 days
+          urgent: new Date(borrowing.due_date).getTime() - new Date().getTime() < 2 * 24 * 60 * 60 * 1000 // 2 days
         }))
     ].sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : 0
@@ -132,15 +132,15 @@ export async function getStudentDashboardData() {
 
     // Get weekly schedule from current courses
     const weeklySchedule = currentCourses.reduce((schedule: any[], grade) => {
-      grade.course.schedules.forEach(courseSchedule => {
+      grade.courses.course_schedules.forEach(courseSchedule => {
         schedule.push({
           day: courseSchedule.day,
-          courseName: grade.course.name,
-          courseCode: grade.course.code,
-          time: `${courseSchedule.startTime} - ${courseSchedule.endTime}`,
+          courseName: grade.courses.name,
+          courseCode: grade.courses.code,
+          time: `${courseSchedule.start_time} - ${courseSchedule.end_time}`,
           location: `${courseSchedule.room}${courseSchedule.building ? `, ${courseSchedule.building}` : ''}`,
-          lecturer: grade.course.lecturer?.user.name || 'TBA',
-          credits: grade.course.credits
+          lecturer: grade.courses.lecturers?.users.name || 'TBA',
+          credits: grade.courses.credits
         })
       })
       return schedule
@@ -154,38 +154,38 @@ export async function getStudentDashboardData() {
         major: student.major,
         department: student.department,
         semester: student.semester,
-        academicYear: student.academicYear,
+        academic_year: student.academic_year,
         gpa: student.gpa, // Gunakan GPA dari database, bukan perhitungan ulang
         status: student.status
       },
       currentSemester: {
         courses: currentCourses.length,
         credits: currentCredits,
-        academicYear: currentAcademicYear,
+        academic_year: currentAcademicYear,
         period: currentSemester
       },
       kkpStatus: activeKkp ? {
         status: activeKkp.status,
         title: activeKkp.title,
-        company: activeKkp.company?.name,
-        supervisor: activeKkp.supervisor?.user.name,
-        submissionDate: activeKkp.submissionDate
+        company: activeKkp.companies?.name,
+        supervisor: activeKkp.lecturers?.users.name,
+        submission_date: activeKkp.submission_date
       } : null,
       upcomingDeadlines: upcomingDeadlines.slice(0, 10),
       currentCourses: currentCourses.map(grade => ({
-        id: grade.course.id,
-        code: grade.course.code,
-        name: grade.course.name,
-        credits: grade.course.credits,
-        lecturer: grade.course.lecturer?.user.name || 'TBA',
-        grade: grade.letterGrade,
+        id: grade.courses.id,
+        code: grade.courses.code,
+        name: grade.courses.name,
+        credits: grade.courses.credits,
+        lecturer: grade.courses.lecturers?.users.name || 'TBA',
+        grade: grade.letter_grade,
         semester: grade.semester,
-        schedules: grade.course.schedules
+        schedules: grade.courses.course_schedules
       })),
       weeklySchedule,
       pendingPayments: student.payments.length,
-      activeBorrowings: student.bookBorrowings.length,
-      letterRequests: student.letterRequests.length
+      activeBorrowings: student.book_borrowings.length,
+      letterRequests: student.letter_requests.length
     }
   } catch (error) {
     console.error('Error fetching student dashboard data:', error)
@@ -215,12 +215,12 @@ export async function getStudentNotifications() {
   const userId = await getServerActionUserId()
 
   try {
-    const notifications = await prisma.notification.findMany({
+    const notifications = await prisma.notifications.findMany({
       where: {
-        userId: userId
+        user_id: userId
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       },
       take: 10
     })

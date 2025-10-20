@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    let lecturer = await prisma.lecturer.findFirst({
+    let lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -67,16 +67,16 @@ export async function GET(request: NextRequest) {
       upcomingSchedules,
     ] = await Promise.all([
       // Total mahasiswa bimbingan (PA)
-      prisma.student.count({
+      prisma.students.count({
         where: {
-          academicAdvisorId: lecturer.id
+          academic_advisor_id: lecturer.id
         }
       }),
 
       // KKP bimbingan aktif
-      prisma.kkpApplication.count({
+      prisma.kkp_applications.count({
         where: {
-          supervisorId: lecturer.id,
+          supervisor_id: lecturer.id,
           status: {
             in: ['approved', 'in_progress']
           }
@@ -84,47 +84,47 @@ export async function GET(request: NextRequest) {
       }),
 
       // Thesis bimbingan aktif
-      prisma.thesisTitle.count({
+      prisma.thesis_titles.count({
         where: {
-          supervisorId: lecturer.id,
+          supervisor_id: lecturer.id,
           status: 'approved'
         }
       }),
 
       // Thesis titles yang direkomendasikan
-      prisma.thesisTitle.count({
+      prisma.thesis_titles.count({
         where: {
-          lecturerId: lecturer.id
+          lecturer_id: lecturer.id
         }
       }),
 
       // Exams pending (as examiner/supervisor)
-      prisma.examApplication.count({
+      prisma.exam_applications.count({
         where: {
           OR: [
-            { mainExaminerId: lecturer.id },
-            { coExaminer1Id: lecturer.id },
-            { coExaminer2Id: lecturer.id },
+            { main_examiner_id: lecturer.id },
+            { co_examiner_1_id: lecturer.id },
+            { co_examiner_2_id: lecturer.id },
           ],
           status: {
             in: ['approved', 'scheduled']
           },
-          examDate: {
+          exam_date: {
             gte: new Date()
           }
         }
       }),
 
       // Exams completed this month
-      prisma.examApplication.count({
+      prisma.exam_applications.count({
         where: {
           OR: [
-            { mainExaminerId: lecturer.id },
-            { coExaminer1Id: lecturer.id },
-            { coExaminer2Id: lecturer.id },
+            { main_examiner_id: lecturer.id },
+            { co_examiner_1_id: lecturer.id },
+            { co_examiner_2_id: lecturer.id },
           ],
           status: 'completed',
-          examDate: {
+          exam_date: {
             gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
             lte: new Date()
           }
@@ -132,9 +132,9 @@ export async function GET(request: NextRequest) {
       }),
 
       // Courses this semester (as lecturer)
-      prisma.course.count({
+      prisma.courses.count({
         where: {
-          lecturerId: lecturer.id,
+          lecturer_id: lecturer.id,
           semester: getCurrentSemester()
         }
       }),
@@ -211,13 +211,13 @@ async function getRecentActivities(lecturerId: string) {
   const activities = []
 
   // KKP submissions
-  const kkpSubmissions = await prisma.kkpApplication.findMany({
+  const kkpSubmissions = await prisma.kkp_applications.findMany({
     where: {
-      supervisorId: lecturerId,
+      supervisor_id: lecturerId,
       status: 'pending',
     },
     take: 3,
-    orderBy: { createdAt: 'desc' },
+    orderBy: { created_at: 'desc' },
     include: {
       students: {
         include: {
@@ -234,29 +234,29 @@ async function getRecentActivities(lecturerId: string) {
     type: 'submission',
     title: 'Pengajuan KKP',
     student: kkp.students.users.name,
-    time: formatRelativeTime(kkp.createdAt),
+    time: formatRelativeTime(kkp.created_at),
     status: 'pending',
-    date: kkp.createdAt
+    date: kkp.created_at
   })))
 
   // Upcoming exams
-  const upcomingExams = await prisma.examApplication.findMany({
+  const upcomingExams = await prisma.exam_applications.findMany({
     where: {
       OR: [
-        { mainExaminerId: lecturerId },
-        { coExaminer1Id: lecturerId },
-        { coExaminer2Id: lecturerId },
+        { main_examiner_id: lecturerId },
+        { co_examiner_1_id: lecturerId },
+        { co_examiner_2_id: lecturerId },
       ],
       status: {
         in: ['approved', 'scheduled']
       },
-      examDate: {
+      exam_date: {
         gte: new Date(),
         lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Next 7 days
       }
     },
     take: 3,
-    orderBy: { examDate: 'asc' },
+    orderBy: { exam_date: 'asc' },
     include: {
       students: {
         include: {
@@ -271,11 +271,11 @@ async function getRecentActivities(lecturerId: string) {
   activities.push(...upcomingExams.map(exam => ({
     id: exam.id,
     type: 'exam',
-    title: `Ujian ${exam.examType}`,
+    title: `Ujian ${exam.exam_type}`,
     student: exam.students.users.name,
-    time: formatRelativeTime(exam.examDate),
+    time: formatRelativeTime(exam.exam_date),
     status: 'scheduled',
-    date: exam.examDate
+    date: exam.exam_date
   })))
 
   // Sort by date and return latest 10
@@ -289,16 +289,16 @@ async function getUpcomingSchedules(lecturerId: string) {
   const schedules = []
 
   // Academic consultations
-  const consultations = await prisma.academicConsultation.findMany({
+  const consultations = await prisma.academic_consultations.findMany({
     where: {
-      lecturerId,
-      scheduledDate: {
+      lecturer_id: lecturerId,
+      scheduled_date: {
         gte: new Date()
       },
       status: 'scheduled'
     },
     take: 5,
-    orderBy: { scheduledDate: 'asc' },
+    orderBy: { scheduled_date: 'asc' },
     include: {
       students: {
         include: {
@@ -314,20 +314,20 @@ async function getUpcomingSchedules(lecturerId: string) {
     id: consult.id,
     title: 'Bimbingan Akademik',
     student: consult.students.users.name,
-    time: new Date(consult.scheduledDate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-    date: formatDate(consult.scheduledDate),
+    time: new Date(consult.scheduled_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    date: formatDate(consult.scheduled_date),
     type: 'bimbingan'
   })))
 
   // Exams
-  const exams = await prisma.examApplication.findMany({
+  const exams = await prisma.exam_applications.findMany({
     where: {
       OR: [
-        { mainExaminerId: lecturerId },
-        { coExaminer1Id: lecturerId },
-        { coExaminer2Id: lecturerId },
+        { main_examiner_id: lecturerId },
+        { co_examiner_1_id: lecturerId },
+        { co_examiner_2_id: lecturerId },
       ],
-      examDate: {
+      exam_date: {
         gte: new Date(),
         lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       },
@@ -336,7 +336,7 @@ async function getUpcomingSchedules(lecturerId: string) {
       }
     },
     take: 5,
-    orderBy: { examDate: 'asc' },
+    orderBy: { exam_date: 'asc' },
     include: {
       students: {
         include: {
@@ -350,10 +350,10 @@ async function getUpcomingSchedules(lecturerId: string) {
 
   schedules.push(...exams.map(exam => ({
     id: exam.id,
-    title: `Ujian ${exam.examType}`,
+    title: `Ujian ${exam.exam_type}`,
     student: exam.students.users.name,
-    time: new Date(exam.examDate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-    date: formatDate(exam.examDate),
+    time: new Date(exam.exam_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    date: formatDate(exam.exam_date),
     type: 'ujian'
   })))
 

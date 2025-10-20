@@ -542,6 +542,8 @@ model lecturers {
   specialization                                                String?
   phone                                                         String?
   office                                                        String?
+  email                                                         String?
+  last_sync_at                                                  DateTime?
   academic_consultations                                        academic_consultations[]
   academic_events                                               academic_events[]
   courses                                                       courses[]
@@ -684,6 +686,7 @@ model students {
   status                     StudentStatus                @default(active)
   gpa                        Float?
   academic_advisor_id        String?
+  last_sync_at               DateTime?
   academic_consultations     academic_consultations[]
   academic_events            academic_events[]
   book_borrowings            book_borrowings[]

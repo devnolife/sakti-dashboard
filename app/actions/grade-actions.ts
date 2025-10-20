@@ -9,7 +9,7 @@ export interface GradeData {
   score: number
   letterGrade: string
   semester: string
-  academicYear: string
+  academic_year: string
   course: {
     id: string
     name: string
@@ -20,18 +20,18 @@ export interface GradeData {
       name: string
     } | null
   }
-  createdAt: Date | string
+  created_at: Date | string
 }
 
 export async function getStudentGradesData(): Promise<GradeData[]> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('🔍 Fetching student grades data for user:', userId)
 
   try {
     // Get user with student profile and grades
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
@@ -48,9 +48,9 @@ export async function getStudentGradesData(): Promise<GradeData[]> {
                 }
               },
               orderBy: [
-                { academicYear: 'desc' },
+                { academic_year: 'desc' },
                 { semester: 'desc' },
-                { createdAt: 'desc' }
+                { created_at: 'desc' }
               ]
             }
           }
@@ -70,7 +70,7 @@ export async function getStudentGradesData(): Promise<GradeData[]> {
       score: grade.score,
       letterGrade: grade.letterGrade,
       semester: grade.semester,
-      academicYear: grade.academicYear,
+      academic_year: grade.academicYear,
       course: {
         id: grade.course.id,
         name: grade.course.name,
@@ -81,7 +81,7 @@ export async function getStudentGradesData(): Promise<GradeData[]> {
           name: grade.course.lecturer.user.name
         } : null
       },
-      createdAt: grade.createdAt
+      created_at: grade.createdAt
     }))
 
     console.log(`✅ Found ${grades.length} grades for student`)

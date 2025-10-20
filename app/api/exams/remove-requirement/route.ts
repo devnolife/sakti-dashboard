@@ -5,7 +5,7 @@ import { existsSync } from 'fs'
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { requirementId, examType } = await request.json()
+    const { requirementId, exam_type } = await request.json()
 
     if (!requirementId || !examType) {
       return NextResponse.json(
@@ -19,7 +19,7 @@ export async function DELETE(request: NextRequest) {
     // const requirement = await prisma.examStudentRequirement.findUnique({
     //   where: {
     //     studentId_requirementId: {
-    //       studentId: 'current-user-id',
+    //       student_id: 'current-user-id',
     //       requirementId: requirementId
     //     }
     //   }
@@ -35,7 +35,7 @@ export async function DELETE(request: NextRequest) {
     // await prisma.examStudentRequirement.update({
     //   where: {
     //     studentId_requirementId: {
-    //       studentId: 'current-user-id',
+    //       student_id: 'current-user-id',
     //       requirementId: requirementId
     //     }
     //   },

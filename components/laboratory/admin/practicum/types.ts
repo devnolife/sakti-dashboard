@@ -2,7 +2,7 @@ export type PracticumStatus = "pending" | "approved" | "rejected" | "in_progress
 
 export interface PracticumEnrollment {
   id: string
-  studentId: string
+  student_id: string
   studentName: string
   courseName: string
   courseCode: string
@@ -39,7 +39,7 @@ export interface PracticumCourse {
   name: string
   code: string
   semester: string
-  academicYear: string
+  academic_year: string
   credits: number
   description: string
   maxCapacity: number
@@ -98,8 +98,8 @@ export interface PracticumMaterial {
   unit: string
   threshold: number
   description: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
 }
 
 export interface MaterialRequest {
@@ -120,7 +120,7 @@ export interface MaterialRequest {
 // Extend the existing PracticumEnrollment type to include more grade details
 export interface StudentGrade {
   id: string
-  studentId: string
+  student_id: string
   studentName: string
   courseId: string
   courseName: string

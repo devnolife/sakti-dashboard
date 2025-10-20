@@ -5,16 +5,16 @@ import { authMiddleware } from '@/lib/auth-middleware'
 
 export async function POST(request: NextRequest) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: true
       }
@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const studentId = user.students.id
+    const student_id = user.students.id
 
     // Check if student already has an active AIK exam
     const existingAIKExam = await prisma.exam_applications.findFirst({
       where: {
-        studentId: studentId,
+        student_id: student_id,
         type: 'other',
         title: {
           contains: 'AIK',
@@ -68,8 +68,8 @@ export async function POST(request: NextRequest) {
           existingExam: {
             id: existingAIKExam.id,
             status: existingAIKExam.status,
-            submissionDate: existingAIKExam.submissionDate.toISOString(),
-            scheduledDate: existingAIKExam.scheduledDate?.toISOString()
+            submission_date: existingAIKExam.submissionDate.toISOString(),
+            scheduled_date: existingAIKExam.scheduledDate?.toISOString()
           }
         },
         { status: 400 }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     // Additional validation: Check if student has passed AIK exam before
     const passedAIKExam = await prisma.exam_applications.findFirst({
       where: {
-        studentId: studentId,
+        student_id: student_id,
         type: 'other',
         title: {
           contains: 'AIK',
@@ -121,9 +121,9 @@ export async function POST(request: NextRequest) {
         type: 'other',
         status: 'applicant',
         abstract: 'Ujian AIK (Al-Islam dan Kemuhammadiyahan) dan Komfren (Kemuhammadiyahan dan Profesi) sebagai syarat kelulusan mahasiswa.',
-        submissionDate: new Date(),
-        studentId: studentId,
-        updatedAt: new Date(),
+        submission_date: new Date(),
+        student_id: student_id,
+        updated_at: new Date(),
         // Note: examiner will be assigned later by admin
       }
     })
@@ -163,15 +163,15 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: true
       }

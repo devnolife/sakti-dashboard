@@ -16,8 +16,8 @@ export const mockDrafts: CorrespondenceDraft[] = [
     Fakultas: Teknik</p>
     <p>adalah benar mahasiswa aktif pada semester [SEMESTER] tahun akademik [TAHUN_AKADEMIK].</p>
     <p>Demikian surat keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.</p>`,
-    createdAt: "2023-11-15T08:30:00Z",
-    updatedAt: "2023-11-15T10:45:00Z",
+    created_at: "2023-11-15T08:30:00Z",
+    updated_at: "2023-11-15T10:45:00Z",
     createdBy: "Administrasi Umum",
     status: "draft",
     version: 1,
@@ -43,8 +43,8 @@ export const mockDrafts: CorrespondenceDraft[] = [
     Agenda: Persiapan Semester Genap 2023/2024</p>
     <p>Mengingat pentingnya acara tersebut, kehadiran Bapak/Ibu sangat diharapkan.</p>
     <p>Demikian undangan ini kami sampaikan. Atas perhatian dan kehadirannya, kami ucapkan terima kasih.</p>`,
-    createdAt: "2023-11-16T09:15:00Z",
-    updatedAt: "2023-11-16T14:20:00Z",
+    created_at: "2023-11-16T09:15:00Z",
+    updated_at: "2023-11-16T14:20:00Z",
     createdBy: "Administrasi Umum",
     status: "review",
     reviewedBy: "Kepala Bagian Umum",
@@ -64,8 +64,8 @@ export const mockDrafts: CorrespondenceDraft[] = [
     <p>Sehubungan dengan akan dilaksanakannya kegiatan [NAMA_KEGIATAN] yang diselenggarakan oleh [ORGANISASI_MAHASISWA] pada tanggal [TANGGAL_KEGIATAN], dengan ini kami mengajukan permohonan dana sebesar Rp [JUMLAH_DANA] untuk keperluan pelaksanaan kegiatan tersebut.</p>
     <p>Adapun rincian penggunaan dana terlampir dalam proposal kegiatan yang kami sertakan.</p>
     <p>Demikian surat permohonan ini kami sampaikan. Atas perhatian dan bantuan Bapak/Ibu, kami ucapkan terima kasih.</p>`,
-    createdAt: "2023-11-17T11:00:00Z",
-    updatedAt: "2023-11-17T13:30:00Z",
+    created_at: "2023-11-17T11:00:00Z",
+    updated_at: "2023-11-17T13:30:00Z",
     createdBy: "Administrasi Umum",
     status: "approved",
     reviewedBy: "Kepala Bagian Umum",
@@ -97,8 +97,8 @@ export const mockDrafts: CorrespondenceDraft[] = [
     Fakultas: Teknik</p>
     <p>telah dinyatakan LULUS pada Program Studi [PRODI_MAHASISWA] Fakultas Teknik Universitas Teknologi Indonesia pada tanggal [TANGGAL_LULUS] dengan predikat [PREDIKAT].</p>
     <p>Demikian surat keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.</p>`,
-    createdAt: "2023-11-18T10:20:00Z",
-    updatedAt: "2023-11-18T15:40:00Z",
+    created_at: "2023-11-18T10:20:00Z",
+    updated_at: "2023-11-18T15:40:00Z",
     createdBy: "Administrasi Umum",
     status: "finalized",
     reviewedBy: "Dekan",
@@ -122,8 +122,8 @@ export const mockDrafts: CorrespondenceDraft[] = [
     Program Studi: [PRODI_MAHASISWA]</p>
     <p>Adapun pelaksanaan magang/praktik kerja tersebut direncanakan selama [DURASI_MAGANG] bulan, mulai tanggal [TANGGAL_MULAI] sampai dengan [TANGGAL_SELESAI].</p>
     <p>Demikian surat pengantar ini kami sampaikan. Atas perhatian dan kerja sama Bapak/Ibu, kami ucapkan terima kasih.</p>`,
-    createdAt: "2023-11-19T09:00:00Z",
-    updatedAt: "2023-11-19T11:25:00Z",
+    created_at: "2023-11-19T09:00:00Z",
+    updated_at: "2023-11-19T11:25:00Z",
     createdBy: "Administrasi Umum",
     status: "rejected",
     reviewedBy: "Kepala Bagian Umum",
@@ -144,8 +144,8 @@ export const mockDrafts: CorrespondenceDraft[] = [
     Tempat: Ruang kuliah Fakultas Teknik</p>
     <p>Jadwal detail UAS dapat dilihat pada papan pengumuman fakultas atau website resmi universitas.</p>
     <p>Demikian pengumuman ini disampaikan untuk diketahui dan dilaksanakan sebagaimana mestinya.</p>`,
-    createdAt: "2023-11-20T13:45:00Z",
-    updatedAt: "2023-11-20T16:30:00Z",
+    created_at: "2023-11-20T13:45:00Z",
+    updated_at: "2023-11-20T16:30:00Z",
     createdBy: "Administrasi Umum",
     status: "draft",
     version: 2,
@@ -172,8 +172,8 @@ export const mockTemplates: DraftTemplate[] = [
     <p>Demikian surat keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.</p>`,
     category: "Surat Keterangan",
     tags: ["mahasiswa", "aktif", "keterangan"],
-    createdAt: "2023-10-01T08:00:00Z",
-    updatedAt: "2023-10-01T08:00:00Z",
+    created_at: "2023-10-01T08:00:00Z",
+    updated_at: "2023-10-01T08:00:00Z",
     createdBy: "Admin",
     isDefault: true,
     placeholders: [
@@ -203,8 +203,8 @@ export const mockTemplates: DraftTemplate[] = [
     <p>Demikian undangan ini kami sampaikan. Atas perhatian dan kehadirannya, kami ucapkan terima kasih.</p>`,
     category: "Undangan",
     tags: ["undangan", "rapat", "koordinasi"],
-    createdAt: "2023-10-02T09:30:00Z",
-    updatedAt: "2023-10-02T09:30:00Z",
+    created_at: "2023-10-02T09:30:00Z",
+    updated_at: "2023-10-02T09:30:00Z",
     createdBy: "Admin",
     isDefault: true,
     placeholders: ["PENERIMA", "JENIS_RAPAT", "HARI_TANGGAL", "WAKTU", "TEMPAT", "AGENDA"],
@@ -223,8 +223,8 @@ export const mockTemplates: DraftTemplate[] = [
     <p>Demikian surat permohonan ini kami sampaikan. Atas perhatian dan bantuan Bapak/Ibu, kami ucapkan terima kasih.</p>`,
     category: "Surat Permohonan",
     tags: ["permohonan", "izin", "bantuan"],
-    createdAt: "2023-10-03T10:45:00Z",
-    updatedAt: "2023-10-03T10:45:00Z",
+    created_at: "2023-10-03T10:45:00Z",
+    updated_at: "2023-10-03T10:45:00Z",
     createdBy: "Admin",
     isDefault: true,
     placeholders: [
@@ -247,8 +247,8 @@ export const mockTemplates: DraftTemplate[] = [
     <p>Demikian pengumuman ini disampaikan untuk diketahui dan dilaksanakan sebagaimana mestinya.</p>`,
     category: "Pengumuman",
     tags: ["pengumuman", "informasi", "pemberitahuan"],
-    createdAt: "2023-10-04T11:15:00Z",
-    updatedAt: "2023-10-04T11:15:00Z",
+    created_at: "2023-10-04T11:15:00Z",
+    updated_at: "2023-10-04T11:15:00Z",
     createdBy: "Admin",
     isDefault: true,
     placeholders: ["NOMOR_PENGUMUMAN", "PENERIMA_PENGUMUMAN", "ISI_PENGUMUMAN", "DETAIL_PENGUMUMAN"],
@@ -270,8 +270,8 @@ export const mockTemplates: DraftTemplate[] = [
     <p>Demikian surat keterangan ini dibuat untuk dipergunakan sebagaimana mestinya.</p>`,
     category: "Surat Keterangan",
     tags: ["mahasiswa", "lulus", "keterangan"],
-    createdAt: "2023-10-05T13:30:00Z",
-    updatedAt: "2023-10-05T13:30:00Z",
+    created_at: "2023-10-05T13:30:00Z",
+    updated_at: "2023-10-05T13:30:00Z",
     createdBy: "Admin",
     isDefault: true,
     placeholders: [

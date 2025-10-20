@@ -5,8 +5,8 @@ export interface CorrespondenceDraft {
   title: string
   type: string
   content: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
   createdBy: string
   status: DraftStatus
   reviewedBy?: string
@@ -33,8 +33,8 @@ export interface DraftTemplate {
   content: string
   category: string
   tags: string[]
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
   createdBy: string
   isDefault: boolean
   placeholders: string[]

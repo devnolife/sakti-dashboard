@@ -6,7 +6,7 @@ async function addMockData() {
   console.log('📝 Adding mock data for student dashboard...')
 
   // Get student
-  const student = await prisma.student.findFirst({
+  const student = await prisma.students.findFirst({
     where: { nim: '2021010001' }
   })
 
@@ -33,7 +33,7 @@ async function addMockData() {
       status: 'pending' as const,
       category: 'tuition' as const,
       semester: 'Ganjil',
-      academicYear: '2025'
+      academic_year: '2025'
     },
     {
       description: 'Biaya Praktikum Lab',
@@ -42,26 +42,26 @@ async function addMockData() {
       status: 'pending' as const,
       category: 'laboratory' as const,
       semester: 'Ganjil',
-      academicYear: '2025'
+      academic_year: '2025'
     }
   ]
 
   for (const payment of payments) {
     // Check if payment exists
-    const existingPayment = await prisma.payment.findFirst({
+    const existingPayment = await prisma.payments.findFirst({
       where: {
-        studentId: student.id,
+        student_id: student.id,
         description: payment.description,
-        academicYear: payment.academicYear,
+        academic_year: payment.academicYear,
         semester: payment.semester
       }
     })
 
     if (!existingPayment) {
-      await prisma.payment.create({
+      await prisma.payments.create({
         data: {
           ...payment,
-          studentId: student.id
+          student_id: student.id
         }
       })
     }
@@ -74,19 +74,19 @@ async function addMockData() {
       title: 'Pembayaran SPP',
       message: 'Jangan lupa melakukan pembayaran SPP sebelum tanggal jatuh tempo',
       type: 'warning' as const,
-      userId: user.id
+      user_id: user.id
     },
     {
       title: 'Jadwal Ujian Tengah Semester',
       message: 'Jadwal UTS telah dipublikasikan. Silakan cek portal akademik',
       type: 'info' as const,
-      userId: user.id
+      user_id: user.id
     },
     {
       title: 'Pendaftaran KKP Dibuka',
       message: 'Periode pendaftaran KKP untuk semester depan telah dibuka',
       type: 'info' as const,
-      userId: user.id
+      user_id: user.id
     }
   ]
 
@@ -98,13 +98,13 @@ async function addMockData() {
   console.log('✅ Added notification data')
 
   // Add exam application
-  await prisma.examApplication.create({
+  await prisma.exam_applications.create({
     data: {
-      studentId: student.id,
+      student_id: student.id,
       type: 'proposal',
       title: 'Proposal Tugas Akhir: Sistem Manajemen Dashboard',
       status: 'pending',
-      scheduledDate: new Date('2025-11-20'),
+      scheduled_date: new Date('2025-11-20'),
       abstract: 'Proposal ini membahas pengembangan sistem manajemen dashboard untuk universitas.'
     }
   })

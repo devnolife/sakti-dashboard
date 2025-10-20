@@ -11,7 +11,7 @@ export interface AcademicData {
     major: string
     department: string
     semester: number
-    academicYear: string
+    academic_year: string
     gpa: number | null
     status: string
   }
@@ -72,27 +72,27 @@ export interface ControlCardData {
 }
 
 export async function getStudentAcademicData(): Promise<AcademicData> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
-  console.log('🔍 Fetching student academic data for user:', userId)
+  console.log('🔍 Fetching student academic data for user:', user_id)
 
   try {
     // Get user with student profile, grades, and consultations
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
-            academicAdvisor: {
+            lecturers: {
               include: {
-                user: true
+                users: true
               }
             },
-            academicConsultations: {
+            academic_consultations: {
               include: {
-                advisor: {
+                lecturers: {
                   include: {
-                    user: true
+                    users: true
                   }
                 }
               },
@@ -100,9 +100,9 @@ export async function getStudentAcademicData(): Promise<AcademicData> {
             },
             grades: {
               include: {
-                course: true
+                courses: true
               },
-              orderBy: { createdAt: 'desc' }
+              orderBy: { created_at: 'desc' }
             }
           }
         }
@@ -116,7 +116,7 @@ export async function getStudentAcademicData(): Promise<AcademicData> {
     const student = user.students
 
     // Calculate academic progress
-    const totalCredits = student.grades.reduce((sum, grade) => sum + grade.course.credits, 0)
+    const totalCredits = student.grades.reduce((sum, grade) => sum + grade.courses.credits, 0)
     const requiredCredits = 144 // Standard S1 requirement
     const progressPercentage = Math.round((totalCredits / requiredCredits) * 100)
 
@@ -129,19 +129,19 @@ export async function getStudentAcademicData(): Promise<AcademicData> {
     const currentSemester = new Date().getMonth() < 6 ? 'genap' : 'ganjil'
 
     const currentSemesterGrades = student.grades.filter(
-      grade => grade.academicYear === currentYear && grade.semester.toLowerCase() === currentSemester.toLowerCase()
+      grade => grade.academic_year === currentYear && grade.semester.toLowerCase() === currentSemester.toLowerCase()
     )
 
-    const currentSemesterCredits = currentSemesterGrades.reduce((sum, grade) => sum + grade.course.credits, 0)
+    const currentSemesterCredits = currentSemesterGrades.reduce((sum, grade) => sum + grade.courses.credits, 0)
     const currentSemesterGPA = currentSemesterGrades.length > 0
       ? currentSemesterGrades.reduce((sum, grade) => {
-        const points = getGradePoints(grade.letterGrade)
-        return sum + (points * grade.course.credits)
+        const points = getGradePoints(grade.letter_grade)
+        return sum + (points * grade.courses.credits)
       }, 0) / currentSemesterCredits
       : null
 
     // Transform consultations data
-    const consultations = student.academicConsultations.map((consultation, index) => ({
+    const consultations = student.academic_consultations.map((consultation, index) => ({
       id: consultation.id,
       date: consultation.date,
       uraian: consultation.uraian,
@@ -158,18 +158,18 @@ export async function getStudentAcademicData(): Promise<AcademicData> {
         major: student.major,
         department: student.department,
         semester: student.semester,
-        academicYear: student.academicYear,
+        academic_year: student.academic_year,
         gpa: student.gpa,
         status: student.status
       },
-      academicAdvisor: student.academicAdvisor ? {
-        id: student.academicAdvisor.id,
-        name: student.academicAdvisor.user.name,
-        nip: student.academicAdvisor.nip,
-        position: student.academicAdvisor.position,
-        department: student.academicAdvisor.department,
-        phone: student.academicAdvisor.phone,
-        office: student.academicAdvisor.office
+      academicAdvisor: student.lecturers ? {
+        id: student.lecturers.id,
+        name: student.lecturers.users.name,
+        nip: student.lecturers.nip,
+        position: student.lecturers.position,
+        department: student.lecturers.department,
+        phone: student.lecturers.phone,
+        office: student.lecturers.office
       } : null,
       consultations,
       academicProgress: {
@@ -218,21 +218,21 @@ function getGradePoints(letterGrade: string): number {
 
 export async function getControlCardData(): Promise<ControlCardData> {
   try {
-    const userId = await getServerActionUserId()
+    const user_id = await getServerActionUserId()
 
     // Get student data with academic advisor and consultations
-    const student = await prisma.student.findUnique({
+    const student = await prisma.students.findUnique({
       where: {
-        userId: userId
+        user_id: user_id
       },
       include: {
-        user: true,
-        academicAdvisor: {
+        users: true,
+        lecturers: {
           include: {
-            user: true
+            users: true
           }
         },
-        academicConsultations: {
+        academic_consultations: {
           orderBy: {
             date: 'asc'
           }
@@ -245,7 +245,7 @@ export async function getControlCardData(): Promise<ControlCardData> {
     }
 
     // Format consultations for control card
-    const consultations = student.academicConsultations.map((consultation, index) => ({
+    const consultations = student.academic_consultations.map((consultation, index) => ({
       no: index + 1,
       date: consultation.date.toLocaleDateString('id-ID', {
         day: 'numeric',
@@ -271,12 +271,12 @@ export async function getControlCardData(): Promise<ControlCardData> {
 
     const controlCardData: ControlCardData = {
       student: {
-        name: student.user.name,
+        name: student.users.name,
         nim: student.nim,
-        tahun_akademik: student.academicYear || "2023/2024"
+        tahun_akademik: student.academic_year || "2023/2024"
       },
       academicAdvisor: {
-        name: student.academicAdvisor?.user.name || "Belum ditentukan"
+        name: student.lecturers?.users.name || "Belum ditentukan"
       },
       consultations,
       signatureInfo

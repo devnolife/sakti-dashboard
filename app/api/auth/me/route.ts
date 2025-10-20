@@ -16,10 +16,10 @@ export async function GET(request: NextRequest) {
         username: true,
         name: true,
         role: true,
-        subRole: true,
+        sub_role: true,
         avatar: true,
-        isActive: true,
-        createdAt: true,
+        is_active: true,
+        created_at: true,
         students: {
           select: {
             id: true,
@@ -27,14 +27,14 @@ export async function GET(request: NextRequest) {
             major: true,
             department: true,
             semester: true,
-            academicYear: true,
+            academic_year: true,
             phone: true,
             gpa: true,
-            enrollDate: true,
+            enroll_date: true,
             status: true
           }
         },
-        lecturerProfile: {
+        lecturers: {
           select: {
             id: true,
             nip: true,
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
             office: true
           }
         },
-        staffProfile: {
+        staff: {
           select: {
             id: true,
             nip: true,
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    if (!user || !user.isActive) {
+    if (!user || !user.is_active) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       user: {
         ...user,
-        profile: user.students || user.lecturerProfile || user.staffProfile
+        profile: user.students || user.lecturers || user.staff
       }
     })
   } catch (error) {

@@ -4,7 +4,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "1",
     name: "Ahmad Fauzi",
-    studentId: "2020573010",
+    student_id: "2020573010",
     email: "ahmad.fauzi@example.com",
     phone: "+62812345678",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -42,7 +42,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "2",
     name: "Siti Rahayu",
-    studentId: "2020573011",
+    student_id: "2020573011",
     email: "siti.rahayu@example.com",
     phone: "+62812345679",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -80,7 +80,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "3",
     name: "Budi Santoso",
-    studentId: "2020573012",
+    student_id: "2020573012",
     email: "budi.santoso@example.com",
     phone: "+62812345680",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -118,7 +118,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "4",
     name: "Dewi Lestari",
-    studentId: "2020573013",
+    student_id: "2020573013",
     email: "dewi.lestari@example.com",
     phone: "+62812345681",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -150,7 +150,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "5",
     name: "Eko Prasetyo",
-    studentId: "2020573014",
+    student_id: "2020573014",
     email: "eko.prasetyo@example.com",
     phone: "+62812345682",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -188,7 +188,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "6",
     name: "Putri Handayani",
-    studentId: "2020573015",
+    student_id: "2020573015",
     email: "putri.handayani@example.com",
     phone: "+62812345683",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -213,7 +213,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "7",
     name: "Rudi Hermawan",
-    studentId: "2020573016",
+    student_id: "2020573016",
     email: "rudi.hermawan@example.com",
     phone: "+62812345684",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -251,7 +251,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "8",
     name: "Nina Wati",
-    studentId: "2020573017",
+    student_id: "2020573017",
     email: "nina.wati@example.com",
     phone: "+62812345685",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -283,7 +283,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "9",
     name: "Hadi Wijaya",
-    studentId: "2020573018",
+    student_id: "2020573018",
     email: "hadi.wijaya@example.com",
     phone: "+62812345686",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -321,7 +321,7 @@ export const mockLabAssistants: LabAssistant[] = [
   {
     id: "10",
     name: "Maya Sari",
-    studentId: "2020573019",
+    student_id: "2020573019",
     email: "maya.sari@example.com",
     phone: "+62812345687",
     avatar: "/placeholder.svg?height=40&width=40",

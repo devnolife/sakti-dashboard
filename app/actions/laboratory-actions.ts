@@ -5,12 +5,12 @@ import { getServerActionUserId } from '@/lib/auth-utils'
 
 // Get laboratory data for student dashboard
 export async function getLaboratoryData() {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   try {
     // Get student profile
-    const student = await prisma.student.findUnique({
-      where: { userId },
+    const student = await prisma.students.findUnique({
+      where: { user_id },
       select: { id: true }
     })
 
@@ -28,7 +28,7 @@ export async function getLaboratoryData() {
           }
         },
         registrations: {
-          where: { studentId: student.id },
+          where: { student_id: student.id },
           select: { id: true, status: true }
         },
         _count: {
@@ -44,7 +44,7 @@ export async function getLaboratoryData() {
 
     // Get student's lab registrations
     const myRegistrations = await prisma.labRegistration.findMany({
-      where: { studentId: student.id },
+      where: { student_id: student.id },
       include: {
         laboratory: {
           include: {
@@ -148,16 +148,16 @@ export async function getLaboratoryData() {
 // Register for a laboratory
 export async function registerLaboratory(laboratoryId: string) {
   try {
-    const userId = await getServerActionUserId()
-    // Ambil student berdasarkan userId (bukan langsung studentId karena sebelumnya hardcoded mengacu pada userId mahasiswa)
-    const student = await prisma.student.findUnique({ where: { userId }, select: { id: true } })
+    const user_id = await getServerActionUserId()
+    // Ambil student berdasarkan user_id (bukan langsung student_id karena sebelumnya hardcoded mengacu pada user_id mahasiswa)
+    const student = await prisma.students.findUnique({ where: { user_id }, select: { id: true } })
     if (!student) throw new Error('Student profile not found')
 
     // Check if already registered
     const existingRegistration = await prisma.labRegistration.findUnique({
       where: {
         studentId_laboratoryId: {
-          studentId: student.id,
+          student_id: student.id,
           laboratoryId: laboratoryId
         }
       }
@@ -188,7 +188,7 @@ export async function registerLaboratory(laboratoryId: string) {
     // Create registration
     const registration = await prisma.labRegistration.create({
       data: {
-        studentId: student.id,
+        student_id: student.id,
         laboratoryId: laboratoryId,
         status: 'pending'
       }
@@ -220,8 +220,8 @@ export async function getLabSessions(laboratoryId: string) {
 // Get laboratory assignments
 export async function getLabAssignments(laboratoryId: string) {
   try {
-    const userId = await getServerActionUserId()
-    const studentRecord = await prisma.student.findUnique({ where: { userId }, select: { id: true } })
+    const user_id = await getServerActionUserId()
+    const studentRecord = await prisma.students.findUnique({ where: { user_id }, select: { id: true } })
     if (!studentRecord) throw new Error('Student profile not found')
     
     const student = studentRecord
@@ -230,7 +230,7 @@ export async function getLabAssignments(laboratoryId: string) {
       where: { laboratoryId },
       include: {
         submissions: {
-          where: { studentId: student.id },
+          where: { student_id: student.id },
           select: {
             id: true,
             score: true,
@@ -258,7 +258,7 @@ export async function getLabMaterials(laboratoryId: string) {
   try {
     const materials = await prisma.labMaterial.findMany({
       where: { laboratoryId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { created_at: 'desc' }
     })
 
     return materials
@@ -273,7 +273,7 @@ export async function getLabAnnouncements(laboratoryId: string) {
   try {
     const announcements = await prisma.labAnnouncement.findMany({
       where: { laboratoryId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { created_at: 'desc' }
     })
 
     return announcements

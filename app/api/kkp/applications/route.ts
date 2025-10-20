@@ -6,9 +6,9 @@ import { z } from 'zod'
 const createKkpApplicationSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  studentId: z.string(),
+  start_date: z.string().datetime(),
+  end_date: z.string().datetime(),
+  student_id: z.string(),
   companyId: z.string(),
   groupMembers: z.array(z.string()).optional(),
   notes: z.string().optional()
@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const status = searchParams.get('status')
-    const studentId = searchParams.get('studentId')
-    const supervisorId = searchParams.get('supervisorId')
+    const student_id = searchParams.get('studentId')
+    const supervisor_id = searchParams.get('supervisorId')
     const search = searchParams.get('search')
 
     const skip = (page - 1) * limit
@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
     // Role-based filtering
     if (token.role === 'mahasiswa') {
       // Students can only see their own applications
-      const student = await prisma.student.findUnique({
-        where: { userId: token.sub }
+      const student = await prisma.students.findUnique({
+        where: { user_id: token.sub }
       })
       if (student) {
         where.studentId = student.id
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [applications, total] = await Promise.all([
-      prisma.kkpApplication.findMany({
+      prisma.kkp_applications.findMany({
         where,
         skip,
         take: limit,
@@ -108,9 +108,9 @@ export async function GET(request: NextRequest) {
             orderBy: { approvedAt: 'desc' }
           }
         },
-        orderBy: { submissionDate: 'desc' }
+        orderBy: { submission_date: 'desc' }
       }),
-      prisma.kkpApplication.count({ where })
+      prisma.kkp_applications.count({ where })
     ])
 
     return NextResponse.json({
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
 
     // Generate application number
     const currentYear = new Date().getFullYear()
-    const lastApplication = await prisma.kkpApplication.findFirst({
+    const lastApplication = await prisma.kkp_applications.findFirst({
       where: {
         applicationNumber: {
           startsWith: `KKP-${currentYear}`
@@ -163,8 +163,8 @@ export async function POST(request: NextRequest) {
 
     // Validate student and company exist
     const [student, company] = await Promise.all([
-      prisma.student.findUnique({ where: { id: validatedData.studentId } }),
-      prisma.company.findUnique({ where: { id: validatedData.companyId } })
+      prisma.students.findUnique({ where: { id: validatedData.studentId } }),
+      prisma.companies.findUnique({ where: { id: validatedData.companyId } })
     ])
 
     if (!student) {
@@ -176,12 +176,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Create application with initial approval workflow
-    const application = await prisma.kkpApplication.create({
+    const application = await prisma.kkp_applications.create({
       data: {
         ...validatedData,
         applicationNumber,
-        startDate: new Date(validatedData.startDate),
-        endDate: new Date(validatedData.endDate),
+        start_date: new Date(validatedData.startDate),
+        end_date: new Date(validatedData.endDate),
         groupMembers: validatedData.groupMembers || [],
         approvals: {
           create: [

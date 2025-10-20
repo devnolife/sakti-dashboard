@@ -10,7 +10,7 @@ export interface Payment {
   dueDate: string
   paidDate?: string
   semester: string
-  academicYear: string
+  academic_year: string
   receiptNumber?: string
   paymentMethod?: string
 }
@@ -22,7 +22,7 @@ export interface PaymentItem {
   amount: number
   category: PaymentCategory
   semester: string
-  academicYear: string
+  academic_year: string
   dueDate: string
   isRequired: boolean
   isRecurring: boolean

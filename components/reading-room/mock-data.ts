@@ -7,7 +7,7 @@ export const mockCategories: BookCategory[] = [
     name: "Fiksi",
     description: "Buku-buku fiksi termasuk novel, cerpen, dan karya sastra lainnya",
     bookCount: 156,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "2",
@@ -15,7 +15,7 @@ export const mockCategories: BookCategory[] = [
     name: "Ilmu Komputer",
     description: "Buku-buku tentang pemrograman, jaringan, dan teknologi informasi",
     bookCount: 89,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "3",
@@ -23,7 +23,7 @@ export const mockCategories: BookCategory[] = [
     name: "Hukum",
     description: "Buku-buku tentang hukum dan perundang-undangan",
     bookCount: 67,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "4",
@@ -31,7 +31,7 @@ export const mockCategories: BookCategory[] = [
     name: "Ekonomi",
     description: "Buku-buku tentang ekonomi, bisnis, dan manajemen",
     bookCount: 78,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "5",
@@ -39,7 +39,7 @@ export const mockCategories: BookCategory[] = [
     name: "Psikologi",
     description: "Buku-buku tentang psikologi dan kesehatan mental",
     bookCount: 45,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "6",
@@ -47,7 +47,7 @@ export const mockCategories: BookCategory[] = [
     name: "Sains",
     description: "Buku-buku tentang fisika, kimia, biologi, dan ilmu pengetahuan alam lainnya",
     bookCount: 92,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "7",
@@ -55,7 +55,7 @@ export const mockCategories: BookCategory[] = [
     name: "Agama",
     description: "Buku-buku tentang agama dan spiritualitas",
     bookCount: 53,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "8",
@@ -63,7 +63,7 @@ export const mockCategories: BookCategory[] = [
     name: "Seni dan Budaya",
     description: "Buku-buku tentang seni, musik, film, dan budaya",
     bookCount: 34,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "9",
@@ -71,7 +71,7 @@ export const mockCategories: BookCategory[] = [
     name: "Sejarah",
     description: "Buku-buku tentang sejarah dunia dan Indonesia",
     bookCount: 61,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "10",
@@ -79,7 +79,7 @@ export const mockCategories: BookCategory[] = [
     name: "Filsafat",
     description: "Buku-buku tentang filsafat dan pemikiran",
     bookCount: 28,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "11",
@@ -87,7 +87,7 @@ export const mockCategories: BookCategory[] = [
     name: "Komik dan Manga",
     description: "Koleksi komik dan manga",
     bookCount: 112,
-    isActive: true,
+    is_active: true,
   },
   {
     id: "12",
@@ -95,7 +95,7 @@ export const mockCategories: BookCategory[] = [
     name: "Arsip Lama",
     description: "Buku-buku arsip yang jarang diakses",
     bookCount: 17,
-    isActive: false,
+    is_active: false,
   },
 ]
 

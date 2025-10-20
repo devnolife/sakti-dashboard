@@ -133,8 +133,8 @@ export const mockNonRegularStudents: NonRegularStudent[] = Array.from({ length: 
       Math.random() > 0.7
         ? `Catatan untuk ${name}: ${["Memerlukan bimbingan khusus", "Aktif dalam kegiatan kampus", "Pernah mengajukan cuti", "Penerima beasiswa", "Memiliki prestasi akademik"][Math.floor(Math.random() * 5)]}`
         : undefined,
-    createdAt: generateRandomDate(new Date(entryYear, 6, 1), new Date(entryYear, 8, 30)),
-    updatedAt: generateRandomDate(new Date(2023, 0, 1), new Date()),
+    created_at: generateRandomDate(new Date(entryYear, 6, 1), new Date(entryYear, 8, 30)),
+    updated_at: generateRandomDate(new Date(2023, 0, 1), new Date()),
   }
 })
 

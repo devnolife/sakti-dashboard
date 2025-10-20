@@ -136,19 +136,21 @@ export default function MahasiswaPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                <div className="text-2xl font-bold">{dashboardData.student.gpa.toFixed(2)}</div>
+                <div className="text-2xl font-bold">{dashboardData.student.gpa?.toFixed(2) || 'N/A'}</div>
                 <div className="flex items-center mt-1">
-                  <Badge 
-                    variant="outline" 
+                  <Badge
+                    variant="outline"
                     className={`text-xs font-normal ${
-                      dashboardData.student.gpa >= 3.5 
-                        ? 'text-green-600 border-green-200 bg-green-500/10' 
+                      !dashboardData.student.gpa
+                        ? 'text-gray-600 border-gray-200 bg-gray-500/10'
+                        : dashboardData.student.gpa >= 3.5
+                        ? 'text-green-600 border-green-200 bg-green-500/10'
                         : dashboardData.student.gpa >= 3.0
                         ? 'text-blue-600 border-blue-200 bg-blue-500/10'
                         : 'text-amber-600 border-amber-200 bg-amber-500/10'
                     }`}
                   >
-                    {dashboardData.student.gpa >= 3.5 ? 'Sangat Baik' : dashboardData.student.gpa >= 3.0 ? 'Baik' : 'Cukup'}
+                    {!dashboardData.student.gpa ? 'Belum Ada' : dashboardData.student.gpa >= 3.5 ? 'Sangat Baik' : dashboardData.student.gpa >= 3.0 ? 'Baik' : 'Cukup'}
                   </Badge>
                 </div>
               </CardContent>

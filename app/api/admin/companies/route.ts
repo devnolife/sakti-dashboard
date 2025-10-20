@@ -17,7 +17,7 @@ const companySchema = z.object({
   logo: z.string().optional(),
   industry: z.string().min(1),
   description: z.string().optional(),
-  isActive: z.boolean().default(true),
+  is_active: z.boolean().default(true),
 })
 
 // GET /api/admin/companies
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const search = searchParams.get('search')
-    const isActive = searchParams.get('isActive')
+    const is_active = searchParams.get('isActive')
 
     const skip = (page - 1) * limit
 
@@ -42,12 +42,12 @@ export async function GET(request: NextRequest) {
         { industry: { contains: search, mode: 'insensitive' } }
       ]
     }
-    if (isActive !== null && isActive !== undefined) {
-      where.isActive = isActive === 'true'
+    if (isActive !== null && is_active !== undefined) {
+      where.isActive = is_active === 'true'
     }
 
     const [companies, total] = await Promise.all([
-      prisma.company.findMany({
+      prisma.companies.findMany({
         where,
         skip,
         take: limit,
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
           }
         }
       }),
-      prisma.company.count({ where })
+      prisma.companies.count({ where })
     ])
 
     return NextResponse.json({
@@ -89,14 +89,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = companySchema.parse(body)
 
-    const company = await prisma.company.create({
+    const company = await prisma.companies.create({
       data: validatedData
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'CREATE',
         resource: 'Company',
         details: { companyId: company.id, name: company.name },
@@ -132,15 +132,15 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const validatedData = companySchema.partial().parse(body)
 
-    const company = await prisma.company.update({
+    const company = await prisma.companies.update({
       where: { id },
       data: validatedData
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'UPDATE',
         resource: 'Company',
         details: { companyId: company.id, name: company.name },
@@ -173,14 +173,14 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Company ID required' }, { status: 400 })
     }
 
-    const company = await prisma.company.delete({
+    const company = await prisma.companies.delete({
       where: { id }
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'DELETE',
         resource: 'Company',
         details: { companyId: company.id, name: company.name },

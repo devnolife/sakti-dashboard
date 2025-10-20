@@ -8,7 +8,7 @@ export interface NumberingRule {
   format: string
   currentNumber: number
   resetPeriod: 'never' | 'monthly' | 'yearly'
-  isActive: boolean
+  is_active: boolean
   createdAt?: string
   updatedAt?: string
 }
@@ -77,7 +77,7 @@ export class NumberingSystemAPI {
           format: 'AS-{XXX}/TU-UNIV/{YYYY}/{MM}',
           currentNumber: 89,
           resetPeriod: 'yearly',
-          isActive: true
+          is_active: true
         },
         {
           id: '2',
@@ -86,7 +86,7 @@ export class NumberingSystemAPI {
           format: 'RP-{XXX}/TU-UNIV/{YYYY}/{MM}',
           currentNumber: 23,
           resetPeriod: 'yearly',
-          isActive: true
+          is_active: true
         },
         {
           id: '3',
@@ -95,7 +95,7 @@ export class NumberingSystemAPI {
           format: 'IR-{XXX}/TU-UNIV/{YYYY}/{MM}',
           currentNumber: 18,
           resetPeriod: 'yearly',
-          isActive: true
+          is_active: true
         },
         {
           id: '4',
@@ -104,7 +104,7 @@ export class NumberingSystemAPI {
           format: 'GL-{XXX}/TU-UNIV/{YYYY}/{MM}',
           currentNumber: 15,
           resetPeriod: 'yearly',
-          isActive: true
+          is_active: true
         }
       ]
     }

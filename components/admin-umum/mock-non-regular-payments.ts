@@ -42,7 +42,7 @@ mockNonRegularStudents.forEach((student) => {
 
   for (let i = 0; i < paymentCount; i++) {
     const semester = Math.min(student.semester, Math.floor(Math.random() * 8) + 1)
-    const academicYear = `${student.entryYear + Math.floor(semester / 2)}/${student.entryYear + Math.floor(semester / 2) + 1}`
+    const academic_year = `${student.entryYear + Math.floor(semester / 2)}/${student.entryYear + Math.floor(semester / 2) + 1}`
     const category = paymentCategories[Math.floor(Math.random() * paymentCategories.length)]
 
     // Base amount by category
@@ -118,7 +118,7 @@ mockNonRegularStudents.forEach((student) => {
     let description = ""
     switch (category) {
       case "tuition":
-        description = `Pembayaran SPP Semester ${semester} Tahun Akademik ${academicYear}`
+        description = `Pembayaran SPP Semester ${semester} Tahun Akademik ${academic_year}`
         break
       case "registration":
         description = `Biaya Pendaftaran Program ${
@@ -136,16 +136,16 @@ mockNonRegularStudents.forEach((student) => {
         }`
         break
       case "exam":
-        description = `Biaya Ujian Semester ${semester} Tahun Akademik ${academicYear}`
+        description = `Biaya Ujian Semester ${semester} Tahun Akademik ${academic_year}`
         break
       case "laboratory":
-        description = `Biaya Praktikum Semester ${semester} Tahun Akademik ${academicYear}`
+        description = `Biaya Praktikum Semester ${semester} Tahun Akademik ${academic_year}`
         break
       case "graduation":
-        description = `Biaya Wisuda Tahun Akademik ${academicYear}`
+        description = `Biaya Wisuda Tahun Akademik ${academic_year}`
         break
       case "other":
-        description = `Biaya Lainnya Semester ${semester} Tahun Akademik ${academicYear}`
+        description = `Biaya Lainnya Semester ${semester} Tahun Akademik ${academic_year}`
         break
     }
 
@@ -169,7 +169,7 @@ mockNonRegularStudents.forEach((student) => {
 
     const payment: NonRegularPayment = {
       id: `PAY${Math.random().toString(36).substring(2, 9)}`,
-      studentId: student.id,
+      student_id: student.id,
       invoiceNumber: generateInvoiceNumber(),
       amount,
       category,
@@ -179,12 +179,12 @@ mockNonRegularStudents.forEach((student) => {
       paymentMethod,
       status,
       semester,
-      academicYear,
+      academic_year,
       transactionId,
       receiptUrl,
       notes,
-      createdAt: generateRandomDate(new Date(currentYear - 1, 0, 1), new Date()),
-      updatedAt: generateRandomDate(new Date(currentYear - 1, 0, 1), new Date()),
+      created_at: generateRandomDate(new Date(currentYear - 1, 0, 1), new Date()),
+      updated_at: generateRandomDate(new Date(currentYear - 1, 0, 1), new Date()),
       createdBy: "admin",
     }
 

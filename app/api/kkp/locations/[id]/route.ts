@@ -9,13 +9,13 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) {
-      userId = token.sub
+      user_id = token.sub
     }
     if (!userId) {
-      try { userId = await getServerActionUserId() } catch {}
+      try { user_id = await getServerActionUserId() } catch {}
     }
     if (!userId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
@@ -29,7 +29,7 @@ export async function DELETE(
       include: {
         createdBy: {
           select: {
-            userId: true,
+            user_id: true,
           },
         },
       },
@@ -88,7 +88,7 @@ export async function GET(
     const location = await prisma.kkpLocation.findUnique({
       where: { 
         id: locationId,
-        isActive: true,
+        is_active: true,
       },
       include: {
         company: true,
@@ -179,7 +179,7 @@ export async function PUT(
       include: {
         createdBy: {
           select: {
-            userId: true,
+            user_id: true,
           },
         },
       },

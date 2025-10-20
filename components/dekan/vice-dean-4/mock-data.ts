@@ -13,8 +13,8 @@ export type KkpPlusStudent = {
   teamId: string | null
   teamName: string | null
   status: "active" | "completed" | "pending"
-  startDate: Date | null
-  endDate: Date | null
+  start_date: Date | null
+  end_date: Date | null
   grade: string | null
   supervisor: string | null
 }
@@ -25,10 +25,10 @@ export type KkpPlusTeam = {
   members: string[] // Student IDs
   workProgram: string
   location: string
-  startDate: Date
-  endDate: Date
+  start_date: Date
+  end_date: Date
   status: "planning" | "ongoing" | "completed" | "evaluated"
-  supervisorId: string
+  supervisor_id: string
 }
 
 export type KkpPlusLocation = {
@@ -41,7 +41,7 @@ export type KkpPlusLocation = {
   contactPhone: string
   contactEmail: string
   capacity: number
-  isActive: boolean
+  is_active: boolean
   description: string
 }
 
@@ -98,7 +98,7 @@ export const locations: KkpPlusLocation[] = Array.from({ length: 12 }, (_, i) =>
   contactPhone: faker.phone.number(),
   contactEmail: faker.internet.email(),
   capacity: faker.number.int({ min: 3, max: 10 }),
-  isActive: faker.datatype.boolean(0.8),
+  is_active: faker.datatype.boolean(0.8),
   description: faker.company.catchPhrase(),
 }))
 
@@ -112,8 +112,8 @@ export const students: KkpPlusStudent[] = Array.from({ length: 80 }, (_, i) => (
   teamId: null,
   teamName: null,
   status: faker.helpers.arrayElement(["active", "completed", "pending"]),
-  startDate: faker.date.past({ years: 1 }),
-  endDate: faker.date.future({ years: 1 }),
+  start_date: faker.date.past({ years: 1 }),
+  end_date: faker.date.future({ years: 1 }),
   grade: faker.helpers.arrayElement(["A", "B+", "B", "C+", "C", null]),
   supervisor: faker.helpers.arrayElement(supervisors).name,
 }))
@@ -153,10 +153,10 @@ export const teams: KkpPlusTeam[] = Array.from({ length: 20 }, (_, i) => {
       "Pengembangan Website Desa Wisata",
     ]),
     location: faker.helpers.arrayElement(locations).id,
-    startDate: faker.date.past({ years: 1 }),
-    endDate: faker.date.future({ years: 1 }),
+    start_date: faker.date.past({ years: 1 }),
+    end_date: faker.date.future({ years: 1 }),
     status: faker.helpers.arrayElement(["planning", "ongoing", "completed", "evaluated"]),
-    supervisorId: faker.helpers.arrayElement(supervisors).id,
+    supervisor_id: faker.helpers.arrayElement(supervisors).id,
   }
 })
 
@@ -170,8 +170,8 @@ export const historicalStudents: KkpPlusStudent[] = Array.from({ length: 120 }, 
   teamId: `past-team-${faker.number.int({ min: 1, max: 30 })}`,
   teamName: `Tim KKP Plus ${faker.number.int({ min: 1, max: 30 })}`,
   status: "completed",
-  startDate: faker.date.past({ years: 3 }),
-  endDate: faker.date.past({ years: 2 }),
+  start_date: faker.date.past({ years: 3 }),
+  end_date: faker.date.past({ years: 2 }),
   grade: faker.helpers.arrayElement(["A", "B+", "B", "C+", "C"]),
   supervisor: faker.helpers.arrayElement(supervisors).name,
 }))

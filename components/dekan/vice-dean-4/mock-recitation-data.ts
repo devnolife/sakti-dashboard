@@ -1,6 +1,6 @@
 export type RecitationTest = {
   id: string
-  studentId: string
+  student_id: string
   studentName: string
   department: string
   testDate: string
@@ -26,7 +26,7 @@ export type RecitationStaff = {
 export const mockRecitationTests: RecitationTest[] = [
   {
     id: "RT001",
-    studentId: "TI18001",
+    student_id: "TI18001",
     studentName: "Ahmad Fauzi",
     department: "Informatika",
     testDate: "2023-09-15",
@@ -39,7 +39,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT002",
-    studentId: "SI18045",
+    student_id: "SI18045",
     studentName: "Siti Aisyah",
     department: "Sistem Informasi",
     testDate: "2023-09-16",
@@ -52,7 +52,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT003",
-    studentId: "TK18023",
+    student_id: "TK18023",
     studentName: "Muhammad Rizki",
     department: "Teknik Komputer",
     testDate: "2023-09-17",
@@ -65,7 +65,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT004",
-    studentId: "TE18078",
+    student_id: "TE18078",
     studentName: "Anisa Rahma",
     department: "Teknik Elektro",
     testDate: "2023-09-18",
@@ -78,7 +78,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT005",
-    studentId: "MI18102",
+    student_id: "MI18102",
     studentName: "Budi Santoso",
     department: "Manajemen Informatika",
     testDate: "2023-09-19",
@@ -91,7 +91,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT006",
-    studentId: "TI18056",
+    student_id: "TI18056",
     studentName: "Dewi Lestari",
     department: "Informatika",
     testDate: "2023-09-20",
@@ -104,7 +104,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT007",
-    studentId: "SI18089",
+    student_id: "SI18089",
     studentName: "Eko Prasetyo",
     department: "Sistem Informasi",
     testDate: "2023-09-21",
@@ -117,7 +117,7 @@ export const mockRecitationTests: RecitationTest[] = [
   },
   {
     id: "RT008",
-    studentId: "TK18112",
+    student_id: "TK18112",
     studentName: "Fitriani Putri",
     department: "Teknik Komputer",
     testDate: "2023-09-22",

@@ -5,15 +5,15 @@ import { authMiddleware } from '@/lib/auth-middleware'
 
 export async function GET(request: NextRequest) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: true
       }
@@ -26,23 +26,23 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const studentId = user.students.id
+    const student_id = user.students.id
 
     // Get student's exam history to determine available exams
-    const examHistory = await prisma.examApplication.findMany({
+    const examHistory = await prisma.exam_applications.findMany({
       where: {
-        studentId: studentId
+        student_id: studentId
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     })
 
     // Get available lecturers for supervisors
-    const lecturers = await prisma.lecturer.findMany({
+    const lecturers = await prisma.lecturers.findMany({
       where: {
         user: {
-          isActive: true
+          is_active: true
         }
       },
       include: {
@@ -128,18 +128,18 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
 
-    const { examType, title, abstract, preferredDate, preferredTime, supervisorId, notes } = body
+    const { exam_type, title, abstract, preferredDate, preferredTime, supervisor_id, notes } = body
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: true
       }
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const studentId = user.students.id
+    const student_id = user.students.id
 
     // Validate exam type
     const validExamTypes = ['proposal', 'result', 'closing', 'final']
@@ -164,10 +164,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if student already has a pending exam of the same type
-    const existingExam = await prisma.examApplication.findFirst({
+    const existingExam = await prisma.exam_applications.findFirst({
       where: {
-        studentId: studentId,
-        type: examType,
+        student_id: student_id,
+        type: exam_type,
         status: {
           in: ['pending', 'scheduled', 'applicant']
         }
@@ -182,19 +182,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the exam application
-    const scheduledDate = preferredDate && preferredTime
+    const scheduled_date = preferredDate && preferredTime
       ? new Date(`${preferredDate}T${preferredTime}:00Z`)
       : null
 
-    const examApplication = await prisma.examApplication.create({
+    const examApplication = await prisma.exam_applications.create({
       data: {
-        studentId: studentId,
+        student_id: student_id,
         title: title,
-        type: examType,
+        type: exam_type,
         abstract: abstract,
         status: 'applicant',
-        scheduledDate: scheduledDate,
-        advisor1Id: supervisorId || null
+        scheduled_date: scheduled_date,
+        advisor1Id: supervisor_id || null
       }
     })
 
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
         title: examApplication.title,
         type: examApplication.type,
         status: examApplication.status,
-        submissionDate: examApplication.submissionDate.toISOString()
+        submission_date: examApplication.submissionDate.toISOString()
       }
     })
 

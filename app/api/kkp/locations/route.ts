@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const locations = await prisma.kkpLocation.findMany({
       where: {
-        isActive: true,
+        is_active: true,
       },
       include: {
         company: true,
@@ -16,7 +16,7 @@ export async function GET() {
           select: {
             id: true,
             nim: true,
-            userId: true,
+            user_id: true,
             user: {
               select: {
                 id: true,
@@ -33,7 +33,7 @@ export async function GET() {
         },
       },
       orderBy: {
-        createdAt: "desc",
+        created_at: "desc",
       },
     })
 
@@ -67,22 +67,22 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     // Gunakan authMiddleware terlebih dahulu (Bearer / NextAuth)
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) {
-      userId = token.sub
+      user_id = token.sub
     }
     // Fallback ke cookie JWT server action helper bila authMiddleware gagal (token adalah NextResponse)
     if (!userId) {
-      try { userId = await getServerActionUserId() } catch {}
+      try { user_id = await getServerActionUserId() } catch {}
     }
     if (!userId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     
     // Check if user is a student
-    const student = await prisma.student.findUnique({
-      where: { userId },
+    const student = await prisma.students.findUnique({
+      where: { user_id },
     })
 
     if (!student) {
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
             select: {
               id: true,
               nim: true,
-              userId: true,
+              user_id: true,
               user: {
                 select: {
                   id: true,

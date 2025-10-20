@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit
 
     const where: any = {
-      isActive: true
+      is_active: true
     }
 
     if (search) {
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     }
 
     const [companies, total] = await Promise.all([
-      prisma.company.findMany({
+      prisma.companies.findMany({
         where,
         skip,
         take: limit,
@@ -67,21 +67,21 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { name: 'asc' }
       }),
-      prisma.company.count({ where })
+      prisma.companies.count({ where })
     ])
 
     // Get industry list for filters
-    const industries = await prisma.company.groupBy({
+    const industries = await prisma.companies.groupBy({
       by: ['industry'],
-      where: { isActive: true },
+      where: { is_active: true },
       _count: { industry: true },
       orderBy: { industry: 'asc' }
     })
 
     // Get city list for filters
-    const cities = await prisma.company.groupBy({
+    const cities = await prisma.companies.groupBy({
       by: ['city'],
-      where: { isActive: true },
+      where: { is_active: true },
       _count: { city: true },
       orderBy: { city: 'asc' }
     })
@@ -126,10 +126,10 @@ export async function POST(request: NextRequest) {
     const validatedData = createCompanySchema.parse(body)
 
     // Check if company name already exists
-    const existingCompany = await prisma.company.findFirst({
+    const existingCompany = await prisma.companies.findFirst({
       where: {
         name: validatedData.name,
-        isActive: true
+        is_active: true
       }
     })
 
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const company = await prisma.company.create({
+    const company = await prisma.companies.create({
       data: validatedData,
       include: {
         _count: {

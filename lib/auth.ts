@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           }
         })
 
-        if (!user || !user.isActive) {
+        if (!user || !user.is_active) {
           return null
         }
 
@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
           username: user.username,
           name: user.name,
           role: user.role,
-          subRole: user.subRole || undefined,
+          sub_role: user.sub_role || undefined,
           avatar: user.avatar || undefined,
           profile: user.students || user.lecturers || user.staff
         }

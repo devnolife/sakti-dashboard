@@ -2,9 +2,9 @@ export interface ThesisSubmission {
   id: string
   title: string
   studentName: string
-  studentId: string
+  student_id: string
   program: string
-  submissionDate: string
+  submission_date: string
   status: "pending" | "approved" | "rejected" | "revision"
   abstract: string
   keywords: string[]
@@ -22,10 +22,10 @@ export interface ExamSchedule {
   id: string
   title: string
   studentName: string
-  studentId: string
+  student_id: string
   program: string
-  examType: "proposal" | "result" | "final"
-  scheduledDate: string
+  exam_type: "proposal" | "result" | "final"
+  scheduled_date: string
   duration: number
   location: string
   verificationStatus: "pending" | "verified" | "rescheduled" | "cancelled"
@@ -51,9 +51,9 @@ export interface SupervisorExaminerData {
   id: string
   title: string
   studentName: string
-  studentId: string
+  student_id: string
   program: string
-  examType: "proposal" | "result" | "final"
+  exam_type: "proposal" | "result" | "final"
   status: "pending" | "complete" | "partial"
   supervisors?: Lecturer[]
   examiners?: Lecturer[]

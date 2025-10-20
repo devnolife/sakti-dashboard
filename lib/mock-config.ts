@@ -7,6 +7,6 @@ export const MOCK_STUDENT_ID = "cmg3rxcbi00019yl0b38jhy03"
 // In real app, this would get from auth context/session
 export function getCurrentStudentId(): string {
   // TODO: Replace with actual auth context
-  console.log('🆔 Using studentId:', MOCK_STUDENT_ID)
+  console.log('🆔 Using student_id:', MOCK_STUDENT_ID)
   return MOCK_STUDENT_ID
 }

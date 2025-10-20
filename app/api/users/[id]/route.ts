@@ -9,9 +9,9 @@ const updateUserSchema = z.object({
   password: z.string().min(6).optional(),
   name: z.string().min(1).optional(),
   role: z.enum(['mahasiswa', 'dosen', 'prodi', 'staff_tu', 'dekan', 'admin', 'laboratory_admin', 'reading_room_admin', 'admin_umum', 'admin_keuangan', 'gkm', 'kepala_tata_usaha']).optional(),
-  subRole: z.string().optional(),
+  sub_role: z.string().optional(),
   avatar: z.string().optional(),
-  isActive: z.boolean().optional()
+  is_active: z.boolean().optional()
 })
 
 interface RouteParams {
@@ -39,18 +39,18 @@ export async function GET(
         username: true,
         name: true,
         role: true,
-        subRole: true,
+        sub_role: true,
         avatar: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
+        is_active: true,
+        created_at: true,
+        updated_at: true,
         students: {
           select: {
             nim: true,
             major: true,
             department: true,
             semester: true,
-            academicYear: true,
+            academic_year: true,
             phone: true,
             address: true,
             status: true,
@@ -142,11 +142,11 @@ export async function PUT(
         username: true,
         name: true,
         role: true,
-        subRole: true,
+        sub_role: true,
         avatar: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true
+        is_active: true,
+        created_at: true,
+        updated_at: true
       }
     })
 

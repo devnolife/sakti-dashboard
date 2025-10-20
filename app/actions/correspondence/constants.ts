@@ -7,7 +7,7 @@ import { LetterType } from "@/types/correspondence"
 export async function getLetterTypes(): Promise<LetterType[]> {
   try {
     const letterTypes = await prisma.letterType.findMany({
-      where: { isActive: true },
+      where: { is_active: true },
       orderBy: { title: 'asc' }
     })
 

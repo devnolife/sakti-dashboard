@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const examType = formData.get('examType') as string
+    const exam_type = formData.get('examType') as string
     const requirementId = formData.get('requirementId') as string
 
     if (!file) {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
 
     // Create directory based on exam type
-    const examTypeDir = `ujian-${examType}`
+    const examTypeDir = `ujian-${exam_type}`
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', examTypeDir)
     
     // Create directory if it doesn't exist
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     // await prisma.examStudentRequirement.upsert({
     //   where: { 
     //     studentId_requirementId: { 
-    //       studentId: 'current-user-id', 
+    //       student_id: 'current-user-id', 
     //       requirementId: requirementId 
     //     } 
     //   },
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     //     uploadedAt: new Date()
     //   },
     //   create: {
-    //     studentId: 'current-user-id',
+    //     student_id: 'current-user-id',
     //     requirementId: requirementId,
     //     completed: true,
     //     fileUrl: fileUrl,

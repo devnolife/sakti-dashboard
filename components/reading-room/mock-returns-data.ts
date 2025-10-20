@@ -2,7 +2,7 @@ export const mockPendingReturns = [
   {
     id: "RTN001",
     studentName: "Ahmad Fauzi",
-    studentId: "2019102001",
+    student_id: "2019102001",
     bookTitle: "Algoritma dan Pemrograman",
     bookId: "BK001",
     borrowDate: "2023-06-15",
@@ -14,7 +14,7 @@ export const mockPendingReturns = [
   {
     id: "RTN002",
     studentName: "Siti Nurhaliza",
-    studentId: "2020103045",
+    student_id: "2020103045",
     bookTitle: "Basis Data Lanjut",
     bookId: "BK002",
     borrowDate: "2023-06-14",
@@ -26,7 +26,7 @@ export const mockPendingReturns = [
   {
     id: "RTN003",
     studentName: "Budi Santoso",
-    studentId: "2021104078",
+    student_id: "2021104078",
     bookTitle: "Jaringan Komputer",
     bookId: "BK003",
     borrowDate: "2023-05-13",
@@ -38,7 +38,7 @@ export const mockPendingReturns = [
   {
     id: "RTN004",
     studentName: "Dewi Lestari",
-    studentId: "2020105023",
+    student_id: "2020105023",
     bookTitle: "Kecerdasan Buatan",
     bookId: "BK004",
     borrowDate: "2023-05-12",
@@ -53,7 +53,7 @@ export const mockRecentReturns = [
   {
     id: "RTN005",
     studentName: "Eko Prasetyo",
-    studentId: "2019106089",
+    student_id: "2019106089",
     bookTitle: "Sistem Operasi",
     bookId: "BK005",
     borrowDate: "2023-06-01",
@@ -66,7 +66,7 @@ export const mockRecentReturns = [
   {
     id: "RTN006",
     studentName: "Rini Susanti",
-    studentId: "2019107056",
+    student_id: "2019107056",
     bookTitle: "Rekayasa Perangkat Lunak",
     bookId: "BK006",
     borrowDate: "2023-05-20",
@@ -79,7 +79,7 @@ export const mockRecentReturns = [
   {
     id: "RTN007",
     studentName: "Doni Pratama",
-    studentId: "2020108034",
+    student_id: "2020108034",
     bookTitle: "Pemrograman Web",
     bookId: "BK007",
     borrowDate: "2023-05-22",
@@ -92,7 +92,7 @@ export const mockRecentReturns = [
   {
     id: "RTN008",
     studentName: "Anisa Rahmawati",
-    studentId: "2021109012",
+    student_id: "2021109012",
     bookTitle: "Interaksi Manusia dan Komputer",
     bookId: "BK008",
     borrowDate: "2023-05-25",
@@ -105,7 +105,7 @@ export const mockRecentReturns = [
   {
     id: "RTN009",
     studentName: "Rizki Maulana",
-    studentId: "2020110067",
+    student_id: "2020110067",
     bookTitle: "Keamanan Jaringan",
     bookId: "BK009",
     borrowDate: "2023-05-18",
