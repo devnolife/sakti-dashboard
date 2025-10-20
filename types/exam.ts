@@ -34,7 +34,7 @@ export interface Exam {
   id: string
   title: string
   studentName: string
-  studentId: string
+  student_id: string
   date: string
   location: string
   status: string

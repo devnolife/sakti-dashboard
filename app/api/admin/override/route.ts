@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     // Handle different modules
     switch (validatedData.module) {
       case 'kkp':
-        result = await prisma.kkpApplication.update({
+        result = await prisma.kkp_applications.update({
           where: { id: validatedData.itemId },
           data: {
             status: validatedData.action === 'approve' ? 'approved' : 'rejected',
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         break
 
       case 'exam':
-        result = await prisma.examApplication.update({
+        result = await prisma.exam_applications.update({
           where: { id: validatedData.itemId },
           data: {
             status: validatedData.action === 'approve' ? 'scheduled' : 'cancelled',
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
         break
 
       case 'payment':
-        result = await prisma.payment.update({
+        result = await prisma.payments.update({
           where: { id: validatedData.itemId },
           data: {
             status: validatedData.action === 'approve' ? 'completed' : 'failed',
@@ -72,9 +72,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create audit log for override action
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'ADMIN_OVERRIDE',
         resource: `${validatedData.module}_${validatedData.action.toUpperCase()}`,
         details: {
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     const module = searchParams.get('module')
 
     const [kkpApplications, examApplications, letterRequests, payments] = await Promise.all([
-      !module || module === 'kkp' ? prisma.kkpApplication.findMany({
+      !module || module === 'kkp' ? prisma.kkp_applications.findMany({
         where: { status: 'pending' },
         include: {
           student: {
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
         },
         take: 20
       }) : [],
-      !module || module === 'exam' ? prisma.examApplication.findMany({
+      !module || module === 'exam' ? prisma.exam_applications.findMany({
         where: { status: 'pending' },
         include: {
           student: {
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
         },
         take: 20
       }) : [],
-      !module || module === 'payment' ? prisma.payment.findMany({
+      !module || module === 'payment' ? prisma.payments.findMany({
         where: { status: 'pending' },
         include: {
           student: {

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const examType = searchParams.get('type')
+    const exam_type = searchParams.get('type')
 
     if (!examType || !['proposal', 'result', 'closing'].includes(examType)) {
       return NextResponse.json(
@@ -237,7 +237,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        examType,
+        exam_type,
         requirements: requirements || []
       }
     })

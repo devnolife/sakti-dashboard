@@ -25,7 +25,7 @@ Adalah benar mahasiswa aktif di Fakultas Teknik Universitas Sriwijaya.
 
 Demikian surat keterangan ini dibuat untuk dapat digunakan sebagaimana mestinya.
       `,
-      isActive: true
+      is_active: true
     },
     {
       title: 'Surat Pengantar KKP/Magang',
@@ -56,7 +56,7 @@ Untuk melaksanakan Kerja Kerja Profesi (KKP) di perusahaan yang Bapak/Ibu pimpin
 
 Demikian surat pengantar ini kami sampaikan, atas perhatian dan kerjasamanya kami ucapkan terima kasih.
       `,
-      isActive: true
+      is_active: true
     },
     {
       title: 'Surat Keterangan Lulus/Bebas Laboratorium',
@@ -83,7 +83,7 @@ Dan dinyatakan BEBAS LABORATORIUM.
 
 Surat keterangan ini berlaku untuk keperluan administrasi akademik.
       `,
-      isActive: true
+      is_active: true
     },
     {
       title: 'Surat Keterangan Penelitian/Tugas Akhir',
@@ -113,7 +113,7 @@ Sedang melaksanakan penelitian dengan judul "{{research_title}}" dalam rangka pe
 
 Untuk itu kami mohon bantuan dan fasilitas yang diperlukan.
       `,
-      isActive: true
+      is_active: true
     },
     {
       title: 'Surat Pengantar Beasiswa',
@@ -146,7 +146,7 @@ Prestasi yang telah diraih:
 
 Kami merekomendasikan mahasiswa tersebut untuk mendapatkan beasiswa {{scholarship_type}}.
       `,
-      isActive: true
+      is_active: true
     },
     {
       title: 'Surat Keterangan Mengikuti Organisasi',
@@ -172,7 +172,7 @@ Adalah anggota aktif organisasi {{organization_name}} dengan jabatan {{position}
 
 Mahasiswa tersebut menunjukkan dedikasi dan kontribusi positif dalam kegiatan organisasi.
       `,
-      isActive: true
+      is_active: true
     }
   ]
 

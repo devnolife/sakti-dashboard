@@ -21,7 +21,7 @@ export interface KkpLocationRequest {
     major: string
     email: string
   }
-  submissionDate: Date
+  submission_date: Date
   status: KkpLocationStatus
   reviewedBy?: string
   reviewDate?: Date

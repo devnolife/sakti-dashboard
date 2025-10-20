@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
 import { graphqlClient } from '@/lib/graphql/client'
-import { GET_MAHASISWA_USER, type MahasiswaUserResponse } from '@/lib/graphql/queries'
+import { GET_MAHASISWA_USER, GET_MAHASISWA_INFO, type MahasiswaUserResponse, type MahasiswaInfoResponse } from '@/lib/graphql/queries'
 import { md5Hash, verifyMd5Password } from '@/lib/utils/md5'
 import { randomBytes } from 'crypto'
 
@@ -13,6 +13,63 @@ const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key'
 // Helper function to generate ID similar to cuid
 function generateId(): string {
   return `c${randomBytes(12).toString('base64url')}`
+}
+
+/**
+ * Sync mahasiswa info (IPK, semester, etc) from GraphQL
+ */
+async function syncMahasiswaInfoFromGraphQL(nim: string, studentId: string) {
+  try {
+    console.log('Fetching mahasiswaInfo from GraphQL for:', nim)
+    const response = await graphqlClient.request<MahasiswaInfoResponse>(
+      GET_MAHASISWA_INFO,
+      { nim }
+    )
+
+    const info = response.mahasiswaInfo
+
+    if (!info) {
+      console.log('No mahasiswaInfo found for:', nim)
+      return
+    }
+
+    console.log('MahasiswaInfo received from GraphQL:', {
+      nim: info.nim,
+      nama: info.nama,
+      ipk: info.ipk,
+      semester: info.jumlahSemester,
+      totalSksLulus: info.totalSksLulus
+    })
+
+    // Map status from GraphQL
+    let status: 'active' | 'inactive' | 'graduated' | 'suspended' | 'leave' = 'active'
+    if (info.statusTerakhirTa) {
+      const statusLower = info.statusTerakhirTa.toLowerCase()
+      if (statusLower.includes('lulus')) {
+        status = 'graduated'
+      } else if (statusLower.includes('cuti')) {
+        status = 'leave'
+      } else if (statusLower.includes('non aktif') || statusLower.includes('nonaktif')) {
+        status = 'inactive'
+      }
+    }
+
+    // Update student with detailed info from GraphQL
+    await prisma.students.update({
+      where: { id: studentId },
+      data: {
+        gpa: info.ipk ? parseFloat(info.ipk.toString()) : null,
+        semester: info.jumlahSemester || 1,
+        status,
+        major: info.namaProdi,
+        last_sync_at: new Date()
+      }
+    })
+
+    console.log('Student profile updated with IPK and semester from GraphQL')
+  } catch (error) {
+    console.error('Error syncing mahasiswaInfo from GraphQL:', error)
+  }
 }
 
 /**
@@ -53,9 +110,9 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
         name: mahasiswaData.nama,
         password: hashedPassword,
         role: 'mahasiswa',
-        isActive: true,
+        is_active: true,
         avatar: mahasiswaData.foto || null,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       },
       include: {
         students: true
@@ -72,19 +129,22 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
       },
       create: {
         id: generateId(),
-        userId: user.id,
+        user_id: user.id,
         nim,
         phone: mahasiswaData.hp,
         major: mahasiswaData.prodi || 'Unknown',
         department: 'Fakultas Teknik',
         semester: 1, // Will be updated from mahasiswaInfo sync
-        academicYear: new Date().getFullYear().toString(),
-        enrollDate: new Date(),
+        academic_year: new Date().getFullYear().toString(),
+        enroll_date: new Date(),
         status: 'active',
       }
     })
 
-    console.log('Mahasiswa synced to local DB:', { nim, userId: user.id, studentId: student.id })
+    console.log('Mahasiswa synced to local DB:', { nim, user_id: user.id, student_id: student.id })
+
+    // Sync detailed info (IPK, semester, etc) from GraphQL
+    await syncMahasiswaInfoFromGraphQL(nim, student.id)
 
     // Return user with profile
     return await prisma.users.findUnique({
@@ -238,7 +298,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is active
-    if (!user || !user.isActive) {
+    if (!user || !user.is_active) {
       return NextResponse.json(
         { error: 'Account is inactive' },
         { status: 401 }
@@ -259,7 +319,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         username: user.username,
         role: user.role,
-        subRole: user.subRole
+        subRole: user.sub_role
       },
       JWT_SECRET,
       { expiresIn: '24h' }
@@ -269,9 +329,9 @@ export async function POST(request: NextRequest) {
     const session = await prisma.sessions.create({
       data: {
         id: generateId(),
-        userId: user.id,
+        user_id: user.id,
         token,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
       }
     })
 
@@ -279,7 +339,7 @@ export async function POST(request: NextRequest) {
     await prisma.audit_logs.create({
       data: {
         id: generateId(),
-        userId: user.id,
+        user_id: user.id,
         action: isNewUser ? 'first_login' : 'login',
         resource: 'auth',
         details: {
@@ -288,7 +348,7 @@ export async function POST(request: NextRequest) {
           isNewUser,
           syncedFromGraphQL: isNewUser
         },
-        ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
       }
     })
 
@@ -298,7 +358,7 @@ export async function POST(request: NextRequest) {
         username: user.username,
         name: user.name,
         role: user.role,
-        subRole: user.subRole,
+        sub_role: user.sub_role,
         avatar: user.avatar,
         profile: user.students || user.lecturers || user.staff,
         isNewUser

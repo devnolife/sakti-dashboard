@@ -6,15 +6,15 @@ import { students } from '@/components/dekan/vice-dean-4/mock-data'
 
 export async function GET(request: NextRequest) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch { } }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: true
       }
@@ -27,12 +27,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const studentId = user.students.id
+    const student_id = user.students.id
 
     // Get all exam applications for the student
-    const examApplications = await prisma.examApplication.findMany({
+    const examApplications = await prisma.exam_applications.findMany({
       where: {
-        studentId: studentId
+        student_id: studentId
       },
       include: {
         advisor1: {
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
         documents: true
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     })
 
@@ -77,8 +77,8 @@ export async function GET(request: NextRequest) {
         type: exam.type,
         status: exam.status,
         abstract: exam.abstract,
-        submissionDate: exam.submissionDate.toISOString(),
-        scheduledDate: exam.scheduledDate?.toISOString(),
+        submission_date: exam.submissionDate.toISOString(),
+        scheduled_date: exam.scheduledDate?.toISOString(),
         completionDate: exam.completionDate?.toISOString(),
         location: exam.location,
         advisor1: exam.advisor1 ? {

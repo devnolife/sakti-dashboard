@@ -55,25 +55,25 @@ export async function syncDosenFromGraphQL(nidn: string, token: string) {
     }
 
     // Create or update lecturer profile
-    const lecturer = await prisma.lecturer.upsert({
+    const lecturer = await prisma.lecturers.upsert({
       where: { nip: nidn },
       update: {
         department: dosenData.prodiId || 'Unknown',
         email: dosenData.email || existingUser.name?.toLowerCase().replace(/\s/g, '.') + '@unismuh.ac.id',
-        lastSyncAt: new Date(),
+        last_sync_at: new Date(),
       },
       create: {
-        userId: existingUser.id,
+        user_id: existingUser.id,
         nip: nidn,
         department: dosenData.prodiId || 'Unknown',
         position: 'Dosen',
         specialization: null,
         email: dosenData.email || existingUser.name?.toLowerCase().replace(/\s/g, '.') + '@unismuh.ac.id',
-        lastSyncAt: new Date(),
+        last_sync_at: new Date(),
       }
     })
 
-    console.log('Dosen synced to local DB:', { nidn, userId: existingUser.id, lecturerId: lecturer.id })
+    console.log('Dosen synced to local DB:', { nidn, user_id: existingUser.id, lecturer_id: lecturer.id })
 
     return { user: existingUser, lecturer }
   } catch (error) {
@@ -139,7 +139,7 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
             name: mahasiswa.nama,
             password: 'temp', // Password will be set on first login
             role: 'mahasiswa',
-            isActive: true,
+            is_active: true,
           }
         })
 
@@ -157,29 +157,29 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
         }
 
         // Create or update student
-        const student = await prisma.student.upsert({
+        const student = await prisma.students.upsert({
           where: { nim: mahasiswa.nim },
           update: {
             major: mahasiswa.namaProdi,
             department: 'Fakultas Teknik',
             semester: mahasiswa.jumlahSemester || 1,
             gpa: mahasiswa.ipk ? parseFloat(mahasiswa.ipk.toString()) : null,
-            academicAdvisorId: dosenUser.lecturers.id,
+            academic_advisor_id: dosenUser.lecturers.id,
             status,
-            lastSyncAt: new Date(),
+            last_sync_at: new Date(),
           },
           create: {
-            userId: user.id,
+            user_id: user.id,
             nim: mahasiswa.nim,
             major: mahasiswa.namaProdi,
             department: 'Fakultas Teknik',
             semester: mahasiswa.jumlahSemester || 1,
-            academicYear: new Date().getFullYear().toString(),
-            enrollDate: new Date(`${mahasiswa.angkatan}-09-01`),
+            academic_year: new Date().getFullYear().toString(),
+            enroll_date: new Date(`${mahasiswa.angkatan}-09-01`),
             gpa: mahasiswa.ipk ? parseFloat(mahasiswa.ipk.toString()) : null,
-            academicAdvisorId: dosenUser.lecturers.id,
+            academic_advisor_id: dosenUser.lecturers.id,
             status,
-            lastSyncAt: new Date(),
+            last_sync_at: new Date(),
           }
         })
 
@@ -204,7 +204,7 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
 export async function getDosenWithSync(nidn: string, token: string) {
   try {
     // Check if lecturer exists and is recently synced (within 24 hours)
-    const lecturer = await prisma.lecturer.findUnique({
+    const lecturer = await prisma.lecturers.findUnique({
       where: { nip: nidn },
       include: {
         users: true
@@ -212,8 +212,8 @@ export async function getDosenWithSync(nidn: string, token: string) {
     })
 
     const needsSync = !lecturer ||
-      !lecturer.lastSyncAt ||
-      (new Date().getTime() - lecturer.lastSyncAt.getTime() > 24 * 60 * 60 * 1000)
+      !lecturer.last_sync_at ||
+      (new Date().getTime() - lecturer.last_sync_at.getTime() > 24 * 60 * 60 * 1000)
 
     if (needsSync) {
       console.log('Lecturer data outdated or not found, syncing from GraphQL...')
@@ -236,15 +236,15 @@ export async function getDosenWithSync(nidn: string, token: string) {
 export async function getMahasiswaPaWithSync(dosenId: string, token: string, forceSync: boolean = false) {
   try {
     // Check last sync time for any student under this dosen
-    const lastSyncedStudent = await prisma.student.findFirst({
-      where: { academicAdvisorId: dosenId },
-      orderBy: { lastSyncAt: 'desc' }
+    const lastSyncedStudent = await prisma.students.findFirst({
+      where: { academic_advisor_id: dosenId },
+      orderBy: { last_sync_at: 'desc' }
     })
 
     const needsSync = forceSync ||
       !lastSyncedStudent ||
-      !lastSyncedStudent.lastSyncAt ||
-      (new Date().getTime() - lastSyncedStudent.lastSyncAt.getTime() > 24 * 60 * 60 * 1000)
+      !lastSyncedStudent.last_sync_at ||
+      (new Date().getTime() - lastSyncedStudent.last_sync_at.getTime() > 24 * 60 * 60 * 1000)
 
     if (needsSync) {
       console.log('Student PA data outdated or not found, syncing from GraphQL...')
@@ -252,8 +252,8 @@ export async function getMahasiswaPaWithSync(dosenId: string, token: string, for
     }
 
     // Return students from local DB
-    const students = await prisma.student.findMany({
-      where: { academicAdvisorId: dosenId },
+    const students = await prisma.students.findMany({
+      where: { academic_advisor_id: dosenId },
       include: {
         users: {
           select: {

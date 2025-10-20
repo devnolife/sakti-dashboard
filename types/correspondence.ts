@@ -24,7 +24,7 @@ export interface LetterRequest {
   requestDate: string
   approvedDate?: string
   completedDate?: string
-  studentId: string
+  student_id: string
   studentName: string
   studentNIM: string
   studentMajor: string

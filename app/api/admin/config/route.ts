@@ -80,9 +80,9 @@ export async function PUT(request: NextRequest) {
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'UPDATE',
         resource: 'SystemConfig',
         details: {

@@ -30,32 +30,32 @@ export async function GET(request: NextRequest) {
       recentAuditLogs,
     ] = await Promise.all([
       prisma.users.count(),
-      prisma.users.count({ where: { isActive: true } }),
+      prisma.users.count({ where: { is_active: true } }),
       prisma.users.groupBy({
         by: ['role'],
         _count: true,
       }),
-      prisma.student.count(),
-      prisma.lecturer.count(),
+      prisma.students.count(),
+      prisma.lecturers.count(),
       prisma.staff.count(),
-      prisma.kkpApplication.count({ where: { status: 'pending' } }),
-      prisma.kkpApplication.count({ where: { status: 'approved' } }),
-      prisma.kkpApplication.count({ where: { status: 'completed' } }),
-      prisma.examApplication.count({ where: { status: 'pending' } }),
-      prisma.payment.count({ where: { status: 'pending' } }),
-      prisma.payment.count({ where: { status: 'verified' } }),
-      prisma.session.count({
+      prisma.kkp_applications.count({ where: { status: 'pending' } }),
+      prisma.kkp_applications.count({ where: { status: 'approved' } }),
+      prisma.kkp_applications.count({ where: { status: 'completed' } }),
+      prisma.exam_applications.count({ where: { status: 'pending' } }),
+      prisma.payments.count({ where: { status: 'pending' } }),
+      prisma.payments.count({ where: { status: 'verified' } }),
+      prisma.sessions.count({
         where: {
-          expiresAt: {
+          expires_at: {
             gt: new Date()
           }
         }
       }),
-      prisma.company.count(),
-      prisma.book.count(),
-      prisma.auditLog.findMany({
+      prisma.companies.count(),
+      prisma.books.count(),
+      prisma.audit_logs.findMany({
         take: 10,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         include: {
           users: {
             select: {
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
         resource: log.resource,
         user: log.users.name,
         userRole: log.users.role,
-        timestamp: log.createdAt,
+        timestamp: log.created_at,
         details: log.details,
       })),
     })

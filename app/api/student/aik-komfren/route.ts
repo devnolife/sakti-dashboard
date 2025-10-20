@@ -5,11 +5,11 @@ import { authMiddleware } from '@/lib/auth-middleware'
 
 export async function GET(request: NextRequest) {
   try {
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
+    if (!(token instanceof NextResponse)) user_id = token.sub
     if (!userId) {
-      try { userId = await getServerActionUserId() } catch { }
+      try { user_id = await getServerActionUserId() } catch { }
     }
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: true
       }
@@ -30,12 +30,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const studentId = user.students.id
+    const student_id = user.students.id
 
     // Get AIK Komfren exam applications
-    const aikExams = await prisma.examApplication.findMany({
+    const aikExams = await prisma.exam_applications.findMany({
       where: {
-        studentId: studentId,
+        student_id: student_id,
         type: 'other',
         title: {
           contains: 'AIK',
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
         documents: true
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     })
 
@@ -84,8 +84,8 @@ export async function GET(request: NextRequest) {
         id: currentAIKExam.id,
         title: currentAIKExam.title,
         status: currentAIKExam.status,
-        submissionDate: currentAIKExam.submissionDate.toISOString(),
-        scheduledDate: currentAIKExam.scheduledDate?.toISOString(),
+        submission_date: currentAIKExam.submissionDate.toISOString(),
+        scheduled_date: currentAIKExam.scheduledDate?.toISOString(),
         completionDate: currentAIKExam.completionDate?.toISOString(),
         location: currentAIKExam.location,
         examiner: currentAIKExam.advisor1 ? {
@@ -111,8 +111,8 @@ export async function GET(request: NextRequest) {
         id: exam.id,
         title: exam.title,
         status: exam.status,
-        submissionDate: exam.submissionDate.toISOString(),
-        scheduledDate: exam.scheduledDate?.toISOString(),
+        submission_date: exam.submissionDate.toISOString(),
+        scheduled_date: exam.scheduledDate?.toISOString(),
         completionDate: exam.completionDate?.toISOString(),
         location: exam.location
       })),

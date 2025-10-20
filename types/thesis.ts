@@ -10,7 +10,7 @@ export interface ThesisTitle {
   }
   abstract: string
   keywords: string[]
-  submissionDate: string
+  submission_date: string
   status: "pending" | "approved" | "rejected" | "archived"
   supervisor?: {
     id: string

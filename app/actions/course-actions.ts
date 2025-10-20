@@ -15,7 +15,7 @@ export interface CourseData {
   status: 'ongoing' | 'completed' | 'upcoming'
   level: 'beginner' | 'intermediate' | 'advanced' | 'expert'
   semester: string
-  academicYear: string
+  academic_year: string
   schedule: {
     day: string
     time: string
@@ -33,14 +33,14 @@ export interface CourseData {
 }
 
 export async function getStudentCoursesData(): Promise<CourseData[]> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('🔍 Fetching student courses data for user:', userId)
 
   try {
     // Get user with student profile and courses
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
@@ -57,7 +57,7 @@ export async function getStudentCoursesData(): Promise<CourseData[]> {
                   }
                 }
               },
-              orderBy: { createdAt: 'desc' }
+              orderBy: { created_at: 'desc' }
             }
           }
         }
@@ -134,7 +134,7 @@ export async function getStudentCoursesData(): Promise<CourseData[]> {
         status,
         level,
         semester: grade.semester,
-        academicYear: grade.academicYear,
+        academic_year: grade.academicYear,
         schedule: schedules,
         description: course.description || `Mata kuliah ${course.name} untuk ${course.department}`,
         modules: Math.floor(Math.random() * 8) + 8, // 8-15 modules

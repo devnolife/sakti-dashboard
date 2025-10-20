@@ -7,7 +7,7 @@ const bookCategorySchema = z.object({
   code: z.string().min(1).max(10),
   name: z.string().min(1),
   description: z.string().optional(),
-  isActive: z.boolean().default(true),
+  is_active: z.boolean().default(true),
 })
 
 // GET /api/admin/book-categories
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       where.isActive = true
     }
 
-    const categories = await prisma.bookCategory.findMany({
+    const categories = await prisma.booksCategory.findMany({
       where,
       orderBy: { name: 'asc' },
       include: {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     const validatedData = bookCategorySchema.parse(body)
 
     // Check if code already exists
-    const existing = await prisma.bookCategory.findUnique({
+    const existing = await prisma.booksCategory.findUnique({
       where: { code: validatedData.code }
     })
 
@@ -66,14 +66,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const category = await prisma.bookCategory.create({
+    const category = await prisma.booksCategory.create({
       data: validatedData
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'CREATE',
         resource: 'BookCategory',
         details: { categoryId: category.id, name: category.name },
@@ -112,15 +112,15 @@ export async function PUT(request: NextRequest) {
     // Don't allow code to be changed
     delete (validatedData as any).code
 
-    const category = await prisma.bookCategory.update({
+    const category = await prisma.booksCategory.update({
       where: { id },
       data: validatedData
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'UPDATE',
         resource: 'BookCategory',
         details: { categoryId: category.id, name: category.name },
@@ -154,7 +154,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Check if category has books
-    const booksCount = await prisma.book.count({
+    const booksCount = await prisma.books.count({
       where: { categoryId: id }
     })
 
@@ -165,14 +165,14 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const category = await prisma.bookCategory.delete({
+    const category = await prisma.booksCategory.delete({
       where: { id }
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'DELETE',
         resource: 'BookCategory',
         details: { categoryId: category.id, name: category.name },

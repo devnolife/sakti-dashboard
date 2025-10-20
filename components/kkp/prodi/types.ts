@@ -46,7 +46,7 @@ export interface KkpLocation {
   website?: string
   description?: string
   submittedBy: Student
-  submissionDate: string
+  submission_date: string
   status: KkpStatus
   reviewedBy?: string
   reviewDate?: string
@@ -68,9 +68,9 @@ export interface KkpTeam {
     email: string
     phone: string
   }
-  startDate: string
-  endDate: string
-  submissionDate: string
+  start_date: string
+  end_date: string
+  submission_date: string
   status: KkpStatus
   reviewedBy?: string
   reviewDate?: string
@@ -91,7 +91,7 @@ export interface StudentKkpRecord {
     email: string
     phone: string
   }
-  startDate: string
+  start_date: string
   endDate?: string
   status: KkpStatus
   projectTitle?: string

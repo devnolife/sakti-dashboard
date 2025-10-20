@@ -245,20 +245,20 @@ class JadwalKuliahAPI {
   // Download & Export endpoints
   async downloadSchedule(
     prodiCode: string,
-    academicYear: string,
+    academic_year: string,
     semesterType: string,
     format: 'xlsx' | 'pdf' | 'json' = 'xlsx'
   ): Promise<Response> {
-    const url = `${this.baseURL}/api/download/schedule/${prodiCode}?academic_year=${academicYear}&semester_type=${semesterType}&format=${format}`
+    const url = `${this.baseURL}/api/download/schedule/${prodiCode}?academic_year=${academic_year}&semester_type=${semesterType}&format=${format}`
     return fetch(url)
   }
 
   async downloadAllSchedules(
-    academicYear: string,
+    academic_year: string,
     semesterType: string,
     format: 'xlsx' | 'pdf' | 'json' = 'xlsx'
   ): Promise<Response> {
-    const url = `${this.baseURL}/api/download/all-schedules?academic_year=${academicYear}&semester_type=${semesterType}&format=${format}`
+    const url = `${this.baseURL}/api/download/all-schedules?academic_year=${academic_year}&semester_type=${semesterType}&format=${format}`
     return fetch(url)
   }
 

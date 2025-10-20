@@ -8,7 +8,7 @@ export type PaymentStatus = "paid" | "pending" | "failed" | "refunded" | "partia
 
 export interface NonRegularPayment {
   id: string
-  studentId: string
+  student_id: string
   student?: NonRegularStudent
   invoiceNumber: string
   amount: number
@@ -19,12 +19,12 @@ export interface NonRegularPayment {
   paymentMethod?: PaymentMethod
   status: PaymentStatus
   semester: number
-  academicYear: string
+  academic_year: string
   transactionId?: string
   receiptUrl?: string
   notes?: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
   createdBy: string
 }
 

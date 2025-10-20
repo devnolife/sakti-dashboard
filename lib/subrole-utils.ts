@@ -1,8 +1,8 @@
 import type { DosenSubRole } from "@/types/role"
 
 /**
- * Parse user's subroles from database subRole field
- * The subRole field can contain multiple subroles separated by comma
+ * Parse user's subroles from database sub_role field
+ * The sub_role field can contain multiple subroles separated by comma
  * Example: "dekan,wakil_dekan_1" or "prodi" or "dosen"
  */
 export function parseUserSubRoles(subRoleString?: string | null): DosenSubRole[] {

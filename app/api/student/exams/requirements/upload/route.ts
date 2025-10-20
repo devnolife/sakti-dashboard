@@ -13,29 +13,29 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File
     const requirementId = formData.get('requirementId') as string
-    let userId: string | null = null
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch {} }
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     
-    console.log(`📤 Upload attempt - UserId: ${userId}, RequirementId: ${requirementId}`)
+    console.log(`📤 Upload attempt - UserId: ${user_id}, RequirementId: ${requirementId}`)
     
-    const student = await prisma.student.findUnique({
-      where: { userId },
+    const student = await prisma.students.findUnique({
+      where: { user_id },
       select: { id: true, nim: true }
     })
 
     if (!student) {
-      console.log(`❌ Student not found for userId: ${userId}`)
+      console.log(`❌ Student not found for user_id: ${user_id}`)
       return NextResponse.json(
         { success: false, error: 'Student not found' },
         { status: 404 }
       )
     }
 
-    const studentId = student.id
-    console.log(`✅ Found student ID: ${studentId} (NIM: ${student.nim})`)
+    const student_id = student.id
+    console.log(`✅ Found student ID: ${student_id} (NIM: ${student.nim})`)
 
     if (!file || !requirementId || !studentId) {
       return NextResponse.json(
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now()
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-    const fileName = `${studentId}_${requirementId}_${timestamp}_${sanitizedFileName}`
+    const fileName = `${student_id}_${requirementId}_${timestamp}_${sanitizedFileName}`
     const filePath = join(uploadDir, fileName)
     const fileUrl = `/uploads/${examTypeFolder}/${fileName}`
 
@@ -93,12 +93,12 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer)
 
     // Update or create student requirement record
-    console.log(`💾 Upserting student requirement - StudentId: ${studentId}, RequirementId: ${requirementId}`)
+    console.log(`💾 Upserting student requirement - StudentId: ${student_id}, RequirementId: ${requirementId}`)
     
     const studentRequirement = await prisma.examStudentRequirement.upsert({
       where: {
         studentId_requirementId: {
-          studentId,
+          student_id,
           requirementId
         }
       },
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
         uploadedAt: new Date()
       },
       create: {
-        studentId,
+        student_id,
         requirementId,
         completed: true,
         completedAt: new Date(),
@@ -159,14 +159,14 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // Get studentId from authenticated user
-    let userId: string | null = null
+    // Get student_id from authenticated user
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch {} }
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    const student = await prisma.student.findUnique({
-      where: { userId },
+    const student = await prisma.students.findUnique({
+      where: { user_id },
       select: { id: true }
     })
 
@@ -177,14 +177,14 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const studentId = student.id
-    console.log(`🗑️ Delete attempt - StudentId: ${studentId}, RequirementId: ${requirementId}`)
+    const student_id = student.id
+    console.log(`🗑️ Delete attempt - StudentId: ${student_id}, RequirementId: ${requirementId}`)
 
     // Find the student requirement record
     const studentRequirement = await prisma.examStudentRequirement.findUnique({
       where: {
         studentId_requirementId: {
-          studentId,
+          student_id,
           requirementId
         }
       }
@@ -213,7 +213,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.examStudentRequirement.update({
       where: {
         studentId_requirementId: {
-          studentId,
+          student_id,
           requirementId
         }
       },

@@ -16,7 +16,7 @@ export interface ThesisTitle {
   year: number
   status: "approved" | "pending" | "rejected" | "completed"
   field: string
-  submissionDate: string
+  submission_date: string
 }
 
 export const mockThesisTitles: ThesisTitle[] = [
@@ -39,7 +39,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2023,
     status: "completed",
     field: "Artificial Intelligence",
-    submissionDate: "2023-01-15",
+    submission_date: "2023-01-15",
   },
   {
     id: "thesis-002",
@@ -60,7 +60,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2022,
     status: "completed",
     field: "Natural Language Processing",
-    submissionDate: "2022-06-20",
+    submission_date: "2022-06-20",
   },
   {
     id: "thesis-003",
@@ -81,7 +81,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2023,
     status: "approved",
     field: "Mobile Application Development",
-    submissionDate: "2023-03-10",
+    submission_date: "2023-03-10",
   },
   {
     id: "thesis-004",
@@ -102,7 +102,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2022,
     status: "completed",
     field: "Computer Networks",
-    submissionDate: "2022-09-05",
+    submission_date: "2022-09-05",
   },
   {
     id: "thesis-005",
@@ -123,7 +123,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2023,
     status: "pending",
     field: "Recommender Systems",
-    submissionDate: "2023-05-18",
+    submission_date: "2023-05-18",
   },
   {
     id: "thesis-006",
@@ -144,7 +144,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2022,
     status: "completed",
     field: "Blockchain Technology",
-    submissionDate: "2022-11-30",
+    submission_date: "2022-11-30",
   },
   {
     id: "thesis-007",
@@ -165,7 +165,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2023,
     status: "approved",
     field: "Natural Language Processing",
-    submissionDate: "2023-02-14",
+    submission_date: "2023-02-14",
   },
   {
     id: "thesis-008",
@@ -186,7 +186,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2022,
     status: "completed",
     field: "Web Development",
-    submissionDate: "2022-08-22",
+    submission_date: "2022-08-22",
   },
   {
     id: "thesis-009",
@@ -207,7 +207,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2023,
     status: "pending",
     field: "Machine Learning",
-    submissionDate: "2023-04-05",
+    submission_date: "2023-04-05",
   },
   {
     id: "thesis-010",
@@ -228,7 +228,7 @@ export const mockThesisTitles: ThesisTitle[] = [
     year: 2022,
     status: "completed",
     field: "Educational Technology",
-    submissionDate: "2022-10-15",
+    submission_date: "2022-10-15",
   },
 ]
 

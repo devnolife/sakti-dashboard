@@ -13,24 +13,24 @@ export async function POST(request: NextRequest) {
 
     if (sessionToken) {
       // Delete session from database
-      await prisma.session.deleteMany({
+      await prisma.sessions.deleteMany({
         where: {
           token: sessionToken,
-          userId: token.sub
+          user_id: token.sub
         }
       })
 
       // Log audit
-      await prisma.auditLog.create({
+      await prisma.audit_logs.create({
         data: {
-          userId: token.sub!,
+          user_id: token.sub!,
           action: 'logout',
           resource: 'auth',
           details: {
             logoutTime: new Date(),
             userAgent: request.headers.get('user-agent')
           },
-          ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+          ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
         }
       })
     }

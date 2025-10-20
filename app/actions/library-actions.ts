@@ -49,14 +49,14 @@ export interface LibraryData {
 }
 
 export async function getLibraryData(): Promise<LibraryData> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('🔍 Fetching library data for user:', userId)
 
   try {
     // Get user with student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
@@ -82,7 +82,7 @@ export async function getLibraryData(): Promise<LibraryData> {
     const student = user.students
 
     // Get all books with categories
-    const allBooks = await prisma.book.findMany({
+    const allBooks = await prisma.books.findMany({
       include: {
         category: true,
         borrowings: {
@@ -95,8 +95,8 @@ export async function getLibraryData(): Promise<LibraryData> {
     })
 
     // Get categories
-    const categories = await prisma.bookCategory.findMany({
-      where: { isActive: true },
+    const categories = await prisma.booksCategory.findMany({
+      where: { is_active: true },
       orderBy: { name: 'asc' }
     })
 
@@ -146,9 +146,9 @@ export async function getLibraryData(): Promise<LibraryData> {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    const recentReturns = await prisma.bookBorrowing.count({
+    const recentReturns = await prisma.booksBorrowing.count({
       where: {
-        studentId: student.id,
+        student_id: student.id,
         status: 'returned',
         returnDate: {
           gte: sevenDaysAgo
@@ -205,7 +205,7 @@ export interface ThesisTitle {
   year: number
   status: 'pending' | 'approved' | 'rejected' | 'completed'
   field: string
-  submissionDate: string
+  submission_date: string
 }
 
 export interface ThesisData {
@@ -219,13 +219,13 @@ export interface ThesisData {
 }
 
 export async function getThesisTitlesData(): Promise<ThesisData> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('🔍 Fetching thesis titles data for user:', userId)
 
   try {
     // Get all thesis titles (for browsing approved ones)
-    const allTheses = await prisma.thesisTitle.findMany({
+    const allTheses = await prisma.thesis_titles.findMany({
       include: {
         author: {
           include: {
@@ -260,7 +260,7 @@ export async function getThesisTitlesData(): Promise<ThesisData> {
       year: thesis.year,
       status: thesis.status === 'archived' ? 'completed' : thesis.status as 'pending' | 'approved' | 'rejected' | 'completed',
       field: thesis.department,
-      submissionDate: thesis.submissionDate.toISOString()
+      submission_date: thesis.submissionDate.toISOString()
     }))
 
     // Calculate stats
@@ -302,7 +302,7 @@ export interface StudentThesisSubmission {
   abstract: string
   keywords: string[]
   status: 'pending' | 'approved' | 'rejected'
-  submissionDate: string
+  submission_date: string
   similarityScore?: number
   supervisor?: string
 }
@@ -313,14 +313,14 @@ export interface ThesisSubmissionData {
 }
 
 export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('🔍 Fetching thesis submission data for user:', userId)
 
   try {
     // Get user with student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
@@ -332,7 +332,7 @@ export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
                   }
                 }
               },
-              orderBy: { submissionDate: 'desc' }
+              orderBy: { submission_date: 'desc' }
             }
           }
         }
@@ -352,7 +352,7 @@ export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
       abstract: thesis.abstract,
       keywords: thesis.keywords,
       status: thesis.status as StudentThesisSubmission['status'],
-      submissionDate: thesis.submissionDate.toISOString(),
+      submission_date: thesis.submissionDate.toISOString(),
       similarityScore: thesis.similarityScore || undefined,
       supervisor: thesis.supervisor?.user.name
     }))
@@ -385,14 +385,14 @@ export async function submitThesisTitle(data: {
   keywords: string[]
   supervisorId?: string
 }): Promise<{ success: boolean; message: string; thesisId?: string }> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('📝 Submitting thesis title for user:', userId)
 
   try {
     // Get user with student profile
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
@@ -434,13 +434,13 @@ export async function submitThesisTitle(data: {
     }
 
     // Create new thesis submission
-    const newThesis = await prisma.thesisTitle.create({
+    const newThesis = await prisma.thesis_titles.create({
       data: {
         title: data.title,
         abstract: data.abstract,
         keywords: data.keywords,
         authorId: student.id,
-        supervisorId: data.supervisorId,
+        supervisor_id: data.supervisorId,
         department: 'Teknik Informatika', // Can be made dynamic
         year: new Date().getFullYear(),
         status: 'pending'

@@ -1,7 +1,7 @@
 export interface LabAssistant {
   id: string
   name: string
-  studentId: string
+  student_id: string
   email: string
   phone?: string
   avatar?: string

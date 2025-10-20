@@ -65,7 +65,7 @@ const getRandomDate = () => {
 
 // Generate a mock student grade
 const generateMockStudentGrade = (courseId: string, index: number): StudentGrade => {
-  const studentId = `${Math.floor(1000000 + Math.random() * 9000000)}`
+  const student_id = `${Math.floor(1000000 + Math.random() * 9000000)}`
   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
   const studentName = `${firstName} ${lastName}`
@@ -142,7 +142,7 @@ const generateMockStudentGrade = (courseId: string, index: number): StudentGrade
 
   return {
     id: `grade-${courseId}-${index}`,
-    studentId,
+    student_id,
     studentName,
     courseId,
     courseName: `Practicum in Laboratory Techniques ${courseId.slice(-1)}`,

@@ -65,9 +65,9 @@ export interface KkpApplication {
   applicationNumber: string
   title: string
   description: string
-  submissionDate: Date
-  startDate: Date
-  endDate: Date
+  submission_date: Date
+  start_date: Date
+  end_date: Date
   status: KkpStatus
   student: Student
   groupMembers?: Student[]

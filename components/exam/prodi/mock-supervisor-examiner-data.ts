@@ -5,9 +5,9 @@ export const mockSupervisorExaminerData: SupervisorExaminerData[] = [
     id: "se-001",
     title: "Implementasi Deep Learning untuk Deteksi Penyakit pada Tanaman Padi",
     studentName: "Ahmad Fauzi",
-    studentId: "1901234567",
+    student_id: "1901234567",
     program: "Informatika",
-    examType: "proposal",
+    exam_type: "proposal",
     status: "complete",
     supervisors: [
       {
@@ -58,9 +58,9 @@ export const mockSupervisorExaminerData: SupervisorExaminerData[] = [
     id: "se-002",
     title: "Analisis Sentimen pada Media Sosial Twitter Terhadap Kebijakan Pendidikan di Indonesia",
     studentName: "Siti Nurhaliza",
-    studentId: "1901234568",
+    student_id: "1901234568",
     program: "Informatika",
-    examType: "proposal",
+    exam_type: "proposal",
     status: "partial",
     supervisors: [
       {
@@ -78,9 +78,9 @@ export const mockSupervisorExaminerData: SupervisorExaminerData[] = [
     id: "se-003",
     title: "Pengembangan Sistem Rekomendasi Buku Berbasis Collaborative Filtering",
     studentName: "Muhammad Rizki",
-    studentId: "1901234569",
+    student_id: "1901234569",
     program: "Informatika",
-    examType: "result",
+    exam_type: "result",
     status: "pending",
     supervisors: [],
     examiners: [],
@@ -89,9 +89,9 @@ export const mockSupervisorExaminerData: SupervisorExaminerData[] = [
     id: "se-004",
     title: "Implementasi Blockchain untuk Sistem Manajemen Rantai Pasok Produk Pertanian",
     studentName: "Dian Permata",
-    studentId: "1901234570",
+    student_id: "1901234570",
     program: "Informatika",
-    examType: "proposal",
+    exam_type: "proposal",
     status: "partial",
     supervisors: [
       {
@@ -118,9 +118,9 @@ export const mockSupervisorExaminerData: SupervisorExaminerData[] = [
     id: "se-005",
     title: "Pengembangan Aplikasi Mobile untuk Monitoring Kesehatan Mental Mahasiswa",
     studentName: "Rina Fitriani",
-    studentId: "1901234571",
+    student_id: "1901234571",
     program: "Informatika",
-    examType: "proposal",
+    exam_type: "proposal",
     status: "complete",
     supervisors: [
       {
@@ -155,9 +155,9 @@ export const mockSupervisorExaminerData: SupervisorExaminerData[] = [
     id: "se-006",
     title: "Optimasi Rute Pengiriman Barang Menggunakan Algoritma Genetika",
     studentName: "Budi Santoso",
-    studentId: "1901234572",
+    student_id: "1901234572",
     program: "Informatika",
-    examType: "final",
+    exam_type: "final",
     status: "pending",
     supervisors: [],
     examiners: [],

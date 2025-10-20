@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, abstract, keywords, supervisorId } = body
+    const { title, abstract, keywords, supervisor_id } = body
 
     if (!title || !abstract || !keywords || !Array.isArray(keywords)) {
       return NextResponse.json(

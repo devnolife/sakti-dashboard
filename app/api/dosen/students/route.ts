@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -43,9 +43,9 @@ export async function GET(request: NextRequest) {
 
     if (!type || type === 'pa' || type === 'all') {
       // Get PA (Pembimbing Akademik) students
-      const paStudents = await prisma.student.findMany({
+      const paStudents = await prisma.students.findMany({
         where: {
-          academicAdvisorId: lecturer.id,
+          academic_advisor_id: lecturer.id,
           ...(search && {
             OR: [
               { nim: { contains: search, mode: 'insensitive' } },
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         major: s.major,
         department: s.department,
         semester: s.semester,
-        academicYear: s.academicYear,
+        academic_year: s.academic_year,
         gpa: s.gpa,
         status: s.status,
         type: 'pa',
@@ -86,9 +86,9 @@ export async function GET(request: NextRequest) {
 
     if (type === 'kkp' || type === 'all') {
       // Get KKP guidance students
-      const kkpStudents = await prisma.kkpApplication.findMany({
+      const kkpStudents = await prisma.kkp_applications.findMany({
         where: {
-          supervisorId: lecturer.id,
+          supervisor_id: lecturer.id,
           status: {
             in: ['approved', 'in_progress']
           }
@@ -122,16 +122,16 @@ export async function GET(request: NextRequest) {
         kkpTitle: kkp.title,
         kkpCompany: kkp.companies?.name,
         kkpStatus: kkp.status,
-        kkpStartDate: kkp.startDate,
-        kkpEndDate: kkp.endDate
+        kkpStartDate: kkp.start_date,
+        kkpEndDate: kkp.end_date
       })))
     }
 
     if (type === 'thesis' || type === 'all') {
       // Get thesis guidance students
-      const thesisStudents = await prisma.thesisTitle.findMany({
+      const thesisStudents = await prisma.thesis_titles.findMany({
         where: {
-          supervisorId: lecturer.id,
+          supervisor_id: lecturer.id,
           status: 'approved'
         },
         include: {
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
         type: 'thesis',
         thesisTitle: thesis.title,
         thesisStatus: thesis.status,
-        thesisSubmissionDate: thesis.submissionDate
+        thesisSubmissionDate: thesis.submission_date
       })))
     }
 

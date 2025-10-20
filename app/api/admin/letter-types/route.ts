@@ -11,7 +11,7 @@ const letterTypeSchema = z.object({
   requiredDocuments: z.array(z.string()).default([]),
   additionalFields: z.any().optional(),
   template: z.string().optional(),
-  isActive: z.boolean().default(true),
+  is_active: z.boolean().default(true),
 })
 
 // GET /api/admin/letter-types
@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'CREATE',
         resource: 'LetterType',
         details: { letterTypeId: letterType.id, title: letterType.title },
@@ -114,9 +114,9 @@ export async function PUT(request: NextRequest) {
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'UPDATE',
         resource: 'LetterType',
         details: { letterTypeId: letterType.id, title: letterType.title },
@@ -166,9 +166,9 @@ export async function DELETE(request: NextRequest) {
     })
 
     // Create audit log
-    await prisma.auditLog.create({
+    await prisma.audit_logs.create({
       data: {
-        userId: token.sub!,
+        user_id: token.sub!,
         action: 'DELETE',
         resource: 'LetterType',
         details: { letterTypeId: letterType.id, title: letterType.title },

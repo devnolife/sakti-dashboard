@@ -15,7 +15,7 @@ function transformLetterRequest(req: any): LetterRequest {
     requestDate: req.requestDate.toISOString(),
     approvedDate: req.approvedDate?.toISOString(),
     completedDate: req.completedDate?.toISOString(),
-    studentId: req.studentId,
+    student_id: req.studentId,
     studentName: req.student.user.name,
     studentNIM: req.student.nim,
     studentMajor: req.student.major || 'Unknown',
@@ -61,7 +61,7 @@ export async function getLetterRequestsForApproval(role: string): Promise<Letter
 export async function getStudentLetterRequests(studentId: string): Promise<LetterRequest[]> {
   const requests = await prisma.letterRequest.findMany({
     where: {
-      studentId: studentId
+      student_id: studentId
     },
     include: {
       student: {

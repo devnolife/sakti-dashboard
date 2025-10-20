@@ -38,7 +38,7 @@ export async function getCurrentUserFromToken(request?: NextRequest): Promise<st
       include: { users: true }
     })
 
-    if (!session || session.expiresAt < new Date() || !session.users.isActive) {
+    if (!session || session.expires_at < new Date() || !session.users.is_active) {
       return null
     }
 
@@ -55,7 +55,7 @@ export function getHardcodedUserId(): string {
   return 'cmg4j3mf200019ypx53e5ujp1' // MAHASISWA001 ID
 }
 
-// New helper for Server Actions: resolve userId from either NextAuth session or custom JWT cookie
+// New helper for Server Actions: resolve user_id from either NextAuth session or custom JWT cookie
 export async function getServerActionUserId(): Promise<string> {
   // 1. Try NextAuth session (if using NextAuth protected routes)
   try {
@@ -87,10 +87,10 @@ export async function getServerActionUserId(): Promise<string> {
       include: { users: true }
     })
 
-    if (!sessionRecord || sessionRecord.expiresAt < new Date()) {
+    if (!sessionRecord || sessionRecord.expires_at < new Date()) {
       throw new Error('Unauthorized: session expired')
     }
-    if (!sessionRecord.users.isActive) {
+    if (!sessionRecord.users.is_active) {
       throw new Error('Unauthorized: user inactive')
     }
 

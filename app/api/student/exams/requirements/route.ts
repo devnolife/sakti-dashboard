@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const examType = searchParams.get('examType') as 'proposal' | 'result' | 'closing'
+    const exam_type = searchParams.get('examType') as 'proposal' | 'result' | 'closing'
 
     if (!examType) {
       return NextResponse.json(
@@ -17,14 +17,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get studentId from authenticated user
-    let userId: string | null = null
+    // Get student_id from authenticated user
+    let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) userId = token.sub
-    if (!userId) { try { userId = await getServerActionUserId() } catch {} }
+    if (!(token instanceof NextResponse)) user_id = token.sub
+    if (!userId) { try { user_id = await getServerActionUserId() } catch {} }
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    const student = await prisma.student.findUnique({
-      where: { userId },
+    const student = await prisma.students.findUnique({
+      where: { user_id },
       select: { id: true }
     })
 
@@ -35,18 +35,18 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const studentId = student.id
-    console.log(`📋 Fetching ${examType} requirements for student: ${studentId}`)
+    const student_id = student.id
+    console.log(`📋 Fetching ${exam_type} requirements for student: ${student_id}`)
 
     // Get requirements for the exam type
     const requirements = await prisma.examRequirement.findMany({
       where: {
-        examType: examType
+        exam_type: examType
       },
       include: {
         studentRequirements: {
           where: {
-            studentId: studentId
+            student_id: studentId
           }
         }
       },

@@ -9,8 +9,8 @@ export const mockExams: Exam[] = [
     title: "Implementation of Machine Learning for Predicting Student Performance",
     abstract:
       "This research focuses on implementing machine learning algorithms to predict student academic performance based on various factors such as attendance, participation, and previous grades.",
-    submissionDate: "2025-03-01T00:00:00.000Z",
-    scheduledDate: "2025-03-15T09:00:00.000Z",
+    submission_date: "2025-03-01T00:00:00.000Z",
+    scheduled_date: "2025-03-15T09:00:00.000Z",
     type: "proposal",
     status: "scheduled",
     committee: [
@@ -27,7 +27,7 @@ export const mockExams: Exam[] = [
     title: "Analysis of E-Commerce User Experience in Indonesia",
     abstract:
       "This study analyzes the user experience of e-commerce platforms in Indonesia, focusing on usability, accessibility, and customer satisfaction.",
-    submissionDate: "2025-03-02T00:00:00.000Z",
+    submission_date: "2025-03-02T00:00:00.000Z",
     type: "proposal",
     status: "pending",
     documents: [
@@ -82,8 +82,8 @@ export const mockExams: Exam[] = [
     title: "Blockchain Implementation for Academic Record Verification",
     abstract:
       "This research proposes a blockchain-based system for verifying academic records, ensuring their authenticity and preventing fraud.",
-    submissionDate: "2025-03-03T00:00:00.000Z",
-    scheduledDate: "2025-03-20T13:00:00.000Z",
+    submission_date: "2025-03-03T00:00:00.000Z",
+    scheduled_date: "2025-03-20T13:00:00.000Z",
     type: "proposal",
     status: "scheduled",
     committee: [
@@ -100,7 +100,7 @@ export const mockExams: Exam[] = [
     title: "Impact of Social Media on Student Academic Performance",
     abstract:
       "This study examines the impact of social media usage on the academic performance of university students, considering factors such as time spent, platform used, and purpose of use.",
-    submissionDate: "2025-02-15T00:00:00.000Z",
+    submission_date: "2025-02-15T00:00:00.000Z",
     completionDate: "2025-03-01T00:00:00.000Z",
     type: "proposal",
     status: "passed",
@@ -113,7 +113,7 @@ export const mockExams: Exam[] = [
     title: "Development of Mobile Application for Campus Navigation",
     abstract:
       "This project involves the development of a mobile application that helps students navigate the university campus, locate classrooms, offices, and facilities.",
-    submissionDate: "2025-02-20T00:00:00.000Z",
+    submission_date: "2025-02-20T00:00:00.000Z",
     completionDate: "2025-03-05T00:00:00.000Z",
     type: "proposal",
     status: "failed",
@@ -126,7 +126,7 @@ export const mockExams: Exam[] = [
     title: "Implementation of IoT for Smart Classroom",
     abstract:
       "This research focuses on implementing Internet of Things (IoT) technology to create smart classrooms that enhance the learning experience through automation and data collection.",
-    submissionDate: "2025-03-05T00:00:00.000Z",
+    submission_date: "2025-03-05T00:00:00.000Z",
     type: "result",
     status: "pending",
     documents: [
@@ -182,8 +182,8 @@ export const mockExams: Exam[] = [
     title: "Cybersecurity Awareness Among University Students",
     abstract:
       "This study assesses the level of cybersecurity awareness among university students and proposes strategies to improve their knowledge and practices.",
-    submissionDate: "2025-03-06T00:00:00.000Z",
-    scheduledDate: "2025-03-25T10:00:00.000Z",
+    submission_date: "2025-03-06T00:00:00.000Z",
+    scheduled_date: "2025-03-25T10:00:00.000Z",
     type: "result",
     status: "scheduled",
     committee: [
@@ -200,7 +200,7 @@ export const mockExams: Exam[] = [
     title: "Digital Transformation in Higher Education",
     abstract:
       "This research examines the process of digital transformation in higher education institutions, focusing on challenges, opportunities, and best practices.",
-    submissionDate: "2025-02-25T00:00:00.000Z",
+    submission_date: "2025-02-25T00:00:00.000Z",
     completionDate: "2025-03-10T00:00:00.000Z",
     type: "result",
     status: "passed",
@@ -213,7 +213,7 @@ export const mockExams: Exam[] = [
     title: "Artificial Intelligence for Automated Essay Grading",
     abstract:
       "This study develops and evaluates an artificial intelligence system for automatically grading student essays, considering factors such as content, structure, and grammar.",
-    submissionDate: "2025-02-28T00:00:00.000Z",
+    submission_date: "2025-02-28T00:00:00.000Z",
     completionDate: "2025-03-12T00:00:00.000Z",
     type: "result",
     status: "failed",
@@ -226,8 +226,8 @@ export const mockExams: Exam[] = [
     title: "Cloud Computing Adoption in Indonesian Universities",
     abstract:
       "This research investigates the adoption of cloud computing in Indonesian universities, examining factors that influence adoption decisions and implementation strategies.",
-    submissionDate: "2025-03-07T00:00:00.000Z",
-    scheduledDate: "2025-03-30T14:00:00.000Z",
+    submission_date: "2025-03-07T00:00:00.000Z",
+    scheduled_date: "2025-03-30T14:00:00.000Z",
     type: "result",
     status: "scheduled",
     committee: [

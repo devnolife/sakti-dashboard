@@ -6,7 +6,7 @@ async function addCourseData() {
   console.log('📚 Adding course data for current semester...')
 
   // Get student
-  const student = await prisma.student.findFirst({
+  const student = await prisma.students.findFirst({
     where: {
       nim: '2021010001'
     }
@@ -24,11 +24,11 @@ async function addCourseData() {
 
   let lecturer = null
   if (dosen) {
-    lecturer = await prisma.lecturer.upsert({
-      where: { userId: dosen.id },
+    lecturer = await prisma.lecturers.upsert({
+      where: { user_id: dosen.id },
       update: {},
       create: {
-        userId: dosen.id,
+        user_id: dosen.id,
         nip: 'NIP001234567890',
         department: 'Fakultas Teknik',
         position: 'Lektor',
@@ -81,13 +81,13 @@ async function addCourseData() {
     const courseData = coursesData[i]
 
     // Create course
-    const course = await prisma.course.upsert({
+    const course = await prisma.courses.upsert({
       where: { code: courseData.code },
       update: {
         name: courseData.name,
         credits: courseData.credits,
         description: courseData.description,
-        lecturerId: lecturer.id,
+        lecturer_id: lecturer.id,
         semester: 5,
         department: 'Fakultas Teknik'
       },
@@ -96,7 +96,7 @@ async function addCourseData() {
         name: courseData.name,
         credits: courseData.credits,
         description: courseData.description,
-        lecturerId: lecturer.id,
+        lecturer_id: lecturer.id,
         semester: 5,
         department: 'Fakultas Teknik'
       }
@@ -113,17 +113,17 @@ async function addCourseData() {
     const rooms = ['Lab-201', 'Ruang-301', 'Lab-202', 'Ruang-401']
 
     // Check if schedule exists, if not create it
-    const existingSchedule = await prisma.courseSchedule.findFirst({
+    const existingSchedule = await prisma.coursesSchedule.findFirst({
       where: {
         courseId: course.id,
         day: days[i],
         semester: currentSemester,
-        academicYear: currentYear
+        academic_year: currentYear
       }
     })
 
     if (!existingSchedule) {
-      await prisma.courseSchedule.create({
+      await prisma.coursesSchedule.create({
         data: {
           courseId: course.id,
           day: days[i],
@@ -132,7 +132,7 @@ async function addCourseData() {
           room: rooms[i],
           building: 'Gedung Teknik',
           semester: currentSemester,
-          academicYear: currentYear
+          academic_year: currentYear
         }
       })
     }
@@ -141,10 +141,10 @@ async function addCourseData() {
     await prisma.grade.upsert({
       where: {
         studentId_courseId_semester_academicYear: {
-          studentId: student.id,
+          student_id: student.id,
           courseId: course.id,
           semester: currentSemester,
-          academicYear: currentYear
+          academic_year: currentYear
         }
       },
       update: {
@@ -152,10 +152,10 @@ async function addCourseData() {
         score: scores[i]
       },
       create: {
-        studentId: student.id,
+        student_id: student.id,
         courseId: course.id,
         semester: currentSemester,
-        academicYear: currentYear,
+        academic_year: currentYear,
         letterGrade: grades[i],
         score: scores[i]
       }

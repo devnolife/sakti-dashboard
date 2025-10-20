@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
 
     const whereClause: any = {
-      lecturerId: lecturer.id
+      lecturer_id: lecturer.id
     }
 
     if (status === 'available') {
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    const thesisTitles = await prisma.thesisTitle.findMany({
+    const thesisTitles = await prisma.thesis_titles.findMany({
       where: whereClause,
       include: {
         students: {
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       },
       orderBy: [
         { status: 'asc' },
-        { createdAt: 'desc' }
+        { created_at: 'desc' }
       ]
     })
 
@@ -106,10 +106,10 @@ export async function GET(request: NextRequest) {
         id: title.lecturers.id,
         name: title.lecturers.users.name
       },
-      submissionDate: title.submissionDate,
+      submission_date: title.submissionDate,
       approvalDate: title.approvalDate,
-      createdAt: title.createdAt,
-      updatedAt: title.updatedAt
+      created_at: title.createdAt,
+      updated_at: title.updatedAt
     }))
 
     // Summary statistics
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get lecturer profile
-    const lecturer = await prisma.lecturer.findFirst({
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
           id: token.sub
@@ -161,9 +161,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = createTitleSchema.parse(body)
 
-    const thesisTitle = await prisma.thesisTitle.create({
+    const thesisTitle = await prisma.thesis_titles.create({
       data: {
-        lecturerId: lecturer.id,
+        lecturer_id: lecturer.id,
         title: validatedData.title,
         description: validatedData.description,
         keywords: validatedData.keywords,
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
         id: thesisTitle.lecturers.id,
         name: thesisTitle.lecturers.users.name
       },
-      createdAt: thesisTitle.createdAt
+      created_at: thesisTitle.createdAt
     }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {

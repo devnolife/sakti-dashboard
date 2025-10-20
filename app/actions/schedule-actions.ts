@@ -8,8 +8,8 @@ export interface ScheduleEvent {
   title: string
   description?: string
   date: string // ISO string for start date
-  startDate: string // ISO string
-  endDate: string // ISO string
+  start_date: string // ISO string
+  end_date: string // ISO string
   location?: string
   type: 'exam' | 'class' | 'lab' | 'consultation' | 'seminar' | 'workshop' | 'deadline' | 'organization'
   examType?: 'proposal' | 'result' | 'final' | 'closing' | 'midterm' | 'other'
@@ -41,14 +41,14 @@ export interface ScheduleData {
 }
 
 export async function getStudentScheduleData(): Promise<ScheduleData> {
-  const userId = await getServerActionUserId()
+  const user_id = await getServerActionUserId()
 
   console.log('🔍 Fetching student schedule data for user:', userId)
 
   try {
     // Get user with student profile and academic events
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: {
         students: {
           include: {
@@ -61,7 +61,7 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
                   }
                 }
               },
-              orderBy: { startDate: 'asc' }
+              orderBy: { start_date: 'asc' }
             },
             grades: {
               include: {
@@ -78,7 +78,7 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
               },
               where: {
                 // Only current academic year courses
-                academicYear: new Date().getFullYear().toString()
+                academic_year: new Date().getFullYear().toString()
               }
             }
           }
@@ -98,11 +98,11 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
       title: event.title,
       description: event.description || undefined,
       date: event.startDate.toISOString(),
-      startDate: event.startDate.toISOString(),
-      endDate: event.endDate.toISOString(),
+      start_date: event.startDate.toISOString(),
+      end_date: event.endDate.toISOString(),
       location: event.location || undefined,
       type: event.type as ScheduleEvent['type'],
-      examType: event.examType as ScheduleEvent['examType'] || undefined,
+      exam_type: event.examType as ScheduleEvent['examType'] || undefined,
       status: event.status as ScheduleEvent['status'],
       lecturer: event.lecturer?.user.name || undefined,
       course: event.course ? {

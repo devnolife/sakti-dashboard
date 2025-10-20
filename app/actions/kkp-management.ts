@@ -10,9 +10,9 @@ const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
     applicationNumber: "KKP/2023/001",
     title: "Pengembangan Sistem Informasi Keuangan",
     description: "Pengembangan sistem informasi keuangan berbasis web untuk memudahkan pengelolaan keuangan perusahaan",
-    submissionDate: new Date("2023-09-01"),
-    startDate: new Date("2023-10-01"),
-    endDate: new Date("2023-12-31"),
+    submission_date: new Date("2023-09-01"),
+    start_date: new Date("2023-10-01"),
+    end_date: new Date("2023-12-31"),
     status: "pending",
     student: {
       id: "std-001",
@@ -87,9 +87,9 @@ const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
     applicationNumber: "KKP/2023/002",
     title: "Implementasi Sistem Manajemen Inventaris",
     description: "Implementasi sistem manajemen inventaris untuk memudahkan pengelolaan barang di gudang",
-    submissionDate: new Date("2023-09-02"),
-    startDate: new Date("2023-10-15"),
-    endDate: new Date("2024-01-15"),
+    submission_date: new Date("2023-09-02"),
+    start_date: new Date("2023-10-15"),
+    end_date: new Date("2024-01-15"),
     status: "approved",
     student: {
       id: "std-004",
@@ -165,9 +165,9 @@ const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
     applicationNumber: "KKP/2023/003",
     title: "Pengembangan Aplikasi Mobile E-Commerce",
     description: "Pengembangan aplikasi mobile e-commerce untuk memudahkan pengguna dalam berbelanja online",
-    submissionDate: new Date("2023-09-03"),
-    startDate: new Date("2023-10-01"),
-    endDate: new Date("2023-12-31"),
+    submission_date: new Date("2023-09-03"),
+    start_date: new Date("2023-10-01"),
+    end_date: new Date("2023-12-31"),
     status: "in-progress",
     student: {
       id: "std-006",
@@ -269,9 +269,9 @@ const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
     title: "Analisis dan Pengembangan Sistem Informasi Akademik",
     description:
       "Analisis dan pengembangan sistem informasi akademik untuk meningkatkan efisiensi pengelolaan data akademik",
-    submissionDate: new Date("2023-09-04"),
-    startDate: new Date("2023-10-15"),
-    endDate: new Date("2024-01-15"),
+    submission_date: new Date("2023-09-04"),
+    start_date: new Date("2023-10-15"),
+    end_date: new Date("2024-01-15"),
     status: "rejected",
     student: {
       id: "std-009",
@@ -323,9 +323,9 @@ const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
     applicationNumber: "KKP/2023/005",
     title: "Pengembangan Sistem Informasi Perpustakaan",
     description: "Pengembangan sistem informasi perpustakaan untuk memudahkan pengelolaan buku dan peminjaman",
-    submissionDate: new Date("2023-09-05"),
-    startDate: new Date("2023-10-01"),
-    endDate: new Date("2023-12-31"),
+    submission_date: new Date("2023-09-05"),
+    start_date: new Date("2023-10-01"),
+    end_date: new Date("2023-12-31"),
     status: "pending",
     student: {
       id: "std-010",
@@ -391,9 +391,9 @@ const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
     applicationNumber: "KKP/2023/006",
     title: "Implementasi Sistem Manajemen Proyek",
     description: "Implementasi sistem manajemen proyek untuk meningkatkan efisiensi pengelolaan proyek perusahaan",
-    submissionDate: new Date("2023-09-06"),
-    startDate: new Date("2023-10-15"),
-    endDate: new Date("2024-01-15"),
+    submission_date: new Date("2023-09-06"),
+    start_date: new Date("2023-10-15"),
+    end_date: new Date("2024-01-15"),
     status: "completed",
     student: {
       id: "std-012",
@@ -529,7 +529,7 @@ export async function getKkpApplicationById(id: string) {
 export async function updateKkpApplicationStatus(
   id: string,
   newStatus: KkpStatus,
-  userId: string,
+  user_id: string,
   userName: string,
   notes?: string,
 ) {
@@ -641,7 +641,7 @@ export async function verifyDocument(
 }
 
 // Function to assign supervisor to KKP application
-export async function assignSupervisor(applicationId: string, supervisorId: string, supervisorName: string) {
+export async function assignSupervisor(applicationId: string, supervisor_id: string, supervisorName: string) {
   try {
     // In a real app, this would update a database record and fetch supervisor details
     const applicationIndex = MOCK_KKP_APPLICATIONS.findIndex((app) => app.id === applicationId)
@@ -652,7 +652,7 @@ export async function assignSupervisor(applicationId: string, supervisorId: stri
 
     // Create a mock supervisor object (in a real app, this would be fetched from the database)
     const supervisor = {
-      id: supervisorId,
+      id: supervisor_id,
       name: supervisorName,
       nip: `NIP${Math.floor(Math.random() * 10000000)}`,
       department: MOCK_KKP_APPLICATIONS[applicationIndex].student.major,
@@ -711,9 +711,9 @@ export async function submitKkpApplication(applicationData: Partial<KkpApplicati
       applicationNumber: newApplicationNumber,
       title: applicationData.title || "Untitled KKP Application",
       description: applicationData.description || "",
-      submissionDate: new Date(),
-      startDate: applicationData.startDate || new Date(),
-      endDate: applicationData.endDate || new Date(),
+      submission_date: new Date(),
+      start_date: applicationData.startDate || new Date(),
+      end_date: applicationData.endDate || new Date(),
       status: "pending",
       student: applicationData.student!,
       groupMembers: applicationData.groupMembers || [],

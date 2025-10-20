@@ -16,9 +16,9 @@ export async function submitLetterRequest(
 ): Promise<{ success: boolean; message: string; requestId?: string }> {
   try {
     // Get student ID from session
-    const userId = await getServerActionUserId()
+    const user_id = await getServerActionUserId()
     const user = await prisma.users.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
       include: { students: true }
     })
 
@@ -43,7 +43,7 @@ export async function submitLetterRequest(
         title,
         purpose,
         description,
-        studentId: user.students.id,
+        student_id: user.students.id,
         approvalRole: approvalRole as any,
         additionalInfo: additionalInfo || {},
         status: 'submitted'
@@ -87,7 +87,7 @@ export async function updateLetterRequestStatus(
   try {
     const updateData: any = {
       status: newStatus,
-      updatedAt: new Date()
+      updated_at: new Date()
     }
 
     // Add notes if provided

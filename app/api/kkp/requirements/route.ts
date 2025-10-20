@@ -14,20 +14,20 @@ export async function GET(request: NextRequest) {
       return token // unauthorized / invalid token response
     }
 
-    const userId = (token as any).sub
+    const user_id = (token as any).sub
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Cari student berdasarkan userId
-    const student = await prisma.student.findUnique({ where: { userId } })
+    const student = await prisma.students.findUnique({ where: { user_id } })
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 })
     }
 
     const requirements = await prisma.kkpRequirement.findMany({
-      where: { studentId: student.id },
-      orderBy: { createdAt: 'desc' }
+      where: { student_id: student.id },
+      orderBy: { created_at: 'desc' }
     })
 
     const requiredTypes = [
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (token instanceof NextResponse) {
       return token
     }
-    const userId = (token as any).sub
+    const user_id = (token as any).sub
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File and requirement type are required' }, { status: 400 })
     }
 
-    const student = await prisma.student.findUnique({ where: { userId } })
+    const student = await prisma.students.findUnique({ where: { user_id } })
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 })
     }
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer)
 
     const existingRequirement = await prisma.kkpRequirement.findUnique({
-      where: { studentId_requirementType: { studentId: student.id, requirementType: requirementType as any } }
+      where: { studentId_requirementType: { student_id: student.id, requirementType: requirementType as any } }
     })
 
     let requirement
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     } else {
       requirement = await prisma.kkpRequirement.create({
         data: {
-          studentId: student.id,
+          student_id: student.id,
           requirementType: requirementType as any,
           fileName,
           originalFileName: originalName,

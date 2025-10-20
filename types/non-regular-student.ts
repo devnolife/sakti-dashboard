@@ -39,7 +39,7 @@ export interface NonRegularStudent {
     url: string
   }[]
   notes?: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
 }
 
