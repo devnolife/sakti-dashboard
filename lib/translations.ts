@@ -36,7 +36,7 @@ export const translations = {
     'common.action': 'Aksi',
     'common.name': 'Nama',
     'common.description': 'Deskripsi',
-    
+
     // Auth
     'auth.login': 'Masuk',
     'auth.register': 'Daftar',
@@ -45,7 +45,7 @@ export const translations = {
     'auth.email': 'Email',
     'auth.remember': 'Ingat Saya',
     'auth.forgot_password': 'Lupa Kata Sandi?',
-    
+
     // Navigation
     'nav.mahasiswa': 'Mahasiswa',
     'nav.dosen': 'Dosen',
@@ -56,7 +56,7 @@ export const translations = {
     'nav.laboratory_admin': 'Admin Laboratorium',
     'nav.admin_keuangan': 'Admin Keuangan',
     'nav.admin_umum': 'Admin Umum',
-    
+
     // Student Dashboard
     'student.dashboard': 'Dashboard Mahasiswa',
     'student.welcome': 'Selamat datang kembali, {{name}}. Ini adalah ringkasan akademik Anda.',
@@ -80,7 +80,7 @@ export const translations = {
     'student.important': 'Penting',
     'student.event': 'Acara',
     'student.registration': 'Pendaftaran',
-    
+
     // Academic
     'academic.semester': 'Semester',
     'academic.course': 'Mata Kuliah',
@@ -99,7 +99,7 @@ export const translations = {
     'academic.course_progress': 'Kemajuan Mata Kuliah',
     'academic.this_semester_courses': 'Mata Kuliah Semester Ini',
     'academic.courses_taken_this_semester': 'Mata kuliah yang Anda ambil semester ini',
-    
+
     // Days of the week
     'day.monday': 'Senin',
     'day.tuesday': 'Selasa',
@@ -108,7 +108,7 @@ export const translations = {
     'day.friday': 'Jumat',
     'day.saturday': 'Sabtu',
     'day.sunday': 'Minggu',
-    
+
     // Documents & Letters
     'document.correspondence': 'Surat Menyurat',
     'document.transfer_letter': 'Surat Pindah',
@@ -119,7 +119,7 @@ export const translations = {
     'document.approved': 'Disetujui',
     'document.rejected': 'Ditolak',
     'document.in_review': 'Sedang Ditinjau',
-    
+
     // KKP (Community Service)
     'kkp.title': 'Kuliah Kerja Praktis (KKP)',
     'kkp.team_creation': 'Pembentukan Tim',
@@ -130,7 +130,7 @@ export const translations = {
     'kkp.daily_report': 'Laporan Harian',
     'kkp.withdrawal_letter': 'Surat Penarikan',
     'kkp.timeout_warning': 'Pengajuan akan dibatalkan otomatis dalam {{days}} hari',
-    
+
     // Payments
     'payment.title': 'Pembayaran',
     'payment.overview': 'Ringkasan Pembayaran',
@@ -139,21 +139,21 @@ export const translations = {
     'payment.pending': 'Menunggu Pembayaran',
     'payment.completed': 'Selesai',
     'payment.failed': 'Gagal',
-    
+
     // Journal
     'journal.title': 'Jurnal Mahasiswa',
     'journal.entry': 'Entri Jurnal',
     'journal.new_entry': 'Entri Baru',
     'journal.date': 'Tanggal',
     'journal.content': 'Konten',
-    
+
     // Diploma Verification
     'diploma.verification': 'Verifikasi Ijazah',
     'diploma.upload': 'Unggah Ijazah',
     'diploma.verify': 'Verifikasi',
     'diploma.verified': 'Terverifikasi',
     'diploma.pending_verification': 'Menunggu Verifikasi',
-    
+
     // Role-specific features
     'role.lecturer.teaching_assignments': 'Penugasan Mengajar',
     'role.lecturer.academic_advisor': 'Pembimbing Akademik',
@@ -163,6 +163,218 @@ export const translations = {
     'role.dean.digital_signature': 'Tanda Tangan Digital',
     'role.prodi.student_data': 'Data Mahasiswa',
     'role.prodi.academic_management': 'Manajemen Akademik',
+
+    // Admin Dashboard
+    'admin.dashboard': 'Dashboard Admin',
+    'admin.welcome': 'Selamat datang di Dashboard Admin',
+    'admin.overview': 'Ringkasan',
+    'admin.statistics': 'Statistik',
+    'admin.users': 'Pengguna',
+    'admin.students': 'Mahasiswa',
+    'admin.lecturers': 'Dosen',
+    'admin.staff': 'Staff',
+    'admin.total_users': 'Total Pengguna',
+    'admin.active_students': 'Mahasiswa Aktif',
+    'admin.total_courses': 'Total Mata Kuliah',
+    'admin.pending_requests': 'Permintaan Tertunda',
+    'admin.recent_activities': 'Aktivitas Terkini',
+    'admin.user_management': 'Manajemen Pengguna',
+    'admin.course_management': 'Manajemen Mata Kuliah',
+    'admin.finance_management': 'Manajemen Keuangan',
+    'admin.reports': 'Laporan',
+    'admin.settings': 'Pengaturan Sistem',
+    'admin.master_data': 'Data Master',
+    'admin.academic_calendar': 'Kalender Akademik',
+    'admin.announcements': 'Pengumuman',
+    'admin.notifications': 'Notifikasi',
+    'admin.workflows': 'Alur Kerja',
+    'admin.integrations': 'Integrasi',
+    'admin.document_templates': 'Template Dokumen',
+    'admin.system_config': 'Konfigurasi Sistem',
+    'admin.view_details': 'Lihat Detail',
+    'admin.add_new': 'Tambah Baru',
+    'admin.export': 'Ekspor',
+    'admin.import': 'Impor',
+    'admin.refresh': 'Segarkan',
+
+    // Admin Reports
+    'admin.reports.academic': 'Laporan Akademik',
+    'admin.reports.financial': 'Laporan Keuangan',
+    'admin.reports.student': 'Laporan Mahasiswa',
+    'admin.reports.attendance': 'Laporan Kehadiran',
+    'admin.reports.grade': 'Laporan Nilai',
+    'admin.reports.generate': 'Buat Laporan',
+    'admin.reports.download': 'Unduh Laporan',
+    'admin.reports.period': 'Periode',
+    'admin.reports.type': 'Jenis Laporan',
+
+    // Admin Master Data
+    'admin.master.faculty': 'Fakultas',
+    'admin.master.department': 'Program Studi',
+    'admin.master.major': 'Jurusan',
+    'admin.master.classroom': 'Ruang Kelas',
+    'admin.master.building': 'Gedung',
+    'admin.master.curriculum': 'Kurikulum',
+
+    // Admin Academic Calendar
+    'admin.calendar.title': 'Kalender Akademik',
+    'admin.calendar.add_event': 'Tambah Acara',
+    'admin.calendar.edit_event': 'Edit Acara',
+    'admin.calendar.delete_event': 'Hapus Acara',
+    'admin.calendar.event_name': 'Nama Acara',
+    'admin.calendar.start_date': 'Tanggal Mulai',
+    'admin.calendar.end_date': 'Tanggal Selesai',
+    'admin.calendar.event_type': 'Jenis Acara',
+    'admin.calendar.description': 'Deskripsi',
+
+    // Admin Workflows
+    'admin.workflow.title': 'Alur Kerja',
+    'admin.workflow.create': 'Buat Alur Kerja',
+    'admin.workflow.edit': 'Edit Alur Kerja',
+    'admin.workflow.active': 'Aktif',
+    'admin.workflow.inactive': 'Tidak Aktif',
+    'admin.workflow.steps': 'Langkah',
+    'admin.workflow.approvers': 'Pemberi Persetujuan',
+
+    // Library
+    'library.title': 'Perpustakaan',
+    'library.books': 'Buku',
+    'library.search': 'Cari Buku',
+    'library.borrow': 'Pinjam',
+    'library.return': 'Kembalikan',
+    'library.history': 'Riwayat Peminjaman',
+    'library.available': 'Tersedia',
+    'library.borrowed': 'Dipinjam',
+    'library.overdue': 'Terlambat',
+
+    // Laboratory
+    'lab.title': 'Laboratorium',
+    'lab.schedule': 'Jadwal Lab',
+    'lab.equipment': 'Peralatan',
+    'lab.booking': 'Pemesanan',
+    'lab.inventory': 'Inventaris',
+    'lab.maintenance': 'Pemeliharaan',
+
+    // Exams
+    'exam.title': 'Ujian',
+    'exam.schedule': 'Jadwal Ujian',
+    'exam.results': 'Hasil Ujian',
+    'exam.upcoming': 'Ujian Mendatang',
+    'exam.past': 'Ujian Sebelumnya',
+    'exam.register': 'Daftar Ujian',
+
+    // Correspondence
+    'correspondence.title': 'Surat Menyurat',
+    'correspondence.inbox': 'Kotak Masuk',
+    'correspondence.outbox': 'Kotak Keluar',
+    'correspondence.drafts': 'Draf',
+    'correspondence.sent': 'Terkirim',
+    'correspondence.archive': 'Arsip',
+    'correspondence.create': 'Buat Surat',
+    'correspondence.reply': 'Balas',
+    'correspondence.forward': 'Teruskan',
+
+    // Admin Pages
+    'admin.page.overview': 'Ringkasan',
+    'admin.page.monitoring': 'Monitoring Sistem',
+    'admin.page.config': 'Konfigurasi',
+    'admin.page.users': 'Manajemen Pengguna',
+    'admin.page.payments': 'Manajemen Pembayaran',
+    'admin.page.books': 'Manajemen Buku',
+    'admin.page.laboratories': 'Manajemen Laboratorium',
+    'admin.page.kkp_requests': 'Permintaan KKP',
+    'admin.page.letter_requests': 'Permintaan Surat',
+    'admin.page.audit_logs': 'Log Audit',
+    'admin.page.companies': 'Manajemen Perusahaan',
+    'admin.page.courses': 'Manajemen Mata Kuliah',
+    'admin.page.notifications': 'Manajemen Notifikasi',
+    'admin.page.role_views': 'Tampilan Role',
+
+    // Admin Actions
+    'admin.action.approve': 'Setujui',
+    'admin.action.reject': 'Tolak',
+    'admin.action.review': 'Tinjau',
+    'admin.action.generate_letter': 'Buat Surat',
+    'admin.action.view_details': 'Lihat Detail',
+    'admin.action.edit_user': 'Edit Pengguna',
+    'admin.action.delete_user': 'Hapus Pengguna',
+    'admin.action.reset_password': 'Reset Password',
+    'admin.action.send_notification': 'Kirim Notifikasi',
+
+    // Admin Tables
+    'admin.table.no': 'No',
+    'admin.table.student_name': 'Nama Mahasiswa',
+    'admin.table.student_id': 'NIM',
+    'admin.table.request_date': 'Tanggal Pengajuan',
+    'admin.table.status': 'Status',
+    'admin.table.actions': 'Aksi',
+    'admin.table.total': 'Total',
+    'admin.table.pending': 'Tertunda',
+    'admin.table.approved': 'Disetujui',
+    'admin.table.rejected': 'Ditolak',
+    'admin.table.in_review': 'Sedang Ditinjau',
+
+    // Admin Filters
+    'admin.filter.all': 'Semua',
+    'admin.filter.search': 'Cari...',
+    'admin.filter.filter_by_status': 'Filter berdasarkan Status',
+    'admin.filter.time_range': 'Rentang Waktu',
+    'admin.filter.today': 'Hari Ini',
+    'admin.filter.this_week': 'Minggu Ini',
+    'admin.filter.this_month': 'Bulan Ini',
+    'admin.filter.this_year': 'Tahun Ini',
+
+    // Admin Stats
+    'admin.stats.total_students': 'Total Mahasiswa',
+    'admin.stats.active_courses': 'Mata Kuliah Aktif',
+    'admin.stats.total_revenue': 'Total Pendapatan',
+    'admin.stats.active_kkp': 'KKP Aktif',
+    'admin.stats.vs_last_month': 'vs bulan lalu',
+    'admin.stats.vs_last_semester': 'vs semester lalu',
+
+    // Admin Messages
+    'admin.message.success_approve': 'Berhasil menyetujui permintaan',
+    'admin.message.success_reject': 'Berhasil menolak permintaan',
+    'admin.message.success_save': 'Berhasil menyimpan data',
+    'admin.message.success_delete': 'Berhasil menghapus data',
+    'admin.message.error_save': 'Gagal menyimpan data',
+    'admin.message.error_delete': 'Gagal menghapus data',
+    'admin.message.confirm_delete': 'Apakah Anda yakin ingin menghapus?',
+    'admin.message.loading': 'Memuat data...',
+    'admin.message.no_data': 'Tidak ada data',
+
+    // Admin User Management
+    'admin.user.add_user': 'Tambah Pengguna',
+    'admin.user.edit_user': 'Edit Pengguna',
+    'admin.user.user_details': 'Detail Pengguna',
+    'admin.user.full_name': 'Nama Lengkap',
+    'admin.user.email': 'Email',
+    'admin.user.role': 'Role',
+    'admin.user.status': 'Status',
+    'admin.user.active': 'Aktif',
+    'admin.user.inactive': 'Tidak Aktif',
+    'admin.user.last_login': 'Login Terakhir',
+    'admin.user.created_at': 'Dibuat Pada',
+
+    // Admin KKP
+    'admin.kkp.title': 'Manajemen KKP',
+    'admin.kkp.requests': 'Daftar Pengajuan KKP',
+    'admin.kkp.team_name': 'Nama Tim',
+    'admin.kkp.location': 'Lokasi',
+    'admin.kkp.members': 'Anggota',
+    'admin.kkp.supervisor': 'Pembimbing',
+    'admin.kkp.submission_date': 'Tanggal Pengajuan',
+    'admin.kkp.approval_status': 'Status Persetujuan',
+
+    // Admin Reports
+    'admin.report.title': 'Laporan',
+    'admin.report.overview': 'Ringkasan Laporan',
+    'admin.report.generate': 'Buat Laporan',
+    'admin.report.export_pdf': 'Ekspor PDF',
+    'admin.report.export_excel': 'Ekspor Excel',
+    'admin.report.date_range': 'Rentang Tanggal',
+    'admin.report.from': 'Dari',
+    'admin.report.to': 'Sampai',
   },
   en: {
     // Common
@@ -201,7 +413,7 @@ export const translations = {
     'common.action': 'Action',
     'common.name': 'Name',
     'common.description': 'Description',
-    
+
     // Auth
     'auth.login': 'Login',
     'auth.register': 'Register',
@@ -210,7 +422,7 @@ export const translations = {
     'auth.email': 'Email',
     'auth.remember': 'Remember Me',
     'auth.forgot_password': 'Forgot Password?',
-    
+
     // Navigation
     'nav.mahasiswa': 'Student',
     'nav.dosen': 'Lecturer',
@@ -221,7 +433,7 @@ export const translations = {
     'nav.laboratory_admin': 'Laboratory Admin',
     'nav.admin_keuangan': 'Finance Admin',
     'nav.admin_umum': 'General Admin',
-    
+
     // Student Dashboard
     'student.dashboard': 'Student Dashboard',
     'student.welcome': 'Welcome back, {{name}}. Here is your academic summary.',
@@ -245,7 +457,7 @@ export const translations = {
     'student.important': 'Important',
     'student.event': 'Event',
     'student.registration': 'Registration',
-    
+
     // Academic
     'academic.semester': 'Semester',
     'academic.course': 'Course',
@@ -264,7 +476,7 @@ export const translations = {
     'academic.course_progress': 'Course Progress',
     'academic.this_semester_courses': 'This Semester Courses',
     'academic.courses_taken_this_semester': 'Courses you are taking this semester',
-    
+
     // Days of the week
     'day.monday': 'Monday',
     'day.tuesday': 'Tuesday',
@@ -273,7 +485,7 @@ export const translations = {
     'day.friday': 'Friday',
     'day.saturday': 'Saturday',
     'day.sunday': 'Sunday',
-    
+
     // Documents & Letters
     'document.correspondence': 'Correspondence',
     'document.transfer_letter': 'Transfer Letter',
@@ -284,7 +496,7 @@ export const translations = {
     'document.approved': 'Approved',
     'document.rejected': 'Rejected',
     'document.in_review': 'In Review',
-    
+
     // KKP (Community Service)
     'kkp.title': 'Community Service Program (KKP)',
     'kkp.team_creation': 'Team Creation',
@@ -295,7 +507,7 @@ export const translations = {
     'kkp.daily_report': 'Daily Report',
     'kkp.withdrawal_letter': 'Withdrawal Letter',
     'kkp.timeout_warning': 'Application will be auto-cancelled in {{days}} days',
-    
+
     // Payments
     'payment.title': 'Payments',
     'payment.overview': 'Payment Overview',
@@ -304,21 +516,21 @@ export const translations = {
     'payment.pending': 'Pending Payment',
     'payment.completed': 'Completed',
     'payment.failed': 'Failed',
-    
+
     // Journal
     'journal.title': 'Student Journal',
     'journal.entry': 'Journal Entry',
     'journal.new_entry': 'New Entry',
     'journal.date': 'Date',
     'journal.content': 'Content',
-    
+
     // Diploma Verification
     'diploma.verification': 'Diploma Verification',
     'diploma.upload': 'Upload Diploma',
     'diploma.verify': 'Verify',
     'diploma.verified': 'Verified',
     'diploma.pending_verification': 'Pending Verification',
-    
+
     // Role-specific features
     'role.lecturer.teaching_assignments': 'Teaching Assignments',
     'role.lecturer.academic_advisor': 'Academic Advisor',
@@ -328,5 +540,217 @@ export const translations = {
     'role.dean.digital_signature': 'Digital Signature',
     'role.prodi.student_data': 'Student Data',
     'role.prodi.academic_management': 'Academic Management',
+
+    // Admin Dashboard
+    'admin.dashboard': 'Admin Dashboard',
+    'admin.welcome': 'Welcome to Admin Dashboard',
+    'admin.overview': 'Overview',
+    'admin.statistics': 'Statistics',
+    'admin.users': 'Users',
+    'admin.students': 'Students',
+    'admin.lecturers': 'Lecturers',
+    'admin.staff': 'Staff',
+    'admin.total_users': 'Total Users',
+    'admin.active_students': 'Active Students',
+    'admin.total_courses': 'Total Courses',
+    'admin.pending_requests': 'Pending Requests',
+    'admin.recent_activities': 'Recent Activities',
+    'admin.user_management': 'User Management',
+    'admin.course_management': 'Course Management',
+    'admin.finance_management': 'Finance Management',
+    'admin.reports': 'Reports',
+    'admin.settings': 'System Settings',
+    'admin.master_data': 'Master Data',
+    'admin.academic_calendar': 'Academic Calendar',
+    'admin.announcements': 'Announcements',
+    'admin.notifications': 'Notifications',
+    'admin.workflows': 'Workflows',
+    'admin.integrations': 'Integrations',
+    'admin.document_templates': 'Document Templates',
+    'admin.system_config': 'System Configuration',
+    'admin.view_details': 'View Details',
+    'admin.add_new': 'Add New',
+    'admin.export': 'Export',
+    'admin.import': 'Import',
+    'admin.refresh': 'Refresh',
+
+    // Admin Reports
+    'admin.reports.academic': 'Academic Report',
+    'admin.reports.financial': 'Financial Report',
+    'admin.reports.student': 'Student Report',
+    'admin.reports.attendance': 'Attendance Report',
+    'admin.reports.grade': 'Grade Report',
+    'admin.reports.generate': 'Generate Report',
+    'admin.reports.download': 'Download Report',
+    'admin.reports.period': 'Period',
+    'admin.reports.type': 'Report Type',
+
+    // Admin Master Data
+    'admin.master.faculty': 'Faculty',
+    'admin.master.department': 'Department',
+    'admin.master.major': 'Major',
+    'admin.master.classroom': 'Classroom',
+    'admin.master.building': 'Building',
+    'admin.master.curriculum': 'Curriculum',
+
+    // Admin Academic Calendar
+    'admin.calendar.title': 'Academic Calendar',
+    'admin.calendar.add_event': 'Add Event',
+    'admin.calendar.edit_event': 'Edit Event',
+    'admin.calendar.delete_event': 'Delete Event',
+    'admin.calendar.event_name': 'Event Name',
+    'admin.calendar.start_date': 'Start Date',
+    'admin.calendar.end_date': 'End Date',
+    'admin.calendar.event_type': 'Event Type',
+    'admin.calendar.description': 'Description',
+
+    // Admin Workflows
+    'admin.workflow.title': 'Workflows',
+    'admin.workflow.create': 'Create Workflow',
+    'admin.workflow.edit': 'Edit Workflow',
+    'admin.workflow.active': 'Active',
+    'admin.workflow.inactive': 'Inactive',
+    'admin.workflow.steps': 'Steps',
+    'admin.workflow.approvers': 'Approvers',
+
+    // Library
+    'library.title': 'Library',
+    'library.books': 'Books',
+    'library.search': 'Search Books',
+    'library.borrow': 'Borrow',
+    'library.return': 'Return',
+    'library.history': 'Borrowing History',
+    'library.available': 'Available',
+    'library.borrowed': 'Borrowed',
+    'library.overdue': 'Overdue',
+
+    // Laboratory
+    'lab.title': 'Laboratory',
+    'lab.schedule': 'Lab Schedule',
+    'lab.equipment': 'Equipment',
+    'lab.booking': 'Booking',
+    'lab.inventory': 'Inventory',
+    'lab.maintenance': 'Maintenance',
+
+    // Exams
+    'exam.title': 'Exams',
+    'exam.schedule': 'Exam Schedule',
+    'exam.results': 'Exam Results',
+    'exam.upcoming': 'Upcoming Exams',
+    'exam.past': 'Past Exams',
+    'exam.register': 'Register for Exam',
+
+    // Correspondence
+    'correspondence.title': 'Correspondence',
+    'correspondence.inbox': 'Inbox',
+    'correspondence.outbox': 'Outbox',
+    'correspondence.drafts': 'Drafts',
+    'correspondence.sent': 'Sent',
+    'correspondence.archive': 'Archive',
+    'correspondence.create': 'Create Letter',
+    'correspondence.reply': 'Reply',
+    'correspondence.forward': 'Forward',
+
+    // Admin Pages
+    'admin.page.overview': 'Overview',
+    'admin.page.monitoring': 'System Monitoring',
+    'admin.page.config': 'Configuration',
+    'admin.page.users': 'User Management',
+    'admin.page.payments': 'Payment Management',
+    'admin.page.books': 'Book Management',
+    'admin.page.laboratories': 'Laboratory Management',
+    'admin.page.kkp_requests': 'KKP Requests',
+    'admin.page.letter_requests': 'Letter Requests',
+    'admin.page.audit_logs': 'Audit Logs',
+    'admin.page.companies': 'Company Management',
+    'admin.page.courses': 'Course Management',
+    'admin.page.notifications': 'Notification Management',
+    'admin.page.role_views': 'Role Views',
+
+    // Admin Actions
+    'admin.action.approve': 'Approve',
+    'admin.action.reject': 'Reject',
+    'admin.action.review': 'Review',
+    'admin.action.generate_letter': 'Generate Letter',
+    'admin.action.view_details': 'View Details',
+    'admin.action.edit_user': 'Edit User',
+    'admin.action.delete_user': 'Delete User',
+    'admin.action.reset_password': 'Reset Password',
+    'admin.action.send_notification': 'Send Notification',
+
+    // Admin Tables
+    'admin.table.no': 'No',
+    'admin.table.student_name': 'Student Name',
+    'admin.table.student_id': 'Student ID',
+    'admin.table.request_date': 'Request Date',
+    'admin.table.status': 'Status',
+    'admin.table.actions': 'Actions',
+    'admin.table.total': 'Total',
+    'admin.table.pending': 'Pending',
+    'admin.table.approved': 'Approved',
+    'admin.table.rejected': 'Rejected',
+    'admin.table.in_review': 'In Review',
+
+    // Admin Filters
+    'admin.filter.all': 'All',
+    'admin.filter.search': 'Search...',
+    'admin.filter.filter_by_status': 'Filter by Status',
+    'admin.filter.time_range': 'Time Range',
+    'admin.filter.today': 'Today',
+    'admin.filter.this_week': 'This Week',
+    'admin.filter.this_month': 'This Month',
+    'admin.filter.this_year': 'This Year',
+
+    // Admin Stats
+    'admin.stats.total_students': 'Total Students',
+    'admin.stats.active_courses': 'Active Courses',
+    'admin.stats.total_revenue': 'Total Revenue',
+    'admin.stats.active_kkp': 'Active KKP',
+    'admin.stats.vs_last_month': 'vs last month',
+    'admin.stats.vs_last_semester': 'vs last semester',
+
+    // Admin Messages
+    'admin.message.success_approve': 'Successfully approved request',
+    'admin.message.success_reject': 'Successfully rejected request',
+    'admin.message.success_save': 'Successfully saved data',
+    'admin.message.success_delete': 'Successfully deleted data',
+    'admin.message.error_save': 'Failed to save data',
+    'admin.message.error_delete': 'Failed to delete data',
+    'admin.message.confirm_delete': 'Are you sure you want to delete?',
+    'admin.message.loading': 'Loading data...',
+    'admin.message.no_data': 'No data available',
+
+    // Admin User Management
+    'admin.user.add_user': 'Add User',
+    'admin.user.edit_user': 'Edit User',
+    'admin.user.user_details': 'User Details',
+    'admin.user.full_name': 'Full Name',
+    'admin.user.email': 'Email',
+    'admin.user.role': 'Role',
+    'admin.user.status': 'Status',
+    'admin.user.active': 'Active',
+    'admin.user.inactive': 'Inactive',
+    'admin.user.last_login': 'Last Login',
+    'admin.user.created_at': 'Created At',
+
+    // Admin KKP
+    'admin.kkp.title': 'KKP Management',
+    'admin.kkp.requests': 'KKP Request List',
+    'admin.kkp.team_name': 'Team Name',
+    'admin.kkp.location': 'Location',
+    'admin.kkp.members': 'Members',
+    'admin.kkp.supervisor': 'Supervisor',
+    'admin.kkp.submission_date': 'Submission Date',
+    'admin.kkp.approval_status': 'Approval Status',
+
+    // Admin Reports
+    'admin.report.title': 'Reports',
+    'admin.report.overview': 'Report Overview',
+    'admin.report.generate': 'Generate Report',
+    'admin.report.export_pdf': 'Export PDF',
+    'admin.report.export_excel': 'Export Excel',
+    'admin.report.date_range': 'Date Range',
+    'admin.report.from': 'From',
+    'admin.report.to': 'To',
   }
 } as const

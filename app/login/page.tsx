@@ -72,12 +72,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen overflow-hidden bg-white">
+    <div className="flex overflow-hidden min-h-screen bg-white">
       <div className="flex flex-col w-full lg:flex-row">
         {/* Left Side - Image Slider */}
         <div className="relative lg:w-3/5 min-h-[300px] lg:min-h-screen bg-gray-900">
           {/* Slider Images */}
-          <div className="relative w-full h-full overflow-hidden">
+          <div className="overflow-hidden relative w-full h-full">
             {slides.map((slide, index) => (
               <div
                 key={index}
@@ -97,10 +97,10 @@ export default function LoginPage() {
                 <div className="absolute inset-0 z-10 bg-black/30" />
 
                 {/* Content */}
-                <div className="relative z-30 flex flex-col justify-center h-full p-8 lg:p-16">
+                <div className="flex relative z-30 flex-col justify-center p-8 h-full lg:p-16">
                   {/* Slide Content */}
                   <div className="max-w-xl">
-                    <h2 className="mb-4 text-5xl font-black leading-tight text-white lg:text-6xl drop-shadow-lg">
+                    <h2 className="mb-4 text-5xl font-black leading-tight text-white drop-shadow-lg lg:text-6xl">
                       {slide.title}
                     </h2>
                     <p className="mb-3 text-2xl font-bold text-white drop-shadow">
@@ -118,11 +118,11 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="flex items-center justify-center p-6 lg:w-2/5 lg:p-12 bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <div className="flex justify-center items-center p-6 bg-gradient-to-br from-gray-50 lg:w-2/5 lg:p-12 to-blue-50/30">
           <div className="w-full max-w-md">
             {/* Logos Section */}
             <div className="p-6 mb-8">
-              <div className="flex flex-wrap items-center justify-center gap-6">
+              <div className="flex flex-wrap gap-6 justify-center items-center">
                 <div className="transition-transform duration-300 hover:scale-110">
                   <Image
                     src="/login/teknik.png"
@@ -191,10 +191,10 @@ export default function LoginPage() {
                       placeholder="Masukkan Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="h-12 pl-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100 rounded-xl"
+                      className="pl-12 h-12 text-gray-900 bg-white rounded-xl border-none transition-all placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100"
                       required
                     />
-                    <div className="absolute text-gray-400 transition-colors -translate-y-1/2 left-4 top-1/2 group-focus-within:text-red-500">
+                    <div className="absolute left-4 top-1/2 text-gray-400 transition-colors -translate-y-1/2 group-focus-within:text-red-500">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -221,10 +221,10 @@ export default function LoginPage() {
                       placeholder="Masukkan password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 pl-12 pr-12 text-gray-900 transition-all bg-white border-none placeholder:text-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl"
+                      className="pr-12 pl-12 h-12 text-gray-900 bg-white rounded-xl border-none transition-all placeholder:text-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     />
-                    <div className="absolute text-gray-400 transition-colors -translate-y-1/2 left-4 top-1/2 group-focus-within:text-blue-500">
+                    <div className="absolute left-4 top-1/2 text-gray-400 transition-colors -translate-y-1/2 group-focus-within:text-blue-500">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -243,7 +243,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute text-gray-400 transition-colors -translate-y-1/2 right-4 top-1/2 hover:text-gray-600"
+                      className="absolute right-4 top-1/2 text-gray-400 transition-colors -translate-y-1/2 hover:text-gray-600"
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -252,7 +252,7 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <Label htmlFor="role" className="text-sm font-semibold text-gray-800">Peran</Label>
                   <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as Role)}>
-                    <SelectTrigger className="w-full h-12 text-gray-900 transition-all bg-white border-none focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-100 rounded-xl">
+                    <SelectTrigger className="w-full h-12 text-gray-900 bg-white rounded-xl border-none transition-all focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-100">
                       <SelectValue placeholder="Pilih peran Anda" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-gray-200">
@@ -268,7 +268,7 @@ export default function LoginPage() {
                   </p>
                 </div>
                 {formError && (
-                  <div className="flex items-start gap-3 p-4 border border-red-200 rounded-xl bg-red-50">
+                  <div className="flex gap-3 items-start p-4 bg-red-50 rounded-xl border border-red-200">
                     <AlertCircle className="w-5 h-5 mt-0.5 text-red-600 flex-shrink-0" />
                     <p className="text-sm font-medium text-red-600">{formError}</p>
                   </div>
@@ -280,13 +280,13 @@ export default function LoginPage() {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 w-5 h-5 animate-spin" />
                       Memproses...
                     </>
                   ) : (
                     <>
                       Login Yuk!
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
                     </>
@@ -294,7 +294,7 @@ export default function LoginPage() {
                 </Button>
               </form>
               <div className="pt-4 text-sm text-center text-gray-600">
-                <Link href="/" className="inline-flex items-center gap-1 font-semibold text-red-600 transition-colors underline-offset-4 hover:text-blue-600 hover:underline">
+                <Link href="/" className="inline-flex gap-1 items-center font-semibold text-red-600 transition-colors underline-offset-4 hover:text-blue-600 hover:underline">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
