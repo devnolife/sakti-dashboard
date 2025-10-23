@@ -588,7 +588,7 @@ export default function ManajemenPenggunaPage() {
                           <div>
                             <div className="font-medium">{user.name}</div>
                             <div className="text-sm text-muted-foreground">
-                              {user.students ? user.studentsmajor :
+                              {user.students ? user.students.major :
                                 user.lecturerProfile ? user.lecturerProfile.department :
                                   user.staffProfile ? user.staffProfile.department : '-'}
                             </div>
@@ -597,7 +597,7 @@ export default function ManajemenPenggunaPage() {
                       </TableCell>
                       <TableCell>
                         <div className="font-mono text-sm">
-                          {user.students ? user.studentsnim :
+                          {user.students ? user.students.nim :
                             user.lecturerProfile ? user.lecturerProfile.nip :
                               user.staffProfile ? user.staffProfile.nip : user.username}
                         </div>

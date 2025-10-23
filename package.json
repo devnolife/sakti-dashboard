@@ -10,7 +10,11 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "generate:lab-template": "tsx scripts/generate-lab-template.ts"
+    "generate:lab-template": "tsx scripts/generate-lab-template.ts",
+    "sync:prodi": "tsx scripts/sync-prodi.ts",
+    "seed:prodi": "tsx scripts/seed-prodi.ts",
+    "fetch:prodi": "tsx scripts/fetch-prodi.ts",
+    "import:prodi": "tsx scripts/import-prodi.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

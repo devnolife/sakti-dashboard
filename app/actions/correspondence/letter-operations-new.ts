@@ -3,6 +3,7 @@
 import { LetterStatus } from "@/types/correspondence"
 import { prisma } from "@/lib/prisma"
 import { getServerActionUserId } from "@/lib/auth-utils"
+import { generateId } from "@/lib/utils"
 import { students } from "@/components/dekan/vice-dean-4/mock-data";
 
 // Submit a new letter request
@@ -30,35 +31,38 @@ export async function submitLetterRequest(
     }
 
     // Get letter type info to determine approval role
-    const letterType = await prisma.letterType.findFirst({
+    const letterType = await prisma.letter_types.findFirst({
       where: { title: title }
     })
 
-    const approvalRole = letterType?.approvalRole || 'staff_tu'
+    const approvalRole = letterType?.approval_role || 'staff_tu'
 
     // Create letter request
-    const letterRequest = await prisma.letterRequest.create({
+    const letterRequest = await prisma.letter_requests.create({
       data: {
+        id: generateId(),
         type,
         title,
         purpose,
         description,
         student_id: user.students.id,
-        approvalRole: approvalRole as any,
-        additionalInfo: additionalInfo || {},
-        status: 'submitted'
+        approval_role: approvalRole as any,
+        additional_info: additionalInfo || {},
+        status: 'submitted',
+        updated_at: new Date()
       }
     })
 
     // Create attachments if provided
     if (attachments && attachments.length > 0) {
-      await prisma.letterAttachment.createMany({
+      await prisma.letter_attachments.createMany({
         data: attachments.map(att => ({
-          requestId: letterRequest.id,
+          id: generateId(),
+          request_id: letterRequest.id,
           name: att.name,
           url: att.url,
-          mimeType: att.mimeType,
-          fileSize: att.fileSize
+          mime_type: att.mimeType,
+          file_size: att.fileSize
         }))
       })
     }
@@ -107,7 +111,7 @@ export async function updateLetterRequestStatus(
       updateData.completedDate = new Date()
     }
 
-    const updatedRequest = await prisma.letterRequest.update({
+    const updatedRequest = await prisma.letter_requests.update({
       where: { id: requestId },
       data: updateData
     })
@@ -130,7 +134,7 @@ export async function deleteLetterRequest(
   requestId: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const request = await prisma.letterRequest.findUnique({
+    const request = await prisma.letter_requests.findUnique({
       where: { id: requestId }
     })
 
@@ -149,7 +153,7 @@ export async function deleteLetterRequest(
       }
     }
 
-    await prisma.letterRequest.delete({
+    await prisma.letter_requests.delete({
       where: { id: requestId }
     })
 

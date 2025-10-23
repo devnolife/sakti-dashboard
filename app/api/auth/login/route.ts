@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
 import { graphqlClient } from '@/lib/graphql/client'
-import { GET_MAHASISWA_USER, GET_MAHASISWA_INFO, type MahasiswaUserResponse, type MahasiswaInfoResponse } from '@/lib/graphql/queries'
+import { GET_MAHASISWA_USER, GET_MAHASISWA_INFO, GET_MAHASISWA, type MahasiswaUserResponse, type MahasiswaInfoResponse, type MahasiswaResponse } from '@/lib/graphql/queries'
 import { md5Hash, verifyMd5Password } from '@/lib/utils/md5'
 import { randomBytes } from 'crypto'
 
@@ -13,6 +13,62 @@ const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key'
 // Helper function to generate ID similar to cuid
 function generateId(): string {
   return `c${randomBytes(12).toString('base64url')}`
+}
+
+/**
+ * Sync prodi data from GraphQL mahasiswa response
+ */
+async function syncProdiFromMahasiswa(nim: string) {
+  try {
+    console.log('🔄 Syncing prodi data from mahasiswa:', nim)
+
+    const response = await graphqlClient.request<MahasiswaResponse>(
+      GET_MAHASISWA,
+      { nim }
+    )
+
+    const mahasiswa = response.mahasiswa
+
+    if (!mahasiswa?.prodi) {
+      console.log('⚠️  No prodi data found for mahasiswa:', nim)
+      return
+    }
+
+    const prodiData = mahasiswa.prodi
+
+    // Check if prodi exists
+    const existingProdi = await prisma.prodi.findUnique({
+      where: { kode: prodiData.kode }
+    })
+
+    if (!existingProdi) {
+      // Create new prodi
+      await prisma.prodi.create({
+        data: {
+          kode: prodiData.kode,
+          nama: prodiData.nama,
+          jenjang: prodiData.jenjang,
+          fakultas: prodiData.fakultas,
+          akreditasi: null // GraphQL tidak return akreditasi
+        }
+      })
+      console.log('✅ Created prodi:', prodiData.kode, '-', prodiData.nama)
+    } else {
+      // Update existing prodi
+      await prisma.prodi.update({
+        where: { kode: prodiData.kode },
+        data: {
+          nama: prodiData.nama,
+          jenjang: prodiData.jenjang,
+          fakultas: prodiData.fakultas
+        }
+      })
+      console.log('✏️  Updated prodi:', prodiData.kode, '-', prodiData.nama)
+    }
+
+  } catch (error) {
+    console.error('❌ Error syncing prodi from mahasiswa:', error)
+  }
 }
 
 /**
@@ -42,15 +98,17 @@ async function syncMahasiswaInfoFromGraphQL(nim: string, studentId: string) {
     })
 
     // Map status from GraphQL
-    let status: 'active' | 'inactive' | 'graduated' | 'suspended' | 'leave' = 'active'
+    let status: 'active' | 'inactive' | 'graduated' | 'suspended' | 'dropped_out' = 'active'
     if (info.statusTerakhirTa) {
       const statusLower = info.statusTerakhirTa.toLowerCase()
       if (statusLower.includes('lulus')) {
         status = 'graduated'
       } else if (statusLower.includes('cuti')) {
-        status = 'leave'
+        status = 'suspended'  // Map 'cuti' to 'suspended'
       } else if (statusLower.includes('non aktif') || statusLower.includes('nonaktif')) {
         status = 'inactive'
+      } else if (statusLower.includes('keluar') || statusLower.includes('do')) {
+        status = 'dropped_out'
       }
     }
 
@@ -60,7 +118,7 @@ async function syncMahasiswaInfoFromGraphQL(nim: string, studentId: string) {
       data: {
         gpa: info.ipk ? parseFloat(info.ipk.toString()) : null,
         semester: info.jumlahSemester || 1,
-        status,
+        status: status,
         major: info.namaProdi,
         last_sync_at: new Date()
       }
@@ -145,6 +203,9 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
 
     // Sync detailed info (IPK, semester, etc) from GraphQL
     await syncMahasiswaInfoFromGraphQL(nim, student.id)
+
+    // Sync prodi data from mahasiswa GraphQL
+    await syncProdiFromMahasiswa(nim)
 
     // Return user with profile
     return await prisma.users.findUnique({

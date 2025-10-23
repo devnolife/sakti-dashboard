@@ -1,8 +1,14 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { randomBytes } from "crypto"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+// Helper function to generate ID similar to cuid
+export function generateId(): string {
+  return `c${randomBytes(12).toString('base64url')}`
 }
 
 export function formatCurrency(amount: number): string {

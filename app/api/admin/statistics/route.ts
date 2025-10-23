@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       completedKkpApplications,
       pendingExamApplications,
       pendingPayments,
-      verifiedPayments,
+      completedPayments,
       activeSessions,
       totalCompanies,
       totalBooks,
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       prisma.kkp_applications.count({ where: { status: 'completed' } }),
       prisma.exam_applications.count({ where: { status: 'pending' } }),
       prisma.payments.count({ where: { status: 'pending' } }),
-      prisma.payments.count({ where: { status: 'verified' } }),
+      prisma.payments.count({ where: { status: 'completed' } }),
       prisma.sessions.count({
         where: {
           expires_at: {
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
       },
       paymentStats: {
         pending: pendingPayments,
-        verified: verifiedPayments,
+        completed: completedPayments,
       },
       activeSessions,
       systemHealth: {

@@ -10,7 +10,8 @@ import {
   BookMarked,
   Microscope,
   Archive,
-  School
+  School,
+  Shield
 } from "lucide-react"
 
 // Icon mapping for string-based resolution
@@ -26,7 +27,8 @@ export const iconMap = {
   BookMarked,
   Microscope,
   Archive,
-  School
+  School,
+  Shield
 } as const
 
 export type IconName = keyof typeof iconMap
@@ -42,7 +44,21 @@ interface RoleConfig {
     email: string
     avatar: string
   }
-}export const roleConfigs: Record<string, RoleConfig> = {
+}
+
+export const roleConfigs: Record<string, RoleConfig> = {
+  admin: {
+    headerConfig: {
+      title: "Administrator",
+      subtitle: "System Management",
+      iconName: "Shield"
+    },
+    user: {
+      name: "Administrator",
+      email: "admin@university.edu",
+      avatar: ""
+    }
+  },
   admin_umum: {
     headerConfig: {
       title: "Admin Umum",

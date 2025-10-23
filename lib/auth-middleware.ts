@@ -39,7 +39,7 @@ export async function authMiddleware(request: NextRequest) {
       sub: decoded.userId,
       username: decoded.username,
       role: decoded.role,
-      sub_role: decoded.subRole
+      sub_role: decoded.sub_role
     }
   } catch (error) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
@@ -187,7 +187,7 @@ export function requireAuth(requiredPermission?: string) {
     context.user = {
       id: token.sub,
       role: token.role,
-      sub_role: token.subRole,
+      sub_role: token.sub_role,
       username: token.username
     }
 
@@ -215,7 +215,7 @@ export function requireAdmin() {
     context.user = {
       id: token.sub,
       role: token.role,
-      sub_role: token.subRole,
+      sub_role: token.sub_role,
       username: token.username
     }
 

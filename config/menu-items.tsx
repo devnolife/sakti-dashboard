@@ -33,6 +33,19 @@ import {
   Code,
   Database,
   FileSignature,
+  Book,
+  CalendarDays,
+  MapPin,
+  Building2,
+  FlaskConical,
+  UserPlus,
+  FolderOpen,
+  Archive,
+  DollarSign,
+  ListChecks,
+  FileType,
+  FileCode,
+  BarChart3,
 
 } from "lucide-react"
 import type { Role, DosenSubRole } from "@/types/role"
@@ -46,7 +59,7 @@ interface MenuBadge {
 interface BaseMenuItem {
   id: string
   title: string
-  href: string
+  href?: string
   icon?: React.ComponentType<any>
   badge?: MenuBadge
 }
@@ -950,11 +963,253 @@ export const adminMenuItems: MenuItem[] = [
     icon: Users,
   },
   {
-    id: "kkp-requests",
-    title: "KKP Requests",
-    href: "/dashboard/admin/kkp-requests",
+    id: "academic",
+    title: "Akademik",
+    icon: BookOpen,
+    children: [
+      {
+        id: "courses",
+        title: "Mata Kuliah",
+        href: "/dashboard/admin/courses",
+        icon: Book,
+      },
+      {
+        id: "schedules",
+        title: "Jadwal Kuliah",
+        href: "/dashboard/admin/schedules",
+        icon: Calendar,
+      },
+      {
+        id: "grades",
+        title: "Nilai Mahasiswa",
+        href: "/dashboard/admin/grades",
+        icon: FileText,
+      },
+      {
+        id: "academic-year",
+        title: "Tahun Akademik",
+        href: "/dashboard/admin/academic-year",
+        icon: CalendarDays,
+      },
+    ],
+  },
+  {
+    id: "kkp-management",
+    title: "Manajemen KKP",
     icon: Briefcase,
-    badge: { text: "12", variant: "destructive" as const },
+    children: [
+      {
+        id: "kkp-requests",
+        title: "Pengajuan KKP",
+        href: "/dashboard/admin/kkp-requests",
+        icon: FileText,
+        badge: { text: "12", variant: "destructive" as const },
+      },
+      {
+        id: "kkp-locations",
+        title: "Lokasi KKP",
+        href: "/dashboard/admin/kkp-locations",
+        icon: MapPin,
+      },
+      {
+        id: "kkp-companies",
+        title: "Perusahaan",
+        href: "/dashboard/admin/companies",
+        icon: Building2,
+      },
+      {
+        id: "kkp-requirements",
+        title: "Persyaratan KKP",
+        href: "/dashboard/admin/kkp-requirements",
+        icon: ClipboardCheck,
+      },
+    ],
+  },
+  {
+    id: "exam-management",
+    title: "Manajemen Ujian",
+    icon: GraduationCapIcon,
+    children: [
+      {
+        id: "exam-applications",
+        title: "Pengajuan Ujian",
+        href: "/dashboard/admin/exam-applications",
+        icon: FileText,
+      },
+      {
+        id: "exam-schedules",
+        title: "Jadwal Ujian",
+        href: "/dashboard/admin/exam-schedules",
+        icon: Calendar,
+      },
+      {
+        id: "exam-committees",
+        title: "Komisi Penguji",
+        href: "/dashboard/admin/exam-committees",
+        icon: Users,
+      },
+      {
+        id: "exam-requirements",
+        title: "Persyaratan Ujian",
+        href: "/dashboard/admin/exam-requirements",
+        icon: ClipboardList,
+      },
+    ],
+  },
+  {
+    id: "laboratory",
+    title: "Laboratorium",
+    icon: FlaskConical,
+    children: [
+      {
+        id: "lab-list",
+        title: "Daftar Lab",
+        href: "/dashboard/admin/laboratories",
+        icon: FlaskConical,
+      },
+      {
+        id: "lab-registrations",
+        title: "Pendaftaran Lab",
+        href: "/dashboard/admin/lab-registrations",
+        icon: UserPlus,
+      },
+      {
+        id: "lab-sessions",
+        title: "Sesi Praktikum",
+        href: "/dashboard/admin/lab-sessions",
+        icon: Calendar,
+      },
+      {
+        id: "lab-assignments",
+        title: "Tugas Lab",
+        href: "/dashboard/admin/lab-assignments",
+        icon: FileText,
+      },
+    ],
+  },
+  {
+    id: "library",
+    title: "Perpustakaan",
+    icon: BookMarked,
+    children: [
+      {
+        id: "books",
+        title: "Koleksi Buku",
+        href: "/dashboard/admin/books",
+        icon: Book,
+      },
+      {
+        id: "borrowing",
+        title: "Peminjaman",
+        href: "/dashboard/admin/book-borrowing",
+        icon: BookOpen,
+      },
+      {
+        id: "book-categories",
+        title: "Kategori Buku",
+        href: "/dashboard/admin/book-categories",
+        icon: FolderOpen,
+      },
+      {
+        id: "thesis-archive",
+        title: "Arsip Skripsi",
+        href: "/dashboard/admin/thesis-archive",
+        icon: Archive,
+      },
+    ],
+  },
+  {
+    id: "finance",
+    title: "Keuangan",
+    icon: DollarSign,
+    children: [
+      {
+        id: "payments",
+        title: "Pembayaran",
+        href: "/dashboard/admin/payments",
+        icon: CreditCard,
+      },
+      {
+        id: "payment-items",
+        title: "Item Pembayaran",
+        href: "/dashboard/admin/payment-items",
+        icon: ListChecks,
+      },
+      {
+        id: "budgets",
+        title: "Anggaran",
+        href: "/dashboard/admin/budgets",
+        icon: Wallet,
+      },
+      {
+        id: "expenses",
+        title: "Pengeluaran",
+        href: "/dashboard/admin/expenses",
+        icon: TrendingDown,
+      },
+    ],
+  },
+  {
+    id: "correspondence",
+    title: "Surat Menyurat",
+    icon: Mail,
+    children: [
+      {
+        id: "letter-requests",
+        title: "Permohonan Surat",
+        href: "/dashboard/admin/letter-requests",
+        icon: FileText,
+      },
+      {
+        id: "letter-types",
+        title: "Jenis Surat",
+        href: "/dashboard/admin/letter-types",
+        icon: FileType,
+      },
+      {
+        id: "letter-templates",
+        title: "Template Surat",
+        href: "/dashboard/admin/letter-templates",
+        icon: FileCode,
+      },
+    ],
+  },
+  {
+    id: "notifications",
+    title: "Notifikasi",
+    href: "/dashboard/admin/notifications",
+    icon: Bell,
+  },
+  {
+    id: "reports",
+    title: "Laporan",
+    icon: BarChart3,
+    children: [
+      {
+        id: "student-reports",
+        title: "Laporan Mahasiswa",
+        href: "/dashboard/admin/reports/students",
+        icon: Users,
+      },
+      {
+        id: "academic-reports",
+        title: "Laporan Akademik",
+        href: "/dashboard/admin/reports/academic",
+        icon: GraduationCapIcon,
+      },
+      {
+        id: "financial-reports",
+        title: "Laporan Keuangan",
+        href: "/dashboard/admin/reports/financial",
+        icon: DollarSign,
+      },
+      {
+        id: "kkp-reports",
+        title: "Laporan KKP",
+        href: "/dashboard/admin/reports/kkp",
+        icon: Briefcase,
+      },
+    ],
   },
   {
     id: "system-settings",
@@ -968,7 +1223,12 @@ export const adminMenuItems: MenuItem[] = [
     href: "/dashboard/admin/logs",
     icon: FileText,
   },
-
+  {
+    id: "backup",
+    title: "Backup & Restore",
+    href: "/dashboard/admin/backup",
+    icon: Database,
+  },
 ]
 
 // Menu items for dosen (formerly lecturer)

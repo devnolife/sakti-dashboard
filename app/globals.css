@@ -627,3 +627,19 @@
   animation: gradient-shift 3s ease-in-out infinite;
 }
 
+/* Fix Radix UI Dialog pointer-events issue */
+/* Remove pointer-events from body when dialog is closed to allow clicking */
+body:not([data-scroll-locked]) {
+  pointer-events: auto !important;
+}
+
+/* Ensure dialog portals don't block interaction when closed */
+[data-radix-portal]:has([data-state="closed"]) {
+  pointer-events: none !important;
+}
+
+/* Allow interaction with open dialogs */
+[data-radix-portal]:has([data-state="open"]) {
+  pointer-events: auto !important;
+}
+

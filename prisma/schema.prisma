@@ -651,6 +651,14 @@ model payments {
   students       students        @relation(fields: [student_id], references: [id])
 }
 
+model prodi {
+  kode       String  @id
+  nama       String
+  jenjang    String
+  fakultas   String
+  akreditasi String?
+}
+
 model sessions {
   id         String   @id
   user_id    String
@@ -788,6 +796,18 @@ model users {
   sessions   sessions[]
   staff      staff?
   students   students?
+}
+
+model role_configurations {
+  id          String   @id
+  role        Role     @unique
+  title       String
+  subtitle    String
+  icon_name   String
+  description String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime
 }
 
 model verification_tokens {
