@@ -29,104 +29,156 @@ async function syncProdiFromMahasiswa(nim: string) {
 
     const mahasiswa = response.mahasiswa
 
-    if (!mahasiswa?.prodi) {
+    if (!mahasiswa?.prodi || !mahasiswa.prodi.kodeProdi) {
       console.log('⚠️  No prodi data found for mahasiswa:', nim)
-      return
+      console.log('Prodi data:', mahasiswa?.prodi)
+      return null
     }
 
     const prodiData = mahasiswa.prodi
+    console.log('🎓 Prodi data from GraphQL:', prodiData)
+
+    // Validate required fields
+    if (!prodiData.kodeProdi || !prodiData.namaProdi) {
+      console.log('⚠️  Incomplete prodi data:', prodiData)
+      return null
+    }
 
     // Check if prodi exists
     const existingProdi = await prisma.prodi.findUnique({
-      where: { kode: prodiData.kode }
+      where: { kode: prodiData.kodeProdi }
     })
 
     if (!existingProdi) {
       // Create new prodi
-      await prisma.prodi.create({
+      // Default jenjang and fakultas from kodeProdi pattern
+      const jenjang = prodiData.kodeProdi.startsWith('55') ? 'S1' :
+        prodiData.kodeProdi.startsWith('56') ? 'S2' : 'S1'
+      const fakultas = 'Teknik' // Default fakultas
+
+      const createdProdi = await prisma.prodi.create({
         data: {
-          kode: prodiData.kode,
-          nama: prodiData.nama,
-          jenjang: prodiData.jenjang,
-          fakultas: prodiData.fakultas,
+          kode: prodiData.kodeProdi,
+          nama: prodiData.namaProdi,
+          jenjang: jenjang,
+          fakultas: fakultas,
           akreditasi: null // GraphQL tidak return akreditasi
         }
       })
-      console.log('✅ Created prodi:', prodiData.kode, '-', prodiData.nama)
+      console.log('✅ Created prodi:', createdProdi.kode, '-', createdProdi.nama)
+      return createdProdi.kode
     } else {
-      // Update existing prodi
-      await prisma.prodi.update({
-        where: { kode: prodiData.kode },
-        data: {
-          nama: prodiData.nama,
-          jenjang: prodiData.jenjang,
-          fakultas: prodiData.fakultas
-        }
-      })
-      console.log('✏️  Updated prodi:', prodiData.kode, '-', prodiData.nama)
+      // Update existing prodi if name changed
+      if (existingProdi.nama !== prodiData.namaProdi) {
+        await prisma.prodi.update({
+          where: { kode: prodiData.kodeProdi },
+          data: {
+            nama: prodiData.namaProdi
+          }
+        })
+        console.log('✏️  Updated prodi:', prodiData.kodeProdi, '-', prodiData.namaProdi)
+      } else {
+        console.log('ℹ️  Prodi already exists:', prodiData.kodeProdi)
+      }
+      return existingProdi.kode
     }
 
   } catch (error) {
     console.error('❌ Error syncing prodi from mahasiswa:', error)
+    return null
   }
 }
 
 /**
- * Sync mahasiswa info (IPK, semester, etc) from GraphQL
+ * Sync complete mahasiswa data from GraphQL
  */
-async function syncMahasiswaInfoFromGraphQL(nim: string, studentId: string) {
+async function syncMahasiswaDataFromGraphQL(nim: string, studentId: string) {
   try {
-    console.log('Fetching mahasiswaInfo from GraphQL for:', nim)
-    const response = await graphqlClient.request<MahasiswaInfoResponse>(
-      GET_MAHASISWA_INFO,
+    console.log('🔄 Fetching complete mahasiswa data from GraphQL for:', nim)
+    console.log('   Student ID:', studentId)
+
+    // Get complete mahasiswa data
+    const response = await graphqlClient.request<MahasiswaResponse>(
+      GET_MAHASISWA,
       { nim }
     )
 
-    const info = response.mahasiswaInfo
+    const mahasiswa = response.mahasiswa
 
-    if (!info) {
-      console.log('No mahasiswaInfo found for:', nim)
+    if (!mahasiswa) {
+      console.log('❌ No mahasiswa data found for:', nim)
       return
     }
 
-    console.log('MahasiswaInfo received from GraphQL:', {
-      nim: info.nim,
-      nama: info.nama,
-      ipk: info.ipk,
-      semester: info.jumlahSemester,
-      totalSksLulus: info.totalSksLulus
-    })
-
-    // Map status from GraphQL
-    let status: 'active' | 'inactive' | 'graduated' | 'suspended' | 'dropped_out' = 'active'
-    if (info.statusTerakhirTa) {
-      const statusLower = info.statusTerakhirTa.toLowerCase()
-      if (statusLower.includes('lulus')) {
-        status = 'graduated'
-      } else if (statusLower.includes('cuti')) {
-        status = 'suspended'  // Map 'cuti' to 'suspended'
-      } else if (statusLower.includes('non aktif') || statusLower.includes('nonaktif')) {
-        status = 'inactive'
-      } else if (statusLower.includes('keluar') || statusLower.includes('do')) {
-        status = 'dropped_out'
-      }
+    console.log('✅ Complete mahasiswa data received from GraphQL')
+    console.log('   Raw data keys:', Object.keys(mahasiswa))    // Calculate GPA from KHS (latest semester IPK)
+    let gpa: number | null = null
+    if (mahasiswa.khs && mahasiswa.khs.length > 0) {
+      const sortedKhs = [...mahasiswa.khs].sort((a, b) => {
+        const taA = a.tahunAkademik || '0'
+        const taB = b.tahunAkademik || '0'
+        return taB.localeCompare(taA)
+      })
+      gpa = sortedKhs[0].ipk || null
     }
 
-    // Update student with detailed info from GraphQL
+    // Determine semester from KHS count
+    const semester = mahasiswa.khs?.length || 1
+
+    // Map status
+    let status: 'active' | 'inactive' | 'graduated' | 'suspended' | 'dropped_out' = 'active'
+    if (mahasiswa.lulus) {
+      status = 'graduated'
+    }
+
+    // Prepare guardian data
+    const guardianData = mahasiswa.ayah ? {
+      ayah: {
+        nama: mahasiswa.ayah.nama || null,
+        nik: mahasiswa.ayah.nik || null,
+        hp: mahasiswa.ayah.hp || null,
+        alamat: mahasiswa.ayah.alamat || null,
+        pendidikan: mahasiswa.ayah.pendidikan || null,
+        pekerjaan: mahasiswa.ayah.pekerjaan || null,
+        instansi: mahasiswa.ayah.instansi || null,
+        penghasilan: mahasiswa.ayah.penghasilan || null,
+        status: mahasiswa.ayah.status || null
+      }
+    } : null
+
+    // Update student with ALL data from GraphQL
     await prisma.students.update({
       where: { id: studentId },
       data: {
-        gpa: info.ipk ? parseFloat(info.ipk.toString()) : null,
-        semester: info.jumlahSemester || 1,
+        angkatan: mahasiswa.angkatan,
+        jenis_kelamin: mahasiswa.jenisKelamin,
+        tempat_lahir: mahasiswa.tempatLahir,
+        tanggal_lahir: mahasiswa.tanggalLahir ? new Date(mahasiswa.tanggalLahir) : null,
+        nik: mahasiswa.nik,
+        email: mahasiswa.email,
+        phone: mahasiswa.hp,
+        semester_awal: mahasiswa.semesterAwal,
+        tahun_akademik_lulus: mahasiswa.tahunAkademikLulus,
+        tanggal_lulus: mahasiswa.tanggalLulus ? new Date(mahasiswa.tanggalLulus) : null,
+        lulus: mahasiswa.lulus,
+        no_seri_ijazah: mahasiswa.noSeriIjazah,
+        masa_studi: mahasiswa.masaStudi,
+        gpa: gpa,
+        semester: semester,
         status: status,
-        major: info.namaProdi,
+        guardian: guardianData as any,
         last_sync_at: new Date()
       }
     })
 
-    console.log('Student profile updated with IPK and semester from GraphQL')
+    console.log('✅ Student profile fully synced with all fields from GraphQL')
+    console.log(`   - Personal: angkatan=${mahasiswa.angkatan}, gender=${mahasiswa.jenisKelamin}`)
+    console.log(`   - Contact: email=${mahasiswa.email}, phone=${mahasiswa.hp}`)
+    console.log(`   - Academic: GPA=${gpa}, semester=${semester}, status=${status}`)
+    console.log(`   - Guardian: ${guardianData ? 'Data ayah tersedia' : 'Tidak ada data wali'}`)
+
   } catch (error) {
-    console.error('Error syncing mahasiswaInfo from GraphQL:', error)
+    console.error('❌ Error syncing complete mahasiswa data from GraphQL:', error)
   }
 }
 
@@ -177,21 +229,9 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
       }
     })
 
-    // Sync prodi data first to ensure it exists
-    await syncProdiFromMahasiswa(nim)
-
-    // Get prodi_id from GraphQL response
-    let prodi_id: string | null = null
-    try {
-      const mahasiswaResponse = await graphqlClient.request<MahasiswaResponse>(
-        GET_MAHASISWA,
-        { nim }
-      )
-      prodi_id = mahasiswaResponse.mahasiswa?.prodi?.kode || null
-      console.log('🎓 Prodi ID from GraphQL:', prodi_id)
-    } catch (error) {
-      console.error('Failed to get prodi from GraphQL:', error)
-    }
+    // Sync prodi data first to ensure it exists and get prodi_id
+    const prodi_id = await syncProdiFromMahasiswa(nim)
+    console.log('🎓 Prodi ID from sync:', prodi_id)
 
     // Create or update student profile
     const student = await prisma.students.upsert({
@@ -219,8 +259,8 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
 
     console.log('Mahasiswa synced to local DB:', { nim, user_id: user.id, student_id: student.id, prodi_id })
 
-    // Sync detailed info (IPK, semester, etc) from GraphQL
-    await syncMahasiswaInfoFromGraphQL(nim, student.id)
+    // Sync complete mahasiswa data from GraphQL (all fields)
+    await syncMahasiswaDataFromGraphQL(nim, student.id)
 
     // Return user with profile including prodi info
     return await prisma.users.findUnique({
@@ -336,6 +376,51 @@ export async function POST(request: NextRequest) {
       }
 
       console.log('✅ Password verification successful')
+
+      // For existing mahasiswa users, always sync data from GraphQL to keep it up-to-date
+      if (user.role === 'mahasiswa') {
+        console.log('🔄 Syncing existing mahasiswa data from GraphQL...')
+        try {
+          await syncMahasiswaFromGraphQL(username, password)
+
+          // Re-fetch user with all relations after sync
+          const updatedUser = await prisma.users.findUnique({
+            where: { id: user.id },
+            include: {
+              students: {
+                include: {
+                  prodi: true
+                }
+              },
+              lecturers: {
+                include: {
+                  prodi: true
+                }
+              },
+              staff: {
+                include: {
+                  prodi: true
+                }
+              }
+            }
+          })
+
+          if (updatedUser) {
+            user = updatedUser
+            console.log('✅ User data synced successfully')
+            console.log('📊 Updated profile:', {
+              id: user.id,
+              hasStudents: !!user.students,
+              studentNim: user.students?.nim,
+              hasLecturers: !!user.lecturers,
+              hasStaff: !!user.staff
+            })
+          }
+        } catch (syncError) {
+          console.error('⚠️ Failed to sync mahasiswa data:', syncError)
+          // Continue with login even if sync fails - user can still access with existing data
+        }
+      }
     } else {
       console.log('User not in local DB, checking GraphQL...')
 
@@ -375,9 +460,9 @@ export async function POST(request: NextRequest) {
         console.log('Syncing user to local DB...')
 
         // Password valid - sync to local database
-        user = await syncMahasiswaFromGraphQL(username, password)
+        const syncedUser = await syncMahasiswaFromGraphQL(username, password)
 
-        if (!user) {
+        if (!syncedUser) {
           console.error('Failed to sync user to local DB')
           return NextResponse.json(
             { error: 'Failed to create user account' },
@@ -385,8 +470,44 @@ export async function POST(request: NextRequest) {
           )
         }
 
+        // Re-fetch user with all relations to ensure students data is loaded
+        user = await prisma.users.findUnique({
+          where: { id: syncedUser.id },
+          include: {
+            students: {
+              include: {
+                prodi: true
+              }
+            },
+            lecturers: {
+              include: {
+                prodi: true
+              }
+            },
+            staff: {
+              include: {
+                prodi: true
+              }
+            }
+          }
+        })
+
+        if (!user) {
+          console.error('Failed to fetch synced user')
+          return NextResponse.json(
+            { error: 'Failed to load user profile' },
+            { status: 500 }
+          )
+        }
+
         isNewUser = true
         console.log('User successfully synced from GraphQL')
+        console.log('User profile loaded:', {
+          id: user.id,
+          hasStudents: !!user.students,
+          hasLecturers: !!user.lecturers,
+          hasStaff: !!user.staff
+        })
 
       } catch (graphqlError: any) {
         console.error('GraphQL error:', graphqlError)

@@ -43,18 +43,18 @@ export default function MahasiswaPage() {
             fetch('/api/student/dashboard'),
             fetch('/api/student/notifications')
           ])
-          
+
           if (!dashboardResponse.ok) {
             throw new Error('Failed to fetch dashboard data')
           }
-          
+
           if (!notificationsResponse.ok) {
             throw new Error('Failed to fetch notifications')
           }
-          
+
           const dashboardResult = await dashboardResponse.json()
           const notificationsResult = await notificationsResponse.json()
-          
+
           setDashboardData(dashboardResult)
           setNotifications(notificationsResult)
         } catch (err) {
@@ -136,21 +136,30 @@ export default function MahasiswaPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                <div className="text-2xl font-bold">{dashboardData.student.gpa?.toFixed(2) || 'N/A'}</div>
+                <div className="text-2xl font-bold">
+                  {dashboardData.student.gpa && dashboardData.student.gpa > 0
+                    ? dashboardData.student.gpa.toFixed(2)
+                    : 'N/A'}
+                </div>
                 <div className="flex items-center mt-1">
                   <Badge
                     variant="outline"
-                    className={`text-xs font-normal ${
-                      !dashboardData.student.gpa
-                        ? 'text-gray-600 border-gray-200 bg-gray-500/10'
-                        : dashboardData.student.gpa >= 3.5
+                    className={`text-xs font-normal ${!dashboardData.student.gpa || dashboardData.student.gpa === 0
+                      ? 'text-gray-600 border-gray-200 bg-gray-500/10'
+                      : dashboardData.student.gpa >= 3.5
                         ? 'text-green-600 border-green-200 bg-green-500/10'
                         : dashboardData.student.gpa >= 3.0
-                        ? 'text-blue-600 border-blue-200 bg-blue-500/10'
-                        : 'text-amber-600 border-amber-200 bg-amber-500/10'
-                    }`}
+                          ? 'text-blue-600 border-blue-200 bg-blue-500/10'
+                          : 'text-amber-600 border-amber-200 bg-amber-500/10'
+                      }`}
                   >
-                    {!dashboardData.student.gpa ? 'Belum Ada' : dashboardData.student.gpa >= 3.5 ? 'Sangat Baik' : dashboardData.student.gpa >= 3.0 ? 'Baik' : 'Cukup'}
+                    {!dashboardData.student.gpa || dashboardData.student.gpa === 0
+                      ? 'Belum Ada'
+                      : dashboardData.student.gpa >= 3.5
+                        ? 'Cumlaude'
+                        : dashboardData.student.gpa >= 3.0
+                          ? 'Sangat Memuaskan'
+                          : 'Memuaskan'}
                   </Badge>
                 </div>
               </CardContent>
@@ -179,18 +188,17 @@ export default function MahasiswaPage() {
               <CardContent className="pt-4">
                 <div className="text-2xl font-bold">
                   {dashboardData.student.status === 'active' ? 'Aktif' :
-                   dashboardData.student.status === 'suspended' ? 'Suspend' :
-                   dashboardData.student.status === 'graduated' ? 'Lulus' :
-                   dashboardData.student.status === 'dropped_out' ? 'Dropout' :
-                   dashboardData.student.status}
+                    dashboardData.student.status === 'suspended' ? 'Suspend' :
+                      dashboardData.student.status === 'graduated' ? 'Lulus' :
+                        dashboardData.student.status === 'dropped_out' ? 'Dropout' :
+                          dashboardData.student.status}
                 </div>
                 <div className="flex items-center mt-1">
                   <Badge
                     variant="outline"
-                    className={`text-xs font-normal ${
-                      dashboardData.student.status === 'active' ? 'text-green-600 border-green-200 bg-green-500/10' :
+                    className={`text-xs font-normal ${dashboardData.student.status === 'active' ? 'text-green-600 border-green-200 bg-green-500/10' :
                       'text-red-600 border-red-200 bg-red-500/10'
-                    }`}
+                      }`}
                   >
                     Semester {dashboardData.student.semester}
                   </Badge>
@@ -234,36 +242,35 @@ export default function MahasiswaPage() {
                   {dashboardData.upcomingDeadlines.length > 0 ? (
                     dashboardData.upcomingDeadlines.slice(0, 4).map((deadline: any) => {
                       const daysUntil = deadline.date ? Math.ceil((new Date(deadline.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0
-                      const IconComponent = deadline.type === 'exam' ? AlertCircle : 
-                                           deadline.type === 'payment' ? FileText : 
-                                           deadline.type === 'library' ? BookOpen : Bell
-                      
+                      const IconComponent = deadline.type === 'exam' ? AlertCircle :
+                        deadline.type === 'payment' ? FileText :
+                          deadline.type === 'library' ? BookOpen : Bell
+
                       return (
                         <div key={deadline.id} className="flex items-center gap-4 p-3 border rounded-lg bg-muted/50 border-border/50">
-                          <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                            deadline.urgent ? 'bg-red-500/10' : 'bg-amber-500/10'
-                          }`}>
+                          <div className={`flex items-center justify-center w-10 h-10 rounded-full ${deadline.urgent ? 'bg-red-500/10' : 'bg-amber-500/10'
+                            }`}>
                             <IconComponent className={`w-5 h-5 ${deadline.urgent ? 'text-red-500' : 'text-amber-500'}`} />
                           </div>
                           <div className="flex-1">
                             <p className="font-medium">{deadline.title}</p>
                             <p className="text-sm text-muted-foreground">
-                              {deadline.date ? new Date(deadline.date).toLocaleDateString('id-ID', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
+                              {deadline.date ? new Date(deadline.date).toLocaleDateString('id-ID', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
                               }) : 'Tanggal tidak tersedia'}
                             </p>
                           </div>
-                          <Badge 
-                            variant="outline" 
+                          <Badge
+                            variant="outline"
                             className={`${deadline.urgent ? 'text-red-500 border-red-200 bg-red-500/10' : 'text-amber-500 border-amber-200 bg-amber-500/10'}`}
                           >
-                            {deadline.urgent ? 'Mendesak' : 
-                             daysUntil === 0 ? 'Hari ini' : 
-                             daysUntil === 1 ? 'Besok' : 
-                             daysUntil < 0 ? 'Terlambat' : 
-                             `${daysUntil} hari`}
+                            {deadline.urgent ? 'Mendesak' :
+                              daysUntil === 0 ? 'Hari ini' :
+                                daysUntil === 1 ? 'Besok' :
+                                  daysUntil < 0 ? 'Terlambat' :
+                                    `${daysUntil} hari`}
                           </Badge>
                         </div>
                       )
@@ -300,7 +307,7 @@ export default function MahasiswaPage() {
                     </div>
                     <p className="font-medium">Sistem Dashboard Mahasiswa Aktif</p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Dashboard mahasiswa telah diperbarui dengan data real dari database. 
+                      Dashboard mahasiswa telah diperbarui dengan data real dari database.
                       Anda dapat melihat informasi akademik terkini.
                     </p>
                   </div>
@@ -354,7 +361,7 @@ export default function MahasiswaPage() {
                   dashboardData.currentCourses.map((course: any, index: number) => {
                     const colors = ["primary", "secondary", "green-500", "amber-500", "purple-500", "blue-500"]
                     const color = colors[index % colors.length]
-                    
+
                     return (
                       <Card key={course.id} className="overflow-hidden transition-all border shadow-sm hover:shadow-md">
                         <div className={`h-2 bg-${color}`} />
@@ -393,38 +400,143 @@ export default function MahasiswaPage() {
 
           <Card className="border-none shadow-md">
             <CardHeader>
-              <CardTitle>Status Akademik</CardTitle>
-              <CardDescription>Ringkasan status akademik Anda</CardDescription>
+              <CardTitle>Informasi Mahasiswa</CardTitle>
+              <CardDescription>Data lengkap mahasiswa dari sistem akademik</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="text-center">
                     <div className="text-lg font-bold">{dashboardData.student.nim}</div>
                     <p className="text-sm text-muted-foreground">NIM</p>
                   </div>
                 </div>
-                
+
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="text-center">
-                    <div className="text-lg font-bold">{dashboardData.student.major}</div>
+                    <div className="text-lg font-bold">{dashboardData.student.major || 'Belum diatur'}</div>
                     <p className="text-sm text-muted-foreground">Program Studi</p>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="text-center">
-                    <div className="text-lg font-bold">{dashboardData.student.department}</div>
+                    <div className="text-lg font-bold">{dashboardData.student.department || 'Belum diatur'}</div>
                     <p className="text-sm text-muted-foreground">Fakultas</p>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="text-center">
-                    <div className="text-lg font-bold">{dashboardData.student.academicYear}</div>
-                    <p className="text-sm text-muted-foreground">Tahun Masuk</p>
+                    <div className="text-lg font-bold">{dashboardData.student.angkatan || dashboardData.student.academic_year}</div>
+                    <p className="text-sm text-muted-foreground">Angkatan</p>
                   </div>
                 </div>
+
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <div className="text-center">
+                    <div className="text-lg font-bold">
+                      {dashboardData.student.jenis_kelamin === 'L' ? 'Laki-laki' : dashboardData.student.jenis_kelamin === 'P' ? 'Perempuan' : 'Belum diatur'}
+                    </div>
+                    <p className="text-sm text-muted-foreground">Jenis Kelamin</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <div className="text-center">
+                    <div className="text-lg font-bold">{dashboardData.student.tempat_lahir || 'Belum diatur'}</div>
+                    <p className="text-sm text-muted-foreground">Tempat Lahir</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <div className="text-center">
+                    <div className="text-lg font-bold">
+                      {dashboardData.student.tanggal_lahir
+                        ? new Date(dashboardData.student.tanggal_lahir).toLocaleDateString('id-ID', {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric'
+                        })
+                        : 'Belum diatur'}
+                    </div>
+                    <p className="text-sm text-muted-foreground">Tanggal Lahir</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <div className="text-center">
+                    <div className="text-sm font-bold break-all">{dashboardData.student.nik || 'Belum diatur'}</div>
+                    <p className="text-sm text-muted-foreground">NIK</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <div className="text-center">
+                    <div className="text-lg font-bold">{dashboardData.student.phone || 'Belum diatur'}</div>
+                    <p className="text-sm text-muted-foreground">No. Telepon</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-muted/50 col-span-full md:col-span-1">
+                  <div className="text-center">
+                    <div className="text-sm font-bold break-all">{dashboardData.student.email || 'Belum diatur'}</div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                  </div>
+                </div>
+
+                {dashboardData.student.semester_awal && (
+                  <div className="p-4 rounded-lg bg-muted/50">
+                    <div className="text-center">
+                      <div className="text-lg font-bold">{dashboardData.student.semester_awal}</div>
+                      <p className="text-sm text-muted-foreground">Semester Awal</p>
+                    </div>
+                  </div>
+                )}
+
+                {dashboardData.student.masa_studi && (
+                  <div className="p-4 rounded-lg bg-muted/50">
+                    <div className="text-center">
+                      <div className="text-lg font-bold">{dashboardData.student.masa_studi}</div>
+                      <p className="text-sm text-muted-foreground">Masa Studi</p>
+                    </div>
+                  </div>
+                )}
+
+                {dashboardData.student.tahun_akademik_lulus && (
+                  <div className="p-4 rounded-lg bg-muted/50">
+                    <div className="text-center">
+                      <div className="text-lg font-bold">{dashboardData.student.tahun_akademik_lulus}</div>
+                      <p className="text-sm text-muted-foreground">Tahun Lulus</p>
+                    </div>
+                  </div>
+                )}
+
+                {dashboardData.student.no_seri_ijazah && (
+                  <div className="p-4 rounded-lg bg-muted/50">
+                    <div className="text-center">
+                      <div className="text-lg font-bold">{dashboardData.student.no_seri_ijazah}</div>
+                      <p className="text-sm text-muted-foreground">No. Seri Ijazah</p>
+                    </div>
+                  </div>
+                )}
+
+                {dashboardData.student.last_sync_at && (
+                  <div className="p-4 rounded-lg bg-primary/5 col-span-full">
+                    <div className="text-center">
+                      <div className="text-sm font-medium">
+                        📅 Data terakhir diperbarui: {new Date(dashboardData.student.last_sync_at).toLocaleString('id-ID', {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Data otomatis sinkron dari sistem akademik GraphQL</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

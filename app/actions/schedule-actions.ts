@@ -42,9 +42,6 @@ export interface ScheduleData {
 
 export async function getStudentScheduleData(): Promise<ScheduleData> {
   const user_id = await getServerActionUserId()
-
-  console.log('🔍 Fetching student schedule data for user:', userId)
-
   try {
     // Get user with student profile and academic events
     const user = await prisma.users.findUnique({
@@ -52,12 +49,12 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
       include: {
         students: {
           include: {
-            academicEvents: {
+            academic_events: {
               include: {
-                course: true,
-                lecturer: {
+                courses: true,
+                lecturers: {
                   include: {
-                    user: true
+                    users: true
                   }
                 }
               },
@@ -65,12 +62,12 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
             },
             grades: {
               include: {
-                course: {
+                courses: {
                   include: {
-                    schedules: true,
-                    lecturer: {
+                    course_schedules: true,
+                    lecturers: {
                       include: {
-                        user: true
+                        users: true
                       }
                     }
                   }
@@ -93,22 +90,22 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
     const student = user.students
 
     // Transform academic events
-    const events: ScheduleEvent[] = student.academicEvents.map((event) => ({
+    const events: ScheduleEvent[] = student.academic_events.map((event: any) => ({
       id: event.id,
       title: event.title,
       description: event.description || undefined,
-      date: event.startDate.toISOString(),
-      start_date: event.startDate.toISOString(),
-      end_date: event.endDate.toISOString(),
+      date: event.start_date.toISOString(),
+      start_date: event.start_date.toISOString(),
+      end_date: event.end_date.toISOString(),
       location: event.location || undefined,
       type: event.type as ScheduleEvent['type'],
-      exam_type: event.examType as ScheduleEvent['examType'] || undefined,
+      examType: event.exam_type as ScheduleEvent['examType'] || undefined,
       status: event.status as ScheduleEvent['status'],
-      lecturer: event.lecturer?.user.name || undefined,
-      course: event.course ? {
-        id: event.course.id,
-        name: event.course.name,
-        code: event.course.code
+      lecturer: event.lecturers?.users.name || undefined,
+      course: event.courses ? {
+        id: event.courses.id,
+        name: event.courses.name,
+        code: event.courses.code
       } : undefined,
       // Mock committee for exam events - can be made dynamic later
       committee: event.type === 'exam' ? [
@@ -122,18 +119,18 @@ export async function getStudentScheduleData(): Promise<ScheduleData> {
     const weeklySchedule: ScheduleData['weeklySchedule'] = []
 
     for (const grade of student.grades) {
-      const course = grade.course
-      if (course.schedules && course.schedules.length > 0) {
-        for (const schedule of course.schedules) {
+      const course = grade.courses
+      if (course.course_schedules && course.course_schedules.length > 0) {
+        for (const schedule of course.course_schedules) {
           weeklySchedule.push({
             id: schedule.id,
             day: schedule.day,
-            startTime: schedule.startTime,
-            endTime: schedule.endTime,
+            startTime: schedule.start_time,
+            endTime: schedule.end_time,
             courseName: course.name,
             courseCode: course.code,
             location: `${schedule.room}${schedule.building ? `, ${schedule.building}` : ''}`,
-            lecturer: course.lecturer?.user.name || 'TBA'
+            lecturer: course.lecturers?.users.name || 'TBA'
           })
         }
       }
