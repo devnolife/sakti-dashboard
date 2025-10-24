@@ -63,39 +63,52 @@ export const GET_MAHASISWA = `
       lulus
       noSeriIjazah
       masaStudi
-      ayah {
-        nama
-        pekerjaan
-        penghasilan
-      }
-      ibu {
-        nama
-        pekerjaan
-      }
-      wali {
-        nama
-      }
-      khs {
-        kodeMk
-        namaMk
-        sks
-        nilai
-        nilaiAngka
-        semester
-        tahunAkademik
-      }
       dosenPenasehat {
         nidn
         nama
         gelar_depan
         gelar_belakang
+        tempat_lahir
+        tanggal_lahir
         email
+        prodiId
+      }
+      ayah {
+        nim
+        nik
+        nama
+        alamat
+        hp
+        email
+        pendidikan
+        pekerjaan
+        instansi
+        jabatan
+        penghasilan
+        status
+      }
+      khs {
+        id
+        nim
+        tahunAkademik
+        ips
+        sksSmt
+        ipk
+        sksTotal
+        statusMahasiswa
       }
       prodi {
-        kode
-        nama
-        jenjang
-        fakultas
+        id
+        kodeFakultas
+        kodeProdi
+        namaProdi
+        namaProdiEng
+        statusProdi
+        emailProdi
+        kodeNim
+        gelarPendek
+        gelarPanjang
+        gelarEng
       }
     }
   }
@@ -272,39 +285,52 @@ export interface MahasiswaResponse {
     lulus: boolean | null
     noSeriIjazah: string | null
     masaStudi: string | null
-    ayah: {
-      nama: string
-      pekerjaan: string
-      penghasilan: string
-    } | null
-    ibu: {
-      nama: string
-      pekerjaan: string
-    } | null
-    wali: {
-      nama: string
-    } | null
-    khs: Array<{
-      kodeMk: string
-      namaMk: string
-      sks: number
-      nilai: string
-      nilaiAngka: number
-      semester: string
-      tahunAkademik: string
-    }> | null
     dosenPenasehat: {
       nidn: string
       nama: string
       gelar_depan: string | null
       gelar_belakang: string | null
+      tempat_lahir: string | null
+      tanggal_lahir: string | null
       email: string | null
+      prodiId: string | null
     } | null
+    ayah: {
+      nim: string | null
+      nik: string | null
+      nama: string | null
+      alamat: string | null
+      hp: string | null
+      email: string | null
+      pendidikan: string | null
+      pekerjaan: string | null
+      instansi: string | null
+      jabatan: string | null
+      penghasilan: string | null
+      status: string | null
+    } | null
+    khs: Array<{
+      id: string | null
+      nim: string | null
+      tahunAkademik: string | null
+      ips: number | null
+      sksSmt: number | null
+      ipk: number | null
+      sksTotal: number | null
+      statusMahasiswa: string | null
+    }> | null
     prodi: {
-      kode: string
-      nama: string
-      jenjang: string
-      fakultas: string
+      id: string | null
+      kodeFakultas: string | null
+      kodeProdi: string | null
+      namaProdi: string | null
+      namaProdiEng: string | null
+      statusProdi: string | null
+      emailProdi: string | null
+      kodeNim: string | null
+      gelarPendek: string | null
+      gelarPanjang: string | null
+      gelarEng: string | null
     } | null
   }
 }

@@ -31,8 +31,15 @@ export async function submitLetterRequest(
     }
 
     // Get letter type info to determine approval role
+    // Check for letter type that matches student's prodi or is global
     const letterType = await prisma.letter_types.findFirst({
-      where: { title: title }
+      where: {
+        title: title,
+        OR: [
+          { is_global: true },
+          { prodi_id: user.students.prodi_id }
+        ]
+      }
     })
 
     const approvalRole = letterType?.approval_role || 'staff_tu'

@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware } from '@/lib/auth-middleware'
 import { z } from 'zod'
+import { generateId } from '@/lib/utils'
 
 const createTitleSchema = z.object({
   title: z.string().min(10),
-  description: z.string().min(20),
+  abstract: z.string().min(20),
   keywords: z.array(z.string()).optional(),
-  requiredSkills: z.array(z.string()).optional(),
-  maxStudents: z.number().min(1).max(3).default(1),
-  category: z.string().optional(),
+  department: z.string().optional(),
+  student_id: z.string(),
+  year: z.number().int().min(2020)
 })
 
 // GET /api/dosen/thesis-titles - Get thesis title recommendations
@@ -40,7 +41,12 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
 
     const whereClause: any = {
-      lecturer_id: lecturer.id
+      supervisor_id: lecturer.id
+    }
+
+    // If lecturer has homebase prodi, filter by that prodi
+    if (lecturer.prodi_id && lecturer.is_homebase) {
+      whereClause.prodi_id = lecturer.prodi_id
     }
 
     if (status === 'available') {
@@ -68,6 +74,12 @@ export async function GET(request: NextRequest) {
                 name: true,
                 avatar: true
               }
+            },
+            prodi: {
+              select: {
+                kode: true,
+                nama: true
+              }
             }
           }
         },
@@ -78,6 +90,13 @@ export async function GET(request: NextRequest) {
                 name: true
               }
             }
+          }
+        },
+        prodi: {
+          select: {
+            kode: true,
+            nama: true,
+            jenjang: true
           }
         }
       },
@@ -90,26 +109,26 @@ export async function GET(request: NextRequest) {
     const formattedTitles = thesisTitles.map(title => ({
       id: title.id,
       title: title.title,
-      description: title.description,
+      abstract: title.abstract,
       keywords: title.keywords || [],
-      requiredSkills: title.requiredSkills || [],
-      maxStudents: title.maxStudents || 1,
-      category: title.category,
       status: title.status,
+      year: title.year,
+      department: title.department,
+      prodi: title.prodi,
       student: title.students ? {
         id: title.students.id,
         nim: title.students.nim,
         name: title.students.users.name,
-        avatar: title.students.users.avatar
+        avatar: title.students.users.avatar,
+        prodi: title.students.prodi
       } : null,
-      lecturer: {
+      supervisor: title.lecturers ? {
         id: title.lecturers.id,
         name: title.lecturers.users.name
-      },
-      submission_date: title.submissionDate,
-      approvalDate: title.approvalDate,
-      created_at: title.createdAt,
-      updated_at: title.updatedAt
+      } : null,
+      submission_date: title.submission_date,
+      created_at: title.created_at,
+      updated_at: title.updated_at
     }))
 
     // Summary statistics
@@ -161,16 +180,24 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = createTitleSchema.parse(body)
 
+    // Get student to populate prodi_id
+    const student = await prisma.students.findUnique({
+      where: { id: validatedData.student_id },
+      select: { prodi_id: true }
+    })
+
     const thesisTitle = await prisma.thesis_titles.create({
       data: {
-        lecturer_id: lecturer.id,
+        id: generateId(),
+        author_id: validatedData.student_id,
+        supervisor_id: lecturer.id,
         title: validatedData.title,
-        description: validatedData.description,
-        keywords: validatedData.keywords,
-        requiredSkills: validatedData.requiredSkills,
-        maxStudents: validatedData.maxStudents,
-        category: validatedData.category,
-        status: 'available',
+        abstract: validatedData.abstract,
+        keywords: validatedData.keywords || [],
+        department: validatedData.department,
+        prodi_id: student?.prodi_id || lecturer.prodi_id,
+        year: validatedData.year,
+        status: 'pending',
       },
       include: {
         lecturers: {
@@ -181,6 +208,21 @@ export async function POST(request: NextRequest) {
               }
             }
           }
+        },
+        students: {
+          include: {
+            users: {
+              select: {
+                name: true
+              }
+            }
+          }
+        },
+        prodi: {
+          select: {
+            kode: true,
+            nama: true
+          }
         }
       }
     })
@@ -188,17 +230,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       id: thesisTitle.id,
       title: thesisTitle.title,
-      description: thesisTitle.description,
+      abstract: thesisTitle.abstract,
       keywords: thesisTitle.keywords,
-      requiredSkills: thesisTitle.requiredSkills,
-      maxStudents: thesisTitle.maxStudents,
-      category: thesisTitle.category,
+      department: thesisTitle.department,
       status: thesisTitle.status,
-      lecturer: {
+      prodi: thesisTitle.prodi,
+      supervisor: thesisTitle.lecturers ? {
         id: thesisTitle.lecturers.id,
         name: thesisTitle.lecturers.users.name
-      },
-      created_at: thesisTitle.createdAt
+      } : null,
+      student: thesisTitle.students ? {
+        id: thesisTitle.students.id,
+        nim: thesisTitle.students.nim,
+        name: thesisTitle.students.users.name
+      } : null,
+      created_at: thesisTitle.created_at
     }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {

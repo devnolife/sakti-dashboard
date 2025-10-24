@@ -32,6 +32,8 @@ model academic_events {
   type        EventType
   exam_type   ExamType?
   status      EventStatus @default(confirmed)
+  prodi_id    String?
+  is_global   Boolean     @default(false)
   student_id  String?
   course_id   String?
   lecturer_id String?
@@ -40,6 +42,7 @@ model academic_events {
   courses     courses?    @relation(fields: [course_id], references: [id])
   lecturers   lecturers?  @relation(fields: [lecturer_id], references: [id])
   students    students?   @relation(fields: [student_id], references: [id])
+  prodi       prodi?      @relation(fields: [prodi_id], references: [kode])
 }
 
 model accounts {
@@ -118,10 +121,12 @@ model books {
 model budget_allocations {
   id          String  @id
   budget_id   String
-  department  String
+  department  String?
+  prodi_id    String?
   amount      Decimal @db.Decimal(12, 2)
   description String?
   budgets     budgets @relation(fields: [budget_id], references: [id], onDelete: Cascade)
+  prodi       prodi?  @relation(fields: [prodi_id], references: [kode])
 }
 
 model budgets {
@@ -132,12 +137,14 @@ model budgets {
   used_amount        Decimal              @default(0) @db.Decimal(15, 2)
   category           String
   department         String?
+  prodi_id           String?
   fiscal_year        String
   status             BudgetStatus         @default(active)
   created_at         DateTime             @default(now())
   updated_at         DateTime
   budget_allocations budget_allocations[]
   expenses           expenses[]
+  prodi              prodi?               @relation(fields: [prodi_id], references: [kode])
 }
 
 model companies {
@@ -174,19 +181,22 @@ model course_schedules {
 }
 
 model courses {
-  id               String             @id
-  code             String             @unique
-  name             String
-  description      String?
-  credits          Int
-  semester         Int
-  department       String
-  is_active        Boolean            @default(true)
-  lecturer_id      String?
-  academic_events  academic_events[]
-  course_schedules course_schedules[]
-  lecturers        lecturers?         @relation(fields: [lecturer_id], references: [id])
-  grades           grades[]
+  id                 String               @id
+  code               String               @unique
+  name               String
+  description        String?
+  credits            Int
+  semester           Int
+  department         String?
+  prodi_id           String?
+  is_active          Boolean              @default(true)
+  lecturer_id        String?
+  academic_events    academic_events[]
+  course_schedules   course_schedules[]
+  curriculum_courses curriculum_courses[]
+  lecturers          lecturers?           @relation(fields: [lecturer_id], references: [id])
+  prodi              prodi?               @relation(fields: [prodi_id], references: [kode])
+  grades             grades[]
 }
 
 model exam_applications {
@@ -242,10 +252,13 @@ model exam_requirements {
   title                     String
   description               String?
   required                  Boolean                     @default(true)
+  prodi_id                  String?
+  is_global                 Boolean                     @default(false)
   order                     Int                         @default(0)
   created_at                DateTime                    @default(now())
   updated_at                DateTime
   exam_student_requirements exam_student_requirements[]
+  prodi                     prodi?                      @relation(fields: [prodi_id], references: [kode])
 }
 
 model exam_student_requirements {
@@ -510,34 +523,39 @@ model lab_sessions {
 }
 
 model laboratories {
-  id                String              @id
-  code              String              @unique
-  name              String
-  description       String?
-  image             String?
-  capacity          Int
-  credits           Int
-  semester          String
-  department        String
-  location          String
-  category          String
-  status            LabStatus           @default(active)
-  instructor_id     String?
-  created_at        DateTime            @default(now())
-  updated_at        DateTime
-  lab_announcements lab_announcements[]
-  lab_assignments   lab_assignments[]
-  lab_materials     lab_materials[]
-  lab_registrations lab_registrations[]
-  lab_sessions      lab_sessions[]
-  lecturers         lecturers?          @relation(fields: [instructor_id], references: [id])
+  id                  String                @id
+  code                String                @unique
+  name                String
+  description         String?
+  image               String?
+  capacity            Int
+  credits             Int
+  semester            String
+  department          String
+  prodi_id            String?
+  location            String
+  category            String
+  status              LabStatus             @default(active)
+  instructor_id       String?
+  created_at          DateTime              @default(now())
+  updated_at          DateTime
+  lab_announcements   lab_announcements[]
+  lab_assignments     lab_assignments[]
+  lab_materials       lab_materials[]
+  lab_registrations   lab_registrations[]
+  lab_sessions        lab_sessions[]
+  laboratory_admins   laboratory_admins[]
+  lecturers           lecturers?            @relation(fields: [instructor_id], references: [id])
+  prodi               prodi?                @relation(fields: [prodi_id], references: [kode])
 }
 
 model lecturers {
   id                                                            String                   @id
   user_id                                                       String                   @unique
   nip                                                           String                   @unique
-  department                                                    String
+  department                                                    String?
+  prodi_id                                                      String?
+  is_homebase                                                   Boolean                  @default(true)
   position                                                      String
   specialization                                                String?
   phone                                                         String?
@@ -555,6 +573,7 @@ model lecturers {
   users                                                         users                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   students                                                      students[]
   thesis_titles                                                 thesis_titles[]
+  prodi                                                         prodi?                   @relation(fields: [prodi_id], references: [kode])
 }
 
 model letter_attachments {
@@ -599,8 +618,11 @@ model letter_types {
   estimated_days     Int
   required_documents String[]
   additional_fields  Json?
+  prodi_id           String?
+  is_global          Boolean      @default(false)
   is_active          Boolean      @default(true)
   template           String?
+  prodi              prodi?       @relation(fields: [prodi_id], references: [kode])
 }
 
 model notifications {
@@ -652,11 +674,29 @@ model payments {
 }
 
 model prodi {
-  kode       String  @id
-  nama       String
-  jenjang    String
-  fakultas   String
-  akreditasi String?
+  kode                  String                  @id
+  nama                  String
+  jenjang               String
+  fakultas              String
+  akreditasi            String?
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @default(now())
+  academic_events       academic_events[]
+  budget_allocations    budget_allocations[]
+  budgets               budgets[]
+  courses               courses[]
+  curriculum            curriculum[]
+  exam_requirements     exam_requirements[]
+  laboratories          laboratories[]
+  laboratory_admins     laboratory_admins[]
+  lecturers             lecturers[]
+  letter_types          letter_types[]
+  reading_room_admins   reading_room_admins[]
+  staff                 staff[]
+  students              students[]
+  thesis_titles         thesis_titles[]
+  announcements         announcements[]
+  classrooms            classrooms[]
 }
 
 model sessions {
@@ -672,26 +712,41 @@ model staff {
   id         String  @id
   user_id    String  @unique
   nip        String? @unique
-  department String
+  department String?
+  prodi_id   String?
   position   String
   phone      String?
   office     String?
   users      users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  prodi      prodi?  @relation(fields: [prodi_id], references: [kode])
 }
 
 model students {
   id                         String                       @id
   user_id                    String                       @unique
   nim                        String                       @unique
-  major                      String
-  department                 String
+  major                      String?
+  department                 String?
+  prodi_id                   String?
+  angkatan                   Int?
   semester                   Int
   academic_year              String
+  jenis_kelamin              String?
+  tempat_lahir               String?
+  tanggal_lahir              DateTime?
+  nik                        String?
   phone                      String?
+  email                      String?
   address                    String?
   guardian                   Json?
   enroll_date                DateTime
+  semester_awal              String?
   status                     StudentStatus                @default(active)
+  tahun_akademik_lulus       String?
+  tanggal_lulus              DateTime?
+  lulus                      Boolean?
+  no_seri_ijazah             String?
+  masa_studi                 String?
   gpa                        Float?
   academic_advisor_id        String?
   last_sync_at               DateTime?
@@ -711,6 +766,7 @@ model students {
   lecturers                  lecturers?                   @relation(fields: [academic_advisor_id], references: [id])
   users                      users                        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   thesis_titles              thesis_titles[]
+  prodi                      prodi?                       @relation(fields: [prodi_id], references: [kode])
 }
 
 model system_configs {
@@ -768,7 +824,8 @@ model thesis_titles {
   external_link                                                             String?
   author_id                                                                 String
   supervisor_id                                                             String?
-  department                                                                String
+  department                                                                String?
+  prodi_id                                                                  String?
   created_at                                                                DateTime              @default(now())
   updated_at                                                                DateTime
   thesis_archives                                                           thesis_archives?
@@ -777,25 +834,28 @@ model thesis_titles {
   thesis_similarities_thesis_similarities_target_thesis_id_to_thesis_titles thesis_similarities[] @relation("thesis_similarities_target_thesis_id_to_thesis_titles")
   students                                                                  students              @relation(fields: [author_id], references: [id])
   lecturers                                                                 lecturers?            @relation(fields: [supervisor_id], references: [id])
+  prodi                                                                     prodi?                @relation(fields: [prodi_id], references: [kode])
 }
 
 model users {
-  id         String       @id
-  username   String       @unique(map: "users_nidn_key")
-  password   String
-  name       String
-  avatar     String?
-  role       Role         @default(mahasiswa)
-  sub_role   String?
-  is_active  Boolean      @default(true)
-  created_at DateTime     @default(now())
-  updated_at DateTime
-  accounts   accounts[]
-  audit_logs audit_logs[]
-  lecturers  lecturers?
-  sessions   sessions[]
-  staff      staff?
-  students   students?
+  id                  String                @id
+  username            String                @unique(map: "users_nidn_key")
+  password            String
+  name                String
+  avatar              String?
+  role                Role                  @default(mahasiswa)
+  sub_role            String?
+  is_active           Boolean               @default(true)
+  created_at          DateTime              @default(now())
+  updated_at          DateTime
+  accounts            accounts[]
+  audit_logs          audit_logs[]
+  lecturers           lecturers?
+  sessions            sessions[]
+  staff               staff?
+  students            students?
+  laboratory_admins   laboratory_admins[]
+  reading_room_admins reading_room_admins[]
 }
 
 model role_configurations {
@@ -808,6 +868,106 @@ model role_configurations {
   is_active   Boolean  @default(true)
   created_at  DateTime @default(now())
   updated_at  DateTime
+}
+
+model laboratory_admins {
+  id             String        @id
+  user_id        String
+  laboratory_id  String
+  prodi_id       String?
+  assigned_at    DateTime      @default(now())
+  assigned_by    String?
+  is_primary     Boolean       @default(false)
+  laboratories   laboratories  @relation(fields: [laboratory_id], references: [id], onDelete: Cascade)
+  users          users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  prodi          prodi?        @relation(fields: [prodi_id], references: [kode])
+
+  @@unique([user_id, laboratory_id])
+  @@index([user_id])
+  @@index([laboratory_id])
+  @@index([prodi_id])
+}
+
+model curriculum {
+  id                 String               @id
+  prodi_id           String
+  name               String
+  academic_year      String
+  semester           Int
+  is_active          Boolean              @default(true)
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @default(now())
+  prodi              prodi                @relation(fields: [prodi_id], references: [kode])
+  curriculum_courses curriculum_courses[]
+
+  @@index([prodi_id])
+}
+
+model curriculum_courses {
+  id            String     @id
+  curriculum_id String
+  course_id     String
+  is_mandatory  Boolean    @default(true)
+  semester      Int
+  created_at    DateTime   @default(now())
+  curriculum    curriculum @relation(fields: [curriculum_id], references: [id], onDelete: Cascade)
+  courses       courses    @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@unique([curriculum_id, course_id])
+  @@index([curriculum_id])
+  @@index([course_id])
+}
+
+model announcements {
+  id          String              @id
+  title       String
+  content     String
+  prodi_id    String?
+  is_global   Boolean             @default(false)
+  priority    AnnouncementPriority @default(normal)
+  published   Boolean             @default(false)
+  published_at DateTime?
+  expires_at  DateTime?
+  created_by  String
+  created_at  DateTime            @default(now())
+  updated_at  DateTime            @default(now())
+  prodi       prodi?              @relation(fields: [prodi_id], references: [kode])
+
+  @@index([prodi_id])
+  @@index([published])
+  @@index([created_at])
+}
+
+model classrooms {
+  id           String   @id
+  name         String
+  building     String
+  floor        Int?
+  capacity     Int
+  prodi_id     String?
+  is_available Boolean  @default(true)
+  facilities   String[]
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+  prodi        prodi?   @relation(fields: [prodi_id], references: [kode])
+
+  @@index([prodi_id])
+  @@index([is_available])
+}
+
+model reading_room_admins {
+  id               String   @id
+  user_id          String
+  prodi_id         String?
+  assigned_at      DateTime @default(now())
+  assigned_by      String?
+  is_primary       Boolean  @default(false)
+  users            users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  prodi            prodi?   @relation(fields: [prodi_id], references: [kode])
+
+  @@unique([user_id, prodi_id])
+  @@index([user_id])
+  @@index([prodi_id])
 }
 
 model verification_tokens {
@@ -829,6 +989,13 @@ enum ApprovalStatus {
   pending
   approved
   rejected
+}
+
+enum AnnouncementPriority {
+  low
+  normal
+  high
+  urgent
 }
 
 enum BookStatus {

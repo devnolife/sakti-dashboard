@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkSession = async () => {
       const token = typeof window !== "undefined" ? localStorage.getItem("session-token") : null
-      
+
       if (token) {
         try {
           const response = await fetch("/api/auth/me", {
@@ -42,11 +42,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               Authorization: `Bearer ${token}`,
             },
           })
-          
+
           if (response.ok) {
             const userData = await response.json()
             setUser(userData.user)
-            
+
             // For dosen role, set initial subrole from database if not already set
             if (userData.user.role === 'dosen' && userData.user.subRole) {
               const currentSubRole = localStorage.getItem("current-subrole")
@@ -64,10 +64,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.removeItem("user")
         }
       }
-      
+
       setIsLoading(false)
     }
-    
+
     checkSession()
   }, [])
 
@@ -92,11 +92,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Don't redirect if user is already on an allowed path
       if (user && pathname.startsWith("/dashboard/")) {
         const allowedPaths = [`/dashboard/${user.role}`]
-        
+
         // For dosen users, allow access to subrole paths based on their database subrole
         if (user.role === 'dosen' && user.subRole) {
           const userSubRoles = user.subRole.split(',').map(role => role.trim())
-          
+
           userSubRoles.forEach(subRole => {
             switch (subRole) {
               case 'dekan':
@@ -123,10 +123,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           })
         }
-        
+
         // Check if current path is allowed
         const isAllowedPath = allowedPaths.some(path => pathname.startsWith(path))
-        
+
         // Only redirect if user is not on an allowed path
         // This prevents redirect loops when user is already on their correct dashboard
         if (!isAllowedPath) {
@@ -154,23 +154,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await response.json()
-      
-      // Verify if the selected role matches the user's actual role from database
-      if (selectedRole && data.user.role !== selectedRole) {
-        throw new Error(`Access denied. Your account role is ${data.user.role}, but you selected ${selectedRole}.`)
-      }
-      
+
       // Store user and token in localStorage
       if (typeof window !== "undefined") {
         localStorage.setItem("user", JSON.stringify(data.user))
         localStorage.setItem("session-token", data.token)
-        
+
         // For dosen role, set initial subrole from database
         if (data.user.role === 'dosen' && data.user.subRole) {
           localStorage.setItem("current-subrole", data.user.subRole)
         }
       }
-      
+
       setUser(data.user)
       setIsLoading(false)
 
@@ -205,7 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("session-token")
       localStorage.removeItem("current-subrole")
     }
-    
+
     setUser(null)
     router.push("/login")
   }

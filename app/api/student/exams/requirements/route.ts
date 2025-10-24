@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { getServerActionUserId } from '@/lib/auth-utils'
 import { authMiddleware } from '@/lib/auth-middleware'
-
-const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const exam_type = searchParams.get('examType') as 'proposal' | 'result' | 'closing'
 
-    if (!examType) {
+    if (!exam_type) {
       return NextResponse.json(
         { success: false, error: 'Missing exam type parameter' },
         { status: 400 }
@@ -20,12 +18,16 @@ export async function GET(request: NextRequest) {
     // Get student_id from authenticated user
     let user_id: string | null = null
     const token = await authMiddleware(request)
-    if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch {} }
-    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    if (!(token instanceof NextResponse)) user_id = token.userId
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch { } }
+    if (!user_id) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
     const student = await prisma.students.findUnique({
       where: { user_id },
-      select: { id: true }
+      select: {
+        id: true,
+        prodi_id: true
+      }
     })
 
     if (!student) {
@@ -39,14 +41,19 @@ export async function GET(request: NextRequest) {
     console.log(`📋 Fetching ${exam_type} requirements for student: ${student_id}`)
 
     // Get requirements for the exam type
-    const requirements = await prisma.examRequirement.findMany({
+    // Show global requirements OR prodi-specific requirements
+    const requirements = await prisma.exam_requirements.findMany({
       where: {
-        exam_type: examType
+        exam_type: exam_type,
+        OR: [
+          { is_global: true },
+          { prodi_id: student.prodi_id }
+        ]
       },
       include: {
-        studentRequirements: {
+        exam_student_requirements: {
           where: {
-            student_id: studentId
+            student_id: student_id
           }
         }
       },
@@ -57,17 +64,20 @@ export async function GET(request: NextRequest) {
 
     // Transform data to include completion status
     const transformedRequirements = requirements.map(requirement => {
-      const studentRequirement = requirement.studentRequirements[0]
+      const studentRequirement = requirement.exam_student_requirements[0]
       return {
         id: requirement.id,
         title: requirement.title,
         description: requirement.description,
-        completed: studentRequirement?.completed || false,
-        fileUrl: studentRequirement?.fileUrl,
-        fileName: studentRequirement?.fileName,
-        fileSize: studentRequirement?.fileSize,
-        uploadedAt: studentRequirement?.uploadedAt?.toISOString(),
-        verifiedAt: studentRequirement?.verifiedAt?.toISOString(),
+        required: requirement.required,
+        is_global: requirement.is_global,
+        prodi_id: requirement.prodi_id,
+        completed: studentRequirement?.status === 'verified' || false,
+        status: studentRequirement?.status || 'pending',
+        file_url: studentRequirement?.file_url,
+        file_name: studentRequirement?.file_name,
+        uploaded_at: studentRequirement?.uploaded_at?.toISOString(),
+        verified_at: studentRequirement?.verified_at?.toISOString(),
         notes: studentRequirement?.notes
       }
     })

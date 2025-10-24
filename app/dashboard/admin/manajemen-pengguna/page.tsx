@@ -42,7 +42,8 @@ import {
   ChevronLeft,
   ChevronRight,
   UserCheck,
-  UserX
+  UserX,
+  Key
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -124,8 +125,13 @@ export default function ManajemenPenggunaPage() {
   const [totalUsers, setTotalUsers] = useState(0)
   const [showDialog, setShowDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deletingUser, setDeletingUser] = useState<User | null>(null)
+  const [resettingUser, setResettingUser] = useState<User | null>(null)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [resetPasswordSubmitting, setResetPasswordSubmitting] = useState(false)
   const [formData, setFormData] = useState<UserFormData>({
     username: '',
     password: '',
@@ -299,6 +305,81 @@ export default function ManajemenPenggunaPage() {
   const handleDeleteUser = (user: User) => {
     setDeletingUser(user)
     setShowDeleteDialog(true)
+  }
+
+  // Handle reset password
+  const handleResetPassword = (user: User) => {
+    setResettingUser(user)
+    setNewPassword('')
+    setConfirmPassword('')
+    setShowResetPasswordDialog(true)
+  }
+
+  // Confirm reset password
+  const confirmResetPassword = async () => {
+    if (!resettingUser) return
+
+    // Validate passwords
+    if (!newPassword || newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password minimal 6 karakter",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Password dan konfirmasi password tidak cocok",
+        variant: "destructive"
+      })
+      return
+    }
+
+    const token = getAuthToken()
+    if (!token) return
+
+    setResetPasswordSubmitting(true)
+    try {
+      const response = await fetch('/api/admin/users/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userId: resettingUser.id,
+          newPassword: newPassword
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Gagal mereset password')
+      }
+
+      const result = await response.json()
+
+      toast({
+        title: "Berhasil",
+        description: result.message || `Password untuk ${resettingUser.name} berhasil direset`,
+      })
+
+      setShowResetPasswordDialog(false)
+      setResettingUser(null)
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Gagal mereset password",
+        variant: "destructive"
+      })
+    } finally {
+      setResetPasswordSubmitting(false)
+    }
   }
 
   // Submit form
@@ -636,6 +717,10 @@ export default function ManajemenPenggunaPage() {
                               <Pencil className="w-4 h-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleResetPassword(user)}>
+                              <Key className="w-4 h-4 mr-2" />
+                              Reset Password
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDeleteUser(user)}
                               className="text-red-600"
@@ -819,6 +904,65 @@ export default function ManajemenPenggunaPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={showResetPasswordDialog} onOpenChange={setShowResetPasswordDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Reset password untuk <strong>{resettingUser?.name}</strong> ({resettingUser?.username})
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="new-password">Password Baru</Label>
+              <Input
+                id="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Masukkan password baru"
+                minLength={6}
+                required
+              />
+              <p className="text-xs text-muted-foreground">Minimal 6 karakter</p>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirm-password">Konfirmasi Password</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Ketik ulang password baru"
+                minLength={6}
+                required
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowResetPasswordDialog(false)
+                setNewPassword('')
+                setConfirmPassword('')
+              }}
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              onClick={confirmResetPassword}
+              disabled={resetPasswordSubmitting || !newPassword || !confirmPassword}
+            >
+              {resetPasswordSubmitting ? 'Mereset...' : 'Reset Password'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
       const paStudents = await prisma.students.findMany({
         where: {
           academic_advisor_id: lecturer.id,
+          ...(lecturer.prodi_id && lecturer.is_homebase && { prodi_id: lecturer.prodi_id }),
           ...(search && {
             OR: [
               { nim: { contains: search, mode: 'insensitive' } },
@@ -62,6 +63,13 @@ export async function GET(request: NextRequest) {
               name: true,
               avatar: true
             }
+          },
+          prodi: {
+            select: {
+              kode: true,
+              nama: true,
+              jenjang: true
+            }
           }
         },
         orderBy: { users: { name: 'asc' } }
@@ -74,6 +82,7 @@ export async function GET(request: NextRequest) {
         avatar: s.users.avatar,
         major: s.major,
         department: s.department,
+        prodi: s.prodi,
         semester: s.semester,
         academic_year: s.academic_year,
         gpa: s.gpa,

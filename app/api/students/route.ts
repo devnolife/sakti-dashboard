@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, hasPermission } from '@/lib/auth-middleware'
 import { z } from 'zod'
-import { students } from '@/components/dekan/vice-dean-4/mock-data'
+import { generateId } from '@/lib/utils'
 
 const createStudentSchema = z.object({
   user_id: z.string(),
   nim: z.string(),
-  major: z.string(),
-  department: z.string(),
+  major: z.string().optional(),
+  department: z.string().optional(),
+  prodi_id: z.string().optional(),
   semester: z.number().int().min(1).max(14),
   academic_year: z.string(),
   phone: z.string().optional(),
@@ -35,11 +36,20 @@ export async function GET(request: NextRequest) {
     const department = searchParams.get('department')
     const major = searchParams.get('major')
     const semester = searchParams.get('semester')
+    const prodi_id = searchParams.get('prodi_id')
     const search = searchParams.get('search')
 
     const skip = (page - 1) * limit
 
     const where: any = {}
+
+    // Prodi-based filtering: if role is 'prodi', only show students from that prodi
+    if (token.role === 'prodi' && token.prodi_id) {
+      where.prodi_id = token.prodi_id
+    } else if (prodi_id) {
+      // Admin or other roles can filter by prodi_id
+      where.prodi_id = prodi_id
+    }
 
     if (department) {
       where.department = department
@@ -56,7 +66,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { nim: { contains: search, mode: 'insensitive' } },
-        { user: { name: { contains: search, mode: 'insensitive' } } }
+        { users: { name: { contains: search, mode: 'insensitive' } } }
       ]
     }
 
@@ -66,12 +76,20 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         include: {
-          user: {
+          users: {
             select: {
               id: true,
               name: true,
               avatar: true,
               is_active: true
+            }
+          },
+          prodi: {
+            select: {
+              kode: true,
+              nama: true,
+              jenjang: true,
+              fakultas: true
             }
           }
         },
@@ -120,7 +138,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user exists and doesn't already have a student profile
     const user = await prisma.users.findUnique({
-      where: { id: validatedData.userId },
+      where: { id: validatedData.user_id },
       include: { students: true }
     })
 
@@ -132,18 +150,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User already has a student profile' }, { status: 400 })
     }
 
+    // If role is 'prodi', auto-populate prodi_id from token
+    let prodi_id = validatedData.prodi_id
+    if (token.role === 'prodi' && token.prodi_id) {
+      prodi_id = token.prodi_id
+    }
+
     const student = await prisma.students.create({
       data: {
+        id: generateId(),
         ...validatedData,
-        enroll_date: new Date(validatedData.enrollDate)
+        prodi_id,
+        enroll_date: new Date(validatedData.enroll_date)
       },
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
             avatar: true,
             is_active: true
+          }
+        },
+        prodi: {
+          select: {
+            kode: true,
+            nama: true,
+            jenjang: true,
+            fakultas: true
           }
         }
       }
@@ -152,7 +186,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(student, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
+      return NextResponse.json({ error: error.issues }, { status: 400 })
     }
     console.error('Error creating student:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

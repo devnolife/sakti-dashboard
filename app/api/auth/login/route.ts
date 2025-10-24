@@ -177,6 +177,22 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
       }
     })
 
+    // Sync prodi data first to ensure it exists
+    await syncProdiFromMahasiswa(nim)
+
+    // Get prodi_id from GraphQL response
+    let prodi_id: string | null = null
+    try {
+      const mahasiswaResponse = await graphqlClient.request<MahasiswaResponse>(
+        GET_MAHASISWA,
+        { nim }
+      )
+      prodi_id = mahasiswaResponse.mahasiswa?.prodi?.kode || null
+      console.log('🎓 Prodi ID from GraphQL:', prodi_id)
+    } catch (error) {
+      console.error('Failed to get prodi from GraphQL:', error)
+    }
+
     // Create or update student profile
     const student = await prisma.students.upsert({
       where: { nim },
@@ -184,6 +200,7 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
         phone: mahasiswaData.hp,
         major: mahasiswaData.prodi || 'Unknown',
         department: 'Fakultas Teknik', // Default, will be updated from full sync
+        prodi_id: prodi_id,
       },
       create: {
         id: generateId(),
@@ -192,6 +209,7 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
         phone: mahasiswaData.hp,
         major: mahasiswaData.prodi || 'Unknown',
         department: 'Fakultas Teknik',
+        prodi_id: prodi_id,
         semester: 1, // Will be updated from mahasiswaInfo sync
         academic_year: new Date().getFullYear().toString(),
         enroll_date: new Date(),
@@ -199,21 +217,30 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
       }
     })
 
-    console.log('Mahasiswa synced to local DB:', { nim, user_id: user.id, student_id: student.id })
+    console.log('Mahasiswa synced to local DB:', { nim, user_id: user.id, student_id: student.id, prodi_id })
 
     // Sync detailed info (IPK, semester, etc) from GraphQL
     await syncMahasiswaInfoFromGraphQL(nim, student.id)
 
-    // Sync prodi data from mahasiswa GraphQL
-    await syncProdiFromMahasiswa(nim)
-
-    // Return user with profile
+    // Return user with profile including prodi info
     return await prisma.users.findUnique({
       where: { id: user.id },
       include: {
-        students: true,
-        lecturers: true,
-        staff: true
+        students: {
+          include: {
+            prodi: true
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true
+          }
+        },
+        staff: {
+          include: {
+            prodi: true
+          }
+        }
       }
     })
   } catch (error) {
@@ -249,9 +276,21 @@ export async function POST(request: NextRequest) {
     user = await prisma.users.findUnique({
       where: { username },
       include: {
-        students: true,
-        lecturers: true,
-        staff: true
+        students: {
+          include: {
+            prodi: true
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true
+          }
+        },
+        staff: {
+          include: {
+            prodi: true
+          }
+        }
       }
     })
 
@@ -374,13 +413,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create session token
+    // Get prodi_id from user profile
+    let prodi_id: string | undefined = undefined
+
+    if (user.students) {
+      prodi_id = user.students.prodi_id || undefined
+      console.log('✅ Student prodi_id:', prodi_id)
+    } else if (user.lecturers) {
+      prodi_id = user.lecturers.prodi_id || undefined
+      console.log('✅ Lecturer prodi_id:', prodi_id)
+    } else if (user.staff) {
+      prodi_id = user.staff.prodi_id || undefined
+      console.log('✅ Staff prodi_id:', prodi_id)
+    }
+
+    // Create session token with prodi_id
     const token = jwt.sign(
       {
         userId: user.id,
         username: user.username,
         role: user.role,
-        subRole: user.sub_role
+        subRole: user.sub_role,
+        prodi_id: prodi_id
       },
       JWT_SECRET,
       { expiresIn: '24h' }
@@ -420,6 +474,7 @@ export async function POST(request: NextRequest) {
         name: user.name,
         role: user.role,
         sub_role: user.sub_role,
+        prodi_id: prodi_id,
         avatar: user.avatar,
         profile: user.students || user.lecturers || user.staff,
         isNewUser

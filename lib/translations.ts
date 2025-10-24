@@ -355,6 +355,14 @@ export const translations = {
     'admin.user.inactive': 'Tidak Aktif',
     'admin.user.last_login': 'Login Terakhir',
     'admin.user.created_at': 'Dibuat Pada',
+    'admin.user.reset_password': 'Reset Password',
+    'admin.user.reset_password_title': 'Reset Password Pengguna',
+    'admin.user.new_password': 'Password Baru',
+    'admin.user.confirm_password': 'Konfirmasi Password',
+    'admin.user.password_min_length': 'Minimal 6 karakter',
+    'admin.user.password_mismatch': 'Password dan konfirmasi password tidak cocok',
+    'admin.user.reset_success': 'Password berhasil direset',
+    'admin.user.reset_error': 'Gagal mereset password',
 
     // Admin KKP
     'admin.kkp.title': 'Manajemen KKP',
@@ -732,6 +740,14 @@ export const translations = {
     'admin.user.inactive': 'Inactive',
     'admin.user.last_login': 'Last Login',
     'admin.user.created_at': 'Created At',
+    'admin.user.reset_password': 'Reset Password',
+    'admin.user.reset_password_title': 'Reset User Password',
+    'admin.user.new_password': 'New Password',
+    'admin.user.confirm_password': 'Confirm Password',
+    'admin.user.password_min_length': 'Minimum 6 characters',
+    'admin.user.password_mismatch': 'Password and confirmation do not match',
+    'admin.user.reset_success': 'Password successfully reset',
+    'admin.user.reset_error': 'Failed to reset password',
 
     // Admin KKP
     'admin.kkp.title': 'KKP Management',

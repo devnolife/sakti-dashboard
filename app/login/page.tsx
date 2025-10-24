@@ -6,18 +6,15 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/context/auth-context"
-import { type Role, roleConfigs } from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2, Eye, EyeOff, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [selectedRole, setSelectedRole] = useState<Role>("mahasiswa")
   const [showPassword, setShowPassword] = useState(false)
   const [formError, setFormError] = useState("")
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -31,19 +28,19 @@ export default function LoginPage() {
       image: "/login/1.jpg",
       title: "Sistem Informasi Terintegrasi",
       subtitle: "Fakultas Teknik Unismuh Makassar",
-      description: "Platform digital terpadu untuk mengelola aktivitas akademik Anda"
+      description: "Platform digital terpadu untuk mengelola seluruh aktivitas akademik dan administrasi kampus"
     },
     {
       image: "/login/2.jpg",
       title: "Manajemen Akademik Modern",
-      subtitle: "Akses Dimana Saja, Kapan Saja",
-      description: "Kelola mata kuliah, tugas, dan jadwal dengan mudah"
+      subtitle: "Akses Fleksibel, Kapan Saja & Dimana Saja",
+      description: "Kelola perkuliahan, tugas, dan jadwal akademik dengan efisien dalam satu dashboard"
     },
     {
       image: "/login/3.jpg",
-      title: "Komunitas Akademik Digital",
-      subtitle: "Terhubung dengan Mahasiswa & Dosen",
-      description: "Berkolaborasi dan berkomunikasi dalam satu platform"
+      title: "Ekosistem Digital Kampus",
+      subtitle: "Terhubung dengan Civitas Akademika",
+      description: "Kolaborasi dan komunikasi seamless antara mahasiswa, dosen, dan staff dalam satu platform"
     }
   ]
 
@@ -59,15 +56,16 @@ export default function LoginPage() {
     e.preventDefault()
     setFormError("")
     if (!username || !password) {
-      setFormError("Username and password are required.")
+      setFormError("Username dan password harus diisi.")
       return
     }
 
     try {
-      await login(username, password, selectedRole)
+      // Role akan ditentukan otomatis dari backend
+      await login(username, password)
       router.push("/dashboard")
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : "Login failed. Please check your credentials.")
+      setFormError(error instanceof Error ? error.message : "Login gagal. Periksa username dan password Anda.")
     }
   }
 
@@ -175,20 +173,22 @@ export default function LoginPage() {
             <div className="space-y-6">
               <div className="space-y-3 text-center">
                 <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600">
-                  Halo! Selamat Datang Kembali
+                  Selamat Datang di SINTEKMu
                 </h2>
                 <p className="text-base text-gray-600">
-                  Yuk login dulu buat lanjut!
+                  Silakan login untuk mengakses dashboard Anda
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-sm font-semibold text-gray-800">Username</Label>
+                  <Label htmlFor="username" className="text-sm font-semibold text-gray-800">
+                    Username (NIM/NIDN)
+                  </Label>
                   <div className="relative group">
                     <Input
                       id="username"
                       type="text"
-                      placeholder="Masukkan Username"
+                      placeholder="Masukkan NIM atau NIDN"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       className="pl-12 h-12 text-gray-900 bg-white rounded-xl border-none transition-all placeholder:text-gray-400 focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-100"
@@ -218,7 +218,7 @@ export default function LoginPage() {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Masukkan password"
+                      placeholder="Masukkan password Anda"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pr-12 pl-12 h-12 text-gray-900 bg-white rounded-xl border-none transition-all placeholder:text-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -249,24 +249,6 @@ export default function LoginPage() {
                     </button>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role" className="text-sm font-semibold text-gray-800">Peran</Label>
-                  <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as Role)}>
-                    <SelectTrigger className="w-full h-12 text-gray-900 bg-white rounded-xl border-none transition-all focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-100">
-                      <SelectValue placeholder="Pilih peran Anda" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200">
-                      {Object.entries(roleConfigs).map(([role, config]) => (
-                        <SelectItem key={role} value={role} className="text-gray-900 focus:bg-gradient-to-r focus:from-red-500 focus:to-blue-500 focus:text-white">
-                          {config.displayName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="mt-2 text-xs text-gray-500">
-                    Masukkan Username Anda
-                  </p>
-                </div>
                 {formError && (
                   <div className="flex gap-3 items-start p-4 bg-red-50 rounded-xl border border-red-200">
                     <AlertCircle className="w-5 h-5 mt-0.5 text-red-600 flex-shrink-0" />
@@ -275,17 +257,17 @@ export default function LoginPage() {
                 )}
                 <Button
                   type="submit"
-                  className="w-full h-13 text-base font-bold text-white transition-all shadow-lg bg-blue-600 hover:bg-blue-700 hover:shadow-2xl hover:scale-[1.02] rounded-xl"
+                  className="w-full h-13 text-base font-bold text-white transition-all shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-2xl hover:scale-[1.02] rounded-xl"
                   disabled={isLoading}
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                      Memproses...
+                      Memproses Login...
                     </>
                   ) : (
                     <>
-                      Login Yuk!
+                      Masuk ke Dashboard
                       <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -293,13 +275,18 @@ export default function LoginPage() {
                   )}
                 </Button>
               </form>
-              <div className="pt-4 text-sm text-center text-gray-600">
-                <Link href="/" className="inline-flex gap-1 items-center font-semibold text-red-600 transition-colors underline-offset-4 hover:text-blue-600 hover:underline">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Kembali ke beranda
-                </Link>
+              <div className="pt-4 space-y-3">
+                <div className="text-sm text-center text-gray-600">
+                  <Link href="/" className="inline-flex gap-1 items-center font-semibold text-red-600 transition-colors underline-offset-4 hover:text-blue-600 hover:underline">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Kembali ke Beranda
+                  </Link>
+                </div>
+                <p className="text-xs text-center text-gray-500">
+                  Butuh bantuan? Hubungi admin kampus atau IT support
+                </p>
               </div>
             </div>
           </div>

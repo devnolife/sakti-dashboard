@@ -8,6 +8,7 @@ export interface DecodedToken {
   username: string
   role: string
   subRole?: string
+  prodi_id?: string
   iat: number
   exp: number
 }

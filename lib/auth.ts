@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
+import { syncStudentDataFromGraphQL } from './graphql/sync-student-data'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -37,6 +38,17 @@ export const authOptions: NextAuthOptions = {
 
         if (!isPasswordValid) {
           return null
+        }
+
+        // Sync student data from GraphQL API after successful login
+        if (user.role === 'mahasiswa' && user.students?.nim) {
+          try {
+            await syncStudentDataFromGraphQL(user.students.nim)
+            console.log(`Student data synced for NIM: ${user.students.nim}`)
+          } catch (error) {
+            console.error('Failed to sync student data:', error)
+            // Continue with login even if sync fails
+          }
         }
 
         return {
