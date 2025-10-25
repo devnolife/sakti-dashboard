@@ -160,10 +160,10 @@ export default function MasterDataPage() {
 
   const renderDataTable = (data: DataItem[], type: string) => (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 flex-1">
+      <div className="flex justify-between items-center">
+        <div className="flex flex-1 gap-2 items-center">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 w-4 h-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={`Cari ${type}...`}
               value={searchQuery}
@@ -172,20 +172,20 @@ export default function MasterDataPage() {
             />
           </div>
           <Button variant="outline" size="icon">
-            <Filter className="h-4 w-4" />
+            <Filter className="w-4 h-4" />
           </Button>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="mr-2 w-4 h-4" />
             Export
           </Button>
           <Button variant="outline" size="sm">
-            <Upload className="h-4 w-4 mr-2" />
+            <Upload className="mr-2 w-4 h-4" />
             Import
           </Button>
           <Button size="sm" onClick={() => setIsDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 w-4 h-4" />
             Tambah {type}
           </Button>
         </div>
@@ -220,12 +220,12 @@ export default function MasterDataPage() {
                   {new Date(item.updated_at).toLocaleDateString("id-ID")}
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex gap-2 justify-end items-center">
                     <Button variant="ghost" size="icon">
-                      <Edit className="h-4 w-4" />
+                      <Edit className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon">
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
                 </TableCell>
@@ -238,20 +238,20 @@ export default function MasterDataPage() {
   )
 
   return (
-    <div className="container mx-auto p-6 space-y-6 mt-20">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Database className="h-8 w-8" />
+          <h1 className="flex gap-2 items-center text-3xl font-bold">
+            <Database className="w-8 h-8" />
             Master Data Management
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Kelola data master sistem akademik
           </p>
         </div>
         <Button variant="outline">
-          <Settings className="h-4 w-4 mr-2" />
+          <Settings className="mr-2 w-4 h-4" />
           Pengaturan
         </Button>
       </div>
@@ -263,14 +263,14 @@ export default function MasterDataPage() {
           return (
             <Card key={index} className={`border-l-4 ${getColorClass(stat.color)}`}>
               <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                  <Icon className="h-4 w-4" />
+                  <Icon className="w-4 h-4" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.count}</div>
-                <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{stat.description}</p>
               </CardContent>
             </Card>
           )
@@ -287,31 +287,31 @@ export default function MasterDataPage() {
         </CardHeader>
         <CardContent>
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid grid-cols-4 w-full">
               <TabsTrigger value="programs">Program Studi</TabsTrigger>
               <TabsTrigger value="faculties">Fakultas</TabsTrigger>
               <TabsTrigger value="courses">Mata Kuliah</TabsTrigger>
               <TabsTrigger value="locations">Lokasi KKP</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="programs" className="space-y-4 mt-4">
+            <TabsContent value="programs" className="mt-4 space-y-4">
               {renderDataTable(programs, "Program Studi")}
             </TabsContent>
 
-            <TabsContent value="faculties" className="space-y-4 mt-4">
+            <TabsContent value="faculties" className="mt-4 space-y-4">
               {renderDataTable(faculties, "Fakultas")}
             </TabsContent>
 
-            <TabsContent value="courses" className="space-y-4 mt-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <BookOpen className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <TabsContent value="courses" className="mt-4 space-y-4">
+              <div className="py-8 text-center text-muted-foreground">
+                <BookOpen className="mx-auto mb-2 w-12 h-12 opacity-50" />
                 <p>Data mata kuliah akan ditampilkan di sini</p>
               </div>
             </TabsContent>
 
-            <TabsContent value="locations" className="space-y-4 mt-4">
-              <div className="text-center py-8 text-muted-foreground">
-                <MapPin className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <TabsContent value="locations" className="mt-4 space-y-4">
+              <div className="py-8 text-center text-muted-foreground">
+                <MapPin className="mx-auto mb-2 w-12 h-12 opacity-50" />
                 <p>Data lokasi KKP akan ditampilkan di sini</p>
               </div>
             </TabsContent>
@@ -328,7 +328,7 @@ export default function MasterDataPage() {
               Tambahkan data master baru ke sistem
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="py-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="code">Kode</Label>
               <Input id="code" placeholder="Masukkan kode" />

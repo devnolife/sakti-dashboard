@@ -158,7 +158,7 @@ export default function OverviewReportPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6 mt-20">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -360,10 +360,10 @@ export default function OverviewReportPage() {
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${data.percentage >= 70
-                            ? "bg-green-500"
-                            : data.percentage >= 50
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
+                          ? "bg-green-500"
+                          : data.percentage >= 50
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                           }`}
                         style={{ width: `${data.percentage}%` }}
                       />
@@ -519,8 +519,8 @@ export default function OverviewReportPage() {
                     className="h-full bg-blue-500"
                     style={{
                       width: `${(financialSummary.budgetUsed /
-                          (financialSummary.budgetUsed +
-                            financialSummary.budgetRemaining)) *
+                        (financialSummary.budgetUsed +
+                          financialSummary.budgetRemaining)) *
                         100
                         }%`,
                     }}

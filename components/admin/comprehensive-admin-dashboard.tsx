@@ -47,7 +47,7 @@ export default function ComprehensiveAdminDashboard() {
 
   if (loading) {
     return (
-      <div className="mt-20 space-y-6">
+      <div className="space-y-6">
         <div className="text-center">
           <div className="w-8 h-8 mx-auto mb-4 border-4 border-t-primary rounded-full animate-spin"></div>
           <p className="text-muted-foreground">{t('common.loading')}</p>
@@ -57,7 +57,7 @@ export default function ComprehensiveAdminDashboard() {
   }
 
   return (
-    <div className="mt-20 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold tracking-tight">

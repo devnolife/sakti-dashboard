@@ -266,7 +266,7 @@ export default function KKPRequestsPage() {
   }
 
   return (
-    <div className="space-y-6 mt-20">
+    <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">

@@ -16,7 +16,7 @@ import Link from "next/link"
 
 export default function NotificationsPage() {
   return (
-    <div className="mt-20 space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Manajemen Notifikasi</h2>

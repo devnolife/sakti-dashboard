@@ -125,7 +125,7 @@ export default function SystemHealthPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6 mt-20">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
