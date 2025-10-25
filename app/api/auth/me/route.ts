@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
     // Get user with full profile
     const user = await prisma.users.findUnique({
-      where: { id: token.sub },
+      where: { id: token.userId },
       select: {
         id: true,
         username: true,

@@ -186,26 +186,25 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Navigation */}
-          <div className="flex-1 p-6 overflow-x-hidden overflow-y-auto scrollbar-hide">
-            {/* Welcome Section */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 p-4 border border-blue-100 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
-                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                  <span className="text-sm font-bold text-white">D</span>
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-900">Dashboard</h3>
-                  <p className="text-xs text-gray-600">Laboratory Management</p>
-                </div>
+          {/* Welcome Section - Fixed Top */}
+          <div className="flex-shrink-0 p-6 pb-4">
+            <div className="flex items-center gap-3 p-4 border border-blue-100 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                <span className="text-sm font-bold text-white">D</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900">Dashboard</h3>
+                <p className="text-xs text-gray-600">Laboratory Management</p>
               </div>
             </div>
+          </div>
 
-            {/* Main Navigation */}
-            <nav className="space-y-6">
+          {/* Main Navigation - Scrollable */}
+          <div className="flex-1 px-6 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 transition-colors">
+            <nav className="space-y-6 pb-6">
               {/* Quick Access Section */}
               <div>
-                <h4 className="px-2 mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                <h4 className="px-2 mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase sticky top-0 bg-white py-2 z-10">
                   Quick Access
                 </h4>
                 <div className="space-y-2">
@@ -218,7 +217,7 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
 
               {/* Management Section */}
               <div>
-                <h4 className="px-2 mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                <h4 className="px-2 mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase sticky top-0 bg-white py-2 z-10">
                   Management
                 </h4>
                 <div className="space-y-2">
@@ -228,8 +227,8 @@ export default function Sidebar({ activeSection, setActiveSection, className }: 
             </nav>
           </div>
 
-          {/* User Profile */}
-          <div className="p-6 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50 rounded-b-2xl">
+          {/* User Profile - Fixed Bottom */}
+          <div className="flex-shrink-0 p-6 pt-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50 rounded-b-2xl">
             <div className="flex items-center gap-3 p-3 mb-4 bg-white border border-gray-100 shadow-sm rounded-xl">
               <Avatar className="border-2 shadow-md h-11 w-11 border-blue-500/20">
                 <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={user?.name || "User"} />

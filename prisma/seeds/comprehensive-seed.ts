@@ -8,6 +8,7 @@ export async function seedComprehensiveData(prisma: PrismaClient) {
 
   // Clean up existing data
   console.log('🧹 Cleaning existing data...')
+  await prisma.audit_logs.deleteMany({})
   await prisma.notifications.deleteMany({})
   await prisma.system_configs.deleteMany({})
   await prisma.letter_types.deleteMany({})
