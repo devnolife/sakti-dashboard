@@ -9,8 +9,8 @@ export async function GET(request: NextRequest) {
     let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch { } }
+    if (!user_id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Get user and student profile
     const user = await prisma.users.findUnique({

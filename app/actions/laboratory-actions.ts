@@ -19,23 +19,23 @@ export async function getLaboratoryData() {
     }
 
     // Get available laboratories
-    const availableLabs = await prisma.laboratory.findMany({
+    const availableLabs = await prisma.laboratories.findMany({
       where: { status: 'active' },
       include: {
-        instructor: {
+        lecturers: {
           include: {
-            user: true
+            users: true
           }
         },
-        registrations: {
+        lab_registrations: {
           where: { student_id: student.id },
           select: { id: true, status: true }
         },
         _count: {
           select: {
-            registrations: true,
-            sessions: true,
-            assignments: true
+            lab_registrations: true,
+            lab_sessions: true,
+            lab_assignments: true
           }
         }
       },
@@ -43,25 +43,25 @@ export async function getLaboratoryData() {
     })
 
     // Get student's lab registrations
-    const myRegistrations = await prisma.labRegistration.findMany({
+    const myRegistrations = await prisma.lab_registrations.findMany({
       where: { student_id: student.id },
       include: {
-        laboratory: {
+        laboratories: {
           include: {
-            instructor: {
+            lecturers: {
               include: {
-                user: true
+                users: true
               }
             }
           }
         },
-        assignments: {
+        lab_assignment_submissions: {
           include: {
-            assignment: true
+            lab_assignments: true
           }
         }
       },
-      orderBy: { registeredAt: 'desc' }
+      orderBy: { registered_at: 'desc' }
     })
 
     // Get completed labs
@@ -77,63 +77,63 @@ export async function getLaboratoryData() {
         title: lab.name,
         description: lab.description,
         image: lab.image || '/placeholder.svg?height=200&width=400',
-        instructor: lab.instructor?.user?.name || 'TBA',
-        instructorImage: lab.instructor?.user?.avatar || '/placeholder.svg?height=100&width=100',
+        instructor: lab.lecturers?.users?.name || 'TBA',
+        instructorImage: lab.lecturers?.users?.avatar || '/placeholder.svg?height=100&width=100',
         schedule: 'Lihat jadwal', // Will be populated from sessions
         capacity: lab.capacity,
-        enrolled: lab._count.registrations,
+        enrolled: lab._count.lab_registrations,
         credits: lab.credits,
         tags: [lab.category, lab.department], // Simplified tags
-        status: lab.registrations.length > 0 ? 
-          (lab.registrations[0].status === 'completed' ? 'selesai' :
-           lab.registrations[0].status === 'approved' ? 'terdaftar' :
-           lab.registrations[0].status === 'pending' ? 'menunggu' : 'tersedia') : 
-          (lab._count.registrations >= lab.capacity ? 'penuh' : 'tersedia'),
+        status: lab.lab_registrations.length > 0 ?
+          (lab.lab_registrations[0].status === 'completed' ? 'selesai' :
+            lab.lab_registrations[0].status === 'approved' ? 'terdaftar' :
+              lab.lab_registrations[0].status === 'pending' ? 'menunggu' : 'tersedia') :
+          (lab._count.lab_registrations >= lab.capacity ? 'penuh' : 'tersedia'),
         semester: lab.semester,
         category: lab.category,
         location: lab.location,
         color: getLabColor(lab.category),
-        isRegistered: lab.registrations.length > 0
+        isRegistered: lab.lab_registrations.length > 0
       })),
       myLabs: myRegistrations
         .filter(reg => ['approved', 'pending'].includes(reg.status))
         .map(reg => ({
           id: reg.id,
-          labId: reg.laboratory.id,
-          title: reg.laboratory.name,
-          code: reg.laboratory.code,
-          instructor: reg.laboratory.instructor?.user?.name || 'TBA',
+          labId: reg.laboratories.id,
+          title: reg.laboratories.name,
+          code: reg.laboratories.code,
+          instructor: reg.laboratories.lecturers?.users?.name || 'TBA',
           progress: reg.progress,
           status: reg.status,
-          registeredAt: reg.registeredAt,
-          totalAssignments: reg.assignments.length,
-          completedAssignments: reg.assignments.filter(a => a.score !== null).length,
-          nextDeadline: reg.assignments
+          registeredAt: reg.registered_at,
+          totalAssignments: reg.lab_assignment_submissions.length,
+          completedAssignments: reg.lab_assignment_submissions.filter(a => a.score !== null).length,
+          nextDeadline: reg.lab_assignment_submissions
             .filter(a => a.score === null)
-            .sort((a, b) => new Date(a.assignment.dueDate).getTime() - new Date(b.assignment.dueDate).getTime())[0]?.assignment.dueDate
+            .sort((a, b) => new Date(a.lab_assignments.due_date).getTime() - new Date(b.lab_assignments.due_date).getTime())[0]?.lab_assignments.due_date
         })),
       completedLabs: completedLabs.map(reg => ({
         id: reg.id,
-        labId: reg.laboratory.id,
-        title: reg.laboratory.name,
-        code: reg.laboratory.code,
-        instructor: reg.laboratory.instructor?.user?.name || 'TBA',
+        labId: reg.laboratories.id,
+        title: reg.laboratories.name,
+        code: reg.laboratories.code,
+        instructor: reg.laboratories.lecturers?.users?.name || 'TBA',
         progress: reg.progress,
         grade: reg.grade,
-        completedAt: reg.completedAt,
-        totalAssignments: reg.assignments.length,
-        averageScore: reg.assignments.length > 0 ? 
-          reg.assignments.reduce((sum, a) => sum + (a.score || 0), 0) / reg.assignments.length : 0
+        completedAt: reg.completed_at,
+        totalAssignments: reg.lab_assignment_submissions.length,
+        averageScore: reg.lab_assignment_submissions.length > 0 ?
+          reg.lab_assignment_submissions.reduce((sum, a) => sum + (a.score || 0), 0) / reg.lab_assignment_submissions.length : 0
       })),
       registrationHistory: registrationHistory.map(reg => ({
         id: reg.id,
-        labId: reg.laboratory.id,
-        title: reg.laboratory.name,
-        code: reg.laboratory.code,
-        instructor: reg.laboratory.instructor?.user?.name || 'TBA',
+        labId: reg.laboratories.id,
+        title: reg.laboratories.name,
+        code: reg.laboratories.code,
+        instructor: reg.laboratories.lecturers?.users?.name || 'TBA',
         status: reg.status,
-        registeredAt: reg.registeredAt,
-        completedAt: reg.completedAt,
+        registeredAt: reg.registered_at,
+        completedAt: reg.completed_at,
         progress: reg.progress,
         grade: reg.grade
       }))
@@ -154,11 +154,11 @@ export async function registerLaboratory(laboratoryId: string) {
     if (!student) throw new Error('Student profile not found')
 
     // Check if already registered
-    const existingRegistration = await prisma.labRegistration.findUnique({
+    const existingRegistration = await prisma.lab_registrations.findUnique({
       where: {
-        studentId_laboratoryId: {
+        student_id_laboratory_id: {
           student_id: student.id,
-          laboratoryId: laboratoryId
+          laboratory_id: laboratoryId
         }
       }
     })
@@ -168,11 +168,11 @@ export async function registerLaboratory(laboratoryId: string) {
     }
 
     // Check laboratory capacity
-    const lab = await prisma.laboratory.findUnique({
+    const lab = await prisma.laboratories.findUnique({
       where: { id: laboratoryId },
       include: {
         _count: {
-          select: { registrations: true }
+          select: { lab_registrations: true }
         }
       }
     })
@@ -181,16 +181,18 @@ export async function registerLaboratory(laboratoryId: string) {
       throw new Error('Laboratory not found')
     }
 
-    if (lab._count.registrations >= lab.capacity) {
+    if (lab._count.lab_registrations >= lab.capacity) {
       throw new Error('Laboratory is full')
     }
 
     // Create registration
-    const registration = await prisma.labRegistration.create({
+    const registration = await prisma.lab_registrations.create({
       data: {
+        id: crypto.randomUUID(),
         student_id: student.id,
-        laboratoryId: laboratoryId,
-        status: 'pending'
+        laboratory_id: laboratoryId,
+        status: 'pending',
+        updated_at: new Date()
       }
     })
 
@@ -205,9 +207,9 @@ export async function registerLaboratory(laboratoryId: string) {
 // Get laboratory sessions
 export async function getLabSessions(laboratoryId: string) {
   try {
-    const sessions = await prisma.labSession.findMany({
-      where: { laboratoryId },
-      orderBy: { sessionDate: 'asc' }
+    const sessions = await prisma.lab_sessions.findMany({
+      where: { laboratory_id: laboratoryId },
+      orderBy: { session_date: 'asc' }
     })
 
     return sessions
@@ -223,29 +225,29 @@ export async function getLabAssignments(laboratoryId: string) {
     const user_id = await getServerActionUserId()
     const studentRecord = await prisma.students.findUnique({ where: { user_id }, select: { id: true } })
     if (!studentRecord) throw new Error('Student profile not found')
-    
+
     const student = studentRecord
 
-    const assignments = await prisma.labAssignment.findMany({
-      where: { laboratoryId },
+    const assignments = await prisma.lab_assignments.findMany({
+      where: { laboratory_id: laboratoryId },
       include: {
-        submissions: {
+        lab_assignment_submissions: {
           where: { student_id: student.id },
           select: {
             id: true,
             score: true,
             feedback: true,
-            submittedAt: true,
-            fileUrl: true
+            submitted_at: true,
+            file_url: true
           }
         }
       },
-      orderBy: { dueDate: 'asc' }
+      orderBy: { due_date: 'asc' }
     })
 
     return assignments.map(assignment => ({
       ...assignment,
-      submission: assignment.submissions[0] || null
+      submission: assignment.lab_assignment_submissions[0] || null
     }))
   } catch (error) {
     console.error('Error fetching lab assignments:', error)
@@ -256,8 +258,8 @@ export async function getLabAssignments(laboratoryId: string) {
 // Get laboratory materials
 export async function getLabMaterials(laboratoryId: string) {
   try {
-    const materials = await prisma.labMaterial.findMany({
-      where: { laboratoryId },
+    const materials = await prisma.lab_materials.findMany({
+      where: { laboratory_id: laboratoryId },
       orderBy: { created_at: 'desc' }
     })
 
@@ -271,8 +273,8 @@ export async function getLabMaterials(laboratoryId: string) {
 // Get laboratory announcements
 export async function getLabAnnouncements(laboratoryId: string) {
   try {
-    const announcements = await prisma.labAnnouncement.findMany({
-      where: { laboratoryId },
+    const announcements = await prisma.lab_announcements.findMany({
+      where: { laboratory_id: laboratoryId },
       orderBy: { created_at: 'desc' }
     })
 

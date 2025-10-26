@@ -51,7 +51,7 @@ export interface LibraryData {
 export async function getLibraryData(): Promise<LibraryData> {
   const user_id = await getServerActionUserId()
 
-  console.log('🔍 Fetching library data for user:', userId)
+  console.log('🔍 Fetching library data for user:', user_id)
 
   try {
     // Get user with student profile
@@ -60,15 +60,15 @@ export async function getLibraryData(): Promise<LibraryData> {
       include: {
         students: {
           include: {
-            bookBorrowings: {
+            book_borrowings: {
               include: {
-                book: {
+                books: {
                   include: {
-                    category: true
+                    book_categories: true
                   }
                 }
               },
-              orderBy: { borrowDate: 'desc' }
+              orderBy: { borrow_date: 'desc' }
             }
           }
         }
@@ -84,8 +84,8 @@ export async function getLibraryData(): Promise<LibraryData> {
     // Get all books with categories
     const allBooks = await prisma.books.findMany({
       include: {
-        category: true,
-        borrowings: {
+        book_categories: true,
+        book_borrowings: {
           where: {
             status: 'active'
           }
@@ -95,14 +95,14 @@ export async function getLibraryData(): Promise<LibraryData> {
     })
 
     // Get categories
-    const categories = await prisma.booksCategory.findMany({
+    const categories = await prisma.book_categories.findMany({
       where: { is_active: true },
       orderBy: { name: 'asc' }
     })
 
     // Transform books data
     const books: Book[] = allBooks.map(book => {
-      const activeBorrowings = book.borrowings.length
+      const activeBorrowings = book.book_borrowings.length
       const totalCopies = 5 // Mock total copies, can be made dynamic
       const availableCopies = Math.max(0, totalCopies - activeBorrowings)
 
@@ -110,11 +110,11 @@ export async function getLibraryData(): Promise<LibraryData> {
         id: book.id,
         title: book.title,
         author: book.author,
-        coverImage: book.coverImage,
-        category: book.category.code.toLowerCase(),
+        coverImage: book.cover_image,
+        category: book.book_categories.code.toLowerCase(),
         isAvailable: book.status === 'available' && availableCopies > 0,
         description: book.description,
-        publishedYear: book.publicationYear,
+        publishedYear: book.publication_year,
         publisher: book.publisher,
         isbn: book.isbn,
         totalCopies,
@@ -125,14 +125,14 @@ export async function getLibraryData(): Promise<LibraryData> {
     })
 
     // Transform borrowed books
-    const borrowedBooks: BorrowedBook[] = student.bookBorrowings
+    const borrowedBooks: BorrowedBook[] = student.book_borrowings
       .filter(borrowing => borrowing.status === 'active')
       .map(borrowing => ({
         id: borrowing.id,
-        title: borrowing.book.title,
-        author: borrowing.book.author,
-        borrowDate: borrowing.borrowDate.toISOString(),
-        dueDate: borrowing.dueDate.toISOString(),
+        title: borrowing.books.title,
+        author: borrowing.books.author,
+        borrowDate: borrowing.borrow_date.toISOString(),
+        dueDate: borrowing.due_date.toISOString(),
         status: borrowing.status as BorrowedBook['status'],
         fine: borrowing.fine ? parseFloat(borrowing.fine.toString()) : null
       }))
@@ -146,11 +146,11 @@ export async function getLibraryData(): Promise<LibraryData> {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    const recentReturns = await prisma.booksBorrowing.count({
+    const recentReturns = await prisma.book_borrowings.count({
       where: {
         student_id: student.id,
         status: 'returned',
-        returnDate: {
+        return_date: {
           gte: sevenDaysAgo
         }
       }
@@ -221,20 +221,20 @@ export interface ThesisData {
 export async function getThesisTitlesData(): Promise<ThesisData> {
   const user_id = await getServerActionUserId()
 
-  console.log('🔍 Fetching thesis titles data for user:', userId)
+  console.log('🔍 Fetching thesis titles data for user:', user_id)
 
   try {
     // Get all thesis titles (for browsing approved ones)
     const allTheses = await prisma.thesis_titles.findMany({
       include: {
-        author: {
+        students: {
           include: {
-            user: true
+            users: true
           }
         },
-        supervisor: {
+        lecturers: {
           include: {
-            user: true
+            users: true
           }
         }
       },
@@ -246,21 +246,21 @@ export async function getThesisTitlesData(): Promise<ThesisData> {
       id: thesis.id,
       title: thesis.title,
       student: {
-        id: thesis.author.id,
-        name: thesis.author.user.name,
-        nim: thesis.author.nim,
+        id: thesis.students.id,
+        name: thesis.students.users.name,
+        nim: thesis.students.nim,
         program: 'Informatika' // Can be made dynamic later
       },
       supervisor: {
-        id: thesis.supervisor?.id || '',
-        name: thesis.supervisor?.user.name || 'TBA'
+        id: thesis.lecturers?.id || '',
+        name: thesis.lecturers?.users.name || 'TBA'
       },
       keywords: thesis.keywords,
       abstract: thesis.abstract,
       year: thesis.year,
       status: thesis.status === 'archived' ? 'completed' : thesis.status as 'pending' | 'approved' | 'rejected' | 'completed',
-      field: thesis.department,
-      submission_date: thesis.submissionDate.toISOString()
+      field: thesis.department || '',
+      submission_date: thesis.submission_date.toISOString()
     }))
 
     // Calculate stats
@@ -315,7 +315,7 @@ export interface ThesisSubmissionData {
 export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
   const user_id = await getServerActionUserId()
 
-  console.log('🔍 Fetching thesis submission data for user:', userId)
+  console.log('🔍 Fetching thesis submission data for user:', user_id)
 
   try {
     // Get user with student profile
@@ -324,11 +324,11 @@ export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
       include: {
         students: {
           include: {
-            thesesAuthored: {
+            thesis_titles: {
               include: {
-                supervisor: {
+                lecturers: {
                   include: {
-                    user: true
+                    users: true
                   }
                 }
               },
@@ -346,15 +346,15 @@ export async function getThesisSubmissionData(): Promise<ThesisSubmissionData> {
     const student = user.students
 
     // Transform submission data
-    const submissions: StudentThesisSubmission[] = student.thesesAuthored.map(thesis => ({
+    const submissions: StudentThesisSubmission[] = student.thesis_titles.map(thesis => ({
       id: thesis.id,
       title: thesis.title,
       abstract: thesis.abstract,
       keywords: thesis.keywords,
       status: thesis.status as StudentThesisSubmission['status'],
-      submission_date: thesis.submissionDate.toISOString(),
-      similarityScore: thesis.similarityScore || undefined,
-      supervisor: thesis.supervisor?.user.name
+      submission_date: thesis.submission_date.toISOString(),
+      similarityScore: thesis.similarity_score || undefined,
+      supervisor: thesis.lecturers?.users.name
     }))
 
     // Check if student can submit new thesis (no pending submissions)
@@ -387,7 +387,7 @@ export async function submitThesisTitle(data: {
 }): Promise<{ success: boolean; message: string; thesisId?: string }> {
   const user_id = await getServerActionUserId()
 
-  console.log('📝 Submitting thesis title for user:', userId)
+  console.log('📝 Submitting thesis title for user:', user_id)
 
   try {
     // Get user with student profile
@@ -396,7 +396,7 @@ export async function submitThesisTitle(data: {
       include: {
         students: {
           include: {
-            thesesAuthored: {
+            thesis_titles: {
               where: {
                 OR: [
                   { status: 'pending' },
@@ -416,8 +416,8 @@ export async function submitThesisTitle(data: {
     const student = user.students
 
     // Check if student can submit
-    const hasPendingSubmission = student.thesesAuthored.some(t => t.status === 'pending')
-    const hasApprovedSubmission = student.thesesAuthored.some(t => t.status === 'approved')
+    const hasPendingSubmission = student.thesis_titles.some(t => t.status === 'pending')
+    const hasApprovedSubmission = student.thesis_titles.some(t => t.status === 'approved')
 
     if (hasPendingSubmission) {
       return {
@@ -436,14 +436,16 @@ export async function submitThesisTitle(data: {
     // Create new thesis submission
     const newThesis = await prisma.thesis_titles.create({
       data: {
+        id: crypto.randomUUID(),
         title: data.title,
         abstract: data.abstract,
         keywords: data.keywords,
-        authorId: student.id,
+        author_id: student.id,
         supervisor_id: data.supervisorId,
         department: 'Teknik Informatika', // Can be made dynamic
         year: new Date().getFullYear(),
-        status: 'pending'
+        status: 'pending',
+        updated_at: new Date()
       }
     })
 
