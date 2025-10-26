@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -69,82 +69,161 @@ export default function MasterDataPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedTab, setSelectedTab] = useState("programs")
+  const [editingItem, setEditingItem] = useState<DataItem | null>(null)
+  const [formData, setFormData] = useState({
+    code: "",
+    name: "",
+    status: "active" as "active" | "inactive"
+  })
 
+  // Data from API
+  const [programs, setPrograms] = useState<DataItem[]>([])
+  const [faculties, setFaculties] = useState<DataItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch data from API
+  useEffect(() => {
+    fetchMasterData()
+  }, [])
+
+  const fetchMasterData = async () => {
+    try {
+      setLoading(true)
+      const token = localStorage.getItem('session-token')
+
+      const response = await fetch('/api/admin/master-data', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch master data')
+      }
+
+      const data = await response.json()
+      setPrograms(data.programs || [])
+      setFaculties(data.faculties || [])
+    } catch (error) {
+      console.error('Error fetching master data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Handler functions
+  const handleAdd = () => {
+    setEditingItem(null)
+    setFormData({ code: "", name: "", status: "active" })
+    setIsDialogOpen(true)
+  }
+
+  const handleEdit = (item: DataItem) => {
+    setEditingItem(item)
+    setFormData({ code: item.code, name: item.name, status: item.status })
+    setIsDialogOpen(true)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('session-token')
+
+      const response = await fetch(`/api/admin/master-data/prodi?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        alert(error.error || 'Gagal menghapus data')
+        return
+      }
+
+      // Refresh data
+      await fetchMasterData()
+      alert('Data berhasil dihapus')
+    } catch (error) {
+      console.error('Error deleting:', error)
+      alert('Terjadi kesalahan saat menghapus data')
+    }
+  }
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('session-token')
+      const method = editingItem ? 'PUT' : 'POST'
+
+      const payload = {
+        ...(editingItem && { id: editingItem.id }),
+        code: formData.code,
+        name: formData.name,
+        fakultas: 'Fakultas Teknik', // TODO: Add fakultas selector
+        jenjang: 'S1', // TODO: Add jenjang selector
+        akreditasi: null,
+      }
+
+      const response = await fetch('/api/admin/master-data/prodi', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        alert(error.error || 'Gagal menyimpan data')
+        return
+      }
+
+      // Refresh data
+      await fetchMasterData()
+      setIsDialogOpen(false)
+      setFormData({ code: "", name: "", status: "active" })
+      setEditingItem(null)
+      alert(editingItem ? 'Data berhasil diperbarui' : 'Data berhasil ditambahkan')
+    } catch (error) {
+      console.error('Error saving:', error)
+      alert('Terjadi kesalahan saat menyimpan data')
+    }
+  }
+
+  // Stats - calculated from state
   const stats: MasterDataStats[] = [
     {
       icon: GraduationCap,
       title: "Program Studi",
-      count: 8,
-      description: "Program studi aktif",
+      count: programs.filter(p => p.status === "active").length,
+      description: `${programs.length} total, ${programs.filter(p => p.status === "active").length} aktif`,
       color: "blue",
     },
     {
       icon: Building2,
       title: "Fakultas",
-      count: 3,
-      description: "Fakultas terdaftar",
+      count: faculties.filter(f => f.status === "active").length,
+      description: `${faculties.length} total, ${faculties.filter(f => f.status === "active").length} aktif`,
       color: "green",
     },
     {
       icon: BookOpen,
       title: "Mata Kuliah",
-      count: 156,
-      description: "Mata kuliah tersedia",
+      count: 0,
+      description: "Belum ada data",
       color: "purple",
     },
     {
       icon: MapPin,
       title: "Lokasi KKP",
-      count: 45,
-      description: "Lokasi mitra",
+      count: 0,
+      description: "Belum ada data",
       color: "orange",
-    },
-  ]
-
-  // Mock data - replace with actual data from API
-  const programs: DataItem[] = [
-    {
-      id: "1",
-      code: "S1TI",
-      name: "S1 Teknik Informatika",
-      status: "active",
-      created_at: "2024-01-01",
-      updated_at: "2024-01-01",
-    },
-    {
-      id: "2",
-      code: "S1SI",
-      name: "S1 Sistem Informasi",
-      status: "active",
-      created_at: "2024-01-01",
-      updated_at: "2024-01-01",
-    },
-    {
-      id: "3",
-      code: "S1TE",
-      name: "S1 Teknik Elektro",
-      status: "active",
-      created_at: "2024-01-01",
-      updated_at: "2024-01-01",
-    },
-  ]
-
-  const faculties: DataItem[] = [
-    {
-      id: "1",
-      code: "FT",
-      name: "Fakultas Teknik",
-      status: "active",
-      created_at: "2024-01-01",
-      updated_at: "2024-01-01",
-    },
-    {
-      id: "2",
-      code: "FE",
-      name: "Fakultas Ekonomi",
-      status: "active",
-      created_at: "2024-01-01",
-      updated_at: "2024-01-01",
     },
   ]
 
@@ -184,7 +263,7 @@ export default function MasterDataPage() {
             <Upload className="mr-2 w-4 h-4" />
             Import
           </Button>
-          <Button size="sm" onClick={() => setIsDialogOpen(true)}>
+          <Button size="sm" onClick={handleAdd}>
             <Plus className="mr-2 w-4 h-4" />
             Tambah {type}
           </Button>
@@ -221,10 +300,10 @@ export default function MasterDataPage() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end items-center">
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}>
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
@@ -323,23 +402,40 @@ export default function MasterDataPage() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Tambah Data Master</DialogTitle>
+            <DialogTitle>
+              {editingItem ? "Edit Data Master" : "Tambah Data Master"}
+            </DialogTitle>
             <DialogDescription>
-              Tambahkan data master baru ke sistem
+              {editingItem
+                ? "Perbarui informasi data master"
+                : "Tambahkan data master baru ke sistem"}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="code">Kode</Label>
-              <Input id="code" placeholder="Masukkan kode" />
+              <Input
+                id="code"
+                placeholder="Masukkan kode (contoh: S1TI)"
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="name">Nama</Label>
-              <Input id="name" placeholder="Masukkan nama" />
+              <Input
+                id="name"
+                placeholder="Masukkan nama lengkap"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select>
+              <Select
+                value={formData.status}
+                onValueChange={(value: "active" | "inactive") => setFormData({ ...formData, status: value })}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih status" />
                 </SelectTrigger>
@@ -354,7 +450,12 @@ export default function MasterDataPage() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Batal
             </Button>
-            <Button onClick={() => setIsDialogOpen(false)}>Simpan</Button>
+            <Button
+              onClick={handleSave}
+              disabled={!formData.code || !formData.name}
+            >
+              {editingItem ? "Perbarui" : "Simpan"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -574,48 +574,232 @@ export const dekanMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    id: "dean-office",
-    title: "Dekan",
-    href: "/dashboard/dekan/dean-office",
-    icon: Crown
+    id: "academic-management",
+    title: "Manajemen Akademik",
+    href: "/dashboard/dekan/academic",
+    icon: BookOpen,
+    children: [
+      {
+        id: "curriculum-oversight",
+        title: "Pengawasan Kurikulum",
+        href: "/dashboard/dekan/academic/curriculum",
+      },
+      {
+        id: "academic-quality",
+        title: "Jaminan Mutu Akademik",
+        href: "/dashboard/dekan/academic/quality",
+      },
+      {
+        id: "accreditation",
+        title: "Akreditasi Program",
+        href: "/dashboard/dekan/academic/accreditation",
+      },
+      {
+        id: "academic-policies",
+        title: "Kebijakan Akademik",
+        href: "/dashboard/dekan/academic/policies",
+      },
+    ],
   },
   {
-    id: "vice-dean-1",
-    title: "Wakil Dekan 1",
-    href: "/dashboard/dekan/vice-dean-1",
+    id: "faculty-management",
+    title: "Manajemen Fakultas",
+    href: "/dashboard/dekan/faculty",
+    icon: Building2,
+    children: [
+      {
+        id: "faculty-structure",
+        title: "Struktur Organisasi",
+        href: "/dashboard/dekan/faculty/structure",
+      },
+      {
+        id: "department-oversight",
+        title: "Pengawasan Jurusan",
+        href: "/dashboard/dekan/faculty/departments",
+      },
+      {
+        id: "faculty-planning",
+        title: "Perencanaan Strategis",
+        href: "/dashboard/dekan/faculty/planning",
+      },
+      {
+        id: "performance-monitoring",
+        title: "Monitor Kinerja",
+        href: "/dashboard/dekan/faculty/performance",
+      },
+    ],
+  },
+  {
+    id: "approvals",
+    title: "Persetujuan & Keputusan",
+    href: "/dashboard/dekan/approvals",
+    icon: ClipboardCheck,
+    children: [
+      {
+        id: "correspondence-approval",
+        title: "Persetujuan Surat",
+        href: "/dashboard/dekan/approvals/correspondence",
+        badge: { text: "5", variant: "destructive" },
+      },
+      {
+        id: "academic-decisions",
+        title: "Keputusan Akademik",
+        href: "/dashboard/dekan/approvals/academic",
+        badge: { text: "3", variant: "destructive" },
+      },
+      {
+        id: "budget-approval",
+        title: "Persetujuan Anggaran",
+        href: "/dashboard/dekan/approvals/budget",
+        badge: { text: "2", variant: "destructive" },
+      },
+      {
+        id: "policy-decisions",
+        title: "Keputusan Kebijakan",
+        href: "/dashboard/dekan/approvals/policy",
+      },
+    ],
+  },
+  {
+    id: "financial-oversight",
+    title: "Pengawasan Keuangan",
+    href: "/dashboard/dekan/finance",
+    icon: DollarSign,
+    children: [
+      {
+        id: "budget-overview",
+        title: "Ikhtisar Anggaran",
+        href: "/dashboard/dekan/finance/budget",
+      },
+      {
+        id: "financial-reports",
+        title: "Laporan Keuangan",
+        href: "/dashboard/dekan/finance/reports",
+      },
+      {
+        id: "expenditure-monitoring",
+        title: "Monitor Pengeluaran",
+        href: "/dashboard/dekan/finance/expenditure",
+      },
+      {
+        id: "financial-planning",
+        title: "Perencanaan Keuangan",
+        href: "/dashboard/dekan/finance/planning",
+      },
+    ],
+  },
+  {
+    id: "human-resources",
+    title: "Sumber Daya Manusia",
+    href: "/dashboard/dekan/hr",
     icon: Users,
+    children: [
+      {
+        id: "faculty-staff",
+        title: "Dosen & Staff",
+        href: "/dashboard/dekan/hr/faculty-staff",
+      },
+      {
+        id: "recruitment",
+        title: "Rekrutmen",
+        href: "/dashboard/dekan/hr/recruitment",
+      },
+      {
+        id: "performance-evaluation",
+        title: "Evaluasi Kinerja",
+        href: "/dashboard/dekan/hr/evaluation",
+      },
+      {
+        id: "professional-development",
+        title: "Pengembangan SDM",
+        href: "/dashboard/dekan/hr/development",
+      },
+    ],
   },
   {
-    id: "vice-dean-2",
-    title: "Wakil Dekan 2",
-    href: "/dashboard/dekan/vice-dean-2",
-    icon: BarChart,
+    id: "partnerships",
+    title: "Kerjasama & Kemitraan",
+    href: "/dashboard/dekan/partnerships",
+    icon: Briefcase,
+    children: [
+      {
+        id: "industry-partnerships",
+        title: "Kemitraan Industri",
+        href: "/dashboard/dekan/partnerships/industry",
+      },
+      {
+        id: "academic-cooperation",
+        title: "Kerjasama Akademik",
+        href: "/dashboard/dekan/partnerships/academic",
+      },
+      {
+        id: "international-relations",
+        title: "Hubungan Internasional",
+        href: "/dashboard/dekan/partnerships/international",
+      },
+      {
+        id: "mou-agreements",
+        title: "MoU & Perjanjian",
+        href: "/dashboard/dekan/partnerships/agreements",
+      },
+    ],
   },
   {
-    id: "vice-dean-3",
-    title: "Wakil Dekan 3",
-    href: "/dashboard/dekan/vice-dean-3",
-    icon: FileText
+    id: "reports-analytics",
+    title: "Laporan & Analitik",
+    href: "/dashboard/dekan/reports",
+    icon: BarChart3,
+    children: [
+      {
+        id: "executive-dashboard",
+        title: "Dashboard Eksekutif",
+        href: "/dashboard/dekan/reports/executive",
+      },
+      {
+        id: "academic-reports",
+        title: "Laporan Akademik",
+        href: "/dashboard/dekan/reports/academic",
+      },
+      {
+        id: "financial-analytics",
+        title: "Analitik Keuangan",
+        href: "/dashboard/dekan/reports/financial",
+      },
+      {
+        id: "kpi-monitoring",
+        title: "Monitor KPI",
+        href: "/dashboard/dekan/reports/kpi",
+      },
+    ],
   },
   {
-    id: "vice-dean-4",
-    title: "Wakil Dekan 4",
-    href: "/dashboard/dekan/vice-dean-4",
-    icon: ClipboardList
+    id: "communication",
+    title: "Komunikasi & Informasi",
+    href: "/dashboard/dekan/communication",
+    icon: Bell,
+    children: [
+      {
+        id: "announcements",
+        title: "Pengumuman",
+        href: "/dashboard/dekan/communication/announcements",
+      },
+      {
+        id: "faculty-meetings",
+        title: "Rapat Fakultas",
+        href: "/dashboard/dekan/communication/meetings",
+      },
+      {
+        id: "external-communication",
+        title: "Komunikasi Eksternal",
+        href: "/dashboard/dekan/communication/external",
+      },
+      {
+        id: "information-management",
+        title: "Manajemen Informasi",
+        href: "/dashboard/dekan/communication/information",
+      },
+    ],
   },
-  {
-    id: "faculty-overview",
-    title: "Ikhtisar Fakultas",
-    href: "/dashboard/dekan/faculty-overview",
-    icon: GalleryVerticalEnd,
-  },
-  {
-    id: "department-analytics",
-    title: "Analitik Jurusan",
-    href: "/dashboard/dekan/department-analytics",
-    icon: BarChart,
-  },
-
   {
     id: "settings",
     title: "Pengaturan",
@@ -959,6 +1143,43 @@ export const adminMenuItems: MenuItem[] = [
     title: "Dashboard",
     href: "/dashboard/admin",
     icon: LayoutDashboard,
+  },
+  {
+    id: "prodi-management",
+    title: "Manajemen Prodi",
+    icon: GraduationCapIcon,
+    children: [
+      {
+        id: "prodi-overview",
+        title: "Overview Prodi",
+        href: "/dashboard/admin/prodi/overview",
+        icon: PieChart,
+      },
+      {
+        id: "prodi-students",
+        title: "Mahasiswa per Prodi",
+        href: "/dashboard/admin/prodi/students",
+        icon: Users,
+      },
+      {
+        id: "prodi-courses",
+        title: "Mata Kuliah per Prodi",
+        href: "/dashboard/admin/prodi/courses",
+        icon: BookOpen,
+      },
+      {
+        id: "prodi-lecturers",
+        title: "Dosen per Prodi",
+        href: "/dashboard/admin/prodi/lecturers",
+        icon: UserCheck,
+      },
+      {
+        id: "prodi-performance",
+        title: "Performa Prodi",
+        href: "/dashboard/admin/prodi/performance",
+        icon: TrendingUp,
+      },
+    ],
   },
   {
     id: "user-roles",

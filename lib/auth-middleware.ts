@@ -114,3 +114,33 @@ export async function getUserId(request: NextRequest): Promise<string | null> {
   }
   return token.userId
 }
+
+/**
+ * Verify authentication and return user info
+ * Returns { authenticated: boolean, user?: DecodedToken }
+ */
+export async function verifyAuth(request: NextRequest): Promise<{
+  authenticated: boolean
+  user?: DecodedToken
+}> {
+  try {
+    const authHeader = request.headers.get('Authorization')
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return { authenticated: false }
+    }
+
+    const token = authHeader.substring(7) // Remove 'Bearer ' prefix
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken
+      return { authenticated: true, user: decoded }
+    } catch (jwtError: any) {
+      console.error('JWT verification error:', jwtError.message)
+      return { authenticated: false }
+    }
+  } catch (error) {
+    console.error('Auth verification error:', error)
+    return { authenticated: false }
+  }
+}

@@ -1,5 +1,7 @@
 import { PrismaClient } from '../lib/generated/prisma';
 import { hash } from 'bcryptjs';
+import { seedMasterData } from './seeds/master-data-seed';
+import { seedUsers } from './seeds/users';
 
 const prisma = new PrismaClient();
 
@@ -21,6 +23,16 @@ async function safeCreate<T>(
 
 async function main() {
   console.log('🌱 Starting seed...');
+
+  // Seed master data first (prodi, etc)
+  await seedMasterData();
+
+  // Seed all users with their roles and sub-roles
+  await seedUsers(prisma);
+
+  // Skip the manual user seeding below as we now use seedUsers()
+  console.log('\n✅ All seeding completed successfully!');
+  return;
 
   // Optional: Clear existing data to avoid conflicts
   // Uncomment if you want to reset data on each seed

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X, ChevronDown } from "lucide-react"
@@ -20,8 +20,13 @@ export default function DynamicRoleMobileMenu() {
   // Get menu items based on current sub-role
   const menuItems = dosenSubRoleMenuItems[currentSubRole] || []
 
+  // Reset submenu state when sub-role changes
+  useEffect(() => {
+    setOpenSubMenus({})
+  }, [currentSubRole])
+
   const toggleMobileMenu = () => setIsOpen(!isOpen)
-  
+
   const toggleSubMenu = (id: string) => {
     setOpenSubMenus(prev => ({
       ...prev,
@@ -144,7 +149,7 @@ export default function DynamicRoleMobileMenu() {
                   <span className="text-lg font-semibold">SINTEKMu</span>
                 </Link>
               </div>
-              
+
               <nav className="p-4 space-y-2 overflow-y-auto">
                 {menuItems.map((item) => renderMobileMenuItem(item))}
               </nav>

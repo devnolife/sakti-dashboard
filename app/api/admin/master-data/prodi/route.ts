@@ -1,193 +1,188 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { authMiddleware, hasPermission } from '@/lib/auth-middleware'
-import { z } from 'zod'
+import { verifyAuth } from '@/lib/auth-middleware'
 
-const prodiSchema = z.object({
-  kode: z.string().min(1),
-  nama: z.string().min(1),
-  jenjang: z.string().min(1),
-  fakultas: z.string().min(1),
-  akreditasi: z.string().optional()
-})
-
-// GET /api/admin/master-data/prodi
-export async function GET(request: NextRequest) {
+// POST - Create new prodi
+export async function POST(req: NextRequest) {
   try {
-    const token = await authMiddleware(request)
-    if (token instanceof NextResponse) return token
-
-    if (!hasPermission(token.role as string, 'read', 'master_data')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    // Verify authentication and admin role
+    const authResult = await verifyAuth(req)
+    if (!authResult.authenticated || authResult.user?.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
-    const { searchParams } = new URL(request.url)
-    const fakultas = searchParams.get('fakultas')
-    const jenjang = searchParams.get('jenjang')
-    const search = searchParams.get('search')
+    const body = await req.json()
+    const { code, name, fakultas, jenjang, akreditasi } = body
 
-    const where: any = {}
-    if (fakultas) where.fakultas = fakultas
-    if (jenjang) where.jenjang = jenjang
-    if (search) {
-      where.OR = [
-        { nama: { contains: search, mode: 'insensitive' } },
-        { kode: { contains: search, mode: 'insensitive' } }
-      ]
+    // Validate required fields
+    if (!code || !name) {
+      return NextResponse.json(
+        { error: 'Code and name are required' },
+        { status: 400 }
+      )
     }
 
-    const [prodi, total] = await Promise.all([
-      prisma.prodi.findMany({
-        where,
-        orderBy: { nama: 'asc' }
-      }),
-      prisma.prodi.count({ where })
-    ])
+    // Create prodi
+    const prodi = await prisma.prodi.create({
+      data: {
+        kode: code,
+        nama: name,
+        fakultas: fakultas || 'Fakultas Teknik',
+        jenjang: jenjang || 'S1',
+        akreditasi: akreditasi || null,
+      }
+    })
 
     return NextResponse.json({
-      data: prodi,
-      total
-    })
-  } catch (error) {
-    console.error('Error fetching prodi:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
-  }
-}
-
-// POST /api/admin/master-data/prodi
-export async function POST(request: NextRequest) {
-  try {
-    const token = await authMiddleware(request)
-    if (token instanceof NextResponse) return token
-
-    if (!hasPermission(token.role as string, 'create', 'master_data')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-
-    const body = await request.json()
-    const validatedData = prodiSchema.parse(body)
-
-    // Check if kode already exists
-    const existing = await prisma.prodi.findUnique({
-      where: { kode: validatedData.kode }
-    })
-
-    if (existing) {
-      return NextResponse.json({ error: 'Kode prodi already exists' }, { status: 400 })
-    }
-
-    const prodi = await prisma.prodi.create({
-      data: validatedData
-    })
-
-    // Audit log
-    await prisma.audit_logs.create({
+      success: true,
       data: {
-        id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        user_id: token.userId as string,
-        action: 'create_prodi',
-        resource: 'master_data',
-        details: validatedData,
-        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+        id: prodi.kode,
+        code: prodi.kode,
+        name: prodi.nama,
+        status: 'active',
+        created_at: prodi.created_at.toISOString(),
+        updated_at: prodi.updated_at.toISOString(),
       }
     })
-
-    return NextResponse.json(prodi, { status: 201 })
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues }, { status: 400 })
-    }
+  } catch (error: any) {
     console.error('Error creating prodi:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+
+    // Handle unique constraint violation
+    if (error.code === 'P2002') {
+      return NextResponse.json(
+        { error: 'Kode prodi sudah digunakan' },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
-// PUT /api/admin/master-data/prodi/[kode]
-export async function PUT(request: NextRequest) {
+// PUT - Update prodi
+export async function PUT(req: NextRequest) {
   try {
-    const token = await authMiddleware(request)
-    if (token instanceof NextResponse) return token
-
-    if (!hasPermission(token.role as string, 'update', 'master_data')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    // Verify authentication and admin role
+    const authResult = await verifyAuth(req)
+    if (!authResult.authenticated || authResult.user?.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
-    const { searchParams } = new URL(request.url)
-    const kode = searchParams.get('kode')
+    const body = await req.json()
+    const { id, code, name, fakultas, jenjang, akreditasi } = body
 
-    if (!kode) {
-      return NextResponse.json({ error: 'Kode is required' }, { status: 400 })
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID is required' },
+        { status: 400 }
+      )
     }
 
-    const body = await request.json()
-    const { nama, jenjang, fakultas, akreditasi } = body
-
+    // Update prodi
     const prodi = await prisma.prodi.update({
-      where: { kode },
+      where: { kode: id },
       data: {
-        nama,
-        jenjang,
-        fakultas,
-        akreditasi
+        nama: name,
+        fakultas: fakultas,
+        jenjang: jenjang,
+        akreditasi: akreditasi,
+        updated_at: new Date(),
       }
     })
 
-    // Audit log
-    await prisma.audit_logs.create({
+    return NextResponse.json({
+      success: true,
       data: {
-        id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        user_id: token.userId as string,
-        action: 'update_prodi',
-        resource: 'master_data',
-        details: { kode, ...body },
-        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+        id: prodi.kode,
+        code: prodi.kode,
+        name: prodi.nama,
+        status: 'active',
+        created_at: prodi.created_at.toISOString(),
+        updated_at: prodi.updated_at.toISOString(),
       }
     })
-
-    return NextResponse.json(prodi)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating prodi:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+
+    if (error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Prodi tidak ditemukan' },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
-// DELETE /api/admin/master-data/prodi/[kode]
-export async function DELETE(request: NextRequest) {
+// DELETE - Delete prodi
+export async function DELETE(req: NextRequest) {
   try {
-    const token = await authMiddleware(request)
-    if (token instanceof NextResponse) return token
-
-    if (!hasPermission(token.role as string, 'delete', 'master_data')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    // Verify authentication and admin role
+    const authResult = await verifyAuth(req)
+    if (!authResult.authenticated || authResult.user?.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
-    const { searchParams } = new URL(request.url)
-    const kode = searchParams.get('kode')
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
 
-    if (!kode) {
-      return NextResponse.json({ error: 'Kode is required' }, { status: 400 })
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID is required' },
+        { status: 400 }
+      )
     }
 
+    // Check if prodi has related data
+    const relatedData = await prisma.students.count({
+      where: { prodi_id: id }
+    })
+
+    if (relatedData > 0) {
+      return NextResponse.json(
+        { error: 'Tidak dapat menghapus prodi yang memiliki data mahasiswa terkait' },
+        { status: 400 }
+      )
+    }
+
+    // Delete prodi
     await prisma.prodi.delete({
-      where: { kode }
+      where: { kode: id }
     })
 
-    // Audit log
-    await prisma.audit_logs.create({
-      data: {
-        id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        user_id: token.userId as string,
-        action: 'delete_prodi',
-        resource: 'master_data',
-        details: { kode },
-        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
-      }
+    return NextResponse.json({
+      success: true,
+      message: 'Prodi berhasil dihapus'
     })
-
-    return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error deleting prodi:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+
+    if (error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Prodi tidak ditemukan' },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
-

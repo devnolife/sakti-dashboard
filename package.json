@@ -10,6 +10,8 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed-all": "tsx prisma/seed-all.ts",
+    "seed:master-data": "tsx prisma/seeds/master-data-seed.ts",
     "generate:lab-template": "tsx scripts/generate-lab-template.ts",
     "sync:prodi": "tsx scripts/sync-prodi.ts",
     "seed:prodi": "tsx scripts/seed-prodi.ts",

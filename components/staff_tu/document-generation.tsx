@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   FileText,
   Download,
@@ -426,9 +427,8 @@ export default function StaffTuDocumentGeneration() {
                   {filteredTemplates.map((template) => (
                     <div
                       key={template.id}
-                      className={`p-3 rounded-lg border cursor-pointer transition-colors hover:bg-muted/50 ${
-                        selectedTemplate === template.id ? "bg-muted border-primary" : ""
-                      }`}
+                      className={`p-3 rounded-lg border cursor-pointer transition-colors hover:bg-muted/50 ${selectedTemplate === template.id ? "bg-muted border-primary" : ""
+                        }`}
                       onClick={() => handleTemplateSelect(template.id)}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -568,8 +568,8 @@ export default function StaffTuDocumentGeneration() {
                         const steps = template?.approvalLevel === "dekan"
                           ? ["Staff TU", "Prodi", "Dekan"]
                           : template?.approvalLevel === "prodi"
-                          ? ["Staff TU", "Prodi"]
-                          : ["Staff TU"]
+                            ? ["Staff TU", "Prodi"]
+                            : ["Staff TU"]
 
                         return steps.map((step, index) => (
                           <div key={step} className="flex items-center gap-3 p-3 border rounded-lg">
@@ -619,15 +619,15 @@ export default function StaffTuDocumentGeneration() {
 
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" id="notify" defaultChecked />
+                      <Checkbox id="notify" defaultChecked />
                       <Label htmlFor="notify">Send notification to student</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" id="archive" defaultChecked />
+                      <Checkbox id="archive" defaultChecked />
                       <Label htmlFor="archive">Archive in student records</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" id="qr-verify" defaultChecked />
+                      <Checkbox id="qr-verify" defaultChecked />
                       <Label htmlFor="qr-verify">Include QR verification code</Label>
                     </div>
                   </div>

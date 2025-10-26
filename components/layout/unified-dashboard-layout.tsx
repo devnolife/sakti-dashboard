@@ -5,6 +5,7 @@ import { useAuth } from "@/context/auth-context"
 import { useDosenSubRole } from "@/context/dosen-subrole-context"
 import { cn } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
+import type { Role } from "@/types/role"
 
 // Modern components
 import ModernSidebar from "./modern-sidebar"
@@ -122,7 +123,7 @@ function ModernLayoutWrapper({
       {/* Modern Header */}
       <ModernHeader
         sidebarCollapsed={sidebarCollapsed}
-        onMobileMenuToggle={() => {}}
+        onMobileMenuToggle={() => { }}
         showRoleSwitcher={showRoleSwitcher}
       />
 
@@ -162,11 +163,36 @@ function LegacyLayoutWrapper({
 }) {
   const { currentSubRole } = useDosenSubRole()
 
-  // Dosen layout with dynamic sidebar
-  if (user.role === 'dosen' && showRoleSwitcher) {
+  // Determine the effective role to display
+  // For dosen with leadership sub-roles, map to the appropriate role
+  const getEffectiveRole = (): Role => {
+    if (user.role === 'dosen' && currentSubRole) {
+      // Map leadership sub-roles to their corresponding roles
+      switch (currentSubRole) {
+        case 'dekan':
+          return 'dekan'
+        case 'gkm':
+          return 'gkm'
+        case 'prodi':
+          return 'prodi'
+        // wakil_dekan_* and other sub-roles should use DynamicRoleSidebar
+        default:
+          return user.role
+      }
+    }
+    return user.role
+  }
+
+  const effectiveRole = getEffectiveRole()
+  const useDynamicSidebar = user.role === 'dosen' &&
+    showRoleSwitcher &&
+    effectiveRole === 'dosen' // Only use dynamic sidebar for actual dosen role
+
+  // Dosen layout with dynamic sidebar (for dosen, wakil dekan, sekretaris prodi)
+  if (useDynamicSidebar) {
     return (
       <div className="flex min-h-screen">
-        <DynamicRoleSidebar />
+        <DynamicRoleSidebar key={`dosen-${currentSubRole}`} />
         <div className="flex-1 pt-14">
           <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
             <div className="container flex items-center justify-between p-4 mx-auto md:px-6">
@@ -178,27 +204,38 @@ function LegacyLayoutWrapper({
             </div>
           </div>
           <div className="container p-4 mx-auto md:p-6">{children}</div>
-          <DynamicRoleMobileMenu />
+          <DynamicRoleMobileMenu key={`mobile-${currentSubRole}`} />
         </div>
       </div>
     )
   }
 
-  // Standard role-based layout
+  // Standard role-based layout (for dekan, gkm, prodi when they are sub-roles of dosen)
   return (
     <div className={cn(
       "relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50",
       className
     )}>
-      <RoleSidebar role={user.role} />
+      <RoleSidebar key={`role-${effectiveRole}-${currentSubRole || ''}`} role={effectiveRole} />
 
       <div className="lg:pl-64">
+        {showRoleSwitcher && user.role === 'dosen' && (
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+            <div className="container flex items-center justify-between p-4 mx-auto md:px-6">
+              <div>
+                <h1 className="text-xl font-semibold">Dashboard {effectiveRole === 'dekan' ? 'Dekan' : effectiveRole === 'gkm' ? 'GKM' : 'Prodi'}</h1>
+                <p className="text-sm text-muted-foreground">Kelola peran dan akses sesuai jabatan Anda</p>
+              </div>
+              <SubRoleSwitcher />
+            </div>
+          </div>
+        )}
         <div className="px-4 pb-8 md:px-6 lg:px-8">
           {children}
         </div>
       </div>
 
-      <RoleMobileMenu role={user.role} />
+      <RoleMobileMenu key={`mobile-${effectiveRole}-${currentSubRole || ''}`} role={effectiveRole} />
     </div>
   )
 }

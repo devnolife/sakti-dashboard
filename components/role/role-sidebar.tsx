@@ -20,18 +20,23 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
   const { user, logout } = useAuth()
 
+  // Reset open menus when role changes to ensure proper re-render
+  useEffect(() => {
+    setOpenMenus({})
+  }, [role])
+
   useEffect(() => {
     const newOpenMenus: Record<string, boolean> = {}
     const items = menuItems[role] || []
 
     items.forEach((item) => {
-      if (pathname.startsWith(item.href)) {
+      if (item.href && pathname.startsWith(item.href)) {
         newOpenMenus[item.id] = true
       }
 
       if (item.children) {
         item.children.forEach((child) => {
-          if (pathname.startsWith(child.href)) {
+          if (child.href && pathname.startsWith(child.href)) {
             newOpenMenus[item.id] = true
             if (child.children) {
               newOpenMenus[`${child.id}`] = true
@@ -42,7 +47,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
     })
 
     setOpenMenus(newOpenMenus)
-  }, [pathname, role])
+  }, [pathname, role])  // Added role to ensure re-render on role change
 
   const toggleMenu = (id: string) => {
     setOpenMenus((prev) => ({
@@ -67,14 +72,14 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
   }
 
   const renderMenuItem = (item: MenuItem, depth = 0) => {
-    const active = isActive(item.href)
+    const active = item.href ? isActive(item.href) : false
     const hasChildren = item.children && item.children.length > 0
     const isChildActive =
       hasChildren &&
-      item.children.some(
+      item.children!.some(
         (child: MenuItem) =>
-          isActive(child.href) ||
-          (child.children && child.children.some((grandchild: MenuItem) => isActive(grandchild.href))),
+          (child.href && isActive(child.href)) ||
+          (child.children && child.children.some((grandchild: MenuItem) => grandchild.href && isActive(grandchild.href))),
       )
 
     return (
@@ -110,7 +115,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
               whileHover={{ scale: 1.01, x: 2 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex gap-3 items-center">
                 {item.icon && (
                   <motion.div
                     initial={{ rotate: 0 }}
@@ -129,7 +134,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 500, damping: 15 }}
                   >
-                    <Badge variant={item.badge.variant} className="ml-auto">
+                    <Badge variant={item.badge.variant as "default" | "destructive" | "outline" | "secondary" | "success"} className="ml-auto">
                       {item.badge.text}
                     </Badge>
                   </motion.div>
@@ -141,7 +146,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
             </motion.button>
 
             <AnimatePresence>
-              {isMenuOpen(item.id) && (
+              {isMenuOpen(item.id) && item.children && (
                 <motion.div
                   className="py-1 pl-3 mt-1 ml-4 space-y-1 border-l-2 border-muted"
                   initial={{ opacity: 0, height: 0 }}
@@ -157,13 +162,13 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
         ) : (
           <motion.div whileHover={{ scale: 1.01, x: 2 }} whileTap={{ scale: 0.98 }}>
             <Link
-              href={item.href}
+              href={item.href || '#'}
               className={cn(
                 "flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ease-in-out",
                 active ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-accent hover:text-foreground",
               )}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex gap-3 items-center">
                 {item.icon && (
                   <motion.div
                     initial={{ rotate: 0 }}
@@ -184,7 +189,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
                       damping: 15,
                     }}
                   >
-                    <Badge variant={item.badge.variant} className="ml-auto">
+                    <Badge variant={item.badge.variant as "default" | "destructive" | "outline" | "secondary" | "success"} className="ml-auto">
                       {item.badge.text}
                     </Badge>
                   </motion.div>
@@ -199,21 +204,21 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
 
   return (
     <motion.div
-      className="fixed inset-y-0 left-0 z-30 flex-col hidden w-64 border-r bg-background lg:flex"
+      className="hidden fixed inset-y-0 left-0 z-30 flex-col w-64 border-r bg-background lg:flex"
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3, type: "spring", stiffness: 100 }}
     >
       {/* Logo and App Name */}
       <motion.div
-        className="flex items-center justify-center h-20 px-6"
+        className="flex justify-center items-center px-6 h-20"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.3 }}
       >
-        <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex items-center gap-3">
+        <Link href={user ? `/dashboard/${user.role}` : "/"} className="flex gap-3 items-center">
           <motion.div
-            className="flex items-center justify-center w-10 h-10 rounded-md bg-primary"
+            className="flex justify-center items-center w-10 h-10 rounded-md bg-primary"
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -231,7 +236,7 @@ export default function RoleSidebar({ role }: RoleSidebarProps) {
       </motion.div>
 
       <motion.div
-        className="flex-1 p-4 overflow-y-auto"
+        className="overflow-y-auto flex-1 p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.3 }}

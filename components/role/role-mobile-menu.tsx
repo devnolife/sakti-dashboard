@@ -27,6 +27,11 @@ export default function RoleMobileMenu({ role }: RoleMobileMenuProps) {
     setIsOpen(false)
   }, [pathname])
 
+  // Reset open menus when role changes to ensure proper re-render
+  useEffect(() => {
+    setOpenMenus({})
+  }, [role])
+
   // Initialize open menus based on current path
   useEffect(() => {
     const newOpenMenus: Record<string, boolean> = {}

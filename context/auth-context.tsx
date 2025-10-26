@@ -45,13 +45,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           if (response.ok) {
             const userData = await response.json()
-            setUser(userData.user)
+            // Map sub_role from API to subRole for frontend
+            const mappedUser = {
+              ...userData.user,
+              subRole: userData.user.sub_role || userData.user.subRole
+            }
+            setUser(mappedUser)
 
             // For dosen role, set initial subrole from database if not already set
-            if (userData.user.role === 'dosen' && userData.user.subRole) {
+            if (mappedUser.role === 'dosen' && mappedUser.subRole) {
               const currentSubRole = localStorage.getItem("current-subrole")
               if (!currentSubRole) {
-                localStorage.setItem("current-subrole", userData.user.subRole)
+                localStorage.setItem("current-subrole", mappedUser.subRole)
               }
             }
           } else {
@@ -82,8 +87,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // If user is authenticated but on auth pages
       if (user && (pathname === "/login" || pathname === "/")) {
-        // Always redirect to main role dashboard
-        // Users can switch to subroles from there
+        // For dosen with leadership sub-roles, redirect to their sub-role dashboard
+        if (user.role === 'dosen' && user.subRole) {
+          const primarySubRole = user.subRole.split(',')[0].trim()
+
+          // Leadership roles get redirected to their specific dashboards
+          switch (primarySubRole) {
+            case 'dekan':
+              router.push('/dashboard/dekan')
+              return
+            case 'wakil_dekan_1':
+              router.push('/dashboard/dosen/vice-dean-1')
+              return
+            case 'wakil_dekan_2':
+              router.push('/dashboard/dosen/vice-dean-2')
+              return
+            case 'wakil_dekan_3':
+              router.push('/dashboard/dosen/vice-dean-3')
+              return
+            case 'wakil_dekan_4':
+              router.push('/dashboard/dosen/vice-dean-4')
+              return
+            case 'gkm':
+              router.push('/dashboard/gkm')
+              return
+            case 'prodi':
+              router.push('/dashboard/prodi')
+              return
+            case 'sekretaris_prodi':
+              router.push('/dashboard/dosen') // Sekretaris prodi bisa akses dashboard dosen
+              return
+            default:
+              // Regular dosen
+              router.push('/dashboard/dosen')
+              return
+          }
+        }
+
+        // For other roles, redirect to main role dashboard
         router.push(`/dashboard/${user.role}`)
         return
       }
@@ -91,9 +132,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Only redirect if user is trying to access unauthorized role dashboard  
       // Don't redirect if user is already on an allowed path
       if (user && pathname.startsWith("/dashboard/")) {
-        const allowedPaths = [`/dashboard/${user.role}`]
+        const allowedPaths: string[] = []
 
-        // For dosen users, allow access to subrole paths based on their database subrole
+        // For dosen users, add their subrole paths
         if (user.role === 'dosen' && user.subRole) {
           const userSubRoles = user.subRole.split(',').map(role => role.trim())
 
@@ -120,17 +161,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               case 'prodi':
                 allowedPaths.push('/dashboard/prodi')
                 break
+              case 'sekretaris_prodi':
+                allowedPaths.push('/dashboard/dosen')
+                break
+              case 'dosen':
+                allowedPaths.push('/dashboard/dosen')
+                break
             }
           })
+
+          // If no allowed paths added (shouldn't happen), add dosen as default
+          if (allowedPaths.length === 0) {
+            allowedPaths.push('/dashboard/dosen')
+          }
+        } else {
+          // For non-dosen users, just add their main role dashboard
+          allowedPaths.push(`/dashboard/${user.role}`)
         }
 
         // Check if current path is allowed
         const isAllowedPath = allowedPaths.some(path => pathname.startsWith(path))
 
         // Only redirect if user is not on an allowed path
-        // This prevents redirect loops when user is already on their correct dashboard
         if (!isAllowedPath) {
-          router.push(`/dashboard/${user.role}`)
+          // For dosen with leadership roles, redirect to their primary sub-role dashboard
+          if (user.role === 'dosen' && user.subRole && allowedPaths.length > 0) {
+            router.push(allowedPaths[0]) // Redirect to first allowed path (primary sub-role)
+          } else {
+            router.push(`/dashboard/${user.role}`)
+          }
         }
       }
     }
@@ -155,23 +214,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json()
 
+      // Map sub_role from API to subRole for frontend
+      const mappedUser = {
+        ...data.user,
+        subRole: data.user.sub_role || data.user.subRole
+      }
+
       // Store user and token in localStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(data.user))
+        localStorage.setItem("user", JSON.stringify(mappedUser))
         localStorage.setItem("session-token", data.token)
 
         // For dosen role, set initial subrole from database
-        if (data.user.role === 'dosen' && data.user.subRole) {
-          localStorage.setItem("current-subrole", data.user.subRole)
+        if (mappedUser.role === 'dosen' && mappedUser.subRole) {
+          localStorage.setItem("current-subrole", mappedUser.subRole)
         }
       }
 
-      setUser(data.user)
+      setUser(mappedUser)
       setIsLoading(false)
 
-      // Always redirect to main role dashboard first
-      // Users can switch to subroles using the switcher
-      router.push(`/dashboard/${data.user.role}`)
+      // Don't redirect here - let the useEffect handle redirect based on role and sub-role
+      // This ensures proper redirect logic for dosen with leadership sub-roles
     } catch (error) {
       setIsLoading(false)
       throw error
