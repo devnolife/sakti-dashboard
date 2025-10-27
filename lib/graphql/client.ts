@@ -1,6 +1,6 @@
 import { GraphQLClient } from 'graphql-request'
 
-const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || 'https://sicekcok.if.unismuh.ac.id/graphql'
+const GRAPHQL_ENDPOINT = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'https://superapps.if.unismuh.ac.id/graphql'
 
 // Create GraphQL client
 export const graphqlClient = new GraphQLClient(GRAPHQL_ENDPOINT, {

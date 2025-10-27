@@ -1,0 +1,5801 @@
+{
+  "__schema": {
+    "queryType": {
+      "name": "Query",
+      "fields": [
+        {
+          "name": "sayHello",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "String",
+              "kind": "SCALAR"
+            }
+          }
+        },
+        {
+          "name": "profile",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "UserProfile",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "mahasiswas",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "mahasiswa",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": "MahasiswaSimak",
+            "kind": "OBJECT",
+            "ofType": null
+          }
+        },
+        {
+          "name": "mahasiswasByName",
+          "description": null,
+          "args": [
+            {
+              "name": "nama",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "mahasiswaByEmail",
+          "description": null,
+          "args": [
+            {
+              "name": "email",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": "MahasiswaSimak",
+            "kind": "OBJECT",
+            "ofType": null
+          }
+        },
+        {
+          "name": "mahasiswasByProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "kode_prodi",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKrsMahasiswa",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "periode_krs",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KrsWithHeaderOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getKhsMahasiswa",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "periode_krs",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KhsWithHeaderOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllTranskripMahasiswa",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "TranskripWithHeaderOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllKkps",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkp",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Kkp",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllApprovalStatuses",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpApprovals",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpMahasiswas",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpMahasiswa",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswa",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getMahasiswaKkpSyaratWithApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getAllApprovedMahasiswa",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getAllApprovedMahasiswaStats",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "cekKkpMahasiswa",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Boolean",
+              "kind": "SCALAR"
+            }
+          }
+        },
+        {
+          "name": "getAllFakultas",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getFakultas",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "Int",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Fakultas",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllProdis",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "Float",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getProdiByKodeProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "kodeProdi",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpSyarat",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpSyaratByKodeProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "kodeProdi",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpSyarat",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpSyarat",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getKkpMahasiswaSyarat",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyarat",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getApprovalTimeline",
+          "description": null,
+          "args": [
+            {
+              "name": "nim",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "kkp_syarat_id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpInstansi",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpInstansi",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllInstansiApproved",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpInstansiApprovals",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpInstansiApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpInstansiBagians",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpInstansiBagian",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagianOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpInstansiBagianApprovals",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpInstansiBagianApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagianApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getKkpMahasiswaSyaratKelengkapan",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyaratKelengkapanOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllKkpMahasiswaSyaratKelengkapanApprovals",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getKkpMahasiswaSyaratKelengkapanApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyaratKelengkapanApproval",
+              "kind": "OBJECT"
+            }
+          }
+        }
+      ]
+    },
+    "mutationType": {
+      "name": "Mutation",
+      "fields": [
+        {
+          "name": "login",
+          "description": null,
+          "args": [
+            {
+              "name": "username",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "password",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "LoginResponse",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "signin",
+          "description": null,
+          "args": [
+            {
+              "name": "loginUserInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "SigninUserInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "SigninResponse",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkp",
+          "description": null,
+          "args": [
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Kkp",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "createProdiInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateProdiInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "updateProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "updateProdiInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "UpdateProdiInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "removeProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "Float",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpSyarat",
+          "description": null,
+          "args": [
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpSyaratInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpSyarat",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "updateKkpSyarat",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "UpdateKkpSyaratInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpSyarat",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "removeKkpSyarat",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpSyarat",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "ajukanKkpInstansi",
+          "description": null,
+          "args": [
+            {
+              "name": "createKkpInstansiInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpInstansiInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpInstansiApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpInstansiApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpInstansiBagian",
+          "description": null,
+          "args": [
+            {
+              "name": "createKkpInstansiBagianInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpInstansiBagianInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagian",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "updateKkpInstansiBagian",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "updateKkpInstansiBagianInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "UpdateKkpInstansiBagianInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagian",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "removeKkpInstansiBagian",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagian",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpInstansiBagianApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "createKkpInstansiBagianApprovalInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpInstansiBagianApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagianApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "updateKkpInstansiBagianApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "updateKkpInstansiBagianApprovalInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "UpdateKkpInstansiBagianApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagianApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "removeKkpInstansiBagianApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpInstansiBagianApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpMahasiswaSyaratKelengkapan",
+          "description": null,
+          "args": [
+            {
+              "name": "createKkpMahasiswaSyaratKelengkapanInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpMahasiswaSyaratKelengkapanInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyaratKelengkapanOutput",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpMahasiswaSyaratKelengkapanApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "createKkpMahasiswaSyaratKelengkapanApprovalInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpMahasiswaSyaratKelengkapanApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyaratKelengkapanApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "updateKkpMahasiswaSyaratKelengkapanApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            },
+            {
+              "name": "updateKkpMahasiswaSyaratKelengkapanApprovalInput",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "UpdateKkpMahasiswaSyaratKelengkapanApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyaratKelengkapanApproval",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "removeKkpMahasiswaSyaratKelengkapanApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpMahasiswaSyaratKelengkapanApproval",
+              "kind": "OBJECT"
+            }
+          }
+        }
+      ]
+    },
+    "types": [
+      {
+        "name": "Fakultas",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "kode_fakultas",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nama_fakultas",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nama_fakultas_eng",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nama_alias",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "dekan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "prodi",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "ID",
+        "kind": "SCALAR",
+        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "fields": null
+      },
+      {
+        "name": "String",
+        "kind": "SCALAR",
+        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
+        "fields": null
+      },
+      {
+        "name": "Prodi",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kode_fakultas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kode_prodi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama_prodi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama_prodi_eng",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "gelar_pendek",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "gelar_panjang",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "gelar_eng",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "total_sks_lulus",
+            "type": {
+              "name": "Float",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nidn_ketua_prodi",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "fakultas",
+            "type": {
+              "name": "Fakultas",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "mahasiswa",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Float",
+        "kind": "SCALAR",
+        "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+        "fields": null
+      },
+      {
+        "name": "Mahasiswa",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "nim",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "prodi_kode_prodi",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "is_activated",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "last_sync",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "prodi",
+            "type": {
+              "name": "Prodi",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "Boolean",
+        "kind": "SCALAR",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
+        "fields": null
+      },
+      {
+        "name": "KkpMahasiswa",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "mahasiswa_nim",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "kkp_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "mahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Mahasiswa",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "kkp",
+            "type": {
+              "name": "Kkp",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "syarat",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpSyarat",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "prodi_kode_prodi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "logo",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "url_check",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "response_should_be",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "is_upload_file",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "is_activated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "is_deleted",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "KkpMahasiswaSyarat",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpMahasiswaSyarat",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_mahasiswa_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_syarat_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswa",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "kkpSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "kelengkapan",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpMahasiswaSyaratKelengkapan",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_mahasiswa_syarat_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "uploaded_file_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "get_response",
+            "type": {
+              "name": "JSONObject",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "get_approved",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpMahasiswaSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "JSONObject",
+        "kind": "SCALAR",
+        "description": "The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).",
+        "fields": null
+      },
+      {
+        "name": "KkpMahasiswaSyaratKelengkapanApproval",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_mahasiswa_syarat_kelengkapan_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "approval_status_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpMahasiswaSyaratKelengkapan",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapan",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "approvalStatus",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ApprovalStatus",
+                "kind": "OBJECT"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "ApprovalStatus",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "kkpApprovals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "kkpMahasiswaSyaratKelengkapanApprovals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpApproval",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "tanggal_jam",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approvalStatus",
+            "type": {
+              "name": "ApprovalStatus",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "kkp",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Kkp",
+                "kind": "OBJECT"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Kkp",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "prodi_kode_prodi",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "no_surat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "tanggal_surat",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "no_sk_kkp",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "tanggal_sk_kkp",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "instansi",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "tempat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "mahasiswa_nim_ketua",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "dosen_nidn_pembimbing_prodi",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nama_pembimbing_lapangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "kkpMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "MahasiswaSimak",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "nim",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "hp",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "prodi_kode_prodi",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "password",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpInstansiBagianApproval",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_instansi_bagian_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "approval_status_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "approvalStatus",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ApprovalStatus",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpInstansiBagian",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagian",
+                "kind": "OBJECT"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpInstansiBagian",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_instansi_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "alamat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "is_activated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpInstansi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpInstansiApproval",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_instansi_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpInstansi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "approval_status_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "approvalStatus",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ApprovalStatus",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpInstansi",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "alamat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "logo",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "is_activated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "bagian",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KelengkapanOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "kelengkapan_id",
+            "type": {
+              "name": "ID",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "uploaded_file_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "ApprovalOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "approval_id",
+            "type": {
+              "name": "ID",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approval_status_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approval_status_nama",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "MahasiswaKkpSyaratApprovalOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "mahasiswa_nim",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "syarat_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "syarat_nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "latest_kelengkapan",
+            "type": {
+              "name": "KelengkapanOutput",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval",
+            "type": {
+              "name": "ApprovalOutput",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "ApprovedMahasiswaOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "kkpMahasiswaid",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nim",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "prodi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpMahasiswaApprovalStatsOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "kkpMahasiswaId",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nim",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "prodi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "persentaseSyaratDisetujui",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "jumlahSyaratDisetujui",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "jumlahSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KrsHeader",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "total_sks",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "total_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Int",
+        "kind": "SCALAR",
+        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
+        "fields": null
+      },
+      {
+        "name": "KrsMahasiswaOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "kode_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "semester",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "sks",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KrsWithHeaderOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "header",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KrsHeader",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "krs",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KhsHeader",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "total_sks",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "total_bobot",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "total_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "ips",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "KhsMahasiswaOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "kode_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "semester",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "sks",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "grade",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nilai",
+            "type": {
+              "name": "Float",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "bobot",
+            "type": {
+              "name": "Float",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "KhsWithHeaderOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "header",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KhsHeader",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "khs",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "TranskripHeader",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "total_sks_program",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "total_sks_lulus",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "total_matakuliah_program",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "total_matakuliah_lulus",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "ipk",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "TranskripMahasiswaOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "kode_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama_matakuliah",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "semester",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "sks",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Float",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "periode_krs",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "status_nilai",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "grade",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "nilai",
+            "type": {
+              "name": "Float",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "bobot",
+            "type": {
+              "name": "Float",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "TranskripWithHeaderOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "header",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "TranskripHeader",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "transkrip",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "FindAllApprovedDto",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "alamat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "logo",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approval_status_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "latest_keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approval_status",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpInstansiOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "alamat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "logo",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "is_activated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "bagian",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "latest_approval_status_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval_status",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval_keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval_created_at",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpInstansiBagianOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_instansi_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpInstansi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "alamat",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "latest_approval_status_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval_status",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval_keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "latest_approval_created_at",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "KkpMahasiswaSyaratKelengkapanOutput",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkp_mahasiswa_syarat_id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "uploaded_file_id",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "get_response",
+            "type": {
+              "name": "JSONObject",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "get_approved",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "keterangan",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updated_by",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "created_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "updated_at",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "kkpMahasiswaSyarat",
+            "type": {
+              "name": "KkpMahasiswaSyarat",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "approvals",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "UserProfile",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "username",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "fullname",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "department",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "role",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "LoginResponse",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "access_token",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "SigninResponse",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "access_token",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Date",
+        "kind": "SCALAR",
+        "description": "Date custom scalar type",
+        "fields": null
+      },
+      {
+        "name": "Query",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "sayHello",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "profile",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "UserProfile",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "mahasiswas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "mahasiswa",
+            "type": {
+              "name": "MahasiswaSimak",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "mahasiswasByName",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "mahasiswaByEmail",
+            "type": {
+              "name": "MahasiswaSimak",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "mahasiswasByProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKrsMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KrsWithHeaderOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getKhsMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KhsWithHeaderOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllTranskripMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "TranskripWithHeaderOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllKkps",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkp",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Kkp",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllApprovalStatuses",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpApprovals",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpMahasiswas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswa",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getMahasiswaKkpSyaratWithApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getAllApprovedMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getAllApprovedMahasiswaStats",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "cekKkpMahasiswa",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "getAllFakultas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getFakultas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Fakultas",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllProdis",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getProdiByKodeProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpSyaratByKodeProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getKkpMahasiswaSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getApprovalTimeline",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpInstansi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpInstansi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllInstansiApproved",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpInstansiApprovals",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpInstansiApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpInstansiBagians",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpInstansiBagian",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagianOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpInstansiBagianApprovals",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpInstansiBagianApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagianApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getKkpMahasiswaSyaratKelengkapan",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapanOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllKkpMahasiswaSyaratKelengkapanApprovals",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getKkpMahasiswaSyaratKelengkapanApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapanApproval",
+                "kind": "OBJECT"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Mutation",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "login",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "LoginResponse",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "signin",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "SigninResponse",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkp",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Kkp",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "updateProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "removeProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "updateKkpSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "removeKkpSyarat",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpSyarat",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "ajukanKkpInstansi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpInstansiApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpInstansiBagian",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagian",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "updateKkpInstansiBagian",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagian",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "removeKkpInstansiBagian",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagian",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpInstansiBagianApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagianApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "updateKkpInstansiBagianApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagianApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "removeKkpInstansiBagianApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpInstansiBagianApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpMahasiswaSyaratKelengkapan",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapanOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpMahasiswaSyaratKelengkapanApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapanApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "updateKkpMahasiswaSyaratKelengkapanApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapanApproval",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "removeKkpMahasiswaSyaratKelengkapanApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpMahasiswaSyaratKelengkapanApproval",
+                "kind": "OBJECT"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "SigninUserInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpApprovalInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateProdiInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "UpdateProdiInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpSyaratInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "UpdateKkpSyaratInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpInstansiInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpInstansiApprovalInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpInstansiBagianInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "UpdateKkpInstansiBagianInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpInstansiBagianApprovalInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "UpdateKkpInstansiBagianApprovalInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpMahasiswaSyaratKelengkapanInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "JSON",
+        "kind": "SCALAR",
+        "description": "The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).",
+        "fields": null
+      },
+      {
+        "name": "CreateKkpMahasiswaSyaratKelengkapanApprovalInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "UpdateKkpMahasiswaSyaratKelengkapanApprovalInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "__Schema",
+        "kind": "OBJECT",
+        "description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
+        "fields": [
+          {
+            "name": "description",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "types",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "queryType",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "__Type",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "mutationType",
+            "type": {
+              "name": "__Type",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "subscriptionType",
+            "type": {
+              "name": "__Type",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "directives",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "__Type",
+        "kind": "OBJECT",
+        "description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name, description and optional `specifiedByURL`, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+        "fields": [
+          {
+            "name": "kind",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "__TypeKind",
+                "kind": "ENUM"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "specifiedByURL",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "fields",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "interfaces",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "possibleTypes",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "enumValues",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "inputFields",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL"
+              }
+            }
+          },
+          {
+            "name": "ofType",
+            "type": {
+              "name": "__Type",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "isOneOf",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "__TypeKind",
+        "kind": "ENUM",
+        "description": "An enum describing what kind of type a given `__Type` is.",
+        "fields": null
+      },
+      {
+        "name": "__Field",
+        "kind": "OBJECT",
+        "description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+        "fields": [
+          {
+            "name": "name",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "args",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "type",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "__Type",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "isDeprecated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "deprecationReason",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "__InputValue",
+        "kind": "OBJECT",
+        "description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+        "fields": [
+          {
+            "name": "name",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "type",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "__Type",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "defaultValue",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "isDeprecated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "deprecationReason",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "__EnumValue",
+        "kind": "OBJECT",
+        "description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+        "fields": [
+          {
+            "name": "name",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "isDeprecated",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "deprecationReason",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "__Directive",
+        "kind": "OBJECT",
+        "description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+        "fields": [
+          {
+            "name": "name",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "description",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "isRepeatable",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "locations",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "args",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "__DirectiveLocation",
+        "kind": "ENUM",
+        "description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+        "fields": null
+      }
+    ]
+  }
+}

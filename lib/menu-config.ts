@@ -1,4 +1,4 @@
-import { Role } from './generated/prisma'
+import { Role } from '@/types/models'
 
 export interface MenuItem {
   id: string
@@ -403,7 +403,7 @@ export function getMenuForUser(role: Role | string, subRole?: string): MenuItem[
   return menuConfig.filter(menuItem => {
     // Check if user has access to this menu item
     if (menuItem.roles.includes('*') ||
-        menuItem.roles.some(itemRole => userRoles.includes(itemRole))) {
+      menuItem.roles.some(itemRole => userRoles.includes(itemRole))) {
 
       // Filter children based on user roles
       if (menuItem.children) {

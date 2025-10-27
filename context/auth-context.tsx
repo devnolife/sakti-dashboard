@@ -3,6 +3,24 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import type { Role } from "@/types/role"
+import { executeGraphQLQuery, createAuthenticatedClient } from "@/lib/graphql/client"
+import { LOGIN, GET_PROFILE } from "@/lib/graphql/mutations-superapps"
+
+// GraphQL Response Types
+interface GraphQLLoginResponse {
+  login: {
+    access_token: string
+  }
+}
+
+interface GraphQLProfileResponse {
+  profile: {
+    username: string
+    fullname: string | null
+    department: string | null
+    role: string | null
+  }
+}
 
 interface User {
   id: string
@@ -34,39 +52,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkSession = async () => {
       const token = typeof window !== "undefined" ? localStorage.getItem("session-token") : null
+      const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null
 
-      if (token) {
+      if (token && storedUser) {
         try {
-          const response = await fetch("/api/auth/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
+          // For now, we'll trust the stored user data
+          // In production, you might want to verify with a GraphQL query
+          const userData = JSON.parse(storedUser)
+          setUser(userData)
 
-          if (response.ok) {
-            const userData = await response.json()
-            // Map sub_role from API to subRole for frontend
-            const mappedUser = {
-              ...userData.user,
-              subRole: userData.user.sub_role || userData.user.subRole
-            }
-            setUser(mappedUser)
-
-            // For dosen role, set initial subrole from database if not already set
-            if (mappedUser.role === 'dosen' && mappedUser.subRole) {
-              const currentSubRole = localStorage.getItem("current-subrole")
-              if (!currentSubRole) {
-                localStorage.setItem("current-subrole", mappedUser.subRole)
-              }
-            }
-          } else {
-            localStorage.removeItem("session-token")
-            localStorage.removeItem("user")
-          }
+          console.log('✅ Session restored for:', userData.name)
         } catch (error) {
-          console.error("Session check failed:", error)
+          console.error("Session restore failed:", error)
           localStorage.removeItem("session-token")
           localStorage.removeItem("user")
+          localStorage.removeItem("graphql-token")
         }
       }
 
@@ -136,9 +136,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // For dosen users, add their subrole paths
         if (user.role === 'dosen' && user.subRole) {
-          const userSubRoles = user.subRole.split(',').map(role => role.trim())
+          const userSubRoles = user.subRole.split(',').map((role: string) => role.trim())
 
-          userSubRoles.forEach(subRole => {
+          userSubRoles.forEach((subRole: string) => {
             switch (subRole) {
               case 'dekan':
                 allowedPaths.push('/dashboard/dekan')
@@ -199,69 +199,77 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password, selectedRole }),
-      })
+      console.log('🔐 Logging in with GraphQL...')
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Login failed")
+      // Step 1: Call GraphQL login mutation to get access_token
+      const loginResult = await executeGraphQLQuery<GraphQLLoginResponse>(
+        LOGIN,
+        { username, password }
+      )
+
+      const { data: loginData, error: loginError } = loginResult
+
+      if (loginError || !loginData || !loginData.login) {
+        throw new Error(loginError || 'Login gagal. Periksa username dan password Anda.')
       }
 
-      const data = await response.json()
+      const { access_token } = loginData.login
+      console.log('✅ GraphQL login successful, token received')
 
-      // Map sub_role from API to subRole for frontend
-      const mappedUser = {
-        ...data.user,
-        subRole: data.user.sub_role || data.user.subRole
+      // Step 2: Get user profile using the token
+      const authenticatedClient = createAuthenticatedClient(access_token)
+      const profileResult = await executeGraphQLQuery<GraphQLProfileResponse>(
+        GET_PROFILE,
+        {},
+        authenticatedClient
+      )
+
+      const { data: profileData, error: profileError } = profileResult
+
+      if (profileError || !profileData || !profileData.profile) {
+        throw new Error(profileError || 'Gagal mengambil data profile.')
+      }
+
+      const userData = profileData.profile
+      console.log('✅ Profile data retrieved:', userData)
+
+      // Determine role dari profile data
+      let role: Role = (userData.role?.toLowerCase() as Role) || 'mahasiswa'
+
+      // Map GraphQL response to our User format
+      const mappedUser: User = {
+        id: userData.username, // Use username as ID
+        username: userData.username,
+        name: userData.fullname || userData.username,
+        role: role,
+        avatar: undefined,
+        profile: userData
       }
 
       // Store user and token in localStorage
       if (typeof window !== "undefined") {
         localStorage.setItem("user", JSON.stringify(mappedUser))
-        localStorage.setItem("session-token", data.token)
-
-        // For dosen role, set initial subrole from database
-        if (mappedUser.role === 'dosen' && mappedUser.subRole) {
-          localStorage.setItem("current-subrole", mappedUser.subRole)
-        }
+        localStorage.setItem("session-token", access_token) // GraphQL token
+        localStorage.setItem("graphql-token", access_token) // Store separately for GraphQL requests
       }
 
       setUser(mappedUser)
       setIsLoading(false)
 
-      // Don't redirect here - let the useEffect handle redirect based on role and sub-role
-      // This ensures proper redirect logic for dosen with leadership sub-roles
+      // Don't redirect here - let the useEffect handle redirect based on role
     } catch (error) {
       setIsLoading(false)
+      console.error('❌ Login error:', error)
       throw error
     }
   }
 
   const logout = async () => {
-    try {
-      // Call logout API if needed for cleanup
-      const token = typeof window !== "undefined" ? localStorage.getItem("session-token") : null
-      if (token) {
-        await fetch("/api/auth/logout", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      }
-    } catch (error) {
-      console.error("Logout API call failed:", error)
-    }
-
     // Clear local storage
     if (typeof window !== "undefined") {
       localStorage.removeItem("user")
       localStorage.removeItem("session-token")
+      localStorage.removeItem("graphql-token")
       localStorage.removeItem("current-subrole")
     }
 

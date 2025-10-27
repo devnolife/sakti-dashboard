@@ -1,0 +1,588 @@
+{
+  "endpoint": "https://superapps.if.unismuh.ac.id/graphql",
+  "introspectedAt": "2025-10-27T05:59:42.678Z",
+  "queriesCount": 43,
+  "mutationsCount": 22,
+  "typesCount": 37,
+  "queries": [
+    {
+      "name": "sayHello",
+      "args": [],
+      "returnType": "String"
+    },
+    {
+      "name": "profile",
+      "args": [],
+      "returnType": "UserProfile"
+    },
+    {
+      "name": "mahasiswas",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "mahasiswa",
+      "args": [
+        "nim"
+      ],
+      "returnType": "MahasiswaSimak"
+    },
+    {
+      "name": "mahasiswasByName",
+      "args": [
+        "nama"
+      ],
+      "returnType": null
+    },
+    {
+      "name": "mahasiswaByEmail",
+      "args": [
+        "email"
+      ],
+      "returnType": "MahasiswaSimak"
+    },
+    {
+      "name": "mahasiswasByProdi",
+      "args": [
+        "kode_prodi"
+      ],
+      "returnType": null
+    },
+    {
+      "name": "getKrsMahasiswa",
+      "args": [
+        "nim",
+        "periode_krs"
+      ],
+      "returnType": "KrsWithHeaderOutput"
+    },
+    {
+      "name": "getKhsMahasiswa",
+      "args": [
+        "nim",
+        "periode_krs"
+      ],
+      "returnType": "KhsWithHeaderOutput"
+    },
+    {
+      "name": "getAllTranskripMahasiswa",
+      "args": [
+        "nim"
+      ],
+      "returnType": "TranskripWithHeaderOutput"
+    },
+    {
+      "name": "getAllKkps",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkp",
+      "args": [
+        "id"
+      ],
+      "returnType": "Kkp"
+    },
+    {
+      "name": "getAllApprovalStatuses",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getAllKkpApprovals",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpApproval",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpApproval"
+    },
+    {
+      "name": "getAllKkpMahasiswas",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpMahasiswa",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpMahasiswa"
+    },
+    {
+      "name": "getMahasiswaKkpSyaratWithApproval",
+      "args": [
+        "nim"
+      ],
+      "returnType": null
+    },
+    {
+      "name": "getAllApprovedMahasiswa",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getAllApprovedMahasiswaStats",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "cekKkpMahasiswa",
+      "args": [
+        "nim"
+      ],
+      "returnType": "Boolean"
+    },
+    {
+      "name": "getAllFakultas",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getFakultas",
+      "args": [
+        "id"
+      ],
+      "returnType": "Fakultas"
+    },
+    {
+      "name": "getAllProdis",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getProdi",
+      "args": [
+        "id"
+      ],
+      "returnType": "Prodi"
+    },
+    {
+      "name": "getProdiByKodeProdi",
+      "args": [
+        "kodeProdi"
+      ],
+      "returnType": "Prodi"
+    },
+    {
+      "name": "getAllKkpSyarat",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpSyaratByKodeProdi",
+      "args": [
+        "kodeProdi"
+      ],
+      "returnType": null
+    },
+    {
+      "name": "getKkpSyarat",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpSyarat"
+    },
+    {
+      "name": "getKkpMahasiswaSyarat",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpMahasiswaSyarat"
+    },
+    {
+      "name": "getApprovalTimeline",
+      "args": [
+        "nim",
+        "kkp_syarat_id"
+      ],
+      "returnType": null
+    },
+    {
+      "name": "getAllKkpInstansi",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpInstansi",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpInstansiOutput"
+    },
+    {
+      "name": "getAllInstansiApproved",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getAllKkpInstansiApprovals",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpInstansiApproval",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpInstansiApproval"
+    },
+    {
+      "name": "getAllKkpInstansiBagians",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpInstansiBagian",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpInstansiBagianOutput"
+    },
+    {
+      "name": "getAllKkpInstansiBagianApprovals",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpInstansiBagianApproval",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpInstansiBagianApproval"
+    },
+    {
+      "name": "getKkpMahasiswaSyaratKelengkapan",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpMahasiswaSyaratKelengkapanOutput"
+    },
+    {
+      "name": "getAllKkpMahasiswaSyaratKelengkapanApprovals",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getKkpMahasiswaSyaratKelengkapanApproval",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpMahasiswaSyaratKelengkapanApproval"
+    }
+  ],
+  "mutations": [
+    {
+      "name": "login",
+      "args": [
+        "username",
+        "password"
+      ],
+      "returnType": "LoginResponse"
+    },
+    {
+      "name": "signin",
+      "args": [
+        "loginUserInput"
+      ],
+      "returnType": "SigninResponse"
+    },
+    {
+      "name": "createKkp",
+      "args": [
+        "input"
+      ],
+      "returnType": "Kkp"
+    },
+    {
+      "name": "createKkpApproval",
+      "args": [
+        "input"
+      ],
+      "returnType": "KkpApproval"
+    },
+    {
+      "name": "createProdi",
+      "args": [
+        "createProdiInput"
+      ],
+      "returnType": "Prodi"
+    },
+    {
+      "name": "updateProdi",
+      "args": [
+        "updateProdiInput"
+      ],
+      "returnType": "Prodi"
+    },
+    {
+      "name": "removeProdi",
+      "args": [
+        "id"
+      ],
+      "returnType": "Prodi"
+    },
+    {
+      "name": "createKkpSyarat",
+      "args": [
+        "input"
+      ],
+      "returnType": "KkpSyarat"
+    },
+    {
+      "name": "updateKkpSyarat",
+      "args": [
+        "id",
+        "input"
+      ],
+      "returnType": "KkpSyarat"
+    },
+    {
+      "name": "removeKkpSyarat",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpSyarat"
+    },
+    {
+      "name": "ajukanKkpInstansi",
+      "args": [
+        "createKkpInstansiInput"
+      ],
+      "returnType": "KkpInstansi"
+    },
+    {
+      "name": "createKkpInstansiApproval",
+      "args": [
+        "input"
+      ],
+      "returnType": "KkpInstansiApproval"
+    },
+    {
+      "name": "createKkpInstansiBagian",
+      "args": [
+        "createKkpInstansiBagianInput"
+      ],
+      "returnType": "KkpInstansiBagian"
+    },
+    {
+      "name": "updateKkpInstansiBagian",
+      "args": [
+        "id",
+        "updateKkpInstansiBagianInput"
+      ],
+      "returnType": "KkpInstansiBagian"
+    },
+    {
+      "name": "removeKkpInstansiBagian",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpInstansiBagian"
+    },
+    {
+      "name": "createKkpInstansiBagianApproval",
+      "args": [
+        "createKkpInstansiBagianApprovalInput"
+      ],
+      "returnType": "KkpInstansiBagianApproval"
+    },
+    {
+      "name": "updateKkpInstansiBagianApproval",
+      "args": [
+        "id",
+        "updateKkpInstansiBagianApprovalInput"
+      ],
+      "returnType": "KkpInstansiBagianApproval"
+    },
+    {
+      "name": "removeKkpInstansiBagianApproval",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpInstansiBagianApproval"
+    },
+    {
+      "name": "createKkpMahasiswaSyaratKelengkapan",
+      "args": [
+        "createKkpMahasiswaSyaratKelengkapanInput"
+      ],
+      "returnType": "KkpMahasiswaSyaratKelengkapanOutput"
+    },
+    {
+      "name": "createKkpMahasiswaSyaratKelengkapanApproval",
+      "args": [
+        "createKkpMahasiswaSyaratKelengkapanApprovalInput"
+      ],
+      "returnType": "KkpMahasiswaSyaratKelengkapanApproval"
+    },
+    {
+      "name": "updateKkpMahasiswaSyaratKelengkapanApproval",
+      "args": [
+        "id",
+        "updateKkpMahasiswaSyaratKelengkapanApprovalInput"
+      ],
+      "returnType": "KkpMahasiswaSyaratKelengkapanApproval"
+    },
+    {
+      "name": "removeKkpMahasiswaSyaratKelengkapanApproval",
+      "args": [
+        "id"
+      ],
+      "returnType": "KkpMahasiswaSyaratKelengkapanApproval"
+    }
+  ],
+  "types": [
+    {
+      "name": "Fakultas",
+      "fieldsCount": 8
+    },
+    {
+      "name": "Prodi",
+      "fieldsCount": 12
+    },
+    {
+      "name": "Mahasiswa",
+      "fieldsCount": 11
+    },
+    {
+      "name": "KkpMahasiswa",
+      "fieldsCount": 11
+    },
+    {
+      "name": "KkpSyarat",
+      "fieldsCount": 14
+    },
+    {
+      "name": "KkpMahasiswaSyarat",
+      "fieldsCount": 10
+    },
+    {
+      "name": "KkpMahasiswaSyaratKelengkapan",
+      "fieldsCount": 12
+    },
+    {
+      "name": "KkpMahasiswaSyaratKelengkapanApproval",
+      "fieldsCount": 10
+    },
+    {
+      "name": "ApprovalStatus",
+      "fieldsCount": 5
+    },
+    {
+      "name": "KkpApproval",
+      "fieldsCount": 5
+    },
+    {
+      "name": "Kkp",
+      "fieldsCount": 18
+    },
+    {
+      "name": "MahasiswaSimak",
+      "fieldsCount": 5
+    },
+    {
+      "name": "KkpInstansiBagianApproval",
+      "fieldsCount": 10
+    },
+    {
+      "name": "KkpInstansiBagian",
+      "fieldsCount": 12
+    },
+    {
+      "name": "KkpInstansiApproval",
+      "fieldsCount": 10
+    },
+    {
+      "name": "KkpInstansi",
+      "fieldsCount": 12
+    },
+    {
+      "name": "KelengkapanOutput",
+      "fieldsCount": 4
+    },
+    {
+      "name": "ApprovalOutput",
+      "fieldsCount": 4
+    },
+    {
+      "name": "MahasiswaKkpSyaratApprovalOutput",
+      "fieldsCount": 5
+    },
+    {
+      "name": "ApprovedMahasiswaOutput",
+      "fieldsCount": 4
+    },
+    {
+      "name": "KkpMahasiswaApprovalStatsOutput",
+      "fieldsCount": 7
+    },
+    {
+      "name": "KrsHeader",
+      "fieldsCount": 2
+    },
+    {
+      "name": "KrsMahasiswaOutput",
+      "fieldsCount": 4
+    },
+    {
+      "name": "KrsWithHeaderOutput",
+      "fieldsCount": 2
+    },
+    {
+      "name": "KhsHeader",
+      "fieldsCount": 4
+    },
+    {
+      "name": "KhsMahasiswaOutput",
+      "fieldsCount": 7
+    },
+    {
+      "name": "KhsWithHeaderOutput",
+      "fieldsCount": 2
+    },
+    {
+      "name": "TranskripHeader",
+      "fieldsCount": 5
+    },
+    {
+      "name": "TranskripMahasiswaOutput",
+      "fieldsCount": 9
+    },
+    {
+      "name": "TranskripWithHeaderOutput",
+      "fieldsCount": 2
+    },
+    {
+      "name": "FindAllApprovedDto",
+      "fieldsCount": 7
+    },
+    {
+      "name": "KkpInstansiOutput",
+      "fieldsCount": 16
+    },
+    {
+      "name": "KkpInstansiBagianOutput",
+      "fieldsCount": 11
+    },
+    {
+      "name": "KkpMahasiswaSyaratKelengkapanOutput",
+      "fieldsCount": 12
+    },
+    {
+      "name": "UserProfile",
+      "fieldsCount": 4
+    },
+    {
+      "name": "LoginResponse",
+      "fieldsCount": 1
+    },
+    {
+      "name": "SigninResponse",
+      "fieldsCount": 1
+    }
+  ]
+}

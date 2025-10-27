@@ -1,0 +1,38 @@
+UserProfile fields:
+[
+  {
+    "name": "username",
+    "type": {
+      "name": null,
+      "kind": "NON_NULL",
+      "ofType": {
+        "name": "String",
+        "kind": "SCALAR"
+      }
+    }
+  },
+  {
+    "name": "fullname",
+    "type": {
+      "name": "String",
+      "kind": "SCALAR",
+      "ofType": null
+    }
+  },
+  {
+    "name": "department",
+    "type": {
+      "name": "String",
+      "kind": "SCALAR",
+      "ofType": null
+    }
+  },
+  {
+    "name": "role",
+    "type": {
+      "name": "String",
+      "kind": "SCALAR",
+      "ofType": null
+    }
+  }
+]

@@ -1,0 +1,15 @@
+LoginResponse fields:
+[
+  {
+    "name": "access_token",
+    "type": {
+      "name": null,
+      "kind": "NON_NULL",
+      "ofType": {
+        "name": "String",
+        "kind": "SCALAR",
+        "ofType": null
+      }
+    }
+  }
+]
