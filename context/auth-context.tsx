@@ -3,22 +3,19 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import type { Role } from "@/types/role"
-import { executeGraphQLQuery, createAuthenticatedClient } from "@/lib/graphql/client"
-import { LOGIN, GET_PROFILE } from "@/lib/graphql/mutations-superapps"
+import { executeGraphQLQuery } from "@/lib/graphql/client"
+import { SIGNIN } from "@/lib/graphql/mutations-superapps"
 
-// GraphQL Response Types
-interface GraphQLLoginResponse {
-  login: {
+// GraphQL Response Types (UPDATED 2025-10-30)
+// SIMPLIFIED: No need for GET_PROFILE - signin returns user data directly!
+interface GraphQLSigninResponse {
+  signin: {
     access_token: string
-  }
-}
-
-interface GraphQLProfileResponse {
-  profile: {
-    username: string
-    fullname: string | null
-    department: string | null
-    role: string | null
+    user: {
+      id: string
+      username: string
+      role: string
+    }
   }
 }
 
@@ -199,51 +196,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
 
     try {
-      console.log('🔐 Logging in with GraphQL...')
+      console.log('🔐 Logging in with GraphQL (SIGNIN mutation)...')
 
-      // Step 1: Call GraphQL login mutation to get access_token
-      const loginResult = await executeGraphQLQuery<GraphQLLoginResponse>(
-        LOGIN,
-        { username, password }
+      // Step 1: Call GraphQL signin mutation to get access_token and user data
+      const signinResult = await executeGraphQLQuery<GraphQLSigninResponse>(
+        SIGNIN,
+        {
+          loginUserInput: {
+            username,
+            password
+          }
+        }
       )
 
-      const { data: loginData, error: loginError } = loginResult
+      const { data: signinData, error: signinError } = signinResult
 
-      if (loginError || !loginData || !loginData.login) {
-        throw new Error(loginError || 'Login gagal. Periksa username dan password Anda.')
+      if (signinError || !signinData || !signinData.signin) {
+        throw new Error(signinError || 'Login gagal. Periksa username dan password Anda.')
       }
 
-      const { access_token } = loginData.login
-      console.log('✅ GraphQL login successful, token received')
+      const { access_token, user: signinUser } = signinData.signin
+      console.log('✅ GraphQL signin successful!')
+      console.log('   User ID:', signinUser.id)
+      console.log('   Username:', signinUser.username)
+      console.log('   Role:', signinUser.role)
 
-      // Step 2: Get user profile using the token
-      const authenticatedClient = createAuthenticatedClient(access_token)
-      const profileResult = await executeGraphQLQuery<GraphQLProfileResponse>(
-        GET_PROFILE,
-        {},
-        authenticatedClient
-      )
+      // Determine role dari signin response
+      let role: Role = (signinUser.role?.toLowerCase() as Role) || 'mahasiswa'
 
-      const { data: profileData, error: profileError } = profileResult
-
-      if (profileError || !profileData || !profileData.profile) {
-        throw new Error(profileError || 'Gagal mengambil data profile.')
-      }
-
-      const userData = profileData.profile
-      console.log('✅ Profile data retrieved:', userData)
-
-      // Determine role dari profile data
-      let role: Role = (userData.role?.toLowerCase() as Role) || 'mahasiswa'
-
-      // Map GraphQL response to our User format
+      // Map GraphQL signin response to our User format (SIMPLIFIED 2025-10-30)
+      // No need to call GET_PROFILE - signin already returns user data!
       const mappedUser: User = {
-        id: userData.username, // Use username as ID
-        username: userData.username,
-        name: userData.fullname || userData.username,
+        id: signinUser.id,
+        username: signinUser.username,
+        name: signinUser.username, // Use username as name initially
         role: role,
         avatar: undefined,
-        profile: userData
+        profile: signinUser // Store signin user data
       }
 
       // Store user and token in localStorage

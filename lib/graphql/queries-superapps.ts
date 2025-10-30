@@ -2,29 +2,86 @@
  * GraphQL Queries untuk Superapps API
  * Endpoint: https://superapps.if.unismuh.ac.id/graphql
  * 
- * Berdasarkan introspection: 2025-10-27
- * Total Queries: 43
- * Total Mutations: 22
+ * Berdasarkan introspection: 2025-10-30
+ * Total Queries: 47
  */
 
 // ============================================
 // AUTHENTICATION & USER
 // ============================================
 
+/**
+ * SAY_HELLO Query
+ * Simple hello query for testing connection
+ */
 export const SAY_HELLO = `
-  query SayHello {
+  query {
     sayHello
   }
 `
 
+/**
+ * PROFILE Query (requires authentication)
+ * Returns current user profile (UPDATED 2025-10-30)
+ * Fields: id, username, name, email, phone, role
+ */
 export const GET_PROFILE = `
-  query GetProfile {
+  query {
     profile {
-      # Add fields based on UserProfile type
-      nim
+      id
+      username
+      name
+      email
+      phone
+      role
+    }
+  }
+`
+
+// ============================================
+// DOSEN (LECTURER) QUERIES
+// ============================================
+
+export const GET_ALL_DOSENS = `
+  query {
+    dosens {
+      nidn
       nama
       email
-      role
+      hp
+    }
+  }
+`
+
+export const GET_DOSEN_BY_NIDN = `
+  query GetDosen($nidn: String!) {
+    dosen(nidn: $nidn) {
+      nidn
+      nama
+      email
+      hp
+    }
+  }
+`
+
+export const GET_DOSENS_BY_NAME = `
+  query GetDosensByName($nama: String!) {
+    dosensByName(nama: $nama) {
+      nidn
+      nama
+      email
+      hp
+    }
+  }
+`
+
+export const GET_DOSEN_BY_EMAIL = `
+  query GetDosenByEmail($email: String!) {
+    dosenByEmail(email: $email) {
+      nidn
+      nama
+      email
+      hp
     }
   }
 `

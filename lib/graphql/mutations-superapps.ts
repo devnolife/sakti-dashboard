@@ -2,8 +2,8 @@
  * GraphQL Mutations untuk Superapps API
  * Endpoint: https://superapps.if.unismuh.ac.id/graphql
  * 
- * Berdasarkan introspection: 2025-10-27
- * Total Mutations: 22
+ * Berdasarkan introspection: 2025-10-30
+ * Total Mutations: 24
  */
 
 // ============================================
@@ -11,42 +11,45 @@
 // ============================================
 
 /**
- * LOGIN Mutation
- * Returns: access_token only
- * After login, use PROFILE query with the token to get user data
+ * SIGNIN Mutation (UPDATED 2025-10-30)
+ * Previously named "login", now renamed to "signin"
+ * Input: SigninUserInput { username, password }
+ * Returns: access_token + user data (id, username, role)
  */
-export const LOGIN = `
-  mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
+export const SIGNIN = `
+  mutation Signin($loginUserInput: SigninUserInput!) {
+    signin(loginUserInput: $loginUserInput) {
       access_token
+      user {
+        id
+        username
+        role
+      }
     }
   }
 `
 
 /**
+ * LOGIN Mutation (DEPRECATED - use SIGNIN instead)
+ * Kept for backward compatibility
+ * Use SIGNIN mutation for new code
+ */
+export const LOGIN = SIGNIN
+
+/**
  * PROFILE Query (requires authentication)
  * Use with createAuthenticatedClient(token)
+ * UPDATED 2025-10-30: Fields changed to id, username, name, email, phone, role
  */
 export const GET_PROFILE = `
   query {
     profile {
+      id
       username
-      fullname
-      department
+      name
+      email
+      phone
       role
-    }
-  }
-`
-
-export const SIGNIN = `
-  mutation Signin($loginUserInput: SigninUserInput!) {
-    signin(loginUserInput: $loginUserInput) {
-      token
-      user {
-        nim
-        nama
-        email
-      }
     }
   }
 `

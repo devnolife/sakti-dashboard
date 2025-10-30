@@ -1,9 +1,9 @@
 {
   "endpoint": "https://superapps.if.unismuh.ac.id/graphql",
-  "introspectedAt": "2025-10-27T05:59:42.678Z",
-  "queriesCount": 43,
-  "mutationsCount": 22,
-  "typesCount": 37,
+  "introspectedAt": "2025-10-30T05:50:56.238Z",
+  "queriesCount": 47,
+  "mutationsCount": 24,
+  "typesCount": 39,
   "queries": [
     {
       "name": "sayHello",
@@ -14,6 +14,32 @@
       "name": "profile",
       "args": [],
       "returnType": "UserProfile"
+    },
+    {
+      "name": "dosens",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "dosen",
+      "args": [
+        "nidn"
+      ],
+      "returnType": "Dosen"
+    },
+    {
+      "name": "dosensByName",
+      "args": [
+        "nama"
+      ],
+      "returnType": null
+    },
+    {
+      "name": "dosenByEmail",
+      "args": [
+        "email"
+      ],
+      "returnType": "Dosen"
     },
     {
       "name": "mahasiswas",
@@ -70,6 +96,37 @@
         "nim"
       ],
       "returnType": "TranskripWithHeaderOutput"
+    },
+    {
+      "name": "getAllFakultas",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getFakultas",
+      "args": [
+        "id"
+      ],
+      "returnType": "Fakultas"
+    },
+    {
+      "name": "getAllProdis",
+      "args": [],
+      "returnType": null
+    },
+    {
+      "name": "getProdi",
+      "args": [
+        "id"
+      ],
+      "returnType": "Prodi"
+    },
+    {
+      "name": "getProdiByKodeProdi",
+      "args": [
+        "kodeProdi"
+      ],
+      "returnType": "Prodi"
     },
     {
       "name": "getAllKkps",
@@ -135,37 +192,6 @@
         "nim"
       ],
       "returnType": "Boolean"
-    },
-    {
-      "name": "getAllFakultas",
-      "args": [],
-      "returnType": null
-    },
-    {
-      "name": "getFakultas",
-      "args": [
-        "id"
-      ],
-      "returnType": "Fakultas"
-    },
-    {
-      "name": "getAllProdis",
-      "args": [],
-      "returnType": null
-    },
-    {
-      "name": "getProdi",
-      "args": [
-        "id"
-      ],
-      "returnType": "Prodi"
-    },
-    {
-      "name": "getProdiByKodeProdi",
-      "args": [
-        "kodeProdi"
-      ],
-      "returnType": "Prodi"
     },
     {
       "name": "getAllKkpSyarat",
@@ -276,12 +302,11 @@
   ],
   "mutations": [
     {
-      "name": "login",
+      "name": "signup",
       "args": [
-        "username",
-        "password"
+        "createUserInput"
       ],
-      "returnType": "LoginResponse"
+      "returnType": "User"
     },
     {
       "name": "signin",
@@ -291,18 +316,18 @@
       "returnType": "SigninResponse"
     },
     {
-      "name": "createKkp",
+      "name": "changePassword",
       "args": [
-        "input"
+        "changePasswordInput"
       ],
-      "returnType": "Kkp"
+      "returnType": "User"
     },
     {
-      "name": "createKkpApproval",
+      "name": "createUser",
       "args": [
-        "input"
+        "createUserInput"
       ],
-      "returnType": "KkpApproval"
+      "returnType": "User"
     },
     {
       "name": "createProdi",
@@ -324,6 +349,20 @@
         "id"
       ],
       "returnType": "Prodi"
+    },
+    {
+      "name": "createKkp",
+      "args": [
+        "input"
+      ],
+      "returnType": "Kkp"
+    },
+    {
+      "name": "createKkpApproval",
+      "args": [
+        "input"
+      ],
+      "returnType": "KkpApproval"
     },
     {
       "name": "createKkpSyarat",
@@ -482,7 +521,7 @@
     },
     {
       "name": "MahasiswaSimak",
-      "fieldsCount": 5
+      "fieldsCount": 6
     },
     {
       "name": "KkpInstansiBagianApproval",
@@ -499,6 +538,14 @@
     {
       "name": "KkpInstansi",
       "fieldsCount": 12
+    },
+    {
+      "name": "Dosen",
+      "fieldsCount": 5
+    },
+    {
+      "name": "User",
+      "fieldsCount": 14
     },
     {
       "name": "KelengkapanOutput",
@@ -574,15 +621,15 @@
     },
     {
       "name": "UserProfile",
-      "fieldsCount": 4
+      "fieldsCount": 6
     },
     {
-      "name": "LoginResponse",
-      "fieldsCount": 1
+      "name": "UserPayload",
+      "fieldsCount": 3
     },
     {
       "name": "SigninResponse",
-      "fieldsCount": 1
+      "fieldsCount": 2
     }
   ]
 }

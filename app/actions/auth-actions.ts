@@ -4,7 +4,7 @@
 'use server'
 
 import { executeGraphQLQuery } from '@/lib/graphql/client'
-import { LOGIN } from '@/lib/graphql/mutations-superapps'
+import { SIGNIN } from '@/lib/graphql/mutations-superapps'
 import { cookies } from 'next/headers'
 import { SignJWT, jwtVerify } from 'jose'
 
@@ -12,31 +12,42 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.NEXTAUTH_SECRET || 'your-secret-key-change-this-in-production'
 )
 
-// Login Response Type - Updated untuk GraphQL schema yang benar
-interface LoginResponse {
-  login: {
+// Signin Response Type - Updated 2025-10-30 (login renamed to signin)
+interface SigninResponse {
+  signin: {
     access_token: string
+    user: {
+      id: string
+      username: string
+      role: string
+    }
   }
 }
 
 // GraphQL Login dengan Superapps
 export async function loginWithGraphQL(username: string, password: string) {
   try {
-    console.log('🔐 Attempting GraphQL login for:', username)
+    console.log('🔐 Attempting GraphQL signin for:', username)
 
-    // Step 1: Login to get access_token
-    const { data, error } = await executeGraphQLQuery<LoginResponse>(
-      LOGIN,
-      { username, password }
+    // Step 1: Signin to get access_token and user data
+    const { data, error } = await executeGraphQLQuery<SigninResponse>(
+      SIGNIN,
+      {
+        loginUserInput: {
+          username,
+          password
+        }
+      }
     )
 
-    if (error || !data?.login) {
-      console.error('❌ GraphQL login error:', error)
+    if (error || !data?.signin) {
+      console.error('❌ GraphQL signin error:', error)
       throw new Error(error || 'Login gagal. Periksa username dan password Anda.')
     }
 
-    const { access_token } = data.login
-    console.log('✅ GraphQL login successful, token received')
+    const { access_token, user } = data.signin
+    console.log('✅ GraphQL signin successful, token received')
+    console.log('   User:', user.username, '- Role:', user.role)
 
     // TODO: Step 2 should query profile with token to get user data
     // For now, we just return the token

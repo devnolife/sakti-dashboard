@@ -30,6 +30,91 @@
           }
         },
         {
+          "name": "dosens",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "dosen",
+          "description": null,
+          "args": [
+            {
+              "name": "nidn",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": "Dosen",
+            "kind": "OBJECT",
+            "ofType": null
+          }
+        },
+        {
+          "name": "dosensByName",
+          "description": null,
+          "args": [
+            {
+              "name": "nama",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "dosenByEmail",
+          "description": null,
+          "args": [
+            {
+              "name": "email",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": "Dosen",
+            "kind": "OBJECT",
+            "ofType": null
+          }
+        },
+        {
           "name": "mahasiswas",
           "description": null,
           "args": [],
@@ -243,6 +328,110 @@
           }
         },
         {
+          "name": "getAllFakultas",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getFakultas",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "Int",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Fakultas",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getAllProdis",
+          "description": null,
+          "args": [],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": null,
+              "kind": "LIST"
+            }
+          }
+        },
+        {
+          "name": "getProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "id",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "Float",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "getProdiByKodeProdi",
+          "description": null,
+          "args": [
+            {
+              "name": "kodeProdi",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "String",
+                  "kind": "SCALAR"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
           "name": "getAllKkps",
           "description": null,
           "args": [],
@@ -447,110 +636,6 @@
             "ofType": {
               "name": "Boolean",
               "kind": "SCALAR"
-            }
-          }
-        },
-        {
-          "name": "getAllFakultas",
-          "description": null,
-          "args": [],
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": null,
-              "kind": "LIST"
-            }
-          }
-        },
-        {
-          "name": "getFakultas",
-          "description": null,
-          "args": [
-            {
-              "name": "id",
-              "description": null,
-              "type": {
-                "name": null,
-                "kind": "NON_NULL",
-                "ofType": {
-                  "name": "Int",
-                  "kind": "SCALAR"
-                }
-              }
-            }
-          ],
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": "Fakultas",
-              "kind": "OBJECT"
-            }
-          }
-        },
-        {
-          "name": "getAllProdis",
-          "description": null,
-          "args": [],
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": null,
-              "kind": "LIST"
-            }
-          }
-        },
-        {
-          "name": "getProdi",
-          "description": null,
-          "args": [
-            {
-              "name": "id",
-              "description": null,
-              "type": {
-                "name": null,
-                "kind": "NON_NULL",
-                "ofType": {
-                  "name": "Float",
-                  "kind": "SCALAR"
-                }
-              }
-            }
-          ],
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": "Prodi",
-              "kind": "OBJECT"
-            }
-          }
-        },
-        {
-          "name": "getProdiByKodeProdi",
-          "description": null,
-          "args": [
-            {
-              "name": "kodeProdi",
-              "description": null,
-              "type": {
-                "name": null,
-                "kind": "NON_NULL",
-                "ofType": {
-                  "name": "String",
-                  "kind": "SCALAR"
-                }
-              }
-            }
-          ],
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": "Prodi",
-              "kind": "OBJECT"
             }
           }
         },
@@ -923,30 +1008,18 @@
       "name": "Mutation",
       "fields": [
         {
-          "name": "login",
+          "name": "signup",
           "description": null,
           "args": [
             {
-              "name": "username",
+              "name": "createUserInput",
               "description": null,
               "type": {
                 "name": null,
                 "kind": "NON_NULL",
                 "ofType": {
-                  "name": "String",
-                  "kind": "SCALAR"
-                }
-              }
-            },
-            {
-              "name": "password",
-              "description": null,
-              "type": {
-                "name": null,
-                "kind": "NON_NULL",
-                "ofType": {
-                  "name": "String",
-                  "kind": "SCALAR"
+                  "name": "CreateUserDto",
+                  "kind": "INPUT_OBJECT"
                 }
               }
             }
@@ -955,7 +1028,7 @@
             "name": null,
             "kind": "NON_NULL",
             "ofType": {
-              "name": "LoginResponse",
+              "name": "User",
               "kind": "OBJECT"
             }
           }
@@ -987,17 +1060,17 @@
           }
         },
         {
-          "name": "createKkp",
+          "name": "changePassword",
           "description": null,
           "args": [
             {
-              "name": "input",
+              "name": "changePasswordInput",
               "description": null,
               "type": {
                 "name": null,
                 "kind": "NON_NULL",
                 "ofType": {
-                  "name": "CreateKkpInput",
+                  "name": "ChangePasswordDto",
                   "kind": "INPUT_OBJECT"
                 }
               }
@@ -1007,23 +1080,23 @@
             "name": null,
             "kind": "NON_NULL",
             "ofType": {
-              "name": "Kkp",
+              "name": "User",
               "kind": "OBJECT"
             }
           }
         },
         {
-          "name": "createKkpApproval",
+          "name": "createUser",
           "description": null,
           "args": [
             {
-              "name": "input",
+              "name": "createUserInput",
               "description": null,
               "type": {
                 "name": null,
                 "kind": "NON_NULL",
                 "ofType": {
-                  "name": "CreateKkpApprovalInput",
+                  "name": "CreateUserDto",
                   "kind": "INPUT_OBJECT"
                 }
               }
@@ -1033,7 +1106,7 @@
             "name": null,
             "kind": "NON_NULL",
             "ofType": {
-              "name": "KkpApproval",
+              "name": "User",
               "kind": "OBJECT"
             }
           }
@@ -1112,6 +1185,58 @@
             "kind": "NON_NULL",
             "ofType": {
               "name": "Prodi",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkp",
+          "description": null,
+          "args": [
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "Kkp",
+              "kind": "OBJECT"
+            }
+          }
+        },
+        {
+          "name": "createKkpApproval",
+          "description": null,
+          "args": [
+            {
+              "name": "input",
+              "description": null,
+              "type": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "CreateKkpApprovalInput",
+                  "kind": "INPUT_OBJECT"
+                }
+              }
+            }
+          ],
+          "type": {
+            "name": null,
+            "kind": "NON_NULL",
+            "ofType": {
+              "name": "KkpApproval",
               "kind": "OBJECT"
             }
           }
@@ -2796,6 +2921,14 @@
             }
           },
           {
+            "name": "email",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
             "name": "prodi_kode_prodi",
             "type": {
               "name": "String",
@@ -3276,6 +3409,184 @@
                 "name": null,
                 "kind": "NON_NULL"
               }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Dosen",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "nidn",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "pwd",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "nama",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "email",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "hp",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "User",
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "username",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "password",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "name",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "email",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "phone",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "descriptions",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "role",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "createdBy",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updatedBy",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "isActive",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "passwordChangedAt",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "updatedAt",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
             }
           }
         ]
@@ -4469,7 +4780,7 @@
         "description": null,
         "fields": [
           {
-            "name": "username",
+            "name": "id",
             "type": {
               "name": null,
               "kind": "NON_NULL",
@@ -4480,7 +4791,7 @@
             }
           },
           {
-            "name": "fullname",
+            "name": "username",
             "type": {
               "name": "String",
               "kind": "SCALAR",
@@ -4488,7 +4799,23 @@
             }
           },
           {
-            "name": "department",
+            "name": "name",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "email",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            }
+          },
+          {
+            "name": "phone",
             "type": {
               "name": "String",
               "kind": "SCALAR",
@@ -4506,12 +4833,34 @@
         ]
       },
       {
-        "name": "LoginResponse",
+        "name": "UserPayload",
         "kind": "OBJECT",
         "description": null,
         "fields": [
           {
-            "name": "access_token",
+            "name": "id",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "username",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "role",
             "type": {
               "name": null,
               "kind": "NON_NULL",
@@ -4536,6 +4885,17 @@
               "ofType": {
                 "name": "String",
                 "kind": "SCALAR"
+              }
+            }
+          },
+          {
+            "name": "user",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "UserPayload",
+                "kind": "OBJECT"
               }
             }
           }
@@ -4572,6 +4932,44 @@
                 "name": "UserProfile",
                 "kind": "OBJECT"
               }
+            }
+          },
+          {
+            "name": "dosens",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "dosen",
+            "type": {
+              "name": "Dosen",
+              "kind": "OBJECT",
+              "ofType": null
+            }
+          },
+          {
+            "name": "dosensByName",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "dosenByEmail",
+            "type": {
+              "name": "Dosen",
+              "kind": "OBJECT",
+              "ofType": null
             }
           },
           {
@@ -4652,6 +5050,61 @@
               "kind": "NON_NULL",
               "ofType": {
                 "name": "TranskripWithHeaderOutput",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllFakultas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getFakultas",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Fakultas",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getAllProdis",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST"
+              }
+            }
+          },
+          {
+            "name": "getProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "getProdiByKodeProdi",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Prodi",
                 "kind": "OBJECT"
               }
             }
@@ -4774,61 +5227,6 @@
               "ofType": {
                 "name": "Boolean",
                 "kind": "SCALAR"
-              }
-            }
-          },
-          {
-            "name": "getAllFakultas",
-            "type": {
-              "name": null,
-              "kind": "NON_NULL",
-              "ofType": {
-                "name": null,
-                "kind": "LIST"
-              }
-            }
-          },
-          {
-            "name": "getFakultas",
-            "type": {
-              "name": null,
-              "kind": "NON_NULL",
-              "ofType": {
-                "name": "Fakultas",
-                "kind": "OBJECT"
-              }
-            }
-          },
-          {
-            "name": "getAllProdis",
-            "type": {
-              "name": null,
-              "kind": "NON_NULL",
-              "ofType": {
-                "name": null,
-                "kind": "LIST"
-              }
-            }
-          },
-          {
-            "name": "getProdi",
-            "type": {
-              "name": null,
-              "kind": "NON_NULL",
-              "ofType": {
-                "name": "Prodi",
-                "kind": "OBJECT"
-              }
-            }
-          },
-          {
-            "name": "getProdiByKodeProdi",
-            "type": {
-              "name": null,
-              "kind": "NON_NULL",
-              "ofType": {
-                "name": "Prodi",
-                "kind": "OBJECT"
               }
             }
           },
@@ -5027,12 +5425,12 @@
         "description": null,
         "fields": [
           {
-            "name": "login",
+            "name": "signup",
             "type": {
               "name": null,
               "kind": "NON_NULL",
               "ofType": {
-                "name": "LoginResponse",
+                "name": "User",
                 "kind": "OBJECT"
               }
             }
@@ -5049,23 +5447,23 @@
             }
           },
           {
-            "name": "createKkp",
+            "name": "changePassword",
             "type": {
               "name": null,
               "kind": "NON_NULL",
               "ofType": {
-                "name": "Kkp",
+                "name": "User",
                 "kind": "OBJECT"
               }
             }
           },
           {
-            "name": "createKkpApproval",
+            "name": "createUser",
             "type": {
               "name": null,
               "kind": "NON_NULL",
               "ofType": {
-                "name": "KkpApproval",
+                "name": "User",
                 "kind": "OBJECT"
               }
             }
@@ -5099,6 +5497,28 @@
               "kind": "NON_NULL",
               "ofType": {
                 "name": "Prodi",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkp",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Kkp",
+                "kind": "OBJECT"
+              }
+            }
+          },
+          {
+            "name": "createKkpApproval",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "KkpApproval",
                 "kind": "OBJECT"
               }
             }
@@ -5271,19 +5691,19 @@
         ]
       },
       {
+        "name": "CreateUserDto",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
         "name": "SigninUserInput",
         "kind": "INPUT_OBJECT",
         "description": null,
         "fields": null
       },
       {
-        "name": "CreateKkpInput",
-        "kind": "INPUT_OBJECT",
-        "description": null,
-        "fields": null
-      },
-      {
-        "name": "CreateKkpApprovalInput",
+        "name": "ChangePasswordDto",
         "kind": "INPUT_OBJECT",
         "description": null,
         "fields": null
@@ -5296,6 +5716,18 @@
       },
       {
         "name": "UpdateProdiInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpInput",
+        "kind": "INPUT_OBJECT",
+        "description": null,
+        "fields": null
+      },
+      {
+        "name": "CreateKkpApprovalInput",
         "kind": "INPUT_OBJECT",
         "description": null,
         "fields": null
