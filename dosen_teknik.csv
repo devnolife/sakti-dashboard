@@ -1,0 +1,64 @@
+sinta_id,nidn,nama,afiliasi,prodi,pendidikan_terakhir,jabatan_fungsional,gelar_depan,gelar_balakang,sinta_score_overall_versi_2,sinta_score_3yr_versi2,sinta_score_overall_versi_3,sinta_score_3_year_versi_3,afiliasi_score_overall_versi_3,afiliasi_score_3yr_versi_3,dokumen_scopus,sitasi_scopus,dokumen_tersitasi_scopus,h_index_scopus,g_index_scopus,i10_index_scopus,dokumen_gs,sitasi_gs,dokumen_tersitasi_gs,h_index_gs,g_index_gs,i10_index_gs,dokumen_wos,sitasi_wos,dokumen_tersitasi_wos,h_index_wos,g_index_wos,i10_index_wos,dokumen_garuda,sitasi_garuda,dokumen_tersitasi_garuda,status_aktif,status_verifikasi
+6025319,0030116004,SUKMASARI ANTARIA,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor Kepala,Dr Ir,M.Si,155,565,12903,5125,0,0,3,2,2,1,1,0,20,13,5,1,1,0,0,0,0,,,,6,0,0,Active,Verify
+6060844,0930047504,FAUZAN HAMDI,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,Ir.,"S.T, M.T",120,61,52145,187,0,0,1,1,1,1,0,0,27,62,9,4,1,2,0,0,0,,,,0,0,0,Active,Verify
+6152729,0916036801,NENNY,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor Kepala,Dr,"S.T, M.T",259,895,49495,2815,0,0,5,5,4,1,1,0,54,53,12,3,2,1,0,0,0,,,,6,0,0,Active,Verify
+6168818,0930048304,MUHAMMAD FAISAL,Universitas Muhammadiyah Makassar,S1 Informatika,S3,Lektor Kepala,Ir,"S.SI, M.T, Ph.D",680,578,871359,55641,0,0,10,35,7,3,1,1,101,97,25,5,1,1,7,14,5,2,1,0,25,0,0,Active,Verify
+6182828,0019086209,ABDUL HAFID,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor Kepala,Ir,M.T,291,176,2995,18275,0,0,0,0,0,0,1,0,40,122,24,5,1,2,0,0,0,0,0,0,16,0,0,Active,Verify
+6189767,0904126802,HAMZAH AL-IMRAN,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor,Dr,"S.T, M.T",2225,166,4645,3195,0,0,3,2,2,1,1,0,43,125,14,3,1,2,0,0,0,,,,20,0,0,Active,Verify
+6199046,0923048801,FATRIADY  MR.,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor,Dr. Ir,"S.T, M.T",84,64,256,355,0,0,2,0,0,0,1,0,13,16,5,2,1,0,0,0,0,,,,1,0,0,Active,Verify
+6199492,0907017301,ROHANA,Universitas Muhammadiyah Makassar,S1 Arsitektur,S3,Lektor,Dr,"S.T, M.T",194,123,9425,435,0,0,0,0,0,0,0,0,58,58,15,4,1,2,0,0,0,,,,24,0,0,Active,Verify
+6200253,0903068203,RAHMANIA,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor,Ir,"S.T, M.T",3385,107,13475,3325,0,0,0,0,0,0,0,0,21,81,9,4,1,3,0,0,0,,,,15,0,0,Active,Verify
+6200571,0929068304,ANDI ANNISA AMALIA,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.Si",393,925,23625,15325,0,0,3,0,0,0,1,0,0,0,0,0,1,0,0,0,0,,,,1,0,0,Active,Verify
+6200828,0030106704,ANDI FAHARUDDIN,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor,,"S.T, M.T",12,45,445,625,0,0,0,0,0,0,0,0,14,24,8,2,1,0,0,0,0,,,,9,0,0,Active,Verify
+6639095,0922108804,SITI FUADILLAH ALHUMAIRAH AMIN,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.T",186,635,22525,10775,0,0,0,0,0,0,0,0,31,50,12,4,1,2,0,0,0,,,,36,0,0,Active,Verify
+6643222,0926048103,ANDI MAKBUL SYAMSURI,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor,Dr Ir,"S.T, M.T",1825,875,29975,190,0,0,5,9,4,1,1,0,38,23,12,2,1,0,0,0,0,,,,18,0,0,Active,Verify
+6643400,0901038304,KHILDA WILDANA NUR,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.T",2535,745,13625,61,0,0,3,4,1,1,1,0,33,54,13,4,1,1,0,0,0,,,,1,0,0,Active,Verify
+6643427,0913117801,LUTFI HAIR DJUNUR,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",78,1,1725,12,0,0,0,0,0,0,0,0,17,6,3,1,3,0,0,0,0,,,,0,0,0,Active,Verify
+6643783,0927098403,CITRA AMALIA AMAL,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.T",2405,80,2235,99,0,0,1,0,0,0,1,0,44,51,15,4,1,1,0,0,0,,,,28,0,0,Active,Verify
+6644121,0927128905,FITRAWAN UMAR,Universitas Muhammadiyah Makassar,S1 Arsitektur,S3,Asisten Ahli,Dr,"S.T, M.Sc.",290,665,147439,3867,0,0,3,4,2,2,2,0,26,44,16,4,2,0,1,1,1,1,0,0,0,0,0,Active,Verify
+6644515,0907118201,"ADRIANI, ST.,MT",Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor,Ir,"S.T, M.T",31415,9725,44525,1095,0,0,1,0,0,0,1,0,28,84,19,5,1,2,0,0,0,,,,11,0,0,Active,Verify
+6644665,0917117201,SAHABUDDIN,Universitas Muhammadiyah Makassar,S1 Arsitektur,S3,Lektor Kepala,Dr,"S.T, M.T",270,325,692498,339,0,0,2,6,2,2,0,0,32,144,20,8,1,5,4,222,4,3,0,3,40,0,0,Active,Verify
+6645586,0927097401,ANDI ABD. HALIK LATEKO,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S3,Lektor,,"S.T, M.T, Ph.D.",5005,2385,303491,164,0,0,6,70,5,3,1,2,15,79,5,4,2,2,5,47,4,3,2,2,1,0,0,Active,Verify
+6649620,0928088206,IRNAWATY IDRUS,Universitas Muhammadiyah Makassar,S1 Arsitektur,S3,Lektor,Dr,"S.T, M.T",2315,26,4521,20125,0,0,3,15,3,3,0,0,28,100,14,8,1,4,0,0,0,,,,50,0,0,Active,Verify
+6654308,0927017501,ANDI YUSRI,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.T.",4115,3635,35014,32989,0,0,7,16,5,1,2,1,21,25,4,2,1,1,0,0,0,,,,3,0,0,Active,Verify
+6654863,0925066905,MARUPAH,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor,Dr.,"S.P, M.P.",6,5,157,10025,0,0,0,0,0,0,0,0,4,7,3,2,3,0,0,0,0,,,,1,0,0,Active,Verify
+6663365,0919017702,MUH SYAFAAT S. KUBA,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",5,2,82,265,0,0,0,0,0,0,0,0,26,9,6,2,2,0,0,0,0,,,,5,0,0,Active,Verify
+6667475,0922099003,NURHIKMAH PADDIYATU,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.T",2815,124,256,1895,0,0,0,0,0,0,0,0,26,70,12,6,1,1,0,0,0,,,,8,0,0,Active,Verify
+6673363,0917126801,MAHMUDDIN,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",75,15,23775,12725,0,0,0,0,0,0,0,0,15,9,2,2,1,0,0,0,0,,,,0,0,0,Active,Verify
+6676107,0912087505,M. AGUSALIM,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",5,15,14225,6675,0,0,0,0,0,0,0,0,12,6,2,2,1,0,0,0,0,,,,6,0,0,Active,Verify
+6677383,0914108804,KASMAWATI,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",1435,875,193,123,0,0,0,0,0,0,0,0,19,24,7,2,1,1,0,0,0,,,,17,0,0,Active,Verify
+6681413,0906068406,ASHARI ABDULLAH,Universitas Muhammadiyah Makassar,S1 Arsitektur,S3,Lektor,Dr Ir,"S.T, M.T",1685,105,1715,87,0,0,3,4,2,1,3,0,19,45,10,4,1,1,0,0,0,,,,2,0,0,Active,Verify
+6681449,1216097102,MUHAMMAD SYARIF,Universitas Muhammadiyah Makassar,S1 Arsitektur,S3,Lektor Kepala,Dr Ir,"S.T, M.H, M.M, M.T",14775,7115,195377,660748,0,0,18,80,12,5,1,4,94,244,44,9,1,8,15,77,9,5,2,3,22,0,0,Active,Verify
+6683665,0905078907,RIZKI YUSLIANA BAKTI,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Lektor,,"S.T, M.T",3355,158,17633,9058,0,0,4,12,2,2,1,0,13,59,6,5,1,2,0,0,0,,,,8,0,0,Active,Verify
+6683673,0903058406,TITIN WAHYUNI,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Lektor,,"S.Pd, S.Pd, M.T",196,116,100,65,0,0,0,0,0,0,0,0,43,31,10,4,1,0,0,0,0,,,,8,0,0,Active,Verify
+6683864,0917109102,LUKMAN ANAS,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Lektor,,"S.Kom, M.T",1425,675,34375,11475,0,0,0,0,0,0,0,0,18,34,9,4,1,1,0,0,0,,,,11,0,0,Active,Verify
+6684411,0916088803,FAHRIM IRHAMNAH RACHMAN,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Asisten Ahli,,"S.Kom, M.T",15,15,47,415,0,0,0,0,0,0,0,0,7,0,0,0,1,0,0,0,0,,,,0,0,0,Active,Verify
+6684470,0931087901,MUHYIDDIN,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Asisten Ahli,,"S.Kom, M.T.",24,5,2095,123,0,0,0,0,0,0,0,0,6,8,2,1,2,0,0,0,0,,,,0,0,0,Active,Verify
+6685159,0910076502,MUH AMIR,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",36,1,447,3145,0,0,1,1,1,1,0,0,4,4,2,2,1,0,0,0,0,,,,0,0,0,Active,Verify
+6703433,0901019009,RIDWANG,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S3,Lektor,Dr Ir,"S.Kom, M.T",4655,282,45855,2815,0,0,7,20,5,3,1,0,31,62,16,4,1,1,0,0,0,0,1,0,18,0,0,Active,Verify
+6708005,0926127601,FAUSIAH LATIF,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Asisten Ahli,,"S.T, M.T",0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,,0,0,0,Active,Verify
+6723077,0431037702,CHYQUITHA DANUPUTRI,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Asisten Ahli,,"S.Kom, M.Kom",213,1185,17258,675,0,0,1,6,1,1,0,0,14,35,9,4,1,1,0,0,0,,,,9,0,0,Active,Verify
+6754649,0916108605,FATHURRAHMAN BURHANUDDIN,Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Lektor,,"S.T, S.T, M.T",235,205,6975,245,0,0,0,0,0,0,0,0,13,17,7,2,1,0,0,0,0,,,,6,0,0,Active,Verify
+6754657,0901118502,M. NURHIDAYAT,Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Lektor,,"S.T, M.T",325,7,7425,3725,0,0,0,0,0,0,0,0,17,21,9,2,1,0,0,0,0,0,0,0,9,0,0,Active,Verify
+6757216,0926048906,NINI APRIANI RUMATA,Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Lektor,,"S.T, M.T",1595,1465,7265,2725,0,0,0,0,0,0,0,0,44,385,31,8,1,5,0,0,0,,,,17,0,0,Active,Verify
+6757226,0927118703,"FIRDAUS, ST., M. SI",Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Lektor,Ir,"S.T, M.T, M.Si",2045,1295,48025,2745,0,0,0,0,0,0,0,0,30,221,21,8,1,4,0,0,0,0,0,0,13,0,0,Active,Verify
+6758498,0906108905,LUCKE AYURINDRA MARGIE DAYANA,Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Asisten Ahli,,"S.T, M.Si",1,0,875,725,0,0,0,0,0,0,0,0,4,2,1,1,1,0,0,0,0,,,,0,0,0,Active,Verify
+6758529,0931128411,"SALMIAH ZAINUDIN H, ST., M.ARS.",Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Asisten Ahli,,"S.T, M.Ars",46,29,24,115,0,0,0,0,0,0,0,0,18,12,7,2,1,0,0,0,0,0,0,0,1,0,0,Active,Verify
+6759343,0918056902,ANTARISSUBHI,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S3,Lektor,Dr Ir,"S.T, M.T",62,75,27175,18425,0,0,2,0,0,0,1,0,24,27,8,3,1,0,0,0,0,,,,0,0,0,Active,Verify
+6764010,0912118501,A. SYAHRIYUNITA SYAHRUDDIN,Universitas Muhammadiyah Makassar,S1 Arsitektur,S2,Lektor,,"S.T, M.T",5,0,25,2,0,0,0,0,0,0,0,0,4,1,1,1,1,0,0,0,0,,,,2,0,0,Active,Verify
+6771943,0919067904,INDRIYANTI,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T.",3,0,745,36,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,,,,12,0,0,Active,Verify
+6771970,0014017902,ASNITA VIRLAYANI,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.T",395,355,375,215,0,0,0,0,0,0,0,0,10,7,1,1,1,0,0,0,0,,,,4,0,0,Active,Verify
+6771977,0919046801,FARIDA G.,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Lektor,,"S.T, M.M.",62,595,11825,6475,0,0,0,0,0,0,0,0,17,10,6,2,1,0,0,0,0,,,,9,0,0,Active,Verify
+6772086,0901048102,SURYANI,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor,,"S.T, M.T",205,205,10425,6225,0,0,0,0,0,0,0,0,2,11,2,2,0,0,0,0,0,,,,0,0,0,Active,Verify
+6786385,0011056601,ANDI RAHMAT,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor,Ir,M.T,0,0,1,5,0,0,0,0,0,0,0,0,2,0,0,0,1,0,0,0,0,,,,0,0,0,Active,Verify
+6786839,0914099203,SOEMITRO EMIN PRAJA,Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Asisten Ahli,,"S.T, M.Si",255,1,2825,7,0,0,0,0,0,0,0,0,12,8,3,2,1,0,0,0,0,,,,3,0,0,Active,Verify
+6820956,0007018506,ZULKIFLI,Universitas Muhammadiyah Makassar,S1 Perencanaan Wilayah dan Kota,S2,Asisten Ahli,,"S.Si, M.Si",1395,1385,15353,15028,0,0,2,2,2,1,2,0,17,11,5,2,1,0,0,0,0,,,,0,0,0,Active,Verify
+6833141,0906067401,ANDI BUNGA TONGENG ANAS,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S2,Asisten Ahli,,"S.T, M.T",0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,,0,0,0,Active,Verify
+6840497,0921098306,LUKMAN,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Asisten Ahli,,"S.Kom, M.T",23,55,74,6725,0,0,0,0,0,0,0,0,7,4,2,1,2,0,0,0,0,,,,0,0,0,Active,Verify
+6841690,0912119601,DESI ANGGREANI,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Asisten Ahli,,"S.Kom, M.T",193,174,9175,2725,0,0,4,15,3,3,1,0,14,56,9,5,1,3,0,0,0,,,,0,0,0,Active,Verify
+6886500,0914069102,ST KHADIJAH,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Asisten Ahli,,"S.T, M.Kom",0,0,2,15,0,0,0,0,0,0,0,0,4,0,0,0,1,0,0,0,0,,,,0,0,0,Active,Verify
+6909757,0916036401,ISRAIL,Universitas Muhammadiyah Makassar,S1 Teknik Pengairan,S3,Lektor,Dr,"S.T, M.T",185,185,24775,12625,0,0,0,0,0,0,0,0,9,7,5,1,1,0,0,0,0,,,,0,0,0,Active,Verify
+6943744,"8,26276E+15",DARNIATI,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Lektor,,"S.Kom, M.T, M.T",165,109,19887,14704,0,0,2,3,2,1,2,0,29,6,3,1,1,0,0,0,0,,,,7,0,0,Active,Verify
+6943750,"7,15876E+15",IDA MULYADI,Universitas Muhammadiyah Makassar,S1 Informatika,S2,Lektor,Ir,"S.Kom, M.T",3785,296,50258,34258,0,0,7,9,4,2,1,0,52,22,10,2,2,0,1,0,0,0,1,0,12,0,0,Active,Verify
+6944928,0426087901,LISA FITRIANI ISHAK,Universitas Muhammadiyah Makassar,S1 Teknik Elektro,S2,Lektor,,"S.T, M.T",135,0,3925,24,0,0,0,0,0,0,0,0,10,27,5,4,1,1,0,0,0,,,,0,0,0,Active,Verify
+6950596,"4,14978E+15",EMIL AGUSALIM HABI TALIB,Universitas Muhammadiyah Makassar,S1 Informatika,S2,,,"S.Pd, M.Eng",1,1,125,125,0,0,0,0,0,0,0,0,1,2,1,1,0,0,0,0,0,,,,0,0,0,Active,Verify

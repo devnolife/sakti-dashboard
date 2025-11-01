@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,44 +30,123 @@ import {
 import { Badge } from "@/components/ui/badge"
 import {
   Users, Search, Plus, MoreHorizontal, Edit, Trash2, Key,
-  UserCheck, UserX, Download, Upload, Filter
+  UserCheck, UserX, Download, Upload, Filter, Loader2
 } from "lucide-react"
-import Link from "next/link"
+import { EditUserDialog } from "./edit-user-dialog"
+import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
+interface User {
+  id: string
+  username: string
+  name: string
+  role: string
+  sub_role: string | null
+  is_active: boolean
+  created_at: string
+  lecturers?: Array<{ position?: string; department?: string; prodi_id?: string }>
+  staff?: Array<{ position?: string; department?: string; prodi_id?: string }>
+  students?: Array<{ major?: string; semester?: number; prodi_id?: string }>
+}
 
 export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState("")
   const [roleFilter, setRoleFilter] = useState("all")
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    inactiveUsers: 0,
+    newThisMonth: 0
+  })
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0
+  })
+  const [editUser, setEditUser] = useState<User | null>(null)
+  const [deleteUser, setDeleteUser] = useState<User | null>(null)
 
-  // Mock data - replace with API call
-  const users = [
-    {
-      id: "1",
-      username: "1234567890",
-      name: "John Doe",
-      role: "mahasiswa",
-      subRole: null,
-      isActive: true,
-      createdAt: "2024-01-15"
-    },
-    {
-      id: "2",
-      username: "0987654321",
-      name: "Jane Smith",
-      role: "dosen",
-      subRole: "prodi",
-      isActive: true,
-      createdAt: "2024-01-10"
-    },
-    {
-      id: "3",
-      username: "1122334455",
-      name: "Bob Wilson",
-      role: "staff_tu",
-      subRole: null,
-      isActive: false,
-      createdAt: "2024-01-05"
+  const fetchUsers = async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams({
+        search: searchQuery,
+        role: roleFilter,
+        page: pagination.page.toString(),
+        limit: pagination.limit.toString()
+      })
+
+      const response = await fetch(`/api/admin/users?${params}`)
+      if (!response.ok) throw new Error('Failed to fetch users')
+
+      const data = await response.json()
+      setUsers(data.users)
+      setStats(data.stats)
+      setPagination(data.pagination)
+    } catch (error) {
+      toast.error('Failed to load users')
+      console.error(error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchUsers()
+    }, 300) // Debounce search
+
+    return () => clearTimeout(timer)
+  }, [searchQuery, roleFilter, pagination.page])
+
+  const handleToggleActive = async (user: User) => {
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !user.is_active })
+      })
+
+      if (!response.ok) throw new Error('Failed to update user')
+
+      toast.success(`User ${user.is_active ? 'deactivated' : 'activated'} successfully`)
+      fetchUsers()
+    } catch (error) {
+      toast.error('Failed to update user status')
+      console.error(error)
+    }
+  }
+
+  const handleDeleteUser = async () => {
+    if (!deleteUser) return
+
+    try {
+      const response = await fetch(`/api/admin/users/${deleteUser.id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) throw new Error('Failed to delete user')
+
+      toast.success('User deleted successfully')
+      setDeleteUser(null)
+      fetchUsers()
+    } catch (error) {
+      toast.error('Failed to delete user')
+      console.error(error)
+    }
+  }
 
   const roleColors: Record<string, string> = {
     admin: "bg-red-500",
@@ -88,8 +167,13 @@ export default function UserManagement() {
     mahasiswa: "Mahasiswa",
     dosen: "Dosen",
     staff_tu: "Staff TU",
-    prodi: "Prodi",
+    prodi: "Kepala Prodi",
+    sekretaris_prodi: "Sekretaris Prodi",
     dekan: "Dekan",
+    wakil_dekan_1: "Wakil Dekan I",
+    wakil_dekan_2: "Wakil Dekan II",
+    wakil_dekan_3: "Wakil Dekan III",
+    gkm: "GKM",
     admin_keuangan: "Admin Keuangan",
     admin_umum: "Admin Umum",
     laboratory_admin: "Lab Admin",
@@ -102,12 +186,12 @@ export default function UserManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground">
             Manage all users, roles, and permissions
           </p>
         </div>
         <Button className="gap-2">
-          <Plus className="h-4 w-4" />
+          <Plus className="w-4 h-4" />
           Add New User
         </Button>
       </div>
@@ -115,43 +199,47 @@ export default function UserManagement() {
       {/* Statistics */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3,124</div>
-            <p className="text-xs text-muted-foreground">+12% from last month</p>
+            <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">All registered users</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
+            <UserCheck className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2,987</div>
-            <p className="text-xs text-muted-foreground">95.6% active rate</p>
+            <div className="text-2xl font-bold">{stats.activeUsers.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">
+              {stats.totalUsers > 0 ? ((stats.activeUsers / stats.totalUsers) * 100).toFixed(1) : 0}% active rate
+            </p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Inactive Users</CardTitle>
-            <UserX className="h-4 w-4 text-muted-foreground" />
+            <UserX className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">137</div>
-            <p className="text-xs text-muted-foreground">4.4% inactive</p>
+            <div className="text-2xl font-bold">{stats.inactiveUsers.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">
+              {stats.totalUsers > 0 ? ((stats.inactiveUsers / stats.totalUsers) * 100).toFixed(1) : 0}% inactive
+            </p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">New This Month</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">234</div>
-            <p className="text-xs text-muted-foreground">+18% growth</p>
+            <div className="text-2xl font-bold">{stats.newThisMonth.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">New registrations</p>
           </CardContent>
         </Card>
       </div>
@@ -167,7 +255,7 @@ export default function UserManagement() {
         <CardContent>
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search by name, username..."
                 value={searchQuery}
@@ -191,18 +279,18 @@ export default function UserManagement() {
             </Select>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="gap-2">
-                <Download className="h-4 w-4" />
+                <Download className="w-4 h-4" />
                 Export
               </Button>
               <Button variant="outline" size="sm" className="gap-2">
-                <Upload className="h-4 w-4" />
+                <Upload className="w-4 h-4" />
                 Import
               </Button>
             </div>
           </div>
 
           {/* Users Table */}
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -216,81 +304,99 @@ export default function UserManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-mono text-sm">
-                      {user.username}
-                    </TableCell>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>
-                      <Badge className={roleColors[user.role]}>
-                        {roleLabels[user.role]}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {user.subRole ? (
-                        <Badge variant="outline" className="text-xs">
-                          {roleLabels[user.subRole]}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {user.isActive ? (
-                        <Badge variant="outline" className="text-green-600 border-green-600">
-                          Active
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-red-600 border-red-600">
-                          Inactive
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Key className="mr-2 h-4 w-4" />
-                            Reset Password
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            {user.isActive ? (
-                              <>
-                                <UserX className="mr-2 h-4 w-4" />
-                                Deactivate
-                              </>
-                            ) : (
-                              <>
-                                <UserCheck className="mr-2 h-4 w-4" />
-                                Activate
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete User
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-8 text-center">
+                      <Loader2 className="w-8 h-8 mx-auto animate-spin text-muted-foreground" />
+                      <p className="mt-2 text-sm text-muted-foreground">Loading users...</p>
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : users.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-8 text-center">
+                      <p className="text-sm text-muted-foreground">No users found</p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-mono text-sm">
+                        {user.username}
+                      </TableCell>
+                      <TableCell className="font-medium">{user.name}</TableCell>
+                      <TableCell>
+                        <Badge className={roleColors[user.role]}>
+                          {roleLabels[user.role]}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {user.sub_role ? (
+                          <Badge variant="outline" className="text-xs">
+                            {roleLabels[user.sub_role] || user.sub_role}
+                          </Badge>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {user.is_active ? (
+                          <Badge variant="outline" className="text-green-600 border-green-600">
+                            Active
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-red-600 border-red-600">
+                            Inactive
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(user.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="w-8 h-8 p-0">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => setEditUser(user)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit User
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Key className="w-4 h-4 mr-2" />
+                              Reset Password
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleToggleActive(user)}>
+                              {user.is_active ? (
+                                <>
+                                  <UserX className="w-4 h-4 mr-2" />
+                                  Deactivate
+                                </>
+                              ) : (
+                                <>
+                                  <UserCheck className="w-4 h-4 mr-2" />
+                                  Activate
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => setDeleteUser(user)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete User
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
@@ -298,19 +404,65 @@ export default function UserManagement() {
           {/* Pagination */}
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
-              Showing 1-10 of 3,124 users
+              Showing {((pagination.page - 1) * pagination.limit) + 1}-
+              {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total.toLocaleString()} users
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pagination.page <= 1}
+                onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
+              >
                 Previous
               </Button>
-              <Button variant="outline" size="sm">
+              <div className="flex items-center gap-2 px-3">
+                <span className="text-sm">
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pagination.page >= pagination.totalPages}
+                onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
+              >
                 Next
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit User Dialog */}
+      <EditUserDialog
+        open={!!editUser}
+        onOpenChange={(open) => !open && setEditUser(null)}
+        user={editUser}
+        onSuccess={fetchUsers}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteUser} onOpenChange={(open) => !open && setDeleteUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete user <strong>{deleteUser?.name}</strong> ({deleteUser?.username}).
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

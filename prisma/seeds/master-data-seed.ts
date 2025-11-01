@@ -6,49 +6,42 @@ export async function seedMasterData() {
   console.log('🌱 Seeding master data...')
 
   try {
-    // Seed Program Studi
+    // Seed Program Studi (Data dari CSV Dosen SINTA - Universitas Muhammadiyah Makassar)
     const prodiData = [
       {
-        kode: 'S1TI',
-        nama: 'S1 Teknik Informatika',
-        jenjang: 'S1',
-        fakultas: 'Fakultas Teknik',
-        akreditasi: 'A',
-      },
-      {
-        kode: 'S1SI',
-        nama: 'S1 Sistem Informasi',
-        jenjang: 'S1',
-        fakultas: 'Fakultas Teknik',
-        akreditasi: 'A',
-      },
-      {
-        kode: 'S1TE',
-        nama: 'S1 Teknik Elektro',
+        kode: '55202',
+        nama: 'Informatika',
         jenjang: 'S1',
         fakultas: 'Fakultas Teknik',
         akreditasi: 'B',
       },
       {
-        kode: 'S1TM',
-        nama: 'S1 Teknik Mesin',
+        kode: '55201',
+        nama: 'Teknik Elektro',
         jenjang: 'S1',
         fakultas: 'Fakultas Teknik',
         akreditasi: 'B',
       },
       {
-        kode: 'S1AK',
-        nama: 'S1 Akuntansi',
+        kode: '55203',
+        nama: 'Arsitektur',
         jenjang: 'S1',
-        fakultas: 'Fakultas Ekonomi',
-        akreditasi: 'A',
+        fakultas: 'Fakultas Teknik',
+        akreditasi: 'B',
       },
       {
-        kode: 'S1MN',
-        nama: 'S1 Manajemen',
+        kode: '55204',
+        nama: 'Teknik Sipil',
         jenjang: 'S1',
-        fakultas: 'Fakultas Ekonomi',
-        akreditasi: 'A',
+        fakultas: 'Fakultas Teknik',
+        akreditasi: 'B',
+      },
+      {
+        kode: '55205',
+        nama: 'Perencanaan Wilayah dan Kota',
+        jenjang: 'S1',
+        fakultas: 'Fakultas Teknik',
+        akreditasi: 'B',
       },
     ]
 

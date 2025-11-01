@@ -64,7 +64,7 @@ export function AppHeader({ role, className }: AppHeaderProps) {
   const breadcrumbs = generateBreadcrumbs()
 
   return (
-    <header className={`flex h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 ${className}`}>
+    <div className={`flex shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 ${className}`}>
       {/* Left side - Sidebar trigger and breadcrumbs */}
       <div className="flex items-center gap-2">
         <SidebarTrigger className="-ml-1" />
@@ -126,6 +126,6 @@ export function AppHeader({ role, className }: AppHeaderProps) {
         {/* Notifications */}
         <NotificationDropdown />
       </div>
-    </header>
+    </div>
   )
 }
