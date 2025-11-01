@@ -1,6 +1,10 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { cookies } from 'next/headers'
+import { executeGraphQLQuery, createAuthenticatedClient } from '@/lib/graphql/client'
+import { GET_KKP_SYARAT_BY_KODE_PRODI } from '@/lib/graphql/queries-superapps'
+import { GET_PROFILE } from '@/lib/graphql/mutations-superapps'
 
 // Types for KKP application
 export interface Student {
@@ -779,6 +783,134 @@ export async function generateApprovalLetter(applicationId: string) {
   } catch (error) {
     console.error("Error generating approval letter:", error)
     return { success: false, message: "Failed to generate approval letter" }
+  }
+}
+
+// ============================================
+// GraphQL Functions for KKP Requirements
+// ============================================
+
+export interface KkpRequirement {
+  id: string
+  prodi_kode_prodi: string
+  nama: string
+  logo: string | null
+  url_check: string | null
+  response_should_be: string | null
+  is_upload_file: boolean
+  is_activated: boolean
+  is_deleted: boolean
+  created_by: string | null
+  updated_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Get KKP requirements by program studi code
+ * Mengambil syarat-syarat KKP berdasarkan kode prodi mahasiswa
+ */
+export async function getKkpRequirementsByProdi(kodeProdi?: string) {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value || cookieStore.get('session-token')?.value
+
+    if (!token) {
+      return { success: false, error: 'Not authenticated', data: null }
+    }
+
+    // If kodeProdi not provided, get from user profile
+    if (!kodeProdi) {
+      const profileData = await executeGraphQLQuery<any>(
+        GET_PROFILE, 
+        {}, 
+        createAuthenticatedClient(token)
+      )
+      
+      if (profileData.data?.profile?.department?.kode) {
+        kodeProdi = profileData.data.profile.department.kode
+      } else {
+        // Default to Informatika
+        kodeProdi = '55202'
+      }
+    }
+
+    console.log('📋 Fetching KKP requirements for prodi:', kodeProdi)
+
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<any>(
+      GET_KKP_SYARAT_BY_KODE_PRODI,
+      { kodeProdi },
+      client
+    )
+
+    if (error || !data?.getKkpSyaratByKodeProdi) {
+      console.error('❌ Failed to fetch KKP requirements:', error)
+      return { 
+        success: false, 
+        error: error || 'Failed to fetch KKP requirements', 
+        data: null 
+      }
+    }
+
+    const requirements: KkpRequirement[] = data.getKkpSyaratByKodeProdi
+    const activeRequirements = requirements.filter(req => req.is_activated && !req.is_deleted)
+
+    console.log('✅ KKP requirements fetched:', activeRequirements.length, 'requirements')
+    
+    return { 
+      success: true, 
+      data: activeRequirements,
+      total: activeRequirements.length
+    }
+  } catch (error) {
+    console.error('❌ Error fetching KKP requirements:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error', 
+      data: null 
+    }
+  }
+}
+
+/**
+ * Check if requirement is fulfilled
+ * Mengecek apakah syarat sudah terpenuhi
+ */
+export async function checkRequirementStatus(requirement: KkpRequirement) {
+  try {
+    // If requirement has url_check, validate it
+    if (requirement.url_check && requirement.response_should_be) {
+      // TODO: Implement actual API check
+      // For now, return mock data
+      return {
+        success: true,
+        fulfilled: false,
+        message: 'Requirement check not implemented yet'
+      }
+    }
+
+    // If it's upload file requirement
+    if (requirement.is_upload_file) {
+      return {
+        success: true,
+        fulfilled: false,
+        message: 'Please upload required file'
+      }
+    }
+
+    return {
+      success: true,
+      fulfilled: false,
+      message: 'Unknown requirement type'
+    }
+  } catch (error) {
+    console.error('Error checking requirement:', error)
+    return {
+      success: false,
+      fulfilled: false,
+      message: error instanceof Error ? error.message : 'Check failed'
+    }
   }
 }
 

@@ -23,10 +23,16 @@ interface User {
   id: string
   username: string
   name: string
+  email?: string
+  phone?: string
   role: Role
   subRole?: string
   avatar?: string
   profile?: any
+  department?: {
+    kode: string
+    nama: string
+  }
 }
 
 interface AuthContextType {
@@ -212,7 +218,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: signinData, error: signinError } = signinResult
 
       if (signinError || !signinData || !signinData.signin) {
-        throw new Error(signinError || 'Login gagal. Periksa username dan password Anda.')
+        // Tampilkan pesan error yang user-friendly
+        // Jika error terkait autentikasi, tampilkan pesan sederhana
+        const errorMessage = signinError || 'Login gagal'
+        const isAuthError = errorMessage.toLowerCase().includes('user tidak ada') || 
+                           errorMessage.toLowerCase().includes('tidak aktif') ||
+                           errorMessage.toLowerCase().includes('password') ||
+                           errorMessage.toLowerCase().includes('username') ||
+                           errorMessage.toLowerCase().includes('invalid') ||
+                           errorMessage.toLowerCase().includes('unauthorized')
+        
+        throw new Error(isAuthError ? 'Username atau password salah' : 'Login gagal. Silakan coba lagi.')
       }
 
       const { access_token, user: signinUser } = signinData.signin

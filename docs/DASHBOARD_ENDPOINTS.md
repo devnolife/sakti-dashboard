@@ -33,55 +33,67 @@
 ## ⏳ Belum Terintegrasi (Endpoint Ada di Schema)
 
 ### 3. GET_KRS_MAHASISWA
-- **Status**: ⏳ Tersedia tapi belum diintegrasikan
-- **Diperlukan untuk**:
-  - Jumlah SKS semester ini (`currentSemester.credits`)
-  - Jumlah mata kuliah semester ini (`currentSemester.courses`)
-  - List mata kuliah aktif (`currentCourses`)
+- **Status**: ✅ Tersedia dan terintegrasi (2025-10-30)
+- **Digunakan di**: 
+  - `app/actions/student-actions.ts` (getStudentKRS function)
+  - `app/dashboard/mahasiswa/academic/page.tsx` (Academic Overview - KRS Tab)
+- **Data yang didapat**:
+  - `header.total_sks`: Total SKS semester ini
+  - `header.total_matakuliah`: Total mata kuliah semester ini
+  - `krs[]`: Array list mata kuliah dengan kode, nama, semester, SKS
 - **Query GraphQL**:
   ```graphql
-  query GetKrsMahasiswa($nim: String!, $periode_krs: String!) {
-    krs_mahasiswas(nim: $nim, periode_krs: $periode_krs) {
-      id_krs_mahasiswa
-      nim
-      id_kelas
-      id_matkul
-      periode_krs
-      sks
-      status_krs
-      nama_matkul
-      kode_matkul
-      nama_dosen
+  query GetKrsMahasiswa($nim: String, $periode_krs: String) {
+    getKrsMahasiswa(nim: $nim, periode_krs: $periode_krs) {
+      header {
+        total_sks
+        total_matakuliah
+      }
+      krs {
+        kode_matakuliah
+        nama_matakuliah
+        semester
+        sks
+      }
     }
   }
   ```
-- **Tampilan sekarang**: "Belum ada data" dengan label "Endpoint: GET_KRS_MAHASISWA"
+- **Note**: Parameters `nim` dan `periode_krs` bisa null (menggunakan user session)
 
 ### 4. GET_KHS_MAHASISWA
-- **Status**: ⏳ Tersedia tapi belum diintegrasikan
-- **Diperlukan untuk**:
-  - IPK/GPA mahasiswa (`student.gpa`)
-  - Total SKS yang sudah ditempuh (`academicInfo.totalCredits`)
-  - Riwayat nilai per semester
+- **Status**: ✅ Tersedia dan terintegrasi (2025-10-30)
+- **Digunakan di**: 
+  - `app/actions/student-actions.ts` (getStudentKHS function)
+  - `app/dashboard/mahasiswa/academic/page.tsx` (Academic Overview - KHS Tab)
+- **Data yang didapat**:
+  - `header.total_sks`: Total SKS yang sudah ditempuh
+  - `header.total_bobot`: Total bobot nilai
+  - `header.total_matakuliah`: Total mata kuliah
+  - `header.ips`: Indeks Prestasi Semester (IPS/GPA)
+  - `khs[]`: Array list nilai dengan kode, nama, semester, SKS, nilai, grade, bobot
 - **Query GraphQL**:
   ```graphql
-  query GetKhsMahasiswa($nim: String!) {
-    khs_mahasiswas(nim: $nim) {
-      id_khs_mahasiswa
-      nim
-      periode_khs
-      id_matkul
-      nilai
-      grade
-      bobot
-      sks
-      nama_matkul
-      kode_matkul
-      nama_dosen
+  query GetKhsMahasiswa($nim: String, $periode_krs: String) {
+    getKhsMahasiswa(nim: $nim, periode_krs: $periode_krs) {
+      header {
+        total_sks
+        total_bobot
+        total_matakuliah
+        ips
+      }
+      khs {
+        kode_matakuliah
+        nama_matakuliah
+        semester
+        sks
+        grade
+        nilai
+        bobot
+      }
     }
   }
   ```
-- **Tampilan sekarang**: "Belum ada data" dengan label "Endpoint: GET_KHS_MAHASISWA"
+- **Note**: Parameters `nim` dan `periode_krs` bisa null (menggunakan user session)
 
 ### 5. GET_MAHASISWA_BY_NIM
 - **Status**: ⏳ Tersedia tapi belum diintegrasikan
@@ -178,9 +190,9 @@
 
 ### Priority 1 - Critical (Data Akademik Utama)
 1. ✅ **GET_PROFILE** - Sudah terintegrasi
-2. ⏳ **GET_MAHASISWA_BY_NIM** - Status, semester, data lengkap
-3. ⏳ **GET_KRS_MAHASISWA** - Mata kuliah aktif, SKS semester ini
-4. ⏳ **GET_KHS_MAHASISWA** - IPK, total SKS
+2. ✅ **GET_KRS_MAHASISWA** - Sudah terintegrasi (Academic page)
+3. ✅ **GET_KHS_MAHASISWA** - Sudah terintegrasi (Academic page)
+4. ⏳ **GET_MAHASISWA_BY_NIM** - Status, semester, data lengkap
 
 ### Priority 2 - Important (Data Pendukung)
 5. ❌ **GET_JADWAL_MAHASISWA** - Jadwal mingguan

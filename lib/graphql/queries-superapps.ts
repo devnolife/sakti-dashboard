@@ -214,6 +214,30 @@ export const GET_TRANSKRIP_MAHASISWA = `
 `
 
 // ============================================
+// KKP (Kuliah Kerja Praktek)
+// ============================================
+
+export const GET_KKP_SYARAT_BY_KODE_PRODI = `
+  query GetKkpSyaratByKodeProdi($kodeProdi: String!) {
+    getKkpSyaratByKodeProdi(kodeProdi: $kodeProdi) {
+      id
+      prodi_kode_prodi
+      nama
+      logo
+      url_check
+      response_should_be
+      is_upload_file
+      is_activated
+      is_deleted
+      created_by
+      updated_by
+      created_at
+      updated_at
+    }
+  }
+`
+
+// ============================================
 // KKP (INTERNSHIP) QUERIES
 // ============================================
 

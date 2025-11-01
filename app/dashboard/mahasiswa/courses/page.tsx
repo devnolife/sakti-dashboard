@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/context/auth-context"
 import { useRouter } from "next/navigation"
+import { getStudentCoursesGraphQL } from "@/app/actions/academic-actions"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -99,6 +100,7 @@ const levelConfig = {
 
 export default function CoursesPage() {
   const { t } = useI18n()
+  const { user } = useAuth()
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -107,34 +109,63 @@ export default function CoursesPage() {
   const [selectedLevel, setSelectedLevel] = useState<CourseLevel | 'all'>('all')
   const [likedCourses, setLikedCourses] = useState<Set<string>>(new Set())
 
-  // Fetch courses data from API
+  // Fetch courses data from GraphQL
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        console.log('🚀 Fetching courses data...')
-        const response = await fetch('/api/student/courses')
+        console.log('🚀 Fetching courses from GraphQL...')
+        const result = await getStudentCoursesGraphQL(null, null)
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch courses: ${response.status}`)
+        if (!result.success || !result.data) {
+          throw new Error(result.error || 'Failed to fetch courses')
         }
         
-        const data = await response.json()
-        console.log('📚 Courses data received:', data.length, 'courses')
-        console.log('📋 Sample course:', data[0])
-        setCourses(data)
+        // Transform KRS data to Course format
+        const krsData = result.data.krs || []
+        const transformedCourses: Course[] = krsData.map((item: any) => ({
+          id: item.kode_matakuliah,
+          title: item.nama_matakuliah,
+          code: item.kode_matakuliah,
+          instructor: 'Dosen', // TODO: Get from API if available
+          credits: item.sks || 0,
+          currentGrade: undefined,
+          attendance: '0%',
+          progress: 0,
+          status: 'ongoing' as CourseStatus,
+          level: (item.semester <= 2 ? 'beginner' : item.semester <= 4 ? 'intermediate' : 'advanced') as CourseLevel,
+          semester: item.semester?.toString() || '1',
+          academicYear: '2024/2025',
+          schedule: [],
+          description: `Mata kuliah ${item.nama_matakuliah}`,
+          modules: 0,
+          completedModules: 0,
+          nextClass: new Date(),
+          color: 'bg-blue-500',
+          tags: ['Aktif'],
+          likes: 0,
+          views: 0,
+          isBookmarked: false
+        }))
+        
+        console.log('📚 Courses data received:', transformedCourses.length, 'courses')
+        console.log('📋 Sample course:', transformedCourses[0])
+        setCourses(transformedCourses)
       } catch (error) {
         console.error('❌ Error fetching courses:', error)
         setError(error instanceof Error ? error.message : 'Failed to load courses')
+        setCourses([])
       } finally {
         setLoading(false)
       }
     }
 
-    fetchCourses()
-  }, [])
+    if (user) {
+      fetchCourses()
+    }
+  }, [user])
 
   const filteredCourses = courses.filter(course => {
     const matchesTab = activeTab === 'all' || course.status === activeTab

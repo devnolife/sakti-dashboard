@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { executeGraphQLQuery, createAuthenticatedClient } from '@/lib/graphql/client'
 import { GET_PROFILE } from '@/lib/graphql/mutations-superapps'
+import { GET_KRS_MAHASISWA, GET_KHS_MAHASISWA } from '@/lib/graphql/queries-superapps'
 
 // GraphQL Profile Response
 interface ProfileResponse {
@@ -13,6 +14,10 @@ interface ProfileResponse {
     email: string | null
     phone: string | null
     role: string | null
+    department: {
+      kode: string
+      nama: string
+    } | null
   }
 }
 
@@ -116,4 +121,82 @@ export async function getStudentNotifications() {
   // TODO: Implement with GraphQL notifications query when available
   console.log('⚠️ Using empty notifications - GraphQL integration pending')
   return []
+}
+
+// Fetch KRS (Kartu Rencana Studi) data
+export async function getStudentKRS(nim: string | null = null, periode_krs: string | null = null) {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value || cookieStore.get('session-token')?.value
+
+    if (!token) {
+      return { success: false, error: 'Not authenticated', data: null }
+    }
+
+    // Decode token to get user info if nim not provided
+    if (!nim) {
+      // TODO: Extract nim from token or profile
+      const profileData = await executeGraphQLQuery<any>(GET_PROFILE, {}, createAuthenticatedClient(token))
+      nim = profileData.data?.profile?.username || ''
+    }
+
+    // Default to current period if not provided
+    if (!periode_krs) {
+      periode_krs = '20251' // Default to 2025 Ganjil
+    }
+
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<any>(
+      GET_KRS_MAHASISWA,
+      { nim, periode_krs },
+      client
+    )
+
+    if (error || !data?.getKrsMahasiswa) {
+      return { success: false, error: error || 'Failed to fetch KRS', data: null }
+    }
+
+    return { success: true, data: data.getKrsMahasiswa }
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error', data: null }
+  }
+}
+
+// Fetch KHS (Kartu Hasil Studi) data
+export async function getStudentKHS(nim: string | null = null, periode_krs: string | null = null) {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value || cookieStore.get('session-token')?.value
+
+    if (!token) {
+      return { success: false, error: 'Not authenticated', data: null }
+    }
+
+    // Decode token to get user info if nim not provided
+    if (!nim) {
+      // TODO: Extract nim from token or profile
+      const profileData = await executeGraphQLQuery<any>(GET_PROFILE, {}, createAuthenticatedClient(token))
+      nim = profileData.data?.profile?.username || ''
+    }
+
+    // Default to current period if not provided
+    if (!periode_krs) {
+      periode_krs = '20251' // Default to 2025 Ganjil
+    }
+
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<any>(
+      GET_KHS_MAHASISWA,
+      { nim, periode_krs },
+      client
+    )
+
+    if (error || !data?.getKhsMahasiswa) {
+      return { success: false, error: error || 'Failed to fetch KHS', data: null }
+    }
+
+    return { success: true, data: data.getKhsMahasiswa }
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error', data: null }
+  }
 }

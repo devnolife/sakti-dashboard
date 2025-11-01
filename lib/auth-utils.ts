@@ -12,6 +12,63 @@ if (!process.env.NEXTAUTH_SECRET) {
 }
 
 /**
+ * Mengekstrak pesan error yang user-friendly untuk autentikasi
+ * Menghilangkan detail teknis dan menampilkan pesan sederhana
+ */
+export function getAuthErrorMessage(error: any): string {
+  // Jika error adalah string langsung
+  if (typeof error === 'string') {
+    const errorLower = error.toLowerCase()
+    // Cek jika error terkait autentikasi
+    if (errorLower.includes('user tidak ada') ||
+        errorLower.includes('tidak aktif') ||
+        errorLower.includes('password') ||
+        errorLower.includes('username') ||
+        errorLower.includes('invalid') ||
+        errorLower.includes('unauthorized') ||
+        errorLower.includes('authentication') ||
+        errorLower.includes('credentials')) {
+      return 'Username atau password salah'
+    }
+    return error
+  }
+
+  // Cek jika ada response.errors (format GraphQL standard)
+  if (error?.response?.errors && Array.isArray(error.response.errors)) {
+    const firstError = error.response.errors[0]
+    if (firstError?.message) {
+      const errorMessage = firstError.message.toLowerCase()
+      if (errorMessage.includes('user tidak ada') ||
+          errorMessage.includes('tidak aktif') ||
+          errorMessage.includes('password') ||
+          errorMessage.includes('username') ||
+          errorMessage.includes('invalid') ||
+          errorMessage.includes('unauthorized')) {
+        return 'Username atau password salah'
+      }
+      return firstError.message
+    }
+  }
+
+  // Cek error.message langsung
+  if (error?.message) {
+    const errorMessage = error.message.toLowerCase()
+    if (errorMessage.includes('user tidak ada') ||
+        errorMessage.includes('tidak aktif') ||
+        errorMessage.includes('password') ||
+        errorMessage.includes('username') ||
+        errorMessage.includes('invalid') ||
+        errorMessage.includes('unauthorized')) {
+      return 'Username atau password salah'
+    }
+    return error.message
+  }
+
+  // Default error message
+  return 'Username atau password salah'
+}
+
+/**
  * Get user ID from GraphQL token stored in localStorage
  * This is used by server actions to identify the current user
  */

@@ -19,6 +19,33 @@ export function createAuthenticatedClient(token: string) {
   })
 }
 
+/**
+ * Mengekstrak pesan error yang user-friendly dari GraphQL error
+ * Menghilangkan detail teknis seperti lokasi error, stack trace, dll
+ */
+function extractUserFriendlyError(error: any): string {
+  // Jika error adalah string langsung, kembalikan
+  if (typeof error === 'string') {
+    return error
+  }
+
+  // Cek jika ada response.errors (format GraphQL standard)
+  if (error?.response?.errors && Array.isArray(error.response.errors)) {
+    const firstError = error.response.errors[0]
+    if (firstError?.message) {
+      return firstError.message
+    }
+  }
+
+  // Cek error.message langsung
+  if (error?.message) {
+    return error.message
+  }
+
+  // Default error message
+  return 'Terjadi kesalahan. Silakan coba lagi.'
+}
+
 // Error handling wrapper
 export async function executeGraphQLQuery<T>(
   query: string,
@@ -30,9 +57,10 @@ export async function executeGraphQLQuery<T>(
     return { data, error: null }
   } catch (error: any) {
     console.error('GraphQL Error:', error)
+    const userFriendlyError = extractUserFriendlyError(error)
     return {
       data: null,
-      error: error.message || 'GraphQL request failed',
+      error: userFriendlyError,
     }
   }
 }

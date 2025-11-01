@@ -27,6 +27,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useI18n } from '@/lib/i18n'
+import { getStudentGradesGraphQL } from "@/app/actions/academic-actions"
 
 interface GradeData {
   id: string
@@ -62,6 +63,7 @@ const gradeConfig = {
 
 export default function GradesPage() {
   const { t } = useI18n()
+  const { user } = useAuth()
   const [grades, setGrades] = useState<GradeData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,34 +71,56 @@ export default function GradesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedYear, setSelectedYear] = useState<string>('all')
 
-  // Fetch grades data from API
+  // Fetch grades data from GraphQL
   useEffect(() => {
     const fetchGrades = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        console.log('🚀 Fetching grades data...')
-        const response = await fetch('/api/student/grades')
+        console.log('🚀 Fetching grades from GraphQL...')
+        const result = await getStudentGradesGraphQL(null, null)
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch grades: ${response.status}`)
+        if (!result.success || !result.data) {
+          throw new Error(result.error || 'Failed to fetch grades')
         }
         
-        const data = await response.json()
-        console.log('📊 Grades data received:', data.length, 'grades')
-        console.log('📋 Sample grade:', data[0])
-        setGrades(data)
+        // Transform KHS data to GradeData format
+        const khsData = result.data.khs || []
+        const transformedGrades: GradeData[] = khsData.map((item: any, index: number) => ({
+          id: `${item.kode_matakuliah}-${index}`,
+          score: item.nilai || 0,
+          letterGrade: item.grade || 'N/A',
+          semester: item.semester || '0',
+          academicYear: '2024/2025', // TODO: Extract from periode_krs if available
+          course: {
+            id: item.kode_matakuliah,
+            name: item.nama_matakuliah,
+            code: item.kode_matakuliah,
+            credits: item.sks || 0,
+            department: null,
+            lecturer: null
+          },
+          createdAt: new Date()
+        }))
+        
+        console.log('📊 Grades data received:', transformedGrades.length, 'grades')
+        console.log('📋 Sample grade:', transformedGrades[0])
+        setGrades(transformedGrades)
       } catch (error) {
         console.error('❌ Error fetching grades:', error)
         setError(error instanceof Error ? error.message : 'Failed to load grades')
+        // Set empty array on error so UI still renders
+        setGrades([])
       } finally {
         setLoading(false)
       }
     }
 
-    fetchGrades()
-  }, [])
+    if (user) {
+      fetchGrades()
+    }
+  }, [user])
 
   // Filter grades
   const filteredGrades = grades.filter(grade => {

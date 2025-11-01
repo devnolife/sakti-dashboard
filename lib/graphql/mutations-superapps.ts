@@ -40,6 +40,7 @@ export const LOGIN = SIGNIN
  * PROFILE Query (requires authentication)
  * Use with createAuthenticatedClient(token)
  * UPDATED 2025-10-30: Fields changed to id, username, name, email, phone, role
+ * UPDATED 2025-10-30: Added department with kode and nama for prodi info
  */
 export const GET_PROFILE = `
   query {
@@ -50,6 +51,10 @@ export const GET_PROFILE = `
       email
       phone
       role
+      department {
+        kode
+        nama
+      }
     }
   }
 `

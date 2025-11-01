@@ -20,6 +20,7 @@ import {
   AlertCircle,
 } from "lucide-react"
 import MahasiswaDashboard from "@/components/dashboards/mahasiswa-dashboard"
+import { getStudentKRS, getStudentKHS } from "@/app/actions/student-actions"
 
 export default function MahasiswaPage() {
   const { user, isLoading } = useAuth()
@@ -40,46 +41,127 @@ export default function MahasiswaPage() {
         try {
           setLoading(true)
 
-          // Use user data from context (already from GraphQL signin)
+          console.log('🔍 Fetching GraphQL data for user:', user.username)
+
+          // Fetch KRS and KHS data from GraphQL
+          const [krsResult, khsResult] = await Promise.all([
+            getStudentKRS(null, null),
+            getStudentKHS(null, null)
+          ])
+
+          console.log('📊 KRS Result:', krsResult)
+          console.log('📊 KHS Result:', khsResult)
+
+          // Extract data from GraphQL results
+          const krsData = krsResult.success ? krsResult.data : null
+          const khsData = khsResult.success ? khsResult.data : null
+
+          if (!krsResult.success) {
+            console.warn('⚠️ KRS fetch failed:', krsResult.error)
+          }
+          if (!khsResult.success) {
+            console.warn('⚠️ KHS fetch failed:', khsResult.error)
+          }
+
+          console.log('📊 KRS Data:', krsData)
+          console.log('📊 KHS Data:', khsData)
+
+          // Build student data with GraphQL data (matching MahasiswaDashboard interface)
           const studentData = {
             student: {
               id: user.id,
               nim: user.username,
               name: user.name,
-              email: user.profile?.email || null,
-              phone: user.profile?.phone || null,
+              major: user.department?.nama || 'Teknik Informatika',
+              department: user.department?.nama || 'Fakultas Teknik',
+              semester: 6, // TODO: Calculate from current period
+              academicYear: '2024/2025',
+              gpa: khsData?.header?.ips || 0,
+              status: 'active' as any, // Default
+              email: user.email || null,
+              phone: user.phone || null,
               role: user.role,
-              status: null, // TODO: Fetch from GraphQL
-              semester: null // TODO: Fetch from GraphQL
-            },
-            academicInfo: {
-              currentSemester: 0,
-              totalCredits: 0,
-              gpa: 0,
-              currentCredits: 0
+              prodi: user.department?.nama || 'Belum diatur'
             },
             currentSemester: {
-              credits: null, // TODO: Fetch from GET_KRS_MAHASISWA
-              courses: null  // TODO: Fetch from GET_KRS_MAHASISWA
+              courses: krsData?.header?.total_matakuliah || 0,
+              credits: krsData?.header?.total_sks || 0,
+              academicYear: '2024/2025',
+              period: 'Ganjil'
             },
+            academicInfo: {
+              currentSemester: user.username?.substring(0, 4) || '-',
+              totalCredits: khsData?.header?.total_sks || 0,
+              gpa: khsData?.header?.ips || 0,
+              currentCredits: krsData?.header?.total_sks || 0
+            },
+            currentCourses: krsData?.krs || [],
             upcomingExams: [],
-            upcomingDeadlines: [], // TODO: Add endpoint
-            pendingPayments: [],
+            upcomingDeadlines: [],
+            pendingPayments: null,
             libraryBorrowings: [],
             weeklySchedule: [],
             activeKKP: null,
-            recentLetterRequests: []
+            recentLetterRequests: [],
+            kkpStatus: null
           }
 
           // For now, use empty notifications
           const notificationsData: any[] = []
 
-          // Set the data directly
+          // Set the data
           setDashboardData(studentData)
           setNotifications(notificationsData)
+
+          console.log('✅ Dashboard data set successfully')
         } catch (err) {
-          console.error('Error fetching student data:', err)
-          setError('Failed to load dashboard data')
+          console.error('❌ Error fetching student data:', err)
+
+          // Even if GraphQL fails, show dashboard with basic user data
+          const fallbackData = {
+            student: {
+              id: user.id,
+              nim: user.username,
+              name: user.name,
+              major: user.department?.nama || 'Teknik Informatika',
+              department: user.department?.nama || 'Fakultas Teknik',
+              semester: 6,
+              academicYear: '2024/2025',
+              gpa: 0,
+              status: 'active' as any,
+              email: user.email || null,
+              phone: user.phone || null,
+              role: user.role,
+              prodi: user.department?.nama || 'Belum diatur'
+            },
+            currentSemester: {
+              courses: 0,
+              credits: 0,
+              academicYear: '2024/2025',
+              period: 'Ganjil'
+            },
+            academicInfo: {
+              currentSemester: user.username?.substring(0, 4) || '-',
+              totalCredits: 0,
+              gpa: 0,
+              currentCredits: 0
+            },
+            currentCourses: [],
+            upcomingExams: [],
+            upcomingDeadlines: [],
+            pendingPayments: null,
+            libraryBorrowings: [],
+            weeklySchedule: [],
+            activeKKP: null,
+            recentLetterRequests: [],
+            kkpStatus: null
+          }
+
+          setDashboardData(fallbackData)
+          setNotifications([])
+
+          // Don't set error, just log it - show dashboard with empty data instead
+          console.warn('⚠️ Using fallback data due to error:', err)
         } finally {
           setLoading(false)
         }
@@ -357,14 +439,14 @@ export default function MahasiswaPage() {
                           KKP
                         </Badge>
                         <p className="text-xs text-muted-foreground">
-                          {dashboardData.kkpStatus.submissionDate ? 
+                          {dashboardData.kkpStatus.submissionDate ?
                             new Date(dashboardData.kkpStatus.submissionDate).toLocaleDateString('id-ID') :
                             'Belum ada tanggal'}
                         </p>
                       </div>
                       <p className="font-medium">Status KKP: {dashboardData.kkpStatus.status}</p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {dashboardData.kkpStatus.company ? 
+                        {dashboardData.kkpStatus.company ?
                           `Perusahaan: ${dashboardData.kkpStatus.company}` :
                           'Endpoint: GET_KKP_MAHASISWA'}
                       </p>

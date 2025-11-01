@@ -42,7 +42,16 @@ export async function loginWithGraphQL(username: string, password: string) {
 
     if (error || !data?.signin) {
       console.error('❌ GraphQL signin error:', error)
-      throw new Error(error || 'Login gagal. Periksa username dan password Anda.')
+      // Tampilkan pesan error yang user-friendly
+      const errorMessage = error || 'Login gagal'
+      const isAuthError = errorMessage.toLowerCase().includes('user tidak ada') || 
+                         errorMessage.toLowerCase().includes('tidak aktif') ||
+                         errorMessage.toLowerCase().includes('password') ||
+                         errorMessage.toLowerCase().includes('username') ||
+                         errorMessage.toLowerCase().includes('invalid') ||
+                         errorMessage.toLowerCase().includes('unauthorized')
+      
+      throw new Error(isAuthError ? 'Username atau password salah' : 'Login gagal. Silakan coba lagi.')
     }
 
     const { access_token, user } = data.signin

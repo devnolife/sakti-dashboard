@@ -65,7 +65,23 @@ export default function LoginPage() {
       await login(username, password)
       router.push("/dashboard")
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : "Login gagal. Periksa username dan password Anda.")
+      // Tampilkan pesan error yang user-friendly
+      const errorMessage = error instanceof Error ? error.message : "Login gagal"
+      
+      // Normalisasi pesan error untuk konsistensi
+      let friendlyMessage = errorMessage
+      
+      // Jika error terkait autentikasi, tampilkan pesan sederhana
+      if (errorMessage.toLowerCase().includes('user tidak ada') ||
+          errorMessage.toLowerCase().includes('tidak aktif') ||
+          errorMessage.toLowerCase().includes('password') ||
+          errorMessage.toLowerCase().includes('username') ||
+          errorMessage.toLowerCase().includes('invalid') ||
+          errorMessage.toLowerCase().includes('unauthorized')) {
+        friendlyMessage = 'Username atau password salah'
+      }
+      
+      setFormError(friendlyMessage)
     }
   }
 

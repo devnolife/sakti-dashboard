@@ -1,7 +1,12 @@
 'use server'
 
-// TODO: Replace with GraphQL queries from lib/graphql/queries-superapps.ts
-// Available queries: GET_MAHASISWA_BY_NIM, GET_TRANSKRIP_MAHASISWA, etc.
+import { cookies } from 'next/headers'
+import { executeGraphQLQuery, createAuthenticatedClient } from '@/lib/graphql/client'
+import { 
+  GET_KRS_MAHASISWA, 
+  GET_KHS_MAHASISWA, 
+  GET_TRANSKRIP_MAHASISWA 
+} from '@/lib/graphql/queries-superapps'
 import { getServerActionUserId } from '@/lib/auth-utils'
 
 export interface AcademicData {
@@ -135,6 +140,147 @@ export async function getControlCardData(): Promise<ControlCardData> {
       namaProdi: 'Teknik Informatika',
       namaKetuaProdi: 'Dr. Ketua Prodi',
       nbm: '1234567890'
+    }
+  }
+}
+
+/**
+ * Get student courses (KRS) from GraphQL
+ * Menggantikan /api/student/courses
+ */
+export async function getStudentCoursesGraphQL(nim: string | null = null, periode_krs: string | null = null) {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value || cookieStore.get('session-token')?.value
+
+    if (!token) {
+      return { success: false, error: 'Not authenticated', data: null }
+    }
+
+    // Get profile to extract nim if not provided
+    if (!nim) {
+      const { GET_PROFILE } = await import('@/lib/graphql/mutations-superapps')
+      const profileData = await executeGraphQLQuery<any>(GET_PROFILE, {}, createAuthenticatedClient(token))
+      nim = profileData.data?.profile?.username || ''
+    }
+
+    // Default to current period if not provided
+    if (!periode_krs) {
+      periode_krs = '20251' // Default to 2025 Ganjil
+    }
+
+    console.log('📚 Fetching courses from GraphQL for:', nim, periode_krs)
+
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<any>(
+      GET_KRS_MAHASISWA,
+      { nim, periode_krs },
+      client
+    )
+
+    if (error || !data?.getKrsMahasiswa) {
+      console.error('❌ Failed to fetch KRS:', error)
+      return { success: false, error: error || 'Failed to fetch courses', data: null }
+    }
+
+    console.log('✅ Courses fetched:', data.getKrsMahasiswa.header?.total_matakuliah || 0)
+    return { success: true, data: data.getKrsMahasiswa }
+  } catch (error) {
+    console.error('❌ Error fetching courses:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error', 
+      data: null 
+    }
+  }
+}
+
+/**
+ * Get student grades (KHS) from GraphQL
+ * Menggantikan /api/student/grades
+ */
+export async function getStudentGradesGraphQL(nim: string | null = null, periode_krs: string | null = null) {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value || cookieStore.get('session-token')?.value
+
+    if (!token) {
+      return { success: false, error: 'Not authenticated', data: null }
+    }
+
+    // Get profile to extract nim if not provided
+    if (!nim) {
+      const { GET_PROFILE } = await import('@/lib/graphql/mutations-superapps')
+      const profileData = await executeGraphQLQuery<any>(GET_PROFILE, {}, createAuthenticatedClient(token))
+      nim = profileData.data?.profile?.username || ''
+    }
+
+    // Default to current period if not provided
+    if (!periode_krs) {
+      periode_krs = '20251' // Default to 2025 Ganjil
+    }
+
+    console.log('📊 Fetching grades from GraphQL for:', nim, periode_krs)
+
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<any>(
+      GET_KHS_MAHASISWA,
+      { nim, periode_krs },
+      client
+    )
+
+    if (error || !data?.getKhsMahasiswa) {
+      console.error('❌ Failed to fetch KHS:', error)
+      return { success: false, error: error || 'Failed to fetch grades', data: null }
+    }
+
+    console.log('✅ Grades fetched:', data.getKhsMahasiswa.header?.total_matakuliah || 0)
+    return { success: true, data: data.getKhsMahasiswa }
+  } catch (error) {
+    console.error('❌ Error fetching grades:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error', 
+      data: null 
+    }
+  }
+}
+
+/**
+ * Get student transcript from GraphQL
+ * Data akademik lengkap untuk halaman academic
+ */
+export async function getStudentTranscriptGraphQL(nim: string) {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value || cookieStore.get('session-token')?.value
+
+    if (!token) {
+      return { success: false, error: 'Not authenticated', data: null }
+    }
+
+    console.log('📋 Fetching transcript from GraphQL for:', nim)
+
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<any>(
+      GET_TRANSKRIP_MAHASISWA,
+      { nim },
+      client
+    )
+
+    if (error || !data?.getAllTranskripMahasiswa) {
+      console.error('❌ Failed to fetch transcript:', error)
+      return { success: false, error: error || 'Failed to fetch transcript', data: null }
+    }
+
+    console.log('✅ Transcript fetched successfully')
+    return { success: true, data: data.getAllTranskripMahasiswa }
+  } catch (error) {
+    console.error('❌ Error fetching transcript:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error', 
+      data: null 
     }
   }
 }
