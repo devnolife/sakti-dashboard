@@ -39,24 +39,44 @@ export default function MahasiswaPage() {
       const fetchData = async () => {
         try {
           setLoading(true)
-          const [dashboardResponse, notificationsResponse] = await Promise.all([
-            fetch('/api/student/dashboard'),
-            fetch('/api/student/notifications')
-          ])
 
-          if (!dashboardResponse.ok) {
-            throw new Error('Failed to fetch dashboard data')
+          // Use user data from context (already from GraphQL signin)
+          const studentData = {
+            student: {
+              id: user.id,
+              nim: user.username,
+              name: user.name,
+              email: user.profile?.email || null,
+              phone: user.profile?.phone || null,
+              role: user.role,
+              status: null, // TODO: Fetch from GraphQL
+              semester: null // TODO: Fetch from GraphQL
+            },
+            academicInfo: {
+              currentSemester: 0,
+              totalCredits: 0,
+              gpa: 0,
+              currentCredits: 0
+            },
+            currentSemester: {
+              credits: null, // TODO: Fetch from GET_KRS_MAHASISWA
+              courses: null  // TODO: Fetch from GET_KRS_MAHASISWA
+            },
+            upcomingExams: [],
+            upcomingDeadlines: [], // TODO: Add endpoint
+            pendingPayments: [],
+            libraryBorrowings: [],
+            weeklySchedule: [],
+            activeKKP: null,
+            recentLetterRequests: []
           }
 
-          if (!notificationsResponse.ok) {
-            throw new Error('Failed to fetch notifications')
-          }
+          // For now, use empty notifications
+          const notificationsData: any[] = []
 
-          const dashboardResult = await dashboardResponse.json()
-          const notificationsResult = await notificationsResponse.json()
-
-          setDashboardData(dashboardResult)
-          setNotifications(notificationsResult)
+          // Set the data directly
+          setDashboardData(studentData)
+          setNotifications(notificationsData)
         } catch (err) {
           console.error('Error fetching student data:', err)
           setError('Failed to load dashboard data')
@@ -139,7 +159,7 @@ export default function MahasiswaPage() {
                 <div className="text-2xl font-bold">
                   {dashboardData.student.gpa && dashboardData.student.gpa > 0
                     ? dashboardData.student.gpa.toFixed(2)
-                    : 'N/A'}
+                    : <span className="text-base text-muted-foreground">Belum ada data</span>}
                 </div>
                 <div className="flex items-center mt-1">
                   <Badge
@@ -154,7 +174,7 @@ export default function MahasiswaPage() {
                       }`}
                   >
                     {!dashboardData.student.gpa || dashboardData.student.gpa === 0
-                      ? 'Belum Ada'
+                      ? 'Endpoint: GET_KHS_MAHASISWA'
                       : dashboardData.student.gpa >= 3.5
                         ? 'Cumlaude'
                         : dashboardData.student.gpa >= 3.0
@@ -173,8 +193,16 @@ export default function MahasiswaPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                <div className="text-2xl font-bold">{dashboardData.currentSemester.credits}</div>
-                <p className="mt-1 text-xs text-muted-foreground">{dashboardData.currentSemester.courses} mata kuliah aktif</p>
+                <div className="text-2xl font-bold">
+                  {dashboardData.currentSemester?.credits ?? (
+                    <span className="text-base text-muted-foreground">Belum ada data</span>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {dashboardData.currentSemester?.courses ?
+                    `${dashboardData.currentSemester.courses} mata kuliah aktif` :
+                    'Endpoint: GET_KRS_MAHASISWA'}
+                </p>
               </CardContent>
             </Card>
 
@@ -187,20 +215,24 @@ export default function MahasiswaPage() {
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="text-2xl font-bold">
-                  {dashboardData.student.status === 'active' ? 'Aktif' :
-                    dashboardData.student.status === 'suspended' ? 'Suspend' :
-                      dashboardData.student.status === 'graduated' ? 'Lulus' :
-                        dashboardData.student.status === 'dropped_out' ? 'Dropout' :
-                          dashboardData.student.status}
+                  {dashboardData.student?.status ? (
+                    dashboardData.student.status === 'active' ? 'Aktif' :
+                      dashboardData.student.status === 'suspended' ? 'Suspend' :
+                        dashboardData.student.status === 'graduated' ? 'Lulus' :
+                          dashboardData.student.status === 'dropped_out' ? 'Dropout' :
+                            dashboardData.student.status
+                  ) : (
+                    <span className="text-base text-muted-foreground">Belum ada data</span>
+                  )}
                 </div>
                 <div className="flex items-center mt-1">
                   <Badge
                     variant="outline"
-                    className={`text-xs font-normal ${dashboardData.student.status === 'active' ? 'text-green-600 border-green-200 bg-green-500/10' :
-                      'text-red-600 border-red-200 bg-red-500/10'
-                      }`}
+                    className="text-xs font-normal text-gray-600 border-gray-200 bg-gray-500/10"
                   >
-                    Semester {dashboardData.student.semester}
+                    {dashboardData.student?.semester ?
+                      `Semester ${dashboardData.student.semester}` :
+                      'Endpoint: GET_MAHASISWA_BY_NIM'}
                   </Badge>
                 </div>
               </CardContent>
@@ -214,13 +246,19 @@ export default function MahasiswaPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                <div className="text-2xl font-bold">{dashboardData.upcomingDeadlines.length}</div>
+                <div className="text-2xl font-bold">
+                  {dashboardData.upcomingDeadlines?.length ?? (
+                    <span className="text-base text-muted-foreground">Belum ada data</span>
+                  )}
+                </div>
                 <div className="flex items-center mt-1">
                   <Badge
                     variant="outline"
                     className="text-xs font-normal bg-amber-500/10 text-amber-600 border-amber-200"
                   >
-                    {dashboardData.upcomingDeadlines.filter((d: any) => d.urgent).length} mendesak
+                    {dashboardData.upcomingDeadlines?.length ?
+                      `${dashboardData.upcomingDeadlines.filter((d: any) => d.urgent).length} mendesak` :
+                      'Endpoint: Belum tersedia'}
                   </Badge>
                 </div>
               </CardContent>
@@ -312,24 +350,28 @@ export default function MahasiswaPage() {
                     </p>
                   </div>
 
-                  {dashboardData.kkpStatus && (
+                  {dashboardData.kkpStatus && dashboardData.kkpStatus.status && (
                     <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
                       <div className="flex items-center gap-2 mb-2">
                         <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                           KKP
                         </Badge>
                         <p className="text-xs text-muted-foreground">
-                          {new Date(dashboardData.kkpStatus.submissionDate).toLocaleDateString('id-ID')}
+                          {dashboardData.kkpStatus.submissionDate ? 
+                            new Date(dashboardData.kkpStatus.submissionDate).toLocaleDateString('id-ID') :
+                            'Belum ada tanggal'}
                         </p>
                       </div>
                       <p className="font-medium">Status KKP: {dashboardData.kkpStatus.status}</p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {dashboardData.kkpStatus.company && `Perusahaan: ${dashboardData.kkpStatus.company}`}
+                        {dashboardData.kkpStatus.company ? 
+                          `Perusahaan: ${dashboardData.kkpStatus.company}` :
+                          'Endpoint: GET_KKP_MAHASISWA'}
                       </p>
                     </div>
                   )}
 
-                  {dashboardData.pendingPayments > 0 && (
+                  {dashboardData.pendingPayments !== null && dashboardData.pendingPayments !== undefined && dashboardData.pendingPayments > 0 && (
                     <div className="p-3 border rounded-lg bg-muted/50 border-border/50">
                       <div className="flex items-center gap-2 mb-2">
                         <Badge variant="outline" className="text-amber-500 border-amber-200 bg-amber-500/10">
@@ -357,7 +399,7 @@ export default function MahasiswaPage() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {dashboardData.currentCourses.length > 0 ? (
+                {dashboardData.currentCourses && dashboardData.currentCourses.length > 0 ? (
                   dashboardData.currentCourses.map((course: any, index: number) => {
                     const colors = ["primary", "secondary", "green-500", "amber-500", "purple-500", "blue-500"]
                     const color = colors[index % colors.length]
@@ -391,7 +433,8 @@ export default function MahasiswaPage() {
                   })
                 ) : (
                   <div className="col-span-full text-center p-6 text-muted-foreground">
-                    <p>Tidak ada mata kuliah aktif semester ini</p>
+                    <p>Belum ada data</p>
+                    <p className="text-xs mt-2">Endpoint: GET_KRS_MAHASISWA (detail mata kuliah)</p>
                   </div>
                 )}
               </div>
@@ -550,7 +593,7 @@ export default function MahasiswaPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {dashboardData.weeklySchedule.length > 0 ? (
+                {dashboardData.weeklySchedule && dashboardData.weeklySchedule.length > 0 ? (
                   // Group schedules by day
                   (() => {
                     const groupedSchedule = dashboardData.weeklySchedule.reduce((acc: any, schedule: any) => {
@@ -596,7 +639,8 @@ export default function MahasiswaPage() {
                   })()
                 ) : (
                   <div className="text-center p-6 text-muted-foreground">
-                    <p>Belum ada jadwal mata kuliah tersedia</p>
+                    <p>Belum ada data</p>
+                    <p className="text-xs mt-2">Endpoint: GET_JADWAL_MAHASISWA (jadwal kuliah)</p>
                   </div>
                 )}
               </div>

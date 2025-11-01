@@ -1,34 +1,94 @@
 'use server'
 
-// TODO: Replace with GraphQL queries
-// import { prisma } from '@/lib/prisma'
-import { getServerActionUserId } from '@/lib/auth-utils'
+import { cookies } from 'next/headers'
+import { executeGraphQLQuery, createAuthenticatedClient } from '@/lib/graphql/client'
+import { GET_PROFILE } from '@/lib/graphql/mutations-superapps'
+
+// GraphQL Profile Response
+interface ProfileResponse {
+  profile: {
+    id: string
+    username: string | null
+    name: string | null
+    email: string | null
+    phone: string | null
+    role: string | null
+  }
+}
 
 export async function getStudentDashboardData() {
-  // Get current student user ID
-  const user_id = await getServerActionUserId()
+  console.log('🔍 Fetching student dashboard data from GraphQL...')
 
-  console.log('🔍 Fetching student dashboard data for user:', user_id)
+  try {
+    // Get token from cookies
+    const cookieStore = await cookies()
+    const token = cookieStore.get('graphql-token')?.value ||
+      cookieStore.get('session-token')?.value
 
-  // TODO: Replace with GraphQL queries
-  console.log('⚠️ Using mock data - GraphQL integration pending')
+    if (!token) {
+      console.error('❌ No authentication token found')
+      return {
+        success: false,
+        error: 'Not authenticated',
+        data: null
+      }
+    }
 
-  return {
-    success: true,
-    data: {
-      student: null,
-      academicInfo: {
-        currentSemester: 0,
-        totalCredits: 0,
-        gpa: 0,
-        currentCredits: 0
-      },
-      upcomingExams: [],
-      pendingPayments: [],
-      libraryBorrowings: [],
-      weeklySchedule: [],
-      activeKKP: null,
-      recentLetterRequests: []
+    // Fetch profile from GraphQL
+    const client = createAuthenticatedClient(token)
+    const { data, error } = await executeGraphQLQuery<ProfileResponse>(
+      GET_PROFILE,
+      {},
+      client
+    )
+
+    if (error || !data?.profile) {
+      console.error('❌ Failed to fetch profile:', error)
+      return {
+        success: false,
+        error: error || 'Failed to fetch profile',
+        data: null
+      }
+    }
+
+    const profile = data.profile
+    console.log('✅ Profile fetched:', profile.username)
+
+    // Map profile data to student format
+    const student = {
+      id: profile.id,
+      nim: profile.username || 'N/A',
+      name: profile.name || profile.username || 'Student',
+      email: profile.email || null,
+      phone: profile.phone || null,
+      role: profile.role || 'mahasiswa'
+    }
+
+    // TODO: Fetch academic data from GraphQL (KHS, KRS, etc)
+    return {
+      success: true,
+      data: {
+        student,
+        academicInfo: {
+          currentSemester: 0,
+          totalCredits: 0,
+          gpa: 0,
+          currentCredits: 0
+        },
+        upcomingExams: [],
+        pendingPayments: [],
+        libraryBorrowings: [],
+        weeklySchedule: [],
+        activeKKP: null,
+        recentLetterRequests: []
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error fetching dashboard data:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      data: null
     }
   }
 }
@@ -51,10 +111,9 @@ function getGradePoint(letterGrade: string): number {
 }
 
 export async function getStudentNotifications() {
-  // Get current student user ID
-  const userId = await getServerActionUserId()
+  console.log('🔔 Fetching student notifications...')
 
-  // TODO: Replace with GraphQL queries
-  console.log('⚠️ Using mock data - GraphQL integration pending')
+  // TODO: Implement with GraphQL notifications query when available
+  console.log('⚠️ Using empty notifications - GraphQL integration pending')
   return []
 }
