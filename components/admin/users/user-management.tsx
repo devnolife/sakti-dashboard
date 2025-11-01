@@ -28,9 +28,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   Users, Search, Plus, MoreHorizontal, Edit, Trash2, Key,
-  UserCheck, UserX, Download, Upload, Filter, Loader2
+  UserCheck, UserX, Download, Upload, Filter, Loader2, Info
 } from "lucide-react"
 import { EditUserDialog } from "./edit-user-dialog"
 import { toast } from "sonner"
@@ -187,14 +188,25 @@ export default function UserManagement() {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
           <p className="mt-2 text-muted-foreground">
-            Manage all users, roles, and permissions
+            Kelola semua users yang sudah ada dari database seeding
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" disabled title="Users sudah di-seed dari database">
           <Plus className="w-4 h-4" />
           Add New User
         </Button>
       </div>
+
+      {/* Info Alert */}
+      <Alert>
+        <Info className="w-4 h-4" />
+        <AlertTitle>Data Users dari Database Seeding</AlertTitle>
+        <AlertDescription>
+          Halaman ini menampilkan semua users yang sudah ada dari proses seeding database, termasuk:
+          <strong> 59 Dosen dengan data real SINTA</strong>, Dekan, Wakil Dekan, Kaprodi, Staff, dan Mahasiswa.
+          Anda dapat mengubah role, posisi, dan status mereka melalui tombol Edit.
+        </AlertDescription>
+      </Alert>
 
       {/* Statistics */}
       <div className="grid gap-4 md:grid-cols-4">

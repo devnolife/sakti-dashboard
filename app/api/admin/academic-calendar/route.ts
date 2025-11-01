@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, hasPermission } from '@/lib/auth-middleware'
@@ -14,6 +15,114 @@ const academicYearSchema = z.object({
   exam_start: z.string().transform(str => new Date(str)).optional(),
   exam_end: z.string().transform(str => new Date(str)).optional()
 })
+
+type AcademicYearInput = z.infer<typeof academicYearSchema>
+
+type StoredAcademicYear = {
+  year: string
+  semester: 'ganjil' | 'genap'
+  start_date: string
+  end_date: string
+  is_active: boolean
+  registration_start: string | null
+  registration_end: string | null
+  exam_start: string | null
+  exam_end: string | null
+}
+
+type AcademicYearRecord = StoredAcademicYear & {
+  id: string
+  key: string
+  updated_at: Date
+}
+
+const serializeAcademicYear = (data: AcademicYearInput): StoredAcademicYear => ({
+  year: data.year,
+  semester: data.semester,
+  start_date: data.start_date.toISOString(),
+  end_date: data.end_date.toISOString(),
+  is_active: data.is_active,
+  registration_start: data.registration_start ? data.registration_start.toISOString() : null,
+  registration_end: data.registration_end ? data.registration_end.toISOString() : null,
+  exam_start: data.exam_start ? data.exam_start.toISOString() : null,
+  exam_end: data.exam_end ? data.exam_end.toISOString() : null
+})
+
+const safeParseAcademicYearValue = (value: string): StoredAcademicYear | null => {
+  try {
+    const parsed = JSON.parse(value) as Partial<StoredAcademicYear>
+
+    if (!parsed || typeof parsed !== 'object') {
+      return null
+    }
+
+    if (!parsed.year || !parsed.semester || !parsed.start_date || !parsed.end_date) {
+      return null
+    }
+
+    return {
+      year: parsed.year,
+      semester: parsed.semester as 'ganjil' | 'genap',
+      start_date: parsed.start_date,
+      end_date: parsed.end_date,
+      is_active: parsed.is_active ?? false,
+      registration_start: parsed.registration_start ?? null,
+      registration_end: parsed.registration_end ?? null,
+      exam_start: parsed.exam_start ?? null,
+      exam_end: parsed.exam_end ?? null
+    }
+  } catch (error) {
+    console.warn('Failed to parse academic year config value:', error)
+    return null
+  }
+}
+
+const buildAcademicYearRecord = (config: { id: string; key: string; value: string; updated_at: Date }): AcademicYearRecord | null => {
+  const parsed = safeParseAcademicYearValue(config.value)
+  if (!parsed) {
+    return null
+  }
+
+  return {
+    id: config.id,
+    key: config.key,
+    updated_at: config.updated_at,
+    ...parsed
+  }
+}
+
+const deactivateOtherAcademicYears = async (excludeKey?: string) => {
+  const existingConfigs = await prisma.system_configs.findMany({
+    where: {
+      category: 'academic_year',
+      ...(excludeKey ? { key: { not: excludeKey } } : {})
+    }
+  })
+
+  const updates = existingConfigs
+    .map(config => {
+      const parsed = safeParseAcademicYearValue(config.value)
+
+      if (!parsed?.is_active) {
+        return null
+      }
+
+      const updatedValue = JSON.stringify({ ...parsed, is_active: false })
+
+      return prisma.system_configs.update({
+        where: { id: config.id },
+        data: {
+          value: updatedValue,
+          updated_at: new Date()
+        }
+      })
+    })
+    .filter(Boolean) as Promise<unknown>[]
+
+  if (updates.length > 0) {
+    await Promise.all(updates)
+  }
+}
 
 // GET /api/admin/academic-calendar
 export async function GET(request: NextRequest) {
@@ -38,12 +147,9 @@ export async function GET(request: NextRequest) {
     })
 
     // Parse academic years
-    let parsedYears = academicYears.map(ay => ({
-      id: ay.id,
-      key: ay.key,
-      ...JSON.parse(ay.value),
-      updated_at: ay.updated_at
-    }))
+    let parsedYears = academicYears
+      .map(buildAcademicYearRecord)
+      .filter((record): record is AcademicYearRecord => record !== null)
 
     // Apply filters
     if (year) {
@@ -90,31 +196,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Academic year and semester already exists' }, { status: 400 })
     }
 
+    const serializedValue = serializeAcademicYear(validatedData)
+
     // If setting as active, deactivate others
     if (validatedData.is_active) {
-      await prisma.system_configs.updateMany({
-        where: {
-          category: 'academic_year'
-        },
-        data: {
-          value: prisma.raw('jsonb_set(value, \'{is_active}\', \'false\')') as any
-        }
-      })
+      await deactivateOtherAcademicYears()
     }
 
     const academicYear = await prisma.system_configs.create({
       data: {
-        id: `cfg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: randomUUID(),
         key: academicKey,
-        value: JSON.stringify({
-          ...validatedData,
-          start_date: validatedData.start_date.toISOString(),
-          end_date: validatedData.end_date.toISOString(),
-          registration_start: validatedData.registration_start?.toISOString(),
-          registration_end: validatedData.registration_end?.toISOString(),
-          exam_start: validatedData.exam_start?.toISOString(),
-          exam_end: validatedData.exam_end?.toISOString()
-        }),
+        value: JSON.stringify(serializedValue),
         description: `Academic Year ${validatedData.year} - ${validatedData.semester}`,
         category: 'academic_year',
         updated_at: new Date()
@@ -128,7 +221,7 @@ export async function POST(request: NextRequest) {
         user_id: token.userId as string,
         action: 'create_academic_year',
         resource: 'academic_calendar',
-        details: validatedData,
+        details: serializedValue,
         ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
       }
     })
@@ -136,7 +229,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       id: academicYear.id,
       key: academicYear.key,
-      ...validatedData
+      ...serializedValue
     }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -167,31 +260,17 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const validatedData = academicYearSchema.parse(body)
 
+    const serializedValue = serializeAcademicYear(validatedData)
+
     // If setting as active, deactivate others
     if (validatedData.is_active) {
-      await prisma.system_configs.updateMany({
-        where: {
-          category: 'academic_year',
-          key: { not: key }
-        },
-        data: {
-          value: prisma.raw('jsonb_set(value, \'{is_active}\', \'false\')') as any
-        }
-      })
+      await deactivateOtherAcademicYears(key)
     }
 
     const academicYear = await prisma.system_configs.update({
       where: { key },
       data: {
-        value: JSON.stringify({
-          ...validatedData,
-          start_date: validatedData.start_date.toISOString(),
-          end_date: validatedData.end_date.toISOString(),
-          registration_start: validatedData.registration_start?.toISOString(),
-          registration_end: validatedData.registration_end?.toISOString(),
-          exam_start: validatedData.exam_start?.toISOString(),
-          exam_end: validatedData.exam_end?.toISOString()
-        }),
+        value: JSON.stringify(serializedValue),
         updated_at: new Date()
       }
     })
@@ -203,7 +282,7 @@ export async function PUT(request: NextRequest) {
         user_id: token.userId as string,
         action: 'update_academic_year',
         resource: 'academic_calendar',
-        details: { key, ...validatedData },
+        details: { key, ...serializedValue },
         ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
       }
     })
@@ -211,7 +290,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       id: academicYear.id,
       key: academicYear.key,
-      ...validatedData
+      ...serializedValue
     })
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 import { syncStudentDataFromGraphQL } from './graphql/sync-student-data'
+import { syncDosenDataFromGraphQL } from './graphql/sync-dosen-data'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -44,9 +45,24 @@ export const authOptions: NextAuthOptions = {
         if (user.role === 'mahasiswa' && user.students?.nim) {
           try {
             await syncStudentDataFromGraphQL(user.students.nim)
-            console.log(`Student data synced for NIM: ${user.students.nim}`)
+            console.log(`✅ Student data synced for NIM: ${user.students.nim}`)
           } catch (error) {
-            console.error('Failed to sync student data:', error)
+            console.error('❌ Failed to sync student data:', error)
+            // Continue with login even if sync fails
+          }
+        }
+
+        // Sync dosen data from GraphQL API after successful login
+        if (user.role === 'dosen' && user.lecturers?.nip) {
+          try {
+            const result = await syncDosenDataFromGraphQL(user.lecturers.nip)
+            if (result.success) {
+              console.log(`✅ Dosen data synced for NIP: ${user.lecturers.nip}`)
+            } else {
+              console.log(`⏭️ Dosen data sync skipped: ${result.error}`)
+            }
+          } catch (error) {
+            console.error('❌ Failed to sync dosen data:', error)
             // Continue with login even if sync fails
           }
         }
