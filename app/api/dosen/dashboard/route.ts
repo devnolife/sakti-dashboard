@@ -316,14 +316,13 @@ async function getUpcomingSchedules(lecturerId: string) {
   // Academic consultations
   const consultations = await prisma.academic_consultations.findMany({
     where: {
-      lecturer_id: lecturerId,
-      scheduled_date: {
+      advisor_id: lecturerId,
+      date: {
         gte: new Date()
-      },
-      status: 'scheduled'
+      }
     },
     take: 5,
-    orderBy: { scheduled_date: 'asc' },
+    orderBy: { date: 'asc' },
     include: {
       students: {
         include: {
@@ -339,8 +338,8 @@ async function getUpcomingSchedules(lecturerId: string) {
     id: consult.id,
     title: 'Bimbingan Akademik',
     student: consult.students.users.name,
-    time: new Date(consult.scheduled_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-    date: formatDate(consult.scheduled_date),
+    time: new Date(consult.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    date: formatDate(consult.date),
     type: 'bimbingan'
   })))
 

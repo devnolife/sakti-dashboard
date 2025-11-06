@@ -62,8 +62,8 @@ export default function LoginPage() {
 
     try {
       // Role akan ditentukan otomatis dari backend
+      // Redirect akan dihandle otomatis oleh AuthContext berdasarkan role user
       await login(username, password)
-      router.push("/dashboard")
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "Login gagal. Periksa username dan password Anda.")
     }

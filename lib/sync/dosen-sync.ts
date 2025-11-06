@@ -1,6 +1,12 @@
 import { prisma } from '@/lib/prisma'
 import { createAuthenticatedClient, executeGraphQLQuery } from '@/lib/graphql/client'
 import { GET_DOSEN, GET_PA_DOSEN, type DosenResponse } from '@/lib/graphql/queries'
+import { randomBytes } from 'crypto'
+
+// Helper function to generate ID similar to cuid
+function generateId(): string {
+  return `c${randomBytes(12).toString('base64url')}`
+}
 
 /**
  * Sync dosen profile from GraphQL to local database
@@ -9,6 +15,24 @@ export async function syncDosenFromGraphQL(nidn: string, token: string) {
   try {
     console.log('Syncing dosen from GraphQL:', nidn)
 
+    // Find existing user by username (nidn is username for dosen)
+    const existingUser = await prisma.users.findUnique({
+      where: { username: nidn },
+      include: { lecturers: true }
+    })
+
+    if (!existingUser) {
+      console.error('Dosen user not found in local DB:', nidn)
+      return null
+    }
+
+    // If lecturer profile already exists, skip sync and return existing data
+    if (existingUser.lecturers) {
+      console.log('✅ Dosen lecturer profile already exists, skipping sync')
+      return { user: existingUser, lecturer: existingUser.lecturers }
+    }
+
+    // Only fetch from GraphQL if lecturer profile doesn't exist
     const client = createAuthenticatedClient(token)
     const { data, error } = await executeGraphQLQuery<DosenResponse>(
       GET_DOSEN,
@@ -28,17 +52,6 @@ export async function syncDosenFromGraphQL(nidn: string, token: string) {
       email: dosenData.email
     })
 
-    // Find existing user by username (nidn is username for dosen)
-    const existingUser = await prisma.users.findUnique({
-      where: { username: nidn },
-      include: { lecturers: true }
-    })
-
-    if (!existingUser) {
-      console.error('Dosen user not found in local DB:', nidn)
-      return null
-    }
-
     // Build full name with titles
     const fullName = [
       dosenData.gelar_depan,
@@ -54,15 +67,10 @@ export async function syncDosenFromGraphQL(nidn: string, token: string) {
       })
     }
 
-    // Create or update lecturer profile
-    const lecturer = await prisma.lecturers.upsert({
-      where: { nip: nidn },
-      update: {
-        department: dosenData.prodiId || 'Unknown',
-        email: dosenData.email || existingUser.name?.toLowerCase().replace(/\s/g, '.') + '@unismuh.ac.id',
-        last_sync_at: new Date(),
-      },
-      create: {
+    // Create lecturer profile (since we know it doesn't exist)
+    const lecturer = await prisma.lecturers.create({
+      data: {
+        id: generateId(),
         user_id: existingUser.id,
         nip: nidn,
         department: dosenData.prodiId || 'Unknown',
@@ -135,6 +143,7 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
             name: mahasiswa.nama,
           },
           create: {
+            id: generateId(),
             username: mahasiswa.nim,
             name: mahasiswa.nama,
             password: 'temp', // Password will be set on first login
@@ -169,6 +178,7 @@ export async function syncMahasiswaPaFromGraphQL(token: string) {
             last_sync_at: new Date(),
           },
           create: {
+            id: generateId(),
             user_id: user.id,
             nim: mahasiswa.nim,
             major: mahasiswa.namaProdi,

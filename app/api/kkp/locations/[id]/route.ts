@@ -14,20 +14,20 @@ export async function DELETE(
     if (!(token instanceof NextResponse)) {
       user_id = token.sub
     }
-    if (!userId) {
+    if (!user_id) {
       try { user_id = await getServerActionUserId() } catch {}
     }
-    if (!userId) {
+    if (!user_id) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
     const locationId = params.id
 
     // Find the location and check ownership
-    const location = await prisma.kkpLocation.findUnique({
+    const location = await prisma.kkp_locations.findUnique({
       where: { id: locationId },
       include: {
-        createdBy: {
+        students: {
           select: {
             user_id: true,
           },
@@ -46,7 +46,7 @@ export async function DELETE(
     }
 
     // Check if the current user is the creator of this location
-    if (location.createdBy.userId !== userId) {
+    if (location.students.user_id !== user_id) {
       return NextResponse.json(
         {
           success: false,
@@ -57,7 +57,7 @@ export async function DELETE(
     }
 
     // Delete the location (this will cascade delete sub-locations and documents)
-    await prisma.kkpLocation.delete({
+    await prisma.kkp_locations.delete({
       where: { id: locationId },
     })
 
@@ -85,39 +85,39 @@ export async function GET(
   try {
     const locationId = params.id
 
-    const location = await prisma.kkpLocation.findUnique({
-      where: { 
+    const location = await prisma.kkp_locations.findUnique({
+      where: {
         id: locationId,
         is_active: true,
       },
       include: {
-        company: true,
-        createdBy: {
+        companies: true,
+        students: {
           select: {
             id: true,
             nim: true,
-            user: {
+            users: {
               select: {
                 name: true,
               },
             },
           },
         },
-        subLocations: true,
-        documents: {
+        kkp_sub_locations: true,
+        kkp_documents: {
           select: {
             id: true,
             name: true,
             type: true,
-            uploadDate: true,
+            upload_date: true,
             status: true,
-            fileSize: true,
-            mimeType: true,
+            file_size: true,
+            mime_type: true,
           },
         },
         _count: {
           select: {
-            documents: true,
+            kkp_documents: true,
           },
         },
       },
@@ -174,10 +174,10 @@ export async function PUT(
     const body = await request.json()
 
     // Find the location and check ownership
-    const existingLocation = await prisma.kkpLocation.findUnique({
+    const existingLocation = await prisma.kkp_locations.findUnique({
       where: { id: locationId },
       include: {
-        createdBy: {
+        students: {
           select: {
             user_id: true,
           },
@@ -196,7 +196,7 @@ export async function PUT(
     }
 
     // Check if the current user is the creator of this location
-    if (existingLocation.createdBy.userId !== token.sub) {
+    if (existingLocation.students.user_id !== token.sub) {
       return NextResponse.json(
         {
           success: false,
@@ -225,7 +225,7 @@ export async function PUT(
     // Update the location with sub-locations in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Update the main location
-      const updatedLocation = await tx.kkpLocation.update({
+      const updatedLocation = await tx.kkp_locations.update({
         where: { id: locationId },
         data: {
           name,
@@ -236,49 +236,49 @@ export async function PUT(
           positions,
           quota,
           remaining: quota, // Reset remaining when quota changes
-          contactPerson,
-          contactEmail,
-          contactPhone,
+          contact_person: contactPerson,
+          contact_email: contactEmail,
+          contact_phone: contactPhone,
           description,
-          companyId,
+          company_id: companyId,
         },
       })
 
       // Delete existing sub-locations
-      await tx.kkpSubLocation.deleteMany({
-        where: { locationId },
+      await tx.kkp_sub_locations.deleteMany({
+        where: { location_id: locationId },
       })
 
       // Create new sub-locations if provided
       if (subLocations.length > 0) {
-        await tx.kkpSubLocation.createMany({
+        await tx.kkp_sub_locations.createMany({
           data: subLocations.map((subLoc: any) => ({
             ...subLoc,
-            locationId,
+            location_id: locationId,
           })),
         })
       }
 
       // Fetch the complete updated location with relations
-      return await tx.kkpLocation.findUnique({
+      return await tx.kkp_locations.findUnique({
         where: { id: locationId },
         include: {
-          company: true,
-          createdBy: {
+          companies: true,
+          students: {
             select: {
               id: true,
               nim: true,
-              user: {
+              users: {
                 select: {
                   name: true,
                 },
               },
             },
           },
-          subLocations: true,
+          kkp_sub_locations: true,
           _count: {
             select: {
-              documents: true,
+              kkp_documents: true,
             },
           },
         },
