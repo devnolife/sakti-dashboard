@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
-          id: token.sub
+          id: token.userId
         }
       }
     })
@@ -43,18 +43,23 @@ export async function GET(request: NextRequest) {
 
     if (!type || type === 'pa' || type === 'all') {
       // Get PA (Pembimbing Akademik) students
+      const whereCondition: any = {
+        academic_advisor_id: lecturer.id
+      }
+
+      if (lecturer.prodi_id && lecturer.is_homebase) {
+        whereCondition.prodi_id = lecturer.prodi_id
+      }
+
+      if (search) {
+        whereCondition.OR = [
+          { nim: { contains: search, mode: 'insensitive' as const } },
+          { users: { name: { contains: search, mode: 'insensitive' as const } } }
+        ]
+      }
+
       const paStudents = await prisma.students.findMany({
-        where: {
-          academic_advisor_id: lecturer.id,
-          ...(lecturer.prodi_id && lecturer.is_homebase && { prodi_id: lecturer.prodi_id }),
-          ...(search && {
-            OR: [
-              { nim: { contains: search, mode: 'insensitive' } },
-              { users: { name: { contains: search, mode: 'insensitive' } } }
-            ]
-          }),
-          ...(status && { status })
-        },
+        where: whereCondition,
         include: {
           users: {
             select: {
@@ -72,17 +77,21 @@ export async function GET(request: NextRequest) {
             }
           }
         },
-        orderBy: { users: { name: 'asc' } }
+        orderBy: { nim: 'asc' }
       })
 
       students.push(...paStudents.map(s => ({
         id: s.id,
         nim: s.nim,
-        name: s.users.name,
-        avatar: s.users.avatar,
+        name: s.users?.name || '',
+        avatar: s.users?.avatar,
         major: s.major,
         department: s.department,
-        prodi: s.prodi,
+        prodi: s.prodi ? {
+          kode: s.prodi.kode,
+          nama: s.prodi.nama,
+          jenjang: s.prodi.jenjang
+        } : null,
         semester: s.semester,
         academic_year: s.academic_year,
         gpa: s.gpa,

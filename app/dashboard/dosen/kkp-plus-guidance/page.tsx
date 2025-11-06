@@ -1,20 +1,16 @@
-import { KkpPlusGuidanceList } from "@/components/lecturer/kkp-plus-guidance-list"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
 
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+
+// Redirect ke halaman KKP guidance yang sudah digabung
 export default function KkpPlusGuidancePage() {
-  return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">Bimbingan KKP Plus</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Daftar Mahasiswa Bimbingan KKP Plus</CardTitle>
-          <CardDescription>Daftar mahasiswa yang mengikuti program KKP Plus di bawah bimbingan Anda</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <KkpPlusGuidanceList />
-        </CardContent>
-      </Card>
-    </div>
-  )
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace("/dashboard/dosen/kkp-guidance")
+  }, [router])
+
+  return null
 }
 

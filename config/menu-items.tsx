@@ -1423,12 +1423,6 @@ export const lecturerMenuItems = [
     icon: Briefcase,
   },
   {
-    id: "kkp-plus-guidance",
-    title: "Bimbingan KKP Plus",
-    href: "/dashboard/dosen/kkp-plus-guidance",
-    icon: Award,
-  },
-  {
     id: "rekomendasi-judul",
     title: "Rekomendasi Judul",
     href: "/dashboard/dosen/rekomendasi-judul",

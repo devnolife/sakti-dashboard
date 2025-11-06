@@ -574,6 +574,7 @@ model lecturers {
   students                                                      students[]
   thesis_titles                                                 thesis_titles[]
   prodi                                                         prodi?                   @relation(fields: [prodi_id], references: [kode])
+  rekomendasi_judul                                             rekomendasi_judul[]
 }
 
 model letter_attachments {
@@ -697,6 +698,7 @@ model prodi {
   thesis_titles         thesis_titles[]
   announcements         announcements[]
   classrooms            classrooms[]
+  rekomendasi_judul     rekomendasi_judul[]
 }
 
 model sessions {
@@ -767,6 +769,7 @@ model students {
   users                      users                        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   thesis_titles              thesis_titles[]
   prodi                      prodi?                       @relation(fields: [prodi_id], references: [kode])
+  rekomendasi_judul          rekomendasi_judul[]
 }
 
 model system_configs {
@@ -1205,6 +1208,32 @@ enum Role {
   admin_keuangan
   gkm
   kepala_tata_usaha
+}
+
+model rekomendasi_judul {
+  id                   String    @id @default(cuid())
+  judul                String
+  deskripsi            String    @db.Text
+  bidang_keilmuan      String
+  metodologi           String
+  tingkat_kesulitan    String    // "Mudah", "Sedang", "Sulit"
+  estimasi_waktu       String
+  prerequisites        String[]  // Array of strings
+  status               String    @default("Tersedia") // "Tersedia", "Diambil", "Selesai"
+  dosen_id             String
+  dosen                lecturers @relation(fields: [dosen_id], references: [id], onDelete: Cascade)
+  prodi_kode           String
+  prodi                prodi     @relation(fields: [prodi_kode], references: [kode], onDelete: Cascade)
+  student_id           String?
+  student              students? @relation(fields: [student_id], references: [id], onDelete: SetNull)
+  diambil_oleh         String?   // "Nama Mahasiswa (NIM)" for display
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
+
+  @@index([dosen_id])
+  @@index([prodi_kode])
+  @@index([status])
+  @@index([student_id])
 }
 
 enum StudentStatus {

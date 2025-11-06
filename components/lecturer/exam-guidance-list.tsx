@@ -1,57 +1,103 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { FileText, Calendar } from "lucide-react"
+import { FileText, Calendar, Loader2 } from "lucide-react"
+import { format } from "date-fns"
+import { id } from "date-fns/locale"
 
-export function ExamGuidanceList() {
-  const students = [
-    {
-      id: 1,
-      name: "Gita Nirmala",
-      nim: "12345683",
-      examType: "Proposal",
-      status: "Menunggu Persetujuan",
-      scheduledDate: "5 Juni 2023",
-      avatar: "/placeholder.svg",
-    },
-    {
-      id: 2,
-      name: "Hadi Santoso",
-      nim: "12345684",
-      examType: "Hasil",
-      status: "Terjadwal",
-      scheduledDate: "10 Juni 2023",
-      avatar: "/placeholder.svg",
-    },
-    {
-      id: 3,
-      name: "Indah Permata",
-      nim: "12345685",
-      examType: "Skripsi",
-      status: "Selesai",
-      scheduledDate: "15 Mei 2023",
-      avatar: "/placeholder.svg",
-    },
-    {
-      id: 4,
-      name: "Joko Widodo",
-      nim: "12345686",
-      examType: "Proposal",
-      status: "Terjadwal",
-      scheduledDate: "8 Juni 2023",
-      avatar: "/placeholder.svg",
-    },
-    {
-      id: 5,
-      name: "Kartika Dewi",
-      nim: "12345687",
-      examType: "Hasil",
-      status: "Menunggu Persetujuan",
-      scheduledDate: "-",
-      avatar: "/placeholder.svg",
-    },
-  ]
+interface ExamGuidanceListProps {
+  filter?: string
+}
+
+interface Exam {
+  id: string
+  title: string
+  exam_type: string
+  status: string
+  scheduled_date: string | null
+  location: string | null
+  student: {
+    id: string
+    nim: string
+    name: string
+    avatar: string | null
+  }
+  lecturerRole: string
+}
+
+export function ExamGuidanceList({ filter }: ExamGuidanceListProps) {
+  const [exams, setExams] = useState<Exam[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchExams()
+  }, [filter])
+
+  const fetchExams = async () => {
+    try {
+      setLoading(true)
+      const params = new URLSearchParams()
+      if (filter && filter !== 'all') {
+        params.append('status', filter)
+      }
+
+      const response = await fetch(`/api/dosen/exams?${params.toString()}`)
+      if (!response.ok) throw new Error('Failed to fetch exams')
+
+      const data = await response.json()
+      setExams(data.data || [])
+    } catch (error) {
+      console.error('Error fetching exams:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="outline">Menunggu Persetujuan</Badge>
+      case 'scheduled':
+        return <Badge variant="default">Terjadwal</Badge>
+      case 'completed':
+        return <Badge variant="secondary">Selesai</Badge>
+      default:
+        return <Badge>{status}</Badge>
+    }
+  }
+
+  const getExamTypeLabel = (type: string) => {
+    switch (type) {
+      case 'proposal':
+        return 'Proposal'
+      case 'result':
+        return 'Hasil'
+      case 'closing':
+        return 'Skripsi'
+      default:
+        return type
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (exams.length === 0) {
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        <p>Belum ada data ujian</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -68,33 +114,31 @@ export function ExamGuidanceList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {students.map((student) => (
-              <TableRow key={student.id}>
+            {exams.map((exam) => (
+              <TableRow key={exam.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={student.avatar} alt={student.name} />
-                      <AvatarFallback>{student.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarImage src={exam.student.avatar || undefined} alt={exam.student.name} />
+                      <AvatarFallback>{exam.student.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div>{student.name}</div>
+                    <div>
+                      <div className="font-medium">{exam.student.name}</div>
+                      <div className="text-xs text-muted-foreground">{exam.title}</div>
+                    </div>
                   </div>
                 </TableCell>
-                <TableCell>{student.nim}</TableCell>
-                <TableCell>{student.examType}</TableCell>
+                <TableCell>{exam.student.nim}</TableCell>
+                <TableCell>{getExamTypeLabel(exam.exam_type)}</TableCell>
                 <TableCell>
-                  <Badge
-                    variant={
-                      student.status === "Menunggu Persetujuan"
-                        ? "outline"
-                        : student.status === "Terjadwal"
-                          ? "default"
-                          : "secondary"
-                    }
-                  >
-                    {student.status}
-                  </Badge>
+                  {getStatusBadge(exam.status)}
                 </TableCell>
-                <TableCell>{student.scheduledDate}</TableCell>
+                <TableCell>
+                  {exam.scheduled_date
+                    ? format(new Date(exam.scheduled_date), "d MMM yyyy", { locale: id })
+                    : "-"
+                  }
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" size="icon">

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ExamGuidanceList } from "@/components/lecturer/exam-guidance-list"
+import { AddExamDialog } from "@/components/lecturer/add-exam-dialog"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -56,6 +57,13 @@ const itemVariants = {
 export default function ExamGuidancePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState("all")
+  const [addExamDialogOpen, setAddExamDialogOpen] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const handleExamAdded = () => {
+    // Refresh the exam list
+    setRefreshKey(prev => prev + 1)
+  }
 
   return (
     <motion.div
@@ -156,7 +164,7 @@ export default function ExamGuidancePage() {
             <TabsTrigger value="pending">Pending</TabsTrigger>
           </TabsList>
         </Tabs>
-        
+
         <div className="flex gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -189,11 +197,19 @@ export default function ExamGuidancePage() {
                 </CardDescription>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAddExamDialogOpen(true)}
+                >
                   <Calendar className="h-4 w-4 mr-2" />
                   Jadwal Baru
                 </Button>
-                <Button size="sm" className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                  onClick={() => setAddExamDialogOpen(true)}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Tambah Ujian
                 </Button>
@@ -203,16 +219,16 @@ export default function ExamGuidancePage() {
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsContent value="all" className="mt-0">
-                <ExamGuidanceList />
+                <ExamGuidanceList key={refreshKey} />
               </TabsContent>
               <TabsContent value="scheduled" className="mt-0">
-                <ExamGuidanceList filter="scheduled" />
+                <ExamGuidanceList key={refreshKey} filter="scheduled" />
               </TabsContent>
               <TabsContent value="completed" className="mt-0">
-                <ExamGuidanceList filter="completed" />
+                <ExamGuidanceList key={refreshKey} filter="completed" />
               </TabsContent>
               <TabsContent value="pending" className="mt-0">
-                <ExamGuidanceList filter="pending" />
+                <ExamGuidanceList key={refreshKey} filter="pending" />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -251,6 +267,13 @@ export default function ExamGuidancePage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Add Exam Dialog */}
+      <AddExamDialog
+        open={addExamDialogOpen}
+        onOpenChange={setAddExamDialogOpen}
+        onSuccess={handleExamAdded}
+      />
     </motion.div>
   )
 }

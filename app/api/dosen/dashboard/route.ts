@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     let lecturer = await prisma.lecturers.findFirst({
       where: {
         users: {
-          id: token.userId
+          id: token.sub
         }
       },
       include: {
@@ -37,298 +37,163 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Lecturer profile not found' }, { status: 404 })
     }
 
-    // Sync dosen data from GraphQL if needed (wrapped in try-catch to prevent blocking)
+    // Sync dosen data from GraphQL if needed
     const authHeader = request.headers.get('authorization')
     const sessionToken = authHeader?.replace('Bearer ', '')
+    if (sessionToken && token.username) {
+      console.log('Syncing dosen data from GraphQL...')
+      const syncResult = await syncDosenFromGraphQL(token.username, sessionToken)
+      if (syncResult) {
+        lecturer = syncResult.lecturer
+      }
+    }
 
-    try {
-      if (sessionToken && token.username) {
-        console.log('🔄 Attempting to sync dosen data from GraphQL...')
-        const syncResult = await syncDosenFromGraphQL(token.username, sessionToken)
-        if (syncResult) {
-          // Re-fetch lecturer with users relation after sync
-          const updatedLecturer = await prisma.lecturers.findUnique({
-            where: { id: syncResult.lecturer.id },
-            include: {
-              users: {
-                select: {
-                  id: true,
-                  username: true,
-                  name: true,
-                  avatar: true
-                }
-              }
-            }
-          })
-          if (updatedLecturer) {
-            lecturer = updatedLecturer
-          }
-          console.log('✅ Dosen data synced successfully')
+    // Sync mahasiswa PA from GraphQL
+    if (sessionToken) {
+      console.log('Syncing mahasiswa PA from GraphQL...')
+      await getMahasiswaPaWithSync(lecturer.id, sessionToken)
+    }
+
+    // Get statistics in parallel
+    const [
+      totalMahasiswaBimbingan,
+      bimbinganAktifKKP,
+      bimbinganAktifThesis,
+      thesisTitlesRecommended,
+      examsPending,
+      examsCompleted,
+      coursesThisSemester,
+      recentActivities,
+      upcomingSchedules,
+    ] = await Promise.all([
+      // Total mahasiswa bimbingan (PA)
+      prisma.students.count({
+        where: {
+          academic_advisor_id: lecturer.id
         }
-      }
-    } catch (syncError) {
-      console.warn('⚠️ Failed to sync dosen data from GraphQL, using local data:', syncError)
-      // Continue with local data - don't block dashboard
-    }
+      }),
 
-    // Sync mahasiswa PA from GraphQL (wrapped in try-catch to prevent blocking)
-    try {
-      if (sessionToken) {
-        console.log('🔄 Attempting to sync mahasiswa PA from GraphQL...')
-        await getMahasiswaPaWithSync(lecturer.id, sessionToken)
-        console.log('✅ Mahasiswa PA synced successfully')
-      }
-    } catch (syncError) {
-      console.warn('⚠️ Failed to sync mahasiswa PA from GraphQL, using local data:', syncError)
-      // Continue with local data - don't block dashboard
-    }
-
-    // Get statistics in parallel with error handling
-    let totalMahasiswaBimbingan = 0
-    let bimbinganAktifKKP = 0
-    let bimbinganAktifThesis = 0
-    let thesisTitlesRecommended = 0
-    let examsPending = 0
-    let examsCompleted = 0
-    let coursesThisSemester = 0
-    let recentActivities: any[] = []
-    let upcomingSchedules: any[] = []
-
-    try {
-      [
-        totalMahasiswaBimbingan,
-        bimbinganAktifKKP,
-        bimbinganAktifThesis,
-        thesisTitlesRecommended,
-        examsPending,
-        examsCompleted,
-        coursesThisSemester,
-        recentActivities,
-        upcomingSchedules,
-      ] = await Promise.all([
-        // Total mahasiswa bimbingan (PA)
-        prisma.students.count({
-          where: {
-            academic_advisor_id: lecturer?.id
+      // KKP bimbingan aktif
+      prisma.kkp_applications.count({
+        where: {
+          supervisor_id: lecturer.id,
+          status: {
+            in: ['approved', 'in_progress']
           }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count mahasiswa bimbingan:', err)
-          return 0
-        }),
+        }
+      }),
 
-        // KKP bimbingan aktif
-        prisma.kkp_applications.count({
-          where: {
-            supervisor_id: lecturer?.id,
-            status: {
-              in: ['approved', 'in_progress']
-            }
-          }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count KKP applications:', err)
-          return 0
-        }),
+      // Thesis bimbingan aktif
+      prisma.thesis_titles.count({
+        where: {
+          supervisor_id: lecturer.id,
+          status: 'approved'
+        }
+      }),
 
-        // Thesis bimbingan aktif
-        prisma.thesis_titles.count({
-          where: {
-            supervisor_id: lecturer?.id,
-            status: 'approved'
-          }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count thesis titles:', err)
-          return 0
-        }),
+      // Thesis titles yang direkomendasikan
+      prisma.thesis_titles.count({
+        where: {
+          supervisor_id: lecturer.id
+        }
+      }),
 
-        // Thesis titles yang direkomendasikan
-        prisma.thesis_titles.count({
-          where: {
-            supervisor_id: lecturer?.id
-          }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count recommended thesis:', err)
-          return 0
-        }),
-
-        // Exams pending (as advisor or committee member)
-        prisma.exam_applications.count({
-          where: {
-            OR: [
-              { advisor_1_id: lecturer?.id },
-              { advisor_2_id: lecturer?.id },
-              {
-                exam_committees: {
-                  some: {
-                    lecturer_id: lecturer?.id
-                  }
+      // Exams pending (as advisor or committee member)
+      prisma.exam_applications.count({
+        where: {
+          OR: [
+            { advisor_1_id: lecturer.id },
+            { advisor_2_id: lecturer.id },
+            {
+              exam_committees: {
+                some: {
+                  lecturer_id: lecturer.id
                 }
               }
-            ],
-            status: {
-              in: ['pending', 'scheduled']
-            },
-            scheduled_date: {
-              gte: new Date()
             }
+          ],
+          status: {
+            in: ['approved', 'scheduled']
+          },
+          scheduled_date: {
+            gte: new Date()
           }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count pending exams:', err)
-          return 0
-        }),
+        }
+      }),
 
-        // Exams completed this month
-        prisma.exam_applications.count({
-          where: {
-            OR: [
-              { advisor_1_id: lecturer?.id },
-              { advisor_2_id: lecturer?.id },
-              {
-                exam_committees: {
-                  some: {
-                    lecturer_id: lecturer?.id
-                  }
+      // Exams completed this month
+      prisma.exam_applications.count({
+        where: {
+          OR: [
+            { advisor_1_id: lecturer.id },
+            { advisor_2_id: lecturer.id },
+            {
+              exam_committees: {
+                some: {
+                  lecturer_id: lecturer.id
                 }
               }
-            ],
-            status: 'completed',
-            completion_date: {
-              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-              lte: new Date()
             }
+          ],
+          status: 'completed',
+          completion_date: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            lte: new Date()
           }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count completed exams:', err)
-          return 0
-        }),
+        }
+      }),
 
-        // Courses this semester (as lecturer)
-        prisma.courses.count({
-          where: {
-            lecturer_id: lecturer?.id,
-            semester: getCurrentSemesterNumber()
-          }
-        }).catch(err => {
-          console.warn('⚠️ Failed to count courses:', err)
-          return 0
-        }),
+      // Courses this semester (as lecturer)
+      prisma.courses.count({
+        where: {
+          lecturer_id: lecturer.id,
+          semester: getCurrentSemesterNumber()
+        }
+      }),
 
-        // Recent activities (last 10)
-        getRecentActivities(lecturer?.id || '').catch(err => {
-          console.warn('⚠️ Failed to get recent activities:', err)
-          return []
-        }),
+      // Recent activities (last 10)
+      getRecentActivities(lecturer.id),
 
-        // Upcoming schedules
-        getUpcomingSchedules(lecturer?.id || '').catch(err => {
-          console.warn('⚠️ Failed to get upcoming schedules:', err)
-          return []
-        }),
-      ])
-    } catch (error) {
-      console.error('⚠️ Error fetching some statistics, using defaults:', error)
-      // Continue with default values (already initialized above)
-    }
+      // Upcoming schedules
+      getUpcomingSchedules(lecturer.id),
+    ])
 
     // Calculate rating (simplified - you might want to implement actual rating system)
     const ratingDosen = 4.5 // Placeholder - implement actual rating calculation
 
-    // Prepare response with safe defaults
-    const response = {
-      lecturer: {
-        id: lecturer.id,
-        nip: lecturer.nip || '',
-        name: lecturer.users.name || 'Unknown',
-        department: lecturer.department || null,
-        position: lecturer.position || 'Dosen',
-        specialization: lecturer.specialization || null,
-        avatar: lecturer.users.avatar || null,
-      },
-      stats: {
-        totalMahasiswa: totalMahasiswaBimbingan || 0,
-        bimbinganAktif: (bimbinganAktifKKP || 0) + (bimbinganAktifThesis || 0),
-        bimbinganKKP: bimbinganAktifKKP || 0,
-        bimbinganThesis: bimbinganAktifThesis || 0,
-        rekomendasiJudul: thesisTitlesRecommended || 0,
-        examsPending: examsPending || 0,
-        examsCompleted: examsCompleted || 0,
-        ratingDosen: ratingDosen || 0,
-        totalMataKuliah: coursesThisSemester || 0,
-      },
-      recentActivities: recentActivities || [],
-      upcomingSchedule: upcomingSchedules || [],
-      quickStats: [
-        {
-          title: 'Pending Review',
-          count: examsPending || 0,
-          color: 'text-orange-600',
-          bgColor: 'bg-orange-100'
-        },
-        {
-          title: 'Jadwal Hari Ini',
-          count: (upcomingSchedules || []).filter((s: any) => {
-            try {
-              return isToday(new Date(s.date))
-            } catch {
-              return false
-            }
-          }).length,
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-100'
-        },
-        {
-          title: 'Bimbingan Aktif',
-          count: (bimbinganAktifKKP || 0) + (bimbinganAktifThesis || 0),
-          color: 'text-green-600',
-          bgColor: 'bg-green-100'
-        },
-        {
-          title: 'Selesai Bulan Ini',
-          count: examsCompleted || 0,
-          color: 'text-green-600',
-          bgColor: 'bg-green-100'
-        },
-      ]
-    }
-
-    console.log('✅ Dashboard data prepared successfully')
-    return NextResponse.json(response)
-
-  } catch (error) {
-    console.error('❌ Error fetching dosen dashboard:', error)
-
-    // Return minimal valid response instead of error
     return NextResponse.json({
       lecturer: {
-        id: '',
-        nip: '',
-        name: 'Unknown',
-        department: null,
-        position: 'Dosen',
-        specialization: null,
-        avatar: null,
+        id: lecturer.id,
+        nip: lecturer.nip,
+        name: lecturer.users.name,
+        department: lecturer.department,
+        position: lecturer.position,
+        specialization: lecturer.specialization,
+        avatar: lecturer.users.avatar,
       },
       stats: {
-        totalMahasiswa: 0,
-        bimbinganAktif: 0,
-        bimbinganKKP: 0,
-        bimbinganThesis: 0,
-        rekomendasiJudul: 0,
-        examsPending: 0,
-        examsCompleted: 0,
-        ratingDosen: 0,
-        totalMataKuliah: 0,
+        totalMahasiswa: totalMahasiswaBimbingan,
+        bimbinganAktif: bimbinganAktifKKP + bimbinganAktifThesis,
+        bimbinganKKP: bimbinganAktifKKP,
+        bimbinganThesis: bimbinganAktifThesis,
+        rekomendasiJudul: thesisTitlesRecommended,
+        examsPending,
+        examsCompleted,
+        ratingDosen,
+        totalMataKuliah: coursesThisSemester,
       },
-      recentActivities: [],
-      upcomingSchedule: [],
+      recentActivities,
+      upcomingSchedule: upcomingSchedules,
       quickStats: [
-        { title: 'Pending Review', count: 0, color: 'text-orange-600', bgColor: 'bg-orange-100' },
-        { title: 'Jadwal Hari Ini', count: 0, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-        { title: 'Bimbingan Aktif', count: 0, color: 'text-green-600', bgColor: 'bg-green-100' },
-        { title: 'Selesai Bulan Ini', count: 0, color: 'text-green-600', bgColor: 'bg-green-100' },
-      ],
-      error: 'Failed to load complete dashboard data. Showing defaults.',
-      warning: error instanceof Error ? error.message : 'Unknown error'
+        { title: 'Pending Review', count: examsPending, color: 'text-orange-600', bgColor: 'bg-orange-100' },
+        { title: 'Jadwal Hari Ini', count: upcomingSchedules.filter((s: any) => isToday(new Date(s.date))).length, color: 'text-blue-600', bgColor: 'bg-blue-100' },
+        { title: 'Bimbingan Aktif', count: bimbinganAktifKKP + bimbinganAktifThesis, color: 'text-green-600', bgColor: 'bg-green-100' },
+        { title: 'Selesai Bulan Ini', count: examsCompleted, color: 'text-green-600', bgColor: 'bg-green-100' },
+      ]
     })
+  } catch (error) {
+    console.error('Error fetching dosen dashboard:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
@@ -408,7 +273,7 @@ async function getRecentActivities(lecturerId: string) {
         }
       ],
       status: {
-        in: ['pending', 'scheduled']
+        in: ['approved', 'scheduled']
       },
       scheduled_date: {
         gte: new Date(),
@@ -432,7 +297,7 @@ async function getRecentActivities(lecturerId: string) {
     id: exam.id,
     type: 'exam',
     title: `Ujian ${exam.type}`,
-    student: (exam as any).students.users.name,
+    student: exam.students.users.name,
     time: formatRelativeTime(exam.scheduled_date || exam.submission_date),
     status: 'scheduled',
     date: exam.scheduled_date || exam.submission_date
@@ -451,13 +316,14 @@ async function getUpcomingSchedules(lecturerId: string) {
   // Academic consultations
   const consultations = await prisma.academic_consultations.findMany({
     where: {
-      advisor_id: lecturerId,
-      date: {
+      lecturer_id: lecturerId,
+      scheduled_date: {
         gte: new Date()
-      }
+      },
+      status: 'scheduled'
     },
     take: 5,
-    orderBy: { date: 'asc' },
+    orderBy: { scheduled_date: 'asc' },
     include: {
       students: {
         include: {
@@ -473,8 +339,8 @@ async function getUpcomingSchedules(lecturerId: string) {
     id: consult.id,
     title: 'Bimbingan Akademik',
     student: consult.students.users.name,
-    time: new Date(consult.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-    date: formatDate(consult.date),
+    time: new Date(consult.scheduled_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    date: formatDate(consult.scheduled_date),
     type: 'bimbingan'
   })))
 
@@ -497,7 +363,7 @@ async function getUpcomingSchedules(lecturerId: string) {
         lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       },
       status: {
-        in: ['pending', 'scheduled']
+        in: ['approved', 'scheduled']
       }
     },
     take: 5,
@@ -516,7 +382,7 @@ async function getUpcomingSchedules(lecturerId: string) {
   schedules.push(...exams.map(exam => ({
     id: exam.id,
     title: `Ujian ${exam.type}`,
-    student: (exam as any).students.users.name,
+    student: exam.students.users.name,
     time: exam.scheduled_date ? new Date(exam.scheduled_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-',
     date: formatDate(exam.scheduled_date || exam.submission_date),
     type: 'ujian'

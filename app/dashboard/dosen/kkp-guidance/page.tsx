@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { KkpGuidanceList } from "@/components/lecturer/kkp-guidance-list"
+import { KkpPlusGuidanceList } from "@/components/lecturer/kkp-plus-guidance-list"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import {
   BookOpen,
@@ -14,11 +16,12 @@ import {
   TrendingUp,
   Search,
   Filter,
-  Plus,
   Calendar,
   Clock,
   GraduationCap,
-  Star
+  Star,
+  Award,
+  Briefcase
 } from "lucide-react"
 
 const mockStats = {
@@ -53,6 +56,7 @@ const itemVariants = {
 
 export default function KkpGuidancePage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [activeTab, setActiveTab] = useState("kkp")
 
   return (
     <motion.div
@@ -62,16 +66,16 @@ export default function KkpGuidancePage() {
       className="space-y-6"
     >
       {/* Header Section */}
-      <motion.div variants={itemVariants} className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-6 text-white">
+      <motion.div variants={itemVariants} className="p-6 text-white bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Bimbingan KKP</h1>
-            <p className="text-blue-100 text-lg">Kelola dan pantau progress mahasiswa bimbingan KKP Anda</p>
+            <h1 className="mb-2 text-3xl font-bold">Bimbingan KKP & KKP Plus</h1>
+            <p className="text-lg text-blue-100">Kelola dan pantau progress mahasiswa bimbingan KKP Anda</p>
           </div>
           <div className="hidden md:block">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div className="flex items-center gap-2 text-sm text-blue-100 mb-1">
-                <Star className="h-4 w-4" />
+            <div className="p-4 bg-white/10 backdrop-blur-sm rounded-xl">
+              <div className="flex items-center gap-2 mb-1 text-sm text-blue-100">
+                <Star className="w-4 h-4" />
                 Rating Pembimbingan
               </div>
               <div className="text-2xl font-bold">{mockStats.averageRating}</div>
@@ -81,18 +85,18 @@ export default function KkpGuidancePage() {
       </motion.div>
 
       {/* Statistics Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-indigo-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="bg-blue-500 p-2 rounded-lg">
-                  <Users className="h-5 w-5 text-white" />
+                <div className="p-2 bg-blue-500 rounded-lg">
+                  <Users className="w-5 h-5 text-white" />
                 </div>
-                <Badge className="bg-blue-100 text-blue-700">Aktif</Badge>
+                <Badge className="text-blue-700 bg-blue-100">Aktif</Badge>
               </div>
-              <div className="text-2xl font-bold text-blue-700 mb-1">{mockStats.totalStudents}</div>
-              <div className="text-blue-600 text-sm font-medium">Total Mahasiswa</div>
+              <div className="mb-1 text-2xl font-bold text-blue-700">{mockStats.totalStudents}</div>
+              <div className="text-sm font-medium text-blue-600">Total Mahasiswa</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -101,13 +105,13 @@ export default function KkpGuidancePage() {
           <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-emerald-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="bg-green-500 p-2 rounded-lg">
-                  <ClipboardCheck className="h-5 w-5 text-white" />
+                <div className="p-2 bg-green-500 rounded-lg">
+                  <ClipboardCheck className="w-5 h-5 text-white" />
                 </div>
-                <Badge className="bg-green-100 text-green-700">Progress</Badge>
+                <Badge className="text-green-700 bg-green-100">Progress</Badge>
               </div>
-              <div className="text-2xl font-bold text-green-700 mb-1">{mockStats.activeGuidance}</div>
-              <div className="text-green-600 text-sm font-medium">Bimbingan Aktif</div>
+              <div className="mb-1 text-2xl font-bold text-green-700">{mockStats.activeGuidance}</div>
+              <div className="text-sm font-medium text-green-600">Bimbingan Aktif</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -116,13 +120,13 @@ export default function KkpGuidancePage() {
           <Card className="border-0 shadow-sm bg-gradient-to-br from-orange-50 to-amber-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="bg-orange-500 p-2 rounded-lg">
-                  <Clock className="h-5 w-5 text-white" />
+                <div className="p-2 bg-orange-500 rounded-lg">
+                  <Clock className="w-5 h-5 text-white" />
                 </div>
-                <Badge className="bg-orange-100 text-orange-700">Review</Badge>
+                <Badge className="text-orange-700 bg-orange-100">Review</Badge>
               </div>
-              <div className="text-2xl font-bold text-orange-700 mb-1">{mockStats.pendingReview}</div>
-              <div className="text-orange-600 text-sm font-medium">Pending Review</div>
+              <div className="mb-1 text-2xl font-bold text-orange-700">{mockStats.pendingReview}</div>
+              <div className="text-sm font-medium text-orange-600">Pending Review</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -131,22 +135,22 @@ export default function KkpGuidancePage() {
           <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-violet-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="bg-purple-500 p-2 rounded-lg">
-                  <GraduationCap className="h-5 w-5 text-white" />
+                <div className="p-2 bg-purple-500 rounded-lg">
+                  <GraduationCap className="w-5 h-5 text-white" />
                 </div>
-                <Badge className="bg-purple-100 text-purple-700">Selesai</Badge>
+                <Badge className="text-purple-700 bg-purple-100">Selesai</Badge>
               </div>
-              <div className="text-2xl font-bold text-purple-700 mb-1">{mockStats.completed}</div>
-              <div className="text-purple-600 text-sm font-medium">Diselesaikan</div>
+              <div className="mb-1 text-2xl font-bold text-purple-700">{mockStats.completed}</div>
+              <div className="text-sm font-medium text-purple-600">Diselesaikan</div>
             </CardContent>
           </Card>
         </motion.div>
       </motion.div>
 
       {/* Search and Filter */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row gap-4 items-center">
+      <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 md:flex-row">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
           <Input
             placeholder="Cari mahasiswa, NIM, atau topik KKP..."
             className="pl-10"
@@ -156,38 +160,49 @@ export default function KkpGuidancePage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
+            <Filter className="w-4 h-4 mr-2" />
             Filter
           </Button>
           <Button variant="outline" size="sm">
-            <Calendar className="h-4 w-4 mr-2" />
+            <Calendar className="w-4 h-4 mr-2" />
             Jadwal
           </Button>
         </div>
       </motion.div>
 
-      {/* Main Content */}
+      {/* Main Content with Tabs */}
       <motion.div variants={itemVariants}>
         <Card className="border-0 shadow-sm">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Daftar Mahasiswa Bimbingan KKP
-                </CardTitle>
-                <CardDescription>
-                  Pantau progress dan kelola bimbingan mahasiswa KKP dengan mudah
-                </CardDescription>
-              </div>
-              <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Tambah Mahasiswa
-              </Button>
-            </div>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-primary" />
+              Daftar Mahasiswa Bimbingan
+            </CardTitle>
+            <CardDescription>
+              Pantau progress dan kelola bimbingan mahasiswa KKP dan KKP Plus
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <KkpGuidanceList />
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="kkp" className="gap-2">
+                  <Briefcase className="w-4 h-4" />
+                  Kuliah Kerja Profesi
+                </TabsTrigger>
+                <TabsTrigger value="kkp-plus" className="gap-2">
+                  <Award className="w-4 h-4" />
+                  KKP Plus
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="kkp" className="mt-0">
+                <KkpGuidanceList />
+              </TabsContent>
+
+              <TabsContent value="kkp-plus" className="mt-0">
+                <KkpPlusGuidanceList />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </motion.div>
