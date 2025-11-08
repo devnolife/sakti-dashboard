@@ -150,6 +150,7 @@ export async function POST(request: NextRequest) {
     const result = await prisma.$transaction(async (tx) => {
       const location = await tx.kkp_locations.create({
         data: {
+          id: `kkploc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           name,
           address,
           city,
@@ -170,8 +171,12 @@ export async function POST(request: NextRequest) {
       // Create sub-locations if provided
       if (subLocations.length > 0) {
         await tx.kkp_sub_locations.createMany({
-          data: subLocations.map((subLoc: any) => ({
-            ...subLoc,
+          data: subLocations.map((subLoc: any, index: number) => ({
+            id: `kkpsubloc_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+            name: subLoc.name,
+            address: subLoc.address,
+            quota: subLoc.quota || 0,
+            remaining: subLoc.remaining || subLoc.quota || 0,
             location_id: location.id,
           })),
         })
@@ -195,12 +200,7 @@ export async function POST(request: NextRequest) {
               },
             },
           },
-          kkp_sub_locations: true,
-          _count: {
-            select: {
-              kkp_documents: true,
-            },
-          },
+          kkp_sub_locations: true
         },
       })
     })

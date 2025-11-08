@@ -252,8 +252,12 @@ export async function PUT(
       // Create new sub-locations if provided
       if (subLocations.length > 0) {
         await tx.kkp_sub_locations.createMany({
-          data: subLocations.map((subLoc: any) => ({
-            ...subLoc,
+          data: subLocations.map((subLoc: any, index: number) => ({
+            id: `kkpsubloc_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+            name: subLoc.name,
+            address: subLoc.address,
+            quota: subLoc.quota || 0,
+            remaining: subLoc.remaining || subLoc.quota || 0,
             location_id: locationId,
           })),
         })

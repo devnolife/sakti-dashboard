@@ -2160,11 +2160,31 @@ export const wakilDekan1MenuItems: MenuItem[] = [
     icon: Briefcase,
   },
   {
-    id: "kkp-verification",
-    title: "Verifikasi KKP",
-    href: "/dashboard/dosen/vice-dean-1/kkp-verification",
-    icon: FileText,
-    badge: { text: "2", variant: "destructive" },
+    id: "document-verification",
+    title: "Verifikasi Dokumen",
+    href: "/dashboard/dosen/vice-dean-1/document-verification",
+    icon: FileSignature,
+    children: [
+      {
+        id: "exam-verification",
+        title: "Verifikasi Ujian",
+        href: "/dashboard/dosen/vice-dean-1/document-verification/exam",
+        icon: ClipboardCheck,
+      },
+      {
+        id: "general-verification",
+        title: "Verifikasi Umum",
+        href: "/dashboard/dosen/vice-dean-1/document-verification/general",
+        icon: FileText,
+      },
+      {
+        id: "kkp-verification",
+        title: "Verifikasi KKP",
+        href: "/dashboard/dosen/vice-dean-1/document-verification/kkp",
+        icon: Briefcase,
+        badge: { text: "2", variant: "destructive" },
+      },
+    ],
   },
 ]
 

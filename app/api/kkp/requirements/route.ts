@@ -15,17 +15,17 @@ export async function GET(request: NextRequest) {
     }
 
     const user_id = (token as any).sub
-    if (!userId) {
+    if (!user_id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Cari student berdasarkan userId
+    // Cari student berdasarkan user_id
     const student = await prisma.students.findUnique({ where: { user_id } })
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 })
     }
 
-    const requirements = await prisma.kkpRequirement.findMany({
+    const requirements = await prisma.kkp_requirements.findMany({
       where: { student_id: student.id },
       orderBy: { created_at: 'desc' }
     })
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     ]
 
     const result = requiredTypes.map(required => {
-      const uploaded = requirements.find(req => req.requirementType === required.type)
+      const uploaded = requirements.find(req => req.requirement_type === required.type)
       return { ...required, uploaded: uploaded || null, isUploaded: !!uploaded }
     })
 
@@ -61,15 +61,15 @@ export async function POST(request: NextRequest) {
       return token
     }
     const user_id = (token as any).sub
-    if (!userId) {
+    if (!user_id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const requirementType = formData.get('requirementType') as string
+    const requirement_type = formData.get('requirementType') as string
 
-    if (!file || !requirementType) {
+    if (!file || !requirement_type) {
       return NextResponse.json({ error: 'File and requirement type are required' }, { status: 400 })
     }
 
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now()
     const originalName = file.name
     const extension = path.extname(originalName)
-    const fileName = `${student.id}_${requirementType}_${timestamp}${extension}`
+    const fileName = `${student.id}_${requirement_type}_${timestamp}${extension}`
     const filePath = path.join(uploadDir, fileName)
     const relativePath = `/uploads/persyaratan-kkp/${fileName}`
 
@@ -102,36 +102,37 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     await writeFile(filePath, buffer)
 
-    const existingRequirement = await prisma.kkpRequirement.findUnique({
-      where: { studentId_requirementType: { student_id: student.id, requirementType: requirementType as any } }
+    const existingRequirement = await prisma.kkp_requirements.findUnique({
+      where: { student_id_requirement_type: { student_id: student.id, requirement_type: requirement_type as any } }
     })
 
     let requirement
     if (existingRequirement) {
-      requirement = await prisma.kkpRequirement.update({
+      requirement = await prisma.kkp_requirements.update({
         where: { id: existingRequirement.id },
         data: {
-          fileName,
-          originalFileName: originalName,
-          filePath: relativePath,
-            fileSize: file.size,
-          mimeType: file.type,
+          file_name: fileName,
+          original_file_name: originalName,
+          file_path: relativePath,
+          file_size: file.size,
+          mime_type: file.type,
           status: 'pending',
           notes: null,
-          verifiedAt: null,
-          verifiedBy: null
+          verified_at: null,
+          verified_by: null
         }
       })
     } else {
-      requirement = await prisma.kkpRequirement.create({
+      requirement = await prisma.kkp_requirements.create({
         data: {
+          id: `kkpreq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           student_id: student.id,
-          requirementType: requirementType as any,
-          fileName,
-          originalFileName: originalName,
-          filePath: relativePath,
-          fileSize: file.size,
-          mimeType: file.type,
+          requirement_type: requirement_type as any,
+          file_name: fileName,
+          original_file_name: originalName,
+          file_path: relativePath,
+          file_size: file.size,
+          mime_type: file.type,
           status: 'pending'
         }
       })

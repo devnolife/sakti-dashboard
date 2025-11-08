@@ -8,8 +8,8 @@ export async function GET(request: NextRequest) {
     let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch { } }
+    if (!user_id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Get user and student profile
     const user = await prisma.users.findUnique({
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     // Get student's exam history to determine available exams
     const examHistory = await prisma.exam_applications.findMany({
       where: {
-        student_id: studentId
+        student_id: student_id
       },
       orderBy: {
         created_at: 'desc'
@@ -41,12 +41,12 @@ export async function GET(request: NextRequest) {
     // Get available lecturers for supervisors
     const lecturers = await prisma.lecturers.findMany({
       where: {
-        user: {
+        users: {
           is_active: true
         }
       },
       include: {
-        user: true
+        users: true
       }
     })
 
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
         availableExams,
         supervisors: lecturers.map(lecturer => ({
           id: lecturer.id,
-          name: lecturer.user.name,
+          name: lecturer.users.name,
           nip: lecturer.nip,
           department: lecturer.department
         }))
@@ -131,8 +131,8 @@ export async function POST(request: NextRequest) {
     let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch { } }
+    if (!user_id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const body = await request.json()
 
     const { exam_type, title, abstract, preferredDate, preferredTime, supervisor_id, notes } = body
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
 
     // Validate exam type
     const validExamTypes = ['proposal', 'result', 'closing', 'final']
-    if (!validExamTypes.includes(examType)) {
+    if (!validExamTypes.includes(exam_type)) {
       return NextResponse.json(
         { error: 'Invalid exam type' },
         { status: 400 }
@@ -188,13 +188,15 @@ export async function POST(request: NextRequest) {
 
     const examApplication = await prisma.exam_applications.create({
       data: {
+        id: `examapp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         student_id: student_id,
         title: title,
         type: exam_type,
         abstract: abstract,
         status: 'applicant',
         scheduled_date: scheduled_date,
-        advisor1Id: supervisor_id || null
+        advisor_1_id: supervisor_id || null,
+        updated_at: new Date()
       }
     })
 
@@ -205,7 +207,7 @@ export async function POST(request: NextRequest) {
         title: examApplication.title,
         type: examApplication.type,
         status: examApplication.status,
-        submission_date: examApplication.submissionDate.toISOString()
+        submission_date: examApplication.submission_date.toISOString()
       }
     })
 

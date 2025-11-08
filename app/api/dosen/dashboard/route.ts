@@ -42,10 +42,8 @@ export async function GET(request: NextRequest) {
     const sessionToken = authHeader?.replace('Bearer ', '')
     if (sessionToken && token.username) {
       console.log('Syncing dosen data from GraphQL...')
-      const syncResult = await syncDosenFromGraphQL(token.username, sessionToken)
-      if (syncResult) {
-        lecturer = syncResult.lecturer
-      }
+      await syncDosenFromGraphQL(token.username, sessionToken)
+      // Don't replace lecturer object - it already has the data we need with proper includes
     }
 
     // Sync mahasiswa PA from GraphQL
@@ -113,7 +111,7 @@ export async function GET(request: NextRequest) {
             }
           ],
           status: {
-            in: ['approved', 'scheduled']
+            in: ['pending', 'scheduled']
           },
           scheduled_date: {
             gte: new Date()
@@ -273,7 +271,7 @@ async function getRecentActivities(lecturerId: string) {
         }
       ],
       status: {
-        in: ['approved', 'scheduled']
+        in: ['pending', 'scheduled']
       },
       scheduled_date: {
         gte: new Date(),
@@ -362,7 +360,7 @@ async function getUpcomingSchedules(lecturerId: string) {
         lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       },
       status: {
-        in: ['approved', 'scheduled']
+        in: ['pending', 'scheduled']
       }
     },
     take: 5,

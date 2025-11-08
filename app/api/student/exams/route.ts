@@ -32,29 +32,29 @@ export async function GET(request: NextRequest) {
     // Get all exam applications for the student
     const examApplications = await prisma.exam_applications.findMany({
       where: {
-        student_id: studentId
+        student_id: student_id
       },
       include: {
-        advisor1: {
+        lecturers_exam_applications_advisor_1_id_to_lecturers: {
           include: {
-            user: true
+            users: true
           }
         },
-        advisor2: {
+        lecturers_exam_applications_advisor_2_id_to_lecturers: {
           include: {
-            user: true
+            users: true
           }
         },
-        committees: {
+        exam_committees: {
           include: {
-            lecturer: {
+            lecturers: {
               include: {
-                user: true
+                users: true
               }
             }
           }
         },
-        documents: true
+        exam_documents: true
       },
       orderBy: {
         created_at: 'desc'
@@ -77,35 +77,35 @@ export async function GET(request: NextRequest) {
         type: exam.type,
         status: exam.status,
         abstract: exam.abstract,
-        submission_date: exam.submissionDate.toISOString(),
-        scheduled_date: exam.scheduledDate?.toISOString(),
-        completionDate: exam.completionDate?.toISOString(),
+        submission_date: exam.submission_date.toISOString(),
+        scheduled_date: exam.scheduled_date?.toISOString(),
+        completion_date: exam.completion_date?.toISOString(),
         location: exam.location,
-        advisor1: exam.advisor1 ? {
-          id: exam.advisor1.id,
-          name: exam.advisor1.user.name,
-          nip: exam.advisor1.nip
+        advisor1: exam.lecturers_exam_applications_advisor_1_id_to_lecturers ? {
+          id: exam.lecturers_exam_applications_advisor_1_id_to_lecturers.id,
+          name: exam.lecturers_exam_applications_advisor_1_id_to_lecturers.users.name,
+          nip: exam.lecturers_exam_applications_advisor_1_id_to_lecturers.nip
         } : null,
-        advisor2: exam.advisor2 ? {
-          id: exam.advisor2.id,
-          name: exam.advisor2.user.name,
-          nip: exam.advisor2.nip
+        advisor2: exam.lecturers_exam_applications_advisor_2_id_to_lecturers ? {
+          id: exam.lecturers_exam_applications_advisor_2_id_to_lecturers.id,
+          name: exam.lecturers_exam_applications_advisor_2_id_to_lecturers.users.name,
+          nip: exam.lecturers_exam_applications_advisor_2_id_to_lecturers.nip
         } : null,
-        committees: exam.committees.map(committee => ({
+        committees: exam.exam_committees.map(committee => ({
           id: committee.id,
-          name: committee.lecturer.user.name,
+          name: committee.lecturers.users.name,
           role: committee.role,
-          nip: committee.lecturer.nip
+          nip: committee.lecturers.nip
         })),
-        documents: exam.documents.map(doc => ({
+        documents: exam.exam_documents.map(doc => ({
           id: doc.id,
           name: doc.name,
           type: doc.type,
           status: doc.status,
-          uploadDate: doc.uploadDate.toISOString(),
-          verificationDate: doc.verificationDate?.toISOString(),
-          fileUrl: doc.fileUrl,
-          fileSize: doc.fileSize,
+          upload_date: doc.upload_date.toISOString(),
+          verification_date: doc.verification_date?.toISOString(),
+          file_url: doc.file_url,
+          file_size: doc.file_size,
           notes: doc.notes
         })),
         requirements: [] as any[] // Will be populated based on exam type and status
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       if (!examData) return
 
       // Generate requirements based on exam type and status
-      examData.requirements = generateRequirements(exam.type, exam.status, exam.documents)
+      examData.requirements = generateRequirements(exam.type, exam.status, exam.exam_documents)
 
       if (exam.type === 'proposal') {
         transformedData.proposalExam = examData

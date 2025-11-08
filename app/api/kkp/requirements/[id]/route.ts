@@ -13,7 +13,7 @@ export async function DELETE(
     const { id } = params
 
     // Cari requirement yang akan dihapus
-    const requirement = await prisma.kkpRequirement.findUnique({
+    const requirement = await prisma.kkp_requirements.findUnique({
       where: { id }
     })
 
@@ -25,13 +25,13 @@ export async function DELETE(
     }
 
     // Hapus file dari sistem file
-    const fullPath = path.join(process.cwd(), "public", requirement.filePath)
+    const fullPath = path.join(process.cwd(), "public", requirement.file_path)
     if (existsSync(fullPath)) {
       await unlink(fullPath)
     }
 
     // Hapus record dari database
-    await prisma.kkpRequirement.delete({
+    await prisma.kkp_requirements.delete({
       where: { id }
     })
 

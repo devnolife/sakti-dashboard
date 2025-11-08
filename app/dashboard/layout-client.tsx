@@ -28,10 +28,10 @@ export function DashboardLayoutClient({
 
   // Function to get menu items based on role and sub-role
   const getMenuItems = (role: string) => {
-    // For dosen role, check if user has sub-role and determine menu based on current path
-    if (role === 'dosen' && user?.subRole) {
-      // Extract sub-role from path for wakil dekan routes
-      // e.g., /dashboard/dosen/vice-dean-1 -> wakil_dekan_1
+    // For dosen role, determine menu based on current path OR user's sub-role
+    if (role === 'dosen') {
+      // First priority: Check current path for specific wakil dekan routes
+      // This allows any dosen to see the correct menu when navigating to WD pages
       if (pathname.includes('/vice-dean-1')) {
         return dosenSubRoleMenuItems.wakil_dekan_1
       }
@@ -44,10 +44,27 @@ export function DashboardLayoutClient({
       if (pathname.includes('/vice-dean-4')) {
         return dosenSubRoleMenuItems.wakil_dekan_4
       }
+      if (pathname.includes('/dekan') && !pathname.includes('/vice-dean')) {
+        return dosenSubRoleMenuItems.dekan
+      }
+      if (pathname.includes('/gkm')) {
+        return dosenSubRoleMenuItems.gkm
+      }
+      if (pathname.includes('/prodi')) {
+        return dosenSubRoleMenuItems.prodi
+      }
+      if (pathname.includes('/sekretaris-prodi')) {
+        return dosenSubRoleMenuItems.sekretaris_prodi
+      }
 
-      // For other dosen sub-roles, use their primary sub-role menu
-      const primarySubRole = user.subRole.split(',')[0].trim() as DosenSubRole
-      return dosenSubRoleMenuItems[primarySubRole] || menuItems.dosen
+      // Second priority: If user has sub-role, use their primary sub-role menu
+      if (user?.subRole) {
+        const primarySubRole = user.subRole.split(',')[0].trim() as DosenSubRole
+        return dosenSubRoleMenuItems[primarySubRole] || menuItems.dosen
+      }
+
+      // Default: regular dosen menu
+      return menuItems.dosen
     }
 
     return menuItems[role as Role] || []
