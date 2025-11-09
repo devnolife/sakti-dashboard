@@ -23,7 +23,7 @@ export default function StaffTuDashboardPage() {
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-bold tracking-tight">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-           Administrasi Prodi
+            Administrasi Prodi
           </span>
         </h2>
         <p className="text-muted-foreground">
@@ -37,7 +37,7 @@ export default function StaffTuDashboardPage() {
         <Card className="overflow-hidden transition-all duration-200 md:col-span-2 lg:col-span-2 hover:shadow-md border-primary/10 hover:border-primary/30">
           <CardHeader className="pb-2 bg-gradient-to-r from-primary/5 to-secondary/5">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">KKP Applications</CardTitle>
+              <CardTitle className="text-lg">Aplikasi KKP</CardTitle>
               <Link href="/dashboard/staff_tu/kkp">
                 <Button variant="ghost" size="sm" className="gap-1 text-primary">
                   <span>Lihat Semua</span>
@@ -55,8 +55,8 @@ export default function StaffTuDashboardPage() {
                     <Clock className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium">Pending</p>
-                    <p className="text-sm text-muted-foreground">3 applications</p>
+                    <p className="font-medium">Menunggu</p>
+                    <p className="text-sm text-muted-foreground">3 aplikasi</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -64,8 +64,8 @@ export default function StaffTuDashboardPage() {
                     <CheckCircle className="w-5 h-5 text-green-500" />
                   </div>
                   <div>
-                    <p className="font-medium">Approved</p>
-                    <p className="text-sm text-muted-foreground">8 applications</p>
+                    <p className="font-medium">Disetujui</p>
+                    <p className="text-sm text-muted-foreground">8 aplikasi</p>
                   </div>
                 </div>
               </div>
@@ -75,8 +75,8 @@ export default function StaffTuDashboardPage() {
                     <AlertCircle className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
-                    <p className="font-medium">In Review</p>
-                    <p className="text-sm text-muted-foreground">2 applications</p>
+                    <p className="font-medium">Dalam Review</p>
+                    <p className="text-sm text-muted-foreground">2 aplikasi</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -84,8 +84,8 @@ export default function StaffTuDashboardPage() {
                     <AlertCircle className="w-5 h-5 text-red-500" />
                   </div>
                   <div>
-                    <p className="font-medium">Rejected</p>
-                    <p className="text-sm text-muted-foreground">1 application</p>
+                    <p className="font-medium">Ditolak</p>
+                    <p className="text-sm text-muted-foreground">1 aplikasi</p>
                   </div>
                 </div>
               </div>
@@ -315,11 +315,11 @@ export default function StaffTuDashboardPage() {
                       <CheckCircle className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">KKP Application Approved</p>
+                      <p className="text-sm font-medium">Aplikasi KKP Disetujui</p>
                       <p className="text-xs text-muted-foreground">
-                        You approved Andi Wijaya's KKP application for Tokopedia
+                        Anda menyetujui aplikasi KKP Andi Wijaya untuk Tokopedia
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">2 hours ago</p>
+                      <p className="mt-1 text-xs text-muted-foreground">2 jam yang lalu</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4 p-4 border rounded-xl">
@@ -327,11 +327,11 @@ export default function StaffTuDashboardPage() {
                       <FileText className="w-5 h-5 text-secondary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">New KKP Application</p>
+                      <p className="text-sm font-medium">Aplikasi KKP Baru</p>
                       <p className="text-xs text-muted-foreground">
-                        Dian Sastro submitted a new KKP application for Perpustakaan Nasional
+                        Dian Sastro mengajukan aplikasi KKP baru untuk Perpustakaan Nasional
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">5 hours ago</p>
+                      <p className="mt-1 text-xs text-muted-foreground">5 jam yang lalu</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4 p-4 border rounded-xl">
@@ -339,11 +339,11 @@ export default function StaffTuDashboardPage() {
                       <AlertCircle className="w-5 h-5 text-accent" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Application Set to Review</p>
+                      <p className="text-sm font-medium">Aplikasi Diatur ke Review</p>
                       <p className="text-xs text-muted-foreground">
-                        You set Rini Susanti's KKP application to review status
+                        Anda mengatur aplikasi KKP Rini Susanti ke status review
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">Yesterday</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Kemarin</p>
                     </div>
                   </div>
                 </div>
@@ -356,14 +356,14 @@ export default function StaffTuDashboardPage() {
                     </div>
                     <div className="grid w-full gap-1">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">Review KKP Applications</p>
+                        <p className="text-sm font-medium">Review Aplikasi KKP</p>
                         <Button variant="ghost" size="sm" className="text-xs h-7">
                           Review
                         </Button>
                       </div>
-                      <p className="text-xs text-muted-foreground">3 applications pending review</p>
+                      <p className="text-xs text-muted-foreground">3 aplikasi menunggu review</p>
                       <div className="mt-1">
-                        <span className="text-xs bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full">Urgent</span>
+                        <span className="text-xs bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full">Mendesak</span>
                       </div>
                     </div>
                   </div>
@@ -373,15 +373,15 @@ export default function StaffTuDashboardPage() {
                     </div>
                     <div className="grid w-full gap-1">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">Verify Documents</p>
+                        <p className="text-sm font-medium">Verifikasi Dokumen</p>
                         <Button variant="ghost" size="sm" className="text-xs h-7">
-                          Verify
+                          Verifikasi
                         </Button>
                       </div>
-                      <p className="text-xs text-muted-foreground">5 documents need verification</p>
+                      <p className="text-xs text-muted-foreground">5 dokumen perlu diverifikasi</p>
                       <div className="mt-1">
                         <span className="text-xs bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full">
-                          High Priority
+                          Prioritas Tinggi
                         </span>
                       </div>
                     </div>
@@ -392,14 +392,14 @@ export default function StaffTuDashboardPage() {
                     </div>
                     <div className="grid w-full gap-1">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">Schedule Exams</p>
+                        <p className="text-sm font-medium">Jadwalkan Ujian</p>
                         <Button variant="ghost" size="sm" className="text-xs h-7">
-                          Schedule
+                          Jadwalkan
                         </Button>
                       </div>
-                      <p className="text-xs text-muted-foreground">Finalize exam schedule for next month</p>
+                      <p className="text-xs text-muted-foreground">Finalisasi jadwal ujian untuk bulan depan</p>
                       <div className="mt-1">
-                        <span className="text-xs bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full">This Week</span>
+                        <span className="text-xs bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full">Minggu Ini</span>
                       </div>
                     </div>
                   </div>

@@ -212,34 +212,34 @@ export function AikKomfrenRegistration() {
     switch (status) {
       case "paid":
         return (
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Paid
+          <Badge variant="outline" className="text-green-700 border-green-200 bg-green-50">
+            Lunas
           </Badge>
         )
       case "pending":
         return (
-          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-            Pending
+          <Badge variant="outline" className="text-yellow-700 border-yellow-200 bg-yellow-50">
+            Menunggu
           </Badge>
         )
       default:
-        return <Badge variant="outline">Unknown</Badge>
+        return <Badge variant="outline">Tidak Diketahui</Badge>
     }
   }
 
   // Handle export registrations
   const handleExportRegistrations = () => {
     toast({
-      title: "Export Started",
-      description: "Registration data is being exported to Excel format.",
+      title: "Ekspor Dimulai",
+      description: "Data pendaftaran sedang diekspor ke format Excel.",
     })
   }
 
   // Handle verify payment
   const handleVerifyPayment = (studentId: string) => {
     toast({
-      title: "Payment Verified",
-      description: "The student's payment has been verified successfully.",
+      title: "Pembayaran Terverifikasi",
+      description: "Pembayaran mahasiswa telah berhasil diverifikasi.",
     })
   }
 
@@ -254,67 +254,67 @@ export function AikKomfrenRegistration() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">AIK Komfren Registration</h2>
-          <p className="text-muted-foreground">View and manage student registrations for AIK Komfren examination.</p>
+          <h2 className="text-3xl font-bold tracking-tight">Pendaftaran AIK Komfren</h2>
+          <p className="text-muted-foreground">Lihat dan kelola pendaftaran mahasiswa untuk ujian AIK Komfren.</p>
         </div>
         <Button className="flex items-center gap-2" onClick={handleExportRegistrations}>
-          <Download className="h-4 w-4" />
-          <span>Export Registrations</span>
+          <Download className="w-4 h-4" />
+          <span>Ekspor Pendaftaran</span>
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Pendaftar</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalRegistrations}</div>
-            <p className="text-xs text-muted-foreground mt-1">All registered students</p>
+            <p className="mt-1 text-xs text-muted-foreground">Semua mahasiswa terdaftar</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Payment Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Tingkat Pembayaran</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{paymentRate.toFixed(1)}%</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {paidRegistrations} paid, {pendingRegistrations} pending
+            <p className="mt-1 text-xs text-muted-foreground">
+              {paidRegistrations} lunas, {pendingRegistrations} menunggu
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Pendapatan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">Rp {totalRevenue.toLocaleString("id-ID")}</div>
-            <p className="text-xs text-muted-foreground mt-1">From paid registrations</p>
+            <p className="mt-1 text-xs text-muted-foreground">Dari pendaftaran yang lunas</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+            <CardTitle className="text-sm font-medium">Pembayaran Menunggu</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">{pendingRegistrations}</div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting payment verification</p>
+            <p className="mt-1 text-xs text-muted-foreground">Menunggu verifikasi pembayaran</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>Registered Students</CardTitle>
-          <CardDescription>View and manage students registered for AIK Komfren examination.</CardDescription>
-          <div className="flex flex-col md:flex-row gap-4 mt-2">
+          <CardTitle>Mahasiswa Terdaftar</CardTitle>
+          <CardDescription>Lihat dan kelola mahasiswa yang terdaftar untuk ujian AIK Komfren.</CardDescription>
+          <div className="flex flex-col gap-4 mt-2 md:flex-row">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, NIM, faculty, email, or phone..."
+                placeholder="Cari berdasarkan nama, NIM, fakultas, email, atau telepon..."
                 className="pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -324,7 +324,7 @@ export function AikKomfrenRegistration() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
+                    <Filter className="w-4 h-4" />
                     <span>Filter</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -335,50 +335,50 @@ export function AikKomfrenRegistration() {
                       setFilterPaymentStatus(null)
                     }}
                   >
-                    Clear All Filters
+                    Hapus Semua Filter
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="font-semibold">Faculty</DropdownMenuItem>
+                  <DropdownMenuItem className="font-semibold">Fakultas</DropdownMenuItem>
                   {faculties.map((faculty) => (
                     <DropdownMenuItem key={faculty} onClick={() => setFilterFaculty(faculty)}>
                       {faculty}
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuItem className="font-semibold">Payment Status</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("paid")}>Paid</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("pending")}>Pending</DropdownMenuItem>
+                  <DropdownMenuItem className="font-semibold">Status Pembayaran</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("paid")}>Lunas</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("pending")}>Menunggu</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button variant="outline" onClick={handleExportRegistrations}>
-                <Download className="h-4 w-4" />
+                <Download className="w-4 h-4" />
               </Button>
             </div>
           </div>
           <Tabs defaultValue="all" className="mt-4" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-3 w-full">
-              <TabsTrigger value="all">All Registrations</TabsTrigger>
-              <TabsTrigger value="paid">Paid</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">Semua Pendaftaran</TabsTrigger>
+              <TabsTrigger value="paid">Lunas</TabsTrigger>
+              <TabsTrigger value="pending">Menunggu</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <div className="grid grid-cols-12 gap-4 p-4 font-medium border-b bg-muted/50">
-              <div className="col-span-4">Student</div>
-              <div className="col-span-2">Registration Date</div>
-              <div className="col-span-2">Faculty</div>
-              <div className="col-span-2">Payment Status</div>
-              <div className="col-span-2 text-right">Actions</div>
+              <div className="col-span-4">Mahasiswa</div>
+              <div className="col-span-2">Tanggal Daftar</div>
+              <div className="col-span-2">Fakultas</div>
+              <div className="col-span-2">Status Pembayaran</div>
+              <div className="col-span-2 text-right">Aksi</div>
             </div>
             <ScrollArea className="h-[500px]">
               {filteredStudents.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No registered students found.</p>
+                <div className="py-8 text-center">
+                  <p className="text-muted-foreground">Tidak ada mahasiswa terdaftar ditemukan.</p>
                 </div>
               ) : (
                 filteredStudents.map((student) => (
-                  <div key={student.id} className="grid grid-cols-12 gap-4 p-4 border-b items-center">
-                    <div className="col-span-4 flex items-center gap-3">
+                  <div key={student.id} className="grid items-center grid-cols-12 gap-4 p-4 border-b">
+                    <div className="flex items-center col-span-4 gap-3">
                       <Avatar>
                         <AvatarImage src={student.avatarUrl} alt={student.name} />
                         <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
@@ -388,8 +388,8 @@ export function AikKomfrenRegistration() {
                         <p className="text-xs text-muted-foreground">{student.nim}</p>
                       </div>
                     </div>
-                    <div className="col-span-2 flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center col-span-2 gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
                       <span className="text-sm">
                         {new Date(student.registrationDate).toLocaleDateString("id-ID", {
                           day: "numeric",
@@ -402,13 +402,13 @@ export function AikKomfrenRegistration() {
                       <span className="text-sm">{student.faculty}</span>
                     </div>
                     <div className="col-span-2">{getPaymentStatusBadge(student.paymentStatus)}</div>
-                    <div className="col-span-2 flex justify-end gap-2">
+                    <div className="flex justify-end col-span-2 gap-2">
                       <Button variant="outline" size="sm" onClick={() => handleViewDetails(student)}>
-                        View Details
+                        Lihat Detail
                       </Button>
                       {student.paymentStatus === "pending" && (
                         <Button size="sm" onClick={() => handleVerifyPayment(student.id)}>
-                          Verify Payment
+                          Verifikasi Pembayaran
                         </Button>
                       )}
                     </div>
@@ -426,14 +426,14 @@ export function AikKomfrenRegistration() {
           {selectedStudent && (
             <>
               <DialogHeader>
-                <DialogTitle>Student Registration Details</DialogTitle>
+                <DialogTitle>Detail Pendaftaran Mahasiswa</DialogTitle>
                 <DialogDescription>
-                  Detailed information about the student's AIK Komfren registration.
+                  Informasi lengkap tentang pendaftaran AIK Komfren mahasiswa.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16">
+                  <Avatar className="w-16 h-16">
                     <AvatarImage src={selectedStudent.avatarUrl} alt={selectedStudent.name} />
                     <AvatarFallback>{selectedStudent.name.charAt(0)}</AvatarFallback>
                   </Avatar>
@@ -450,9 +450,9 @@ export function AikKomfrenRegistration() {
 
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Registration Date</p>
-                    <p className="text-sm flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-sm font-medium">Tanggal Pendaftaran</p>
+                    <p className="flex items-center gap-2 text-sm">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
                       {new Date(selectedStudent.registrationDate).toLocaleDateString("id-ID", {
                         weekday: "long",
                         year: "numeric",
@@ -462,7 +462,7 @@ export function AikKomfrenRegistration() {
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Faculty</p>
+                    <p className="text-sm font-medium">Fakultas</p>
                     <p className="text-sm">{selectedStudent.faculty}</p>
                   </div>
                 </div>
@@ -470,44 +470,44 @@ export function AikKomfrenRegistration() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Email</p>
-                    <p className="text-sm flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                    <p className="flex items-center gap-2 text-sm">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
                       {selectedStudent.email}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Phone</p>
-                    <p className="text-sm flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-sm font-medium">Telepon</p>
+                    <p className="flex items-center gap-2 text-sm">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
                       {selectedStudent.phone}
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">Payment Information</h4>
-                  <div className="rounded-md border p-4 bg-muted/50">
+                  <h4 className="mb-2 text-sm font-medium">Informasi Pembayaran</h4>
+                  <div className="p-4 border rounded-md bg-muted/50">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium">Payment Status</p>
-                        <p className="text-sm flex items-center gap-2">
+                        <p className="text-sm font-medium">Status Pembayaran</p>
+                        <p className="flex items-center gap-2 text-sm">
                           {selectedStudent.paymentStatus === "paid" ? (
                             <>
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                              <span className="text-green-600 font-medium">Paid</span>
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              <span className="font-medium text-green-600">Lunas</span>
                             </>
                           ) : (
                             <>
-                              <AlertCircle className="h-4 w-4 text-yellow-600" />
-                              <span className="text-yellow-600 font-medium">Pending</span>
+                              <AlertCircle className="w-4 h-4 text-yellow-600" />
+                              <span className="font-medium text-yellow-600">Menunggu</span>
                             </>
                           )}
                         </p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium">Amount</p>
-                        <p className="text-sm flex items-center gap-2">
-                          <CreditCard className="h-4 w-4 text-muted-foreground" />
+                        <p className="text-sm font-medium">Jumlah</p>
+                        <p className="flex items-center gap-2 text-sm">
+                          <CreditCard className="w-4 h-4 text-muted-foreground" />
                           Rp {selectedStudent.paymentAmount.toLocaleString("id-ID")}
                         </p>
                       </div>
@@ -516,7 +516,7 @@ export function AikKomfrenRegistration() {
                     {selectedStudent.paymentStatus === "paid" && (
                       <div className="grid grid-cols-2 gap-4 mt-4">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium">Payment Date</p>
+                          <p className="text-sm font-medium">Tanggal Pembayaran</p>
                           <p className="text-sm">
                             {new Date(selectedStudent.paymentDate).toLocaleDateString("id-ID", {
                               day: "numeric",
@@ -526,7 +526,7 @@ export function AikKomfrenRegistration() {
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm font-medium">Payment Method</p>
+                          <p className="text-sm font-medium">Metode Pembayaran</p>
                           <p className="text-sm">{selectedStudent.paymentMethod}</p>
                         </div>
                       </div>
@@ -541,7 +541,7 @@ export function AikKomfrenRegistration() {
                             setIsDetailsDialogOpen(false)
                           }}
                         >
-                          Verify Payment
+                          Verifikasi Pembayaran
                         </Button>
                       </div>
                     )}
@@ -550,7 +550,7 @@ export function AikKomfrenRegistration() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
-                  Close
+                  Tutup
                 </Button>
               </DialogFooter>
             </>

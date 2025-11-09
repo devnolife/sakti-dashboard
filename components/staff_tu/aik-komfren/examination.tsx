@@ -223,8 +223,8 @@ export function AikKomfrenExamination() {
       selectedStudents.length === 0
     ) {
       toast({
-        title: "Validation Error",
-        description: "Please fill in all fields and select at least one student.",
+        title: "Kesalahan Validasi",
+        description: "Harap isi semua field dan pilih minimal satu mahasiswa.",
         variant: "destructive",
       })
       return
@@ -251,8 +251,8 @@ export function AikKomfrenExamination() {
     setIsCreateGroupDialogOpen(false)
 
     toast({
-      title: "Group Created",
-      description: `Examination group "${newGroupName}" has been created successfully.`,
+      title: "Kelompok Dibuat",
+      description: `Kelompok ujian "${newGroupName}" berhasil dibuat.`,
     })
   }
 
@@ -262,23 +262,23 @@ export function AikKomfrenExamination() {
       case "scheduled":
         return (
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            Scheduled
+            Terjadwal
           </Badge>
         )
       case "in-progress":
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-            In Progress
+            Berlangsung
           </Badge>
         )
       case "completed":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Completed
+            Selesai
           </Badge>
         )
       default:
-        return <Badge variant="outline">Unknown</Badge>
+        return <Badge variant="outline">Tidak Diketahui</Badge>
     }
   }
 
@@ -288,17 +288,17 @@ export function AikKomfrenExamination() {
       case "paid":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Paid
+            Lunas
           </Badge>
         )
       case "pending":
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-            Pending
+            Menunggu
           </Badge>
         )
       default:
-        return <Badge variant="outline">Unknown</Badge>
+        return <Badge variant="outline">Tidak Diketahui</Badge>
     }
   }
 
@@ -312,9 +312,9 @@ export function AikKomfrenExamination() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">AIK Komfren Examination</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Pelaksanaan Ujian AIK Komfren</h2>
           <p className="text-muted-foreground">
-            Manage examination groups and assign supervisors for AIK Komfren exams.
+            Kelola kelompok ujian dan tetapkan pengawas untuk ujian AIK Komfren.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -322,44 +322,44 @@ export function AikKomfrenExamination() {
             <DialogTrigger asChild>
               <Button className="flex items-center gap-2">
                 <UserPlus className="h-4 w-4" />
-                <span>Create Exam Group</span>
+                <span>Buat Kelompok Ujian</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>Create Examination Group</DialogTitle>
+                <DialogTitle>Buat Kelompok Ujian</DialogTitle>
                 <DialogDescription>
-                  Create a new examination group and assign students and a supervisor.
+                  Buat kelompok ujian baru dan tetapkan mahasiswa serta pengawas.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="group-name" className="text-sm font-medium">
-                      Group Name
+                      Nama Kelompok
                     </label>
                     <Input
                       id="group-name"
-                      placeholder="Enter group name"
+                      placeholder="Masukkan nama kelompok"
                       value={newGroupName}
                       onChange={(e) => setNewGroupName(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="group-date" className="text-sm font-medium">
-                      Examination Date
+                      Tanggal Ujian
                     </label>
-                    <DatePicker date={newGroupDate} setDate={setNewGroupDate} className="w-full" />
+                    <DatePicker date={newGroupDate} onDateChange={setNewGroupDate} className="w-full" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="group-time" className="text-sm font-medium">
-                      Time Slot
+                      Waktu
                     </label>
                     <Select onValueChange={setNewGroupTime}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select time slot" />
+                        <SelectValue placeholder="Pilih waktu" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="08:00 - 10:00">08:00 - 10:00</SelectItem>
@@ -371,11 +371,11 @@ export function AikKomfrenExamination() {
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="group-location" className="text-sm font-medium">
-                      Location
+                      Lokasi
                     </label>
                     <Input
                       id="group-location"
-                      placeholder="Enter location"
+                      placeholder="Masukkan lokasi"
                       value={newGroupLocation}
                       onChange={(e) => setNewGroupLocation(e.target.value)}
                     />
@@ -383,11 +383,11 @@ export function AikKomfrenExamination() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="group-supervisor" className="text-sm font-medium">
-                    Supervisor
+                    Pengawas
                   </label>
                   <Select onValueChange={setNewGroupSupervisor}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select supervisor" />
+                      <SelectValue placeholder="Pilih pengawas" />
                     </SelectTrigger>
                     <SelectContent>
                       {mockSupervisors.map((supervisor) => (
@@ -400,8 +400,8 @@ export function AikKomfrenExamination() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">Select Students</label>
-                    <span className="text-xs text-muted-foreground">{selectedStudents.length} students selected</span>
+                    <label className="text-sm font-medium">Pilih Mahasiswa</label>
+                    <span className="text-xs text-muted-foreground">{selectedStudents.length} mahasiswa dipilih</span>
                   </div>
                   <ScrollArea className="h-[200px] border rounded-md p-2">
                     <div className="space-y-2">
@@ -436,9 +436,9 @@ export function AikKomfrenExamination() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsCreateGroupDialogOpen(false)}>
-                  Cancel
+                  Batal
                 </Button>
-                <Button onClick={handleCreateGroup}>Create Group</Button>
+                <Button onClick={handleCreateGroup}>Buat Kelompok</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -448,14 +448,14 @@ export function AikKomfrenExamination() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
           <CardHeader className="pb-3">
-            <CardTitle>Examination Groups</CardTitle>
-            <CardDescription>Manage and monitor examination groups for AIK Komfren.</CardDescription>
+            <CardTitle>Kelompok Ujian</CardTitle>
+            <CardDescription>Kelola dan pantau kelompok ujian AIK Komfren.</CardDescription>
             <Tabs defaultValue="all" className="mt-2" onValueChange={setActiveTab}>
               <TabsList className="grid grid-cols-4 w-full">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-                <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-                <TabsTrigger value="completed">Completed</TabsTrigger>
+                <TabsTrigger value="all">Semua</TabsTrigger>
+                <TabsTrigger value="scheduled">Terjadwal</TabsTrigger>
+                <TabsTrigger value="in-progress">Berlangsung</TabsTrigger>
+                <TabsTrigger value="completed">Selesai</TabsTrigger>
               </TabsList>
             </Tabs>
           </CardHeader>
@@ -463,7 +463,7 @@ export function AikKomfrenExamination() {
             <div className="space-y-4">
               {filteredExamGroups.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground">No examination groups found.</p>
+                  <p className="text-muted-foreground">Tidak ada kelompok ujian ditemukan.</p>
                 </div>
               ) : (
                 filteredExamGroups.map((group) => (
@@ -492,7 +492,7 @@ export function AikKomfrenExamination() {
                     <CardContent className="px-4 pb-2 pt-0">
                       <div className="flex items-center gap-2 mb-2">
                         <UserCheck className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">Supervisor:</span>
+                        <span className="text-sm font-medium">Pengawas:</span>
                         <span className="text-sm">{group.supervisor}</span>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2">
@@ -515,14 +515,14 @@ export function AikKomfrenExamination() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
-                            Actions <ChevronDown className="ml-2 h-4 w-4" />
+                            Aksi <ChevronDown className="ml-2 h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Group</DropdownMenuItem>
-                          <DropdownMenuItem>Change Status</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete Group</DropdownMenuItem>
+                          <DropdownMenuItem>Lihat Detail</DropdownMenuItem>
+                          <DropdownMenuItem>Edit Kelompok</DropdownMenuItem>
+                          <DropdownMenuItem>Ubah Status</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">Hapus Kelompok</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </CardFooter>
@@ -535,13 +535,13 @@ export function AikKomfrenExamination() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle>Registered Students</CardTitle>
-            <CardDescription>Students registered for AIK Komfren examination.</CardDescription>
+            <CardTitle>Mahasiswa Terdaftar</CardTitle>
+            <CardDescription>Mahasiswa terdaftar untuk ujian AIK Komfren.</CardDescription>
             <div className="flex items-center gap-2 mt-2">
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search students..."
+                  placeholder="Cari mahasiswa..."
                   className="pl-8"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -560,17 +560,17 @@ export function AikKomfrenExamination() {
                       setFilterPaymentStatus(null)
                     }}
                   >
-                    Clear Filters
+                    Hapus Filter
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="font-semibold">Faculty</DropdownMenuItem>
+                  <DropdownMenuItem className="font-semibold">Fakultas</DropdownMenuItem>
                   {faculties.map((faculty) => (
                     <DropdownMenuItem key={faculty} onClick={() => setFilterFaculty(faculty)}>
                       {faculty}
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuItem className="font-semibold">Payment Status</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("paid")}>Paid</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("pending")}>Pending</DropdownMenuItem>
+                  <DropdownMenuItem className="font-semibold">Status Pembayaran</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("paid")}>Lunas</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterPaymentStatus("pending")}>Menunggu</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -580,15 +580,14 @@ export function AikKomfrenExamination() {
               <div className="space-y-2">
                 {filteredStudents.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-muted-foreground">No students found.</p>
+                    <p className="text-muted-foreground">Tidak ada mahasiswa ditemukan.</p>
                   </div>
                 ) : (
                   filteredStudents.map((student) => (
                     <div
                       key={student.id}
-                      className={`flex items-center justify-between p-2 rounded-md hover:bg-muted ${
-                        selectedStudents.includes(student.id) ? "bg-muted" : ""
-                      }`}
+                      className={`flex items-center justify-between p-2 rounded-md hover:bg-muted ${selectedStudents.includes(student.id) ? "bg-muted" : ""
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <Checkbox

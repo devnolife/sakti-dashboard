@@ -183,17 +183,17 @@ export function AikKomfrenCompletion() {
       case "passed":
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            Passed
+            Lulus
           </Badge>
         )
       case "failed":
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-            Failed
+            Tidak Lulus
           </Badge>
         )
       default:
-        return <Badge variant="outline">Unknown</Badge>
+        return <Badge variant="outline">Tidak Diketahui</Badge>
     }
   }
 
@@ -216,8 +216,8 @@ export function AikKomfrenCompletion() {
   // Handle export results
   const handleExportResults = () => {
     toast({
-      title: "Export Started",
-      description: "Exam results are being exported to Excel format.",
+      title: "Ekspor Dimulai",
+      description: "Hasil ujian sedang diekspor ke format Excel.",
     })
   }
 
@@ -232,65 +232,65 @@ export function AikKomfrenCompletion() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">AIK Komfren Completion</h2>
-          <p className="text-muted-foreground">View and manage AIK Komfren examination results.</p>
+          <h2 className="text-3xl font-bold tracking-tight">Penyelesaian AIK Komfren</h2>
+          <p className="text-muted-foreground">Lihat dan kelola hasil ujian AIK Komfren.</p>
         </div>
         <Button className="flex items-center gap-2" onClick={handleExportResults}>
           <Download className="h-4 w-4" />
-          <span>Export Results</span>
+          <span>Ekspor Hasil</span>
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Exams</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Ujian</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalExams}</div>
-            <p className="text-xs text-muted-foreground mt-1">All AIK Komfren exams</p>
+            <p className="text-xs text-muted-foreground mt-1">Semua ujian AIK Komfren</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pass Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Tingkat Kelulusan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{passRate.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {passedExams} passed, {failedExams} failed
+              {passedExams} lulus, {failedExams} tidak lulus
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
+            <CardTitle className="text-sm font-medium">Nilai Rata-rata</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{averageScore.toFixed(1)}</div>
-            <p className="text-xs text-muted-foreground mt-1">Out of 100 points</p>
+            <p className="text-xs text-muted-foreground mt-1">Dari 100 poin</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Certificates Issued</CardTitle>
+            <CardTitle className="text-sm font-medium">Sertifikat Diterbitkan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{passedExams}</div>
-            <p className="text-xs text-muted-foreground mt-1">For passed students</p>
+            <p className="text-xs text-muted-foreground mt-1">Untuk mahasiswa lulus</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>Examination Results</CardTitle>
-          <CardDescription>View and manage AIK Komfren examination results for all students.</CardDescription>
+          <CardTitle>Hasil Ujian</CardTitle>
+          <CardDescription>Lihat dan kelola hasil ujian AIK Komfren untuk semua mahasiswa.</CardDescription>
           <div className="flex flex-col md:flex-row gap-4 mt-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, NIM, faculty, or examiner..."
+                placeholder="Cari berdasarkan nama, NIM, fakultas, atau penguji..."
                 className="pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -312,18 +312,18 @@ export function AikKomfrenCompletion() {
                       setFilterExaminer(null)
                     }}
                   >
-                    Clear All Filters
+                    Hapus Semua Filter
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="font-semibold">Faculty</DropdownMenuItem>
+                  <DropdownMenuItem className="font-semibold">Fakultas</DropdownMenuItem>
                   {faculties.map((faculty) => (
                     <DropdownMenuItem key={faculty} onClick={() => setFilterFaculty(faculty)}>
                       {faculty}
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuItem className="font-semibold">Status</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus("passed")}>Passed</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus("failed")}>Failed</DropdownMenuItem>
-                  <DropdownMenuItem className="font-semibold">Examiner</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus("passed")}>Lulus</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus("failed")}>Tidak Lulus</DropdownMenuItem>
+                  <DropdownMenuItem className="font-semibold">Penguji</DropdownMenuItem>
                   {examiners.map((examiner) => (
                     <DropdownMenuItem key={examiner} onClick={() => setFilterExaminer(examiner)}>
                       {examiner}
@@ -338,26 +338,26 @@ export function AikKomfrenCompletion() {
           </div>
           <Tabs defaultValue="all" className="mt-4" onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-3 w-full">
-              <TabsTrigger value="all">All Results</TabsTrigger>
-              <TabsTrigger value="passed">Passed</TabsTrigger>
-              <TabsTrigger value="failed">Failed</TabsTrigger>
+              <TabsTrigger value="all">Semua Hasil</TabsTrigger>
+              <TabsTrigger value="passed">Lulus</TabsTrigger>
+              <TabsTrigger value="failed">Tidak Lulus</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
             <div className="grid grid-cols-12 gap-4 p-4 font-medium border-b bg-muted/50">
-              <div className="col-span-4">Student</div>
-              <div className="col-span-2">Exam Date</div>
-              <div className="col-span-2">Examiner</div>
-              <div className="col-span-1">Score</div>
+              <div className="col-span-4">Mahasiswa</div>
+              <div className="col-span-2">Tanggal Ujian</div>
+              <div className="col-span-2">Penguji</div>
+              <div className="col-span-1">Nilai</div>
               <div className="col-span-1">Status</div>
-              <div className="col-span-2 text-right">Actions</div>
+              <div className="col-span-2 text-right">Aksi</div>
             </div>
             <ScrollArea className="h-[500px]">
               {filteredResults.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground">No examination results found.</p>
+                  <p className="text-muted-foreground">Tidak ada hasil ujian ditemukan.</p>
                 </div>
               ) : (
                 filteredResults.map((result) => (
@@ -394,7 +394,7 @@ export function AikKomfrenCompletion() {
                     <div className="col-span-1">{getStatusBadge(result.status)}</div>
                     <div className="col-span-2 flex justify-end gap-2">
                       <Button variant="outline" size="sm" onClick={() => handleViewDetails(result)}>
-                        View Details
+                        Lihat Detail
                       </Button>
                     </div>
                   </div>
@@ -411,8 +411,8 @@ export function AikKomfrenCompletion() {
           {selectedResult && (
             <>
               <DialogHeader>
-                <DialogTitle>Examination Result Details</DialogTitle>
-                <DialogDescription>Detailed information about the AIK Komfren examination result.</DialogDescription>
+                <DialogTitle>Detail Hasil Ujian</DialogTitle>
+                <DialogDescription>Informasi lengkap tentang hasil ujian AIK Komfren.</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="flex items-center gap-4">
@@ -429,7 +429,7 @@ export function AikKomfrenCompletion() {
                       {getStatusBadge(selectedResult.status)}
                       {selectedResult.status === "passed" && (
                         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                          Certificate: {selectedResult.certificateNumber}
+                          Sertifikat: {selectedResult.certificateNumber}
                         </Badge>
                       )}
                     </div>
@@ -438,7 +438,7 @@ export function AikKomfrenCompletion() {
 
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Exam Date</p>
+                    <p className="text-sm font-medium">Tanggal Ujian</p>
                     <p className="text-sm">
                       {new Date(selectedResult.examDate).toLocaleDateString("id-ID", {
                         weekday: "long",
@@ -449,14 +449,14 @@ export function AikKomfrenCompletion() {
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Examiner</p>
+                    <p className="text-sm font-medium">Penguji</p>
                     <p className="text-sm">{selectedResult.examiner}</p>
                   </div>
                 </div>
 
                 <div className="space-y-2 mt-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">Score</p>
+                    <p className="text-sm font-medium">Nilai</p>
                     <p className={`text-lg font-bold ${getScoreColor(selectedResult.score)}`}>
                       {selectedResult.score}/100
                     </p>
@@ -469,13 +469,13 @@ export function AikKomfrenCompletion() {
                   />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>0</span>
-                    <span>Passing Score: 70</span>
+                    <span>Nilai Lulus: 70</span>
                     <span>100</span>
                   </div>
                 </div>
 
                 <div className="space-y-1 mt-2">
-                  <p className="text-sm font-medium">Examiner Feedback</p>
+                  <p className="text-sm font-medium">Catatan Penguji</p>
                   <div className="p-3 rounded-md bg-muted">
                     <p className="text-sm">{selectedResult.feedback}</p>
                   </div>
@@ -485,11 +485,11 @@ export function AikKomfrenCompletion() {
                 {selectedResult.status === "passed" && (
                   <Button className="flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    <span>Print Certificate</span>
+                    <span>Cetak Sertifikat</span>
                   </Button>
                 )}
                 <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
-                  Close
+                  Tutup
                 </Button>
               </DialogFooter>
             </>
