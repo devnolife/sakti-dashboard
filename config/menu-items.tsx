@@ -2203,10 +2203,16 @@ export const wakilDekan2MenuItems: MenuItem[] = [
     icon: Calculator,
   },
   {
-    id: "expenses",
-    title: "Pengeluaran",
-    href: "/dashboard/dosen/vice-dean-2/expenses",
+    id: "pembayaran",
+    title: "Pembayaran",
+    href: "/dashboard/dosen/vice-dean-2/pembayaran",
     icon: CreditCard,
+  },
+  {
+    id: "sdm",
+    title: "SDM",
+    href: "/dashboard/dosen/vice-dean-2/sdm",
+    icon: Users,
   },
   {
     id: "reports",

@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Users, UserCheck, Search, Download, Eye, AlertTriangle, Award, BookOpen, ArrowUpRight, ChevronLeft, ChevronRight, X, GraduationCap } from "lucide-react"
+import { Users, UserCheck, Search, Download, Eye, AlertTriangle, Award, BookOpen, ChevronLeft, ChevronRight, X, GraduationCap } from "lucide-react"
 
 interface Student {
   id: string
@@ -76,19 +76,7 @@ const getAvatarColor = (str: string) => {
   return colors[Math.abs(hash) % colors.length]
 }
 
-// Utility function to get badge color for prodi
-const getProdiBadgeColor = (prodi: string) => {
-  const colorMap: Record<string, string> = {
-    'Informatika': 'bg-blue-100 text-blue-700 border-blue-200',
-    'Teknik Sipil': 'bg-green-100 text-green-700 border-green-200',
-    'Arsitektur': 'bg-purple-100 text-purple-700 border-purple-200',
-    'Teknik Elektro': 'bg-amber-100 text-amber-700 border-amber-200',
-    'PWK': 'bg-indigo-100 text-indigo-700 border-indigo-200',
-  }
-  return colorMap[prodi] || 'bg-gray-100 text-gray-700 border-gray-200'
-}
-
-export default function StudentManagementPage() {
+export default function StudentAffairsPage() {
   const [students] = useState<Student[]>(mockStudents)
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
@@ -163,8 +151,8 @@ export default function StudentManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Data Mahasiswa per Program Studi</h1>
-          <p className="text-sm text-muted-foreground mt-1">Monitoring data mahasiswa berdasarkan program studi</p>
+          <h1 className="text-3xl font-bold tracking-tight">Kemahasiswaan</h1>
+          <p className="text-sm text-muted-foreground mt-1">Monitoring dan pengelolaan data kemahasiswaan</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="h-9">

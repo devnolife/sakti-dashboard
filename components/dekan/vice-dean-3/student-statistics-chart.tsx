@@ -97,67 +97,80 @@ export function StudentStatisticsChart({ departmentId }: StudentStatisticsChartP
   useEffect(() => {
     if (!chartRef.current) return
 
+    let chartInstance: any = null
+
     // Dynamically import Chart.js to avoid SSR issues
     const loadChart = async () => {
-      const { Chart, registerables } = await import("chart.js")
-      Chart.register(...registerables)
+      try {
+        const ChartJS = await import("chart.js")
+        const Chart = ChartJS.Chart
+        ChartJS.Chart.register(...ChartJS.registerables)
 
-      const ctx = chartRef.current?.getContext("2d")
-      if (!ctx) return
+        const ctx = chartRef.current?.getContext("2d")
+        if (!ctx) return
 
-      // Destroy previous chart instance if it exists
-      const chartInstance = Chart.getChart(chartRef.current)
-      if (chartInstance) {
-        chartInstance.destroy()
-      }
+        // Destroy previous chart instance if it exists
+        const existingChart = ChartJS.Chart.getChart(chartRef.current)
+        if (existingChart) {
+          existingChart.destroy()
+        }
 
-      const data = studentData[departmentId as keyof typeof studentData] || studentData.all
+        const data = studentData[departmentId as keyof typeof studentData] || studentData.all
 
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: data.labels,
-          datasets: [
-            {
-              label: "Mahasiswa Aktif",
-              data: data.active,
-              backgroundColor: "rgba(59, 130, 246, 0.7)",
-              borderColor: "rgba(59, 130, 246, 1)",
-              borderWidth: 1,
-            },
-            {
-              label: "Mahasiswa Cuti",
-              data: data.onLeave,
-              backgroundColor: "rgba(245, 158, 11, 0.7)",
-              borderColor: "rgba(245, 158, 11, 1)",
-              borderWidth: 1,
-            },
-            {
-              label: "Mahasiswa Lulus",
-              data: data.graduated,
-              backgroundColor: "rgba(16, 185, 129, 0.7)",
-              borderColor: "rgba(16, 185, 129, 1)",
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              stacked: false,
-            },
-            y: {
-              stacked: false,
-              beginAtZero: true,
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Mahasiswa Aktif",
+                data: data.active,
+                backgroundColor: "rgba(59, 130, 246, 0.7)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Mahasiswa Cuti",
+                data: data.onLeave,
+                backgroundColor: "rgba(245, 158, 11, 0.7)",
+                borderColor: "rgba(245, 158, 11, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Mahasiswa Lulus",
+                data: data.graduated,
+                backgroundColor: "rgba(16, 185, 129, 0.7)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: false,
+              },
+              y: {
+                stacked: false,
+                beginAtZero: true,
+              },
             },
           },
-        },
-      })
+        })
+      } catch (error) {
+        console.error("Error loading Chart.js:", error)
+      }
     }
 
     loadChart()
+
+    return () => {
+      if (chartInstance) {
+        chartInstance.destroy()
+      }
+    }
   }, [departmentId])
 
   return (

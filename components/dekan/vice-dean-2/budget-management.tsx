@@ -13,19 +13,19 @@ export function BudgetManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Manajemen Anggaran</h2>
-          <p className="text-muted-foreground mt-2">Kelola dan pantau anggaran fakultas</p>
+          <p className="mt-2 text-muted-foreground">Kelola dan pantau anggaran fakultas</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="hidden md:flex">
-            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
             Export Excel
           </Button>
           <Button variant="outline" size="sm" className="hidden md:flex">
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>
           <Button size="sm">
-            <PlusCircle className="mr-2 h-4 w-4" />
+            <PlusCircle className="w-4 h-4 mr-2" />
             Tambah Anggaran
           </Button>
         </div>

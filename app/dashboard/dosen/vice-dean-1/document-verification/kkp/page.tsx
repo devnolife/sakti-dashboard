@@ -38,6 +38,9 @@ import {
   Calendar,
   Mail,
   Phone,
+  ChevronLeft,
+  ChevronRight,
+  CalendarClock,
 } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
@@ -86,6 +89,8 @@ export default function KkpVerificationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [rejectionReason, setRejectionReason] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   // Sample data for KKP applications awaiting WD1 approval
   useEffect(() => {
@@ -210,40 +215,73 @@ export default function KkpVerificationPage() {
     setApplications(mockApplications)
   }, [])
 
+  // Utility function to get initials from name
+  const getInitials = (name: string) => {
+    const words = name.split(' ').filter(word => word.length > 0)
+    if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
+    return (words[0][0] + words[1][0]).toUpperCase()
+  }
+
+  // Utility function to get consistent color based on string
+  const getAvatarColor = (str: string) => {
+    const colors = [
+      'bg-blue-500',
+      'bg-green-500',
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+      'bg-cyan-500',
+      'bg-teal-500',
+      'bg-orange-500',
+      'bg-red-500',
+      'bg-violet-500',
+    ]
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    return colors[Math.abs(hash) % colors.length]
+  }
+
   // Filter applications based on search and status
   const filteredApplications = applications.filter((app) => {
-    const matchesSearch = 
+    const matchesSearch =
       app.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.student.nim.includes(searchQuery) ||
       app.company.name.toLowerCase().includes(searchQuery.toLowerCase())
-    
+
     const matchesStatus = statusFilter === "all" || app.status === statusFilter
 
     return matchesSearch && matchesStatus
   })
+
+  const totalPages = Math.ceil(filteredApplications.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedApplications = filteredApplications.slice(startIndex, endIndex)
 
   // Get status badge
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending_wd1":
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-            <Clock className="h-3.5 w-3.5 mr-1" />
-            Menunggu Tanda Tangan
+          <Badge className="bg-amber-100 text-amber-700 border border-amber-200 text-sm px-3 py-1">
+            <Clock className="h-4 w-4 mr-1" />
+            Menunggu TTD
           </Badge>
         )
       case "approved_wd1":
         return (
-          <Badge variant="outline" className="text-green-500 border-green-200 bg-green-500/10">
-            <CheckCircle className="h-3.5 w-3.5 mr-1" />
-            Telah Ditandatangani
+          <Badge className="bg-green-100 text-green-700 border border-green-200 text-sm px-3 py-1">
+            <CheckCircle className="h-4 w-4 mr-1" />
+            Ditandatangani
           </Badge>
         )
       case "rejected_wd1":
         return (
-          <Badge variant="outline" className="text-red-500 border-red-200 bg-red-500/10">
-            <XCircle className="h-3.5 w-3.5 mr-1" />
+          <Badge className="bg-red-100 text-red-700 border border-red-200 text-sm px-3 py-1">
+            <XCircle className="h-4 w-4 mr-1" />
             Ditolak
           </Badge>
         )
@@ -323,54 +361,61 @@ export default function KkpVerificationPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium">Total Pengajuan</CardTitle>
-            <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium">Total Pengajuan</CardTitle>
+            <div className="p-2.5 bg-blue-500/10 rounded-lg">
+              <FileText className="h-6 w-6 text-blue-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold">{applications.length}</div>
-            <p className="text-[10px] text-muted-foreground">Semester ini</p>
+            <div className="text-4xl font-bold text-blue-700">{applications.length}</div>
+            <p className="text-sm text-blue-600/80 mt-2">Semester ini</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium">Menunggu TTD</CardTitle>
-            <Clock className="h-3.5 w-3.5 text-amber-500" />
+        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium">Menunggu TTD</CardTitle>
+            <div className="p-2.5 bg-amber-500/10 rounded-lg">
+              <Clock className="h-6 w-6 text-amber-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-amber-500">{pendingCount}</div>
-            <p className="text-[10px] text-muted-foreground">Perlu tindak lanjut</p>
+            <div className="text-4xl font-bold text-amber-700">{pendingCount}</div>
+            <p className="text-sm text-amber-600/80 mt-2">Perlu tindak lanjut</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium">Telah Ditandatangani</CardTitle>
-            <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium">Telah Ditandatangani</CardTitle>
+            <div className="p-2.5 bg-green-500/10 rounded-lg">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-green-500">
+            <div className="text-4xl font-bold text-green-700">
               {applications.filter(app => app.status === "approved_wd1").length}
             </div>
-            <p className="text-[10px] text-muted-foreground">Selesai diproses</p>
+            <p className="text-sm text-green-600/80 mt-2">Selesai diproses</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters and Search */}
       <Card>
-        <CardContent className="pt-4">
-          <div className="flex flex-col gap-3 md:flex-row">
-            <div className="flex-1">
+        <CardContent className="pt-6">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Cari nama, NIM, judul, atau perusahaan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 text-sm"
+                className="h-12 text-base pl-11"
               />
             </div>
             <div className="flex gap-2">
@@ -378,9 +423,9 @@ export default function KkpVerificationPage() {
                 <Button
                   key={status}
                   variant={statusFilter === status ? "default" : "outline"}
-                  size="sm"
+                  size="default"
                   onClick={() => setStatusFilter(status as any)}
-                  className="h-9 text-xs"
+                  className="h-12 px-6 text-base"
                 >
                   {status === "all" && "Semua"}
                   {status === "pending_wd1" && "Menunggu"}
@@ -395,61 +440,72 @@ export default function KkpVerificationPage() {
 
       {/* Applications Table */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Daftar Pengajuan KKP</CardTitle>
-            <CardDescription className="text-xs">
+            <CardTitle className="text-xl font-semibold">Daftar Pengajuan KKP</CardTitle>
+            <CardDescription className="text-sm font-medium">
               {filteredApplications.length} pengajuan
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-md">
+          <div className="border-2 rounded-lg">
             <Table>
               <TableHeader>
-                <TableRow className="text-xs">
-                  <TableHead className="text-xs">Mahasiswa</TableHead>
-                  <TableHead className="text-xs">Judul KKP</TableHead>
-                  <TableHead className="text-xs">Perusahaan</TableHead>
-                  <TableHead className="text-xs">Tim</TableHead>
-                  <TableHead className="text-xs">Tgl. Prodi</TableHead>
-                  <TableHead className="text-xs">Status</TableHead>
-                  <TableHead className="text-xs">Aksi</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-sm font-semibold h-14">Mahasiswa</TableHead>
+                  <TableHead className="text-sm font-semibold h-14">Judul KKP</TableHead>
+                  <TableHead className="text-sm font-semibold h-14">Perusahaan</TableHead>
+                  <TableHead className="text-sm font-semibold h-14">Tim</TableHead>
+                  <TableHead className="text-sm font-semibold h-14">Tgl. Prodi</TableHead>
+                  <TableHead className="text-sm font-semibold h-14">Status</TableHead>
+                  <TableHead className="text-sm font-semibold h-14">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredApplications.map((application) => (
-                  <TableRow key={application.id} className="text-xs">
+                {paginatedApplications.map((application) => (
+                  <TableRow key={application.id} className="hover:bg-muted/30 h-20">
                     <TableCell>
-                      <div>
-                        <p className="font-medium text-xs">{application.student.name}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          {application.student.nim}
-                        </p>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-full ${getAvatarColor(application.student.name)} flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}>
+                          {getInitials(application.student.name)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{application.student.name}</p>
+                          <Badge className="bg-slate-100 text-slate-700 border border-slate-200 text-xs px-2 py-0.5 mt-1">
+                            {application.student.nim}
+                          </Badge>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="max-w-xs">
-                        <p className="font-medium truncate text-xs">{application.title}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          {application.startDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })} - {application.endDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
-                        </p>
+                        <p className="font-medium truncate text-sm">{application.title}</p>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                          <CalendarClock className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>{application.startDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })} - {application.endDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium text-xs">{application.company.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{application.company.city}</p>
+                        <p className="font-medium text-sm">{application.company.name}</p>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>{application.company.city}</span>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-xs">{application.groupMembers.length + 1}</span>
-                      </div>
+                      <Badge className="bg-indigo-100 text-indigo-700 border border-indigo-200 text-sm px-3 py-1">
+                        <Users className="w-4 h-4 mr-1" />
+                        {application.groupMembers.length + 1} Orang
+                      </Badge>
                     </TableCell>
                     <TableCell>
-                      <p className="text-xs">{application.prodiApprovalDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}</p>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {application.prodiApprovalDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                      </span>
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(application.status)}
@@ -459,9 +515,9 @@ export default function KkpVerificationPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleOpenDialog(application)}
-                        className="h-8 text-xs"
+                        className="h-9 px-4"
                       >
-                        <Eye className="w-3 h-3 mr-1" />
+                        <Eye className="w-5 h-5 mr-2" />
                         Detail
                       </Button>
                     </TableCell>
@@ -470,16 +526,58 @@ export default function KkpVerificationPage() {
               </TableBody>
             </Table>
             
-            {filteredApplications.length === 0 && (
-              <div className="flex flex-col items-center justify-center p-6 text-center">
-                <FileText className="w-10 h-10 mb-3 text-muted-foreground" />
-                <h3 className="text-sm font-medium">Tidak ada pengajuan</h3>
-                <p className="text-xs text-muted-foreground">
+            {paginatedApplications.length === 0 && (
+              <div className="flex flex-col items-center justify-center p-10 text-center">
+                <FileText className="w-14 h-14 mb-4 text-muted-foreground" />
+                <h3 className="text-base font-medium">Tidak ada pengajuan</h3>
+                <p className="text-sm text-muted-foreground mt-1">
                   Belum ada pengajuan KKP yang sesuai kriteria.
                 </p>
               </div>
             )}
           </div>
+
+          {/* Pagination */}
+          {filteredApplications.length > 0 && (
+            <div className="flex items-center justify-between mt-6">
+              <p className="text-sm text-muted-foreground font-medium">
+                Menampilkan {startIndex + 1} - {Math.min(endIndex, filteredApplications.length)} dari {filteredApplications.length} data
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="h-10 px-4"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className="h-10 w-10 text-base"
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-10 px-4"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
