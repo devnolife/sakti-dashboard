@@ -994,6 +994,11 @@ export const adminUmumMenuItems = [
         href: "/dashboard/admin_umum/correspondence/leadership",
       },
       {
+        id: "letter-types",
+        title: "Jenis Surat",
+        href: "/dashboard/admin-umum/letter-types",
+      },
+      {
         id: "templates",
         title: "Template Surat",
         href: "/dashboard/admin_umum/correspondence/templates",

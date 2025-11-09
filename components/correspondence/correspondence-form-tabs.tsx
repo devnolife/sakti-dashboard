@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -76,6 +76,29 @@ export function CorrespondenceFormTabs({
 }: CorrespondenceFormTabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab)
   const [isParentCivilServant, setIsParentCivilServant] = useState<"yes" | "no">("no")
+  const [customLetterTypes, setCustomLetterTypes] = useState<any[]>([])
+  const [isLoadingTypes, setIsLoadingTypes] = useState(true)
+
+  // Fetch custom letter types from API
+  useEffect(() => {
+    const fetchLetterTypes = async () => {
+      try {
+        setIsLoadingTypes(true)
+        const response = await fetch('/api/correspondence/letter-types')
+        const result = await response.json()
+
+        if (result.success) {
+          setCustomLetterTypes(result.data)
+        }
+      } catch (error) {
+        console.error('Error fetching letter types:', error)
+      } finally {
+        setIsLoadingTypes(false)
+      }
+    }
+
+    fetchLetterTypes()
+  }, [])
 
   // Initialize forms for each tab
   const activeForm = useForm<z.infer<typeof activeLetterSchema>>({

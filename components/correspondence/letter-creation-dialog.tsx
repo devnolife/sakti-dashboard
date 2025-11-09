@@ -117,11 +117,11 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
           <div className="space-y-6">
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
                 <h3 className="text-xl font-medium text-center">Surat Berhasil Dibuat!</h3>
-                <p className="text-center text-muted-foreground max-w-md">
+                <p className="max-w-md text-center text-muted-foreground">
                   Surat Anda telah berhasil dibuat dan disimpan. Anda dapat mengunduh atau mencetak surat ini.
                 </p>
                 <div className="flex gap-3 mt-4">
@@ -129,7 +129,7 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
                     Kembali ke Daftar
                   </Button>
                   <Button onClick={handleDownload}>
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="w-4 h-4 mr-2" />
                     Unduh Surat
                   </Button>
                 </div>
@@ -140,23 +140,23 @@ export function LetterCreationDialog({ open, onOpenChange, letterType = "active"
 
                 <div className="flex justify-between">
                   <Button variant="outline" onClick={handleBackToForm}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    <ArrowLeft className="w-4 h-4 mr-2" />
                     Kembali
                   </Button>
                   <div className="flex gap-2">
                     <Button variant="outline">
-                      <Printer className="mr-2 h-4 w-4" />
+                      <Printer className="w-4 h-4 mr-2" />
                       Cetak
                     </Button>
                     <Button onClick={handleGenerateLetter} disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>
-                          <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                          <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
                           Memproses...
                         </>
                       ) : (
                         <>
-                          <FileCheck className="mr-2 h-4 w-4" />
+                          <FileCheck className="w-4 h-4 mr-2" />
                           Buat Surat
                         </>
                       )}
