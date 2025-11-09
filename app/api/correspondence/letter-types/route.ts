@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getServerSession } from "next-auth"
+import { getServerAuthSession } from "@/lib/auth"
 
 // GET - Fetch available letter types for students/lecturers
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerAuthSession()
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

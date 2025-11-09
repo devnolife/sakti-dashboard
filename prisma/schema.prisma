@@ -612,18 +612,38 @@ model letter_requests {
 }
 
 model letter_types {
-  id                 String       @id
-  title              String       @unique
-  description        String
-  approval_role      ApprovalRole
-  estimated_days     Int
-  required_documents String[]
-  additional_fields  Json?
-  prodi_id           String?
-  is_global          Boolean      @default(false)
-  is_active          Boolean      @default(true)
-  template           String?
-  prodi              prodi?       @relation(fields: [prodi_id], references: [kode])
+  id                      String                    @id
+  title                   String                    @unique
+  description             String
+  approval_role           ApprovalRole
+  estimated_days          Int
+  required_documents      String[]
+  additional_fields       Json?
+  prodi_id                String?
+  is_global               Boolean                   @default(false)
+  is_active               Boolean                   @default(true)
+  template                String?
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+  prodi                   prodi?                    @relation(fields: [prodi_id], references: [kode])
+  correspondence_requests correspondence_requests[]
+}
+
+model correspondence_requests {
+  id              String            @id
+  letter_type_id  String
+  student_id      String
+  form_data       Json
+  attachments     Json?
+  status          ApprovalStatus    @default(pending)
+  rejection_note  String?
+  approved_by     String?
+  approved_at     DateTime?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  letter_types    letter_types      @relation(fields: [letter_type_id], references: [id])
+  students        students          @relation(fields: [student_id], references: [id])
+  approver        users?            @relation("ApprovedBy", fields: [approved_by], references: [id])
 }
 
 model notifications {
@@ -765,6 +785,7 @@ model students {
   lab_registrations          lab_registrations[]
   letter_requests            letter_requests[]
   payments                   payments[]
+  correspondence_requests    correspondence_requests[]
   lecturers                  lecturers?                   @relation(fields: [academic_advisor_id], references: [id])
   users                      users                        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   thesis_titles              thesis_titles[]
@@ -852,13 +873,14 @@ model users {
   created_at          DateTime              @default(now())
   updated_at          DateTime
   accounts            accounts[]
-  audit_logs          audit_logs[]
-  lecturers           lecturers?
-  sessions            sessions[]
-  staff               staff?
-  students            students?
-  laboratory_admins   laboratory_admins[]
-  reading_room_admins reading_room_admins[]
+  audit_logs              audit_logs[]
+  lecturers               lecturers?
+  sessions                sessions[]
+  staff                   staff?
+  students                students?
+  laboratory_admins       laboratory_admins[]
+  reading_room_admins     reading_room_admins[]
+  approved_correspondences correspondence_requests[] @relation("ApprovedBy")
 }
 
 model role_configurations {

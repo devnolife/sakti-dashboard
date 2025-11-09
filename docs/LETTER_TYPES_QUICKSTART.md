@@ -5,7 +5,7 @@
 ### 1. Akses Halaman
 - Login sebagai Admin Umum
 - Buka menu: **Korespondensi** → **Jenis Surat**
-- URL: `/dashboard/admin-umum/letter-types`
+- URL: `/dashboard/admin_umum/letter-types`
 
 ### 2. Tambah Jenis Surat Baru
 

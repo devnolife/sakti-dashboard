@@ -1,12 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { DynamicFieldsBuilder } from "./dynamic-fields-builder"
+import type { DynamicField } from "@/types/correspondence"
 import {
   Dialog,
   DialogContent,
@@ -44,7 +47,7 @@ interface LetterType {
   approval_role: string
   estimated_days: number
   required_documents: string[]
-  additional_fields?: any
+  additional_fields?: DynamicField[]
   prodi_id?: string
   is_global: boolean
   is_active: boolean
@@ -56,6 +59,7 @@ interface LetterType {
 }
 
 export default function LetterTypesManager() {
+  const router = useRouter()
   const [letterTypes, setLetterTypes] = useState<LetterType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -147,8 +151,7 @@ export default function LetterTypesManager() {
   }
 
   const handleEdit = (item: LetterType) => {
-    setEditingItem(item)
-    setFormData(item)
+    router.push(`/dashboard/admin_umum/letter-types/edit/${item.id}`)
   }
 
   const handleUpdate = async () => {
@@ -302,11 +305,19 @@ export default function LetterTypesManager() {
             </SelectContent>
           </Select>
         </div>
+        <Button onClick={() => router.push('/dashboard/admin_umum/letter-types/add')}>
+          <Plus className="w-4 h-4 mr-2" />
+          Tambah Jenis Surat
+        </Button>
+      </div>
+
+      {/* Old Add Dialog - Keep for backward compatibility but hidden */}
+      <div className="hidden">
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Tambah Jenis Surat
+              Tambah Jenis Surat (Old)
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -365,9 +376,8 @@ export default function LetterTypesManager() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="dekan">Dekan</SelectItem>
-                      <SelectItem value="kaprodi">Kepala Program Studi</SelectItem>
-                      <SelectItem value="admin-umum">Admin Umum</SelectItem>
-                      <SelectItem value="admin-keuangan">Admin Keuangan</SelectItem>
+                      <SelectItem value="staff_tu">Staff TU</SelectItem>
+                      <SelectItem value="prodi">Kaprodi</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -407,6 +417,13 @@ export default function LetterTypesManager() {
                 <p className="mt-1 text-xs text-muted-foreground">
                   Pisahkan dengan koma. Contoh: KTM, KRS, Transkrip Nilai
                 </p>
+              </div>
+
+              <div className="border-t pt-4">
+                <DynamicFieldsBuilder
+                  fields={formData.additional_fields || []}
+                  onChange={(fields) => setFormData({ ...formData, additional_fields: fields })}
+                />
               </div>
 
               <div>
@@ -582,7 +599,7 @@ export default function LetterTypesManager() {
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="edit-description" className="text-sm font-medium">
                 Deskripsi <span className="text-red-500">*</span>
@@ -596,7 +613,7 @@ export default function LetterTypesManager() {
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="edit-approval_role" className="text-sm font-medium">
@@ -612,9 +629,8 @@ export default function LetterTypesManager() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="dekan">Dekan</SelectItem>
-                    <SelectItem value="kaprodi">Kepala Program Studi</SelectItem>
-                    <SelectItem value="admin-umum">Admin Umum</SelectItem>
-                    <SelectItem value="admin-keuangan">Admin Keuangan</SelectItem>
+                    <SelectItem value="staff_tu">Staff TU</SelectItem>
+                    <SelectItem value="prodi">Kaprodi</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -633,7 +649,7 @@ export default function LetterTypesManager() {
                 />
               </div>
             </div>
-            
+
             <div>
               <Label htmlFor="edit-required_docs" className="text-sm font-medium">
                 Dokumen yang Diperlukan
@@ -649,6 +665,13 @@ export default function LetterTypesManager() {
               />
             </div>
 
+            <div className="border-t pt-4">
+              <DynamicFieldsBuilder
+                fields={formData.additional_fields || []}
+                onChange={(fields) => setFormData({ ...formData, additional_fields: fields })}
+              />
+            </div>
+
             <div>
               <Label htmlFor="edit-template" className="text-sm font-medium">
                 Template Surat (Opsional)
@@ -661,7 +684,7 @@ export default function LetterTypesManager() {
                 rows={4}
               />
             </div>
-            
+
             <div className="p-4 space-y-3 rounded-lg bg-muted/50">
               <Label className="text-sm font-medium">Status</Label>
               <div className="space-y-2">

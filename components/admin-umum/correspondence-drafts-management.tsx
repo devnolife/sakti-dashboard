@@ -277,7 +277,7 @@ export function CorrespondenceDraftsManagement() {
                         <TableCell className="font-medium">{draft.title}</TableCell>
                         <TableCell>{draft.type}</TableCell>
                         <TableCell>{getStatusBadge(draft.status)}</TableCell>
-                        <TableCell>{formatDate(draft.updatedAt)}</TableCell>
+                        <TableCell>{formatDate(draft.updated_at)}</TableCell>
                         <TableCell>{draft.createdBy}</TableCell>
                         <TableCell>
                           <DropdownMenu>
@@ -352,7 +352,7 @@ export function CorrespondenceDraftsManagement() {
           <div className="space-y-4">
             <div className="flex justify-between text-sm text-muted-foreground">
               <div>Created by: {selectedDraft?.createdBy}</div>
-              <div>Last updated: {selectedDraft && formatDate(selectedDraft.updatedAt)}</div>
+              <div>Last updated: {selectedDraft && formatDate(selectedDraft.updated_at)}</div>
             </div>
             <div className="p-4 border rounded-md">
               <div dangerouslySetInnerHTML={{ __html: selectedDraft?.content || "" }} />

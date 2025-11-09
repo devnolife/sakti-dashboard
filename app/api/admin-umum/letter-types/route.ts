@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getServerSession } from "next-auth"
+import { getServerAuthSession } from "@/lib/auth"
 
 // GET - Fetch all letter types
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerAuthSession()
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 // POST - Create new letter type
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerAuthSession()
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }

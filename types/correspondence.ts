@@ -51,3 +51,53 @@ export interface LetterType {
   }>
 }
 
+export type FieldType = "text" | "number" | "date" | "email" | "phone" | "textarea" | "file" | "select"
+
+export interface DynamicField {
+  id: string
+  label: string
+  type: FieldType
+  required: boolean
+  placeholder?: string
+  helpText?: string
+  options?: string[] // For select type
+  validation?: {
+    min?: number
+    max?: number
+    pattern?: string
+    fileTypes?: string[] // For file type
+    maxFileSize?: number // in MB
+  }
+}
+
+export interface LetterTypeFormData {
+  title: string
+  description: string
+  approval_role: string
+  estimated_days: number
+  required_documents: string[]
+  additional_fields: DynamicField[]
+  prodi_id?: string
+  is_global: boolean
+  template?: string
+}
+
+export interface CorrespondenceRequestData {
+  id: string
+  letter_type_id: string
+  student_id: string
+  form_data: Record<string, any>
+  attachments?: {
+    fieldId: string
+    fileName: string
+    fileUrl: string
+    fileSize: number
+    fileType: string
+  }[]
+  status: "pending" | "approved" | "rejected"
+  rejection_note?: string
+  approved_by?: string
+  approved_at?: string
+  created_at: string
+  updated_at: string
+}
