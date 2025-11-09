@@ -31,12 +31,8 @@ const activeLetterSchema = z.object({
 
 const leaveLetterSchema = z.object({
   leaveType: z.string().min(1, { message: "Pilih jenis cuti" }),
-  startDate: z.date({
-    required_error: "Tanggal mulai cuti harus diisi",
-  }),
-  endDate: z.date({
-    required_error: "Tanggal selesai cuti harus diisi",
-  }),
+  startDate: z.date(),
+  endDate: z.date(),
   reason: z.string().min(10, { message: "Alasan cuti harus diisi minimal 10 karakter" }),
   semester: z.string().min(1, { message: "Pilih semester" }),
   academicYear: z.string().min(1, { message: "Pilih tahun akademik" }),
@@ -44,9 +40,7 @@ const leaveLetterSchema = z.object({
 
 const paymentLetterSchema = z.object({
   paymentType: z.string().min(1, { message: "Pilih jenis pembayaran" }),
-  paymentDate: z.date({
-    required_error: "Tanggal pembayaran harus diisi",
-  }),
+  paymentDate: z.date(),
   amount: z.string().min(1, { message: "Jumlah pembayaran harus diisi" }),
   semester: z.string().min(1, { message: "Pilih semester" }),
   academicYear: z.string().min(1, { message: "Pilih tahun akademik" }),
@@ -276,19 +270,19 @@ export function CorrespondenceFormTabs({
     <Tabs defaultValue={defaultTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid grid-cols-4 mb-6">
         <TabsTrigger value="active" className="flex items-center gap-2">
-          <FileText className="h-4 w-4" />
+          <FileText className="w-4 h-4" />
           <span className="hidden sm:inline">Surat Aktif</span>
         </TabsTrigger>
         <TabsTrigger value="leave" className="flex items-center gap-2">
-          <CalendarIcon className="h-4 w-4" />
+          <CalendarIcon className="w-4 h-4" />
           <span className="hidden sm:inline">Surat Cuti</span>
         </TabsTrigger>
         <TabsTrigger value="payment" className="flex items-center gap-2">
-          <CreditCard className="h-4 w-4" />
+          <CreditCard className="w-4 h-4" />
           <span className="hidden sm:inline">Surat Pembayaran</span>
         </TabsTrigger>
         <TabsTrigger value="custom" className="flex items-center gap-2">
-          <FileCheck className="h-4 w-4" />
+          <FileCheck className="w-4 h-4" />
           <span className="hidden sm:inline">Surat Lainnya</span>
         </TabsTrigger>
       </TabsList>
@@ -296,7 +290,7 @@ export function CorrespondenceFormTabs({
       <TabsContent value="active" className="mt-0">
         <Form {...activeForm}>
           <form onSubmit={activeForm.handleSubmit(handleActiveSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={activeForm.control}
                 name="semester"
@@ -410,7 +404,7 @@ export function CorrespondenceFormTabs({
                             field.onChange("yes")
                             handleParentCivilServantChange("yes")
                           }}
-                          className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                          className="w-4 h-4 border-gray-300 text-primary focus:ring-primary"
                         />
                         <label htmlFor="parent-yes" className="text-sm font-normal">
                           Ya
@@ -428,7 +422,7 @@ export function CorrespondenceFormTabs({
                             field.onChange("no")
                             handleParentCivilServantChange("no")
                           }}
-                          className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                          className="w-4 h-4 border-gray-300 text-primary focus:ring-primary"
                         />
                         <label htmlFor="parent-no" className="text-sm font-normal">
                           Tidak
@@ -442,10 +436,10 @@ export function CorrespondenceFormTabs({
             />
 
             {isParentCivilServant === "yes" && (
-              <div className="space-y-6 rounded-lg border p-4 bg-muted/30">
+              <div className="p-4 space-y-6 border rounded-lg bg-muted/30">
                 <h3 className="text-sm font-medium">Informasi PNS/ASN Orang Tua</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <FormField
                     control={activeForm.control}
                     name="parentInstitution"
@@ -501,13 +495,13 @@ export function CorrespondenceFormTabs({
 
                 <div>
                   <FormLabel>Unggah SK PNS/ASN</FormLabel>
-                  <div className="mt-2 flex justify-center rounded-lg border border-dashed border-primary/20 bg-primary/5 px-6 py-8 transition-colors hover:bg-primary/10">
+                  <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
                     <div className="text-center">
-                      <Upload className="mx-auto h-10 w-10 text-primary/30" />
-                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                      <Upload className="w-10 h-10 mx-auto text-primary/30" />
+                      <div className="flex mt-4 text-sm leading-6 text-gray-600">
                         <label
                           htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md bg-transparent font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
+                          className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                         >
                           <span>Unggah file</span>
                           <input id="file-upload" name="file-upload" type="file" className="sr-only" />
@@ -524,7 +518,7 @@ export function CorrespondenceFormTabs({
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
                   Memproses...
                 </>
               ) : (
@@ -538,7 +532,7 @@ export function CorrespondenceFormTabs({
       <TabsContent value="leave" className="mt-0">
         <Form {...leaveForm}>
           <form onSubmit={leaveForm.handleSubmit(handleLeaveSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={leaveForm.control}
                 name="semester"
@@ -636,7 +630,7 @@ export function CorrespondenceFormTabs({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={leaveForm.control}
                 name="startDate"
@@ -651,7 +645,7 @@ export function CorrespondenceFormTabs({
                             className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
                             {field.value ? format(field.value, "PPP", { locale: id }) : <span>Pilih tanggal</span>}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -678,7 +672,7 @@ export function CorrespondenceFormTabs({
                             className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
                             {field.value ? format(field.value, "PPP", { locale: id }) : <span>Pilih tanggal</span>}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -724,13 +718,13 @@ export function CorrespondenceFormTabs({
 
             <div>
               <FormLabel>Dokumen Pendukung</FormLabel>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-primary/20 bg-primary/5 px-6 py-8 transition-colors hover:bg-primary/10">
+              <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
                 <div className="text-center">
-                  <Upload className="mx-auto h-10 w-10 text-primary/30" />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                  <Upload className="w-10 h-10 mx-auto text-primary/30" />
+                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
                     <label
                       htmlFor="leave-file-upload"
-                      className="relative cursor-pointer rounded-md bg-transparent font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
+                      className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                     >
                       <span>Unggah file</span>
                       <input id="leave-file-upload" name="leave-file-upload" type="file" className="sr-only" multiple />
@@ -745,7 +739,7 @@ export function CorrespondenceFormTabs({
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
                   Memproses...
                 </>
               ) : (
@@ -759,7 +753,7 @@ export function CorrespondenceFormTabs({
       <TabsContent value="payment" className="mt-0">
         <Form {...paymentForm}>
           <form onSubmit={paymentForm.handleSubmit(handlePaymentSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={paymentForm.control}
                 name="semester"
@@ -857,7 +851,7 @@ export function CorrespondenceFormTabs({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={paymentForm.control}
                 name="paymentDate"
@@ -872,7 +866,7 @@ export function CorrespondenceFormTabs({
                             className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
                             {field.value ? format(field.value, "PPP", { locale: id }) : <span>Pilih tanggal</span>}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -944,13 +938,13 @@ export function CorrespondenceFormTabs({
 
             <div>
               <FormLabel>Bukti Pembayaran</FormLabel>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-primary/20 bg-primary/5 px-6 py-8 transition-colors hover:bg-primary/10">
+              <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
                 <div className="text-center">
-                  <Upload className="mx-auto h-10 w-10 text-primary/30" />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                  <Upload className="w-10 h-10 mx-auto text-primary/30" />
+                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
                     <label
                       htmlFor="payment-file-upload"
-                      className="relative cursor-pointer rounded-md bg-transparent font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
+                      className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                     >
                       <span>Unggah file</span>
                       <input id="payment-file-upload" name="payment-file-upload" type="file" className="sr-only" />
@@ -965,7 +959,7 @@ export function CorrespondenceFormTabs({
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
                   Memproses...
                 </>
               ) : (
@@ -1039,7 +1033,7 @@ export function CorrespondenceFormTabs({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={customForm.control}
                 name="recipient"
@@ -1150,13 +1144,13 @@ export function CorrespondenceFormTabs({
 
             <div>
               <FormLabel>Dokumen Pendukung (Opsional)</FormLabel>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-primary/20 bg-primary/5 px-6 py-8 transition-colors hover:bg-primary/10">
+              <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
                 <div className="text-center">
-                  <Upload className="mx-auto h-10 w-10 text-primary/30" />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                  <Upload className="w-10 h-10 mx-auto text-primary/30" />
+                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
                     <label
                       htmlFor="custom-file-upload"
-                      className="relative cursor-pointer rounded-md bg-transparent font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
+                      className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                     >
                       <span>Unggah file</span>
                       <input id="custom-file-upload" name="custom-file-upload" type="file" className="sr-only" />
@@ -1171,7 +1165,7 @@ export function CorrespondenceFormTabs({
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
                   Memproses...
                 </>
               ) : (

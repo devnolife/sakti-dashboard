@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key'
 
 export interface DecodedToken {
+  [x: string]: any
   userId: string
   username: string
   role: string

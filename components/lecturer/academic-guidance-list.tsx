@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AdvisorControlCard } from "./advisor-control-card"
 import { toast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface ControlCardEntry {
   id: number
@@ -31,7 +30,11 @@ interface Student {
   controlCardEntries?: ControlCardEntry[]
 }
 
-export function AcademicGuidanceList() {
+interface AcademicGuidanceListProps {
+  filter?: "active" | "completed" | "all"
+}
+
+export function AcademicGuidanceList({ filter = "all" }: AcademicGuidanceListProps) {
   const [students, setStudents] = useState<Student[]>([
     {
       id: "1",
@@ -146,10 +149,10 @@ export function AcademicGuidanceList() {
       students.map((student) =>
         student.id === studentId
           ? {
-              ...student,
-              controlCardEntries: entries,
-              lastMeeting: new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }),
-            }
+            ...student,
+            controlCardEntries: entries,
+            lastMeeting: new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }),
+          }
           : student,
       ),
     )
@@ -167,219 +170,96 @@ export function AcademicGuidanceList() {
     setOpenDialog(true)
   }
 
+  // Filter students based on filter prop
+  const filteredStudents = students.filter((student) => {
+    if (filter === "active") return student.status === "Aktif"
+    if (filter === "completed") return student.status !== "Aktif"
+    return true // "all"
+  })
+
+  const getTitle = () => {
+    if (filter === "active") return "Mahasiswa Aktif"
+    if (filter === "completed") return "Mahasiswa Tidak Aktif"
+    return "Daftar Mahasiswa Bimbingan"
+  }
+
+  const getDescription = () => {
+    if (filter === "active") return "Daftar mahasiswa aktif yang berada di bawah bimbingan akademik Anda"
+    if (filter === "completed") return "Daftar mahasiswa tidak aktif atau cuti yang berada di bawah bimbingan akademik Anda"
+    return "Daftar lengkap mahasiswa yang berada di bawah bimbingan akademik Anda"
+  }
+
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">Semua Mahasiswa</TabsTrigger>
-          <TabsTrigger value="active">Aktif</TabsTrigger>
-          <TabsTrigger value="inactive">Tidak Aktif</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle>Daftar Mahasiswa Bimbingan</CardTitle>
-              <CardDescription>Daftar lengkap mahasiswa yang berada di bawah bimbingan akademik Anda</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Mahasiswa</TableHead>
-                      <TableHead>NIM</TableHead>
-                      <TableHead>Semester</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Pertemuan Terakhir</TableHead>
-                      <TableHead>Kartu Kontrol</TableHead>
-                      <TableHead className="text-right">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {students.map((student) => (
-                      <TableRow key={student.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={student.avatar} alt={student.name} />
-                              <AvatarFallback>{student.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                            </Avatar>
-                            <div>{student.name}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{student.nim}</TableCell>
-                        <TableCell>{student.semester}</TableCell>
-                        <TableCell>
-                          <Badge variant={student.status === "Aktif" ? "default" : "secondary"}>{student.status}</Badge>
-                        </TableCell>
-                        <TableCell>{student.lastMeeting}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              student.controlCardEntries && student.controlCardEntries.length > 0
-                                ? "success"
-                                : "outline"
-                            }
-                          >
-                            {student.controlCardEntries && student.controlCardEntries.length > 0
-                              ? `${student.controlCardEntries.length} entri`
-                              : "Belum ada"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" size="sm" onClick={() => openControlCard(student)}>
-                              <ClipboardList className="h-4 w-4 mr-2" />
-                              Kartu Kontrol
-                            </Button>
-                            <Button variant="ghost" size="icon">
-                              <MessageCircle className="h-4 w-4" />
-                              <span className="sr-only">Kirim Pesan</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="active" className="mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle>Mahasiswa Aktif</CardTitle>
-              <CardDescription>Daftar mahasiswa aktif yang berada di bawah bimbingan akademik Anda</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Mahasiswa</TableHead>
-                      <TableHead>NIM</TableHead>
-                      <TableHead>Semester</TableHead>
-                      <TableHead>Pertemuan Terakhir</TableHead>
-                      <TableHead>Kartu Kontrol</TableHead>
-                      <TableHead className="text-right">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {students
-                      .filter((s) => s.status === "Aktif")
-                      .map((student) => (
-                        <TableRow key={student.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-8 w-8">
-                                <AvatarImage src={student.avatar} alt={student.name} />
-                                <AvatarFallback>{student.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                              </Avatar>
-                              <div>{student.name}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{student.nim}</TableCell>
-                          <TableCell>{student.semester}</TableCell>
-                          <TableCell>{student.lastMeeting}</TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                student.controlCardEntries && student.controlCardEntries.length > 0
-                                  ? "success"
-                                  : "outline"
-                              }
-                            >
-                              {student.controlCardEntries && student.controlCardEntries.length > 0
-                                ? `${student.controlCardEntries.length} entri`
-                                : "Belum ada"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="outline" size="sm" onClick={() => openControlCard(student)}>
-                                <ClipboardList className="h-4 w-4 mr-2" />
-                                Kartu Kontrol
-                              </Button>
-                              <Button variant="ghost" size="icon">
-                                <MessageCircle className="h-4 w-4" />
-                                <span className="sr-only">Kirim Pesan</span>
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="inactive" className="mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle>Mahasiswa Tidak Aktif</CardTitle>
-              <CardDescription>
-                Daftar mahasiswa tidak aktif atau cuti yang berada di bawah bimbingan akademik Anda
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Mahasiswa</TableHead>
-                      <TableHead>NIM</TableHead>
-                      <TableHead>Semester</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Pertemuan Terakhir</TableHead>
-                      <TableHead className="text-right">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {students
-                      .filter((s) => s.status !== "Aktif")
-                      .map((student) => (
-                        <TableRow key={student.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-8 w-8">
-                                <AvatarImage src={student.avatar} alt={student.name} />
-                                <AvatarFallback>{student.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                              </Avatar>
-                              <div>{student.name}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{student.nim}</TableCell>
-                          <TableCell>{student.semester}</TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">{student.status}</Badge>
-                          </TableCell>
-                          <TableCell>{student.lastMeeting}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="outline" size="sm" onClick={() => openControlCard(student)}>
-                                <ClipboardList className="h-4 w-4 mr-2" />
-                                Kartu Kontrol
-                              </Button>
-                              <Button variant="ghost" size="icon">
-                                <MessageCircle className="h-4 w-4" />
-                                <span className="sr-only">Kirim Pesan</span>
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle>{getTitle()}</CardTitle>
+          <CardDescription>{getDescription()}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Mahasiswa</TableHead>
+                  <TableHead>NIM</TableHead>
+                  <TableHead>Semester</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Pertemuan Terakhir</TableHead>
+                  <TableHead>Kartu Kontrol</TableHead>
+                  <TableHead className="text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudents.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={student.avatar} alt={student.name} />
+                          <AvatarFallback>{student.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div>{student.name}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{student.nim}</TableCell>
+                    <TableCell>{student.semester}</TableCell>
+                    <TableCell>
+                      <Badge variant={student.status === "Aktif" ? "default" : "secondary"}>{student.status}</Badge>
+                    </TableCell>
+                    <TableCell>{student.lastMeeting}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          student.controlCardEntries && student.controlCardEntries.length > 0
+                            ? "success"
+                            : "outline"
+                        }
+                      >
+                        {student.controlCardEntries && student.controlCardEntries.length > 0
+                          ? `${student.controlCardEntries.length} entri`
+                          : "Belum ada"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" size="sm" onClick={() => openControlCard(student)}>
+                          <ClipboardList className="h-4 w-4 mr-2" />
+                          Kartu Kontrol
+                        </Button>
+                        <Button variant="ghost" size="icon">
+                          <MessageCircle className="h-4 w-4" />
+                          <span className="sr-only">Kirim Pesan</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

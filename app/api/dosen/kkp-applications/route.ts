@@ -90,13 +90,13 @@ export async function GET(request: NextRequest) {
         address: app.companies?.address,
         city: app.companies?.city
       },
-      topic: app.topic,
+      title: app.title,
+      application_number: app.application_number,
       description: app.description,
       status: app.status,
+      submission_date: app.submission_date,
       start_date: app.start_date,
       end_date: app.end_date,
-      location: app.location,
-      is_plus: app.is_plus,
       supervisor: app.lecturers ? {
         id: app.lecturers.id,
         name: app.lecturers.users?.name
@@ -143,18 +143,17 @@ export async function POST(request: NextRequest) {
     const {
       student_id,
       company_id,
-      topic,
+      title,
       description,
       start_date,
       end_date,
-      location,
-      is_plus
+      application_number
     } = body
 
     // Validate required fields
-    if (!student_id || !company_id || !topic) {
+    if (!student_id || !company_id || !title) {
       return NextResponse.json(
-        { error: 'Missing required fields: student_id, company_id, topic' },
+        { error: 'Missing required fields: student_id, company_id, title' },
         { status: 400 }
       )
     }
@@ -204,13 +203,13 @@ export async function POST(request: NextRequest) {
         student_id,
         company_id,
         supervisor_id: lecturer.id,
-        topic,
-        description: description || null,
+        application_number: application_number || `KKP-${Date.now()}`,
+        title,
+        description: description || '',
         status: 'approved', // Langsung approved karena dibuat oleh dosen
-        start_date: start_date ? new Date(start_date) : null,
-        end_date: end_date ? new Date(end_date) : null,
-        location: location || null,
-        is_plus: is_plus || false,
+        submission_date: new Date(),
+        start_date: start_date ? new Date(start_date) : new Date(),
+        end_date: end_date ? new Date(end_date) : new Date(),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -244,11 +243,14 @@ export async function POST(request: NextRequest) {
         },
         company: {
           id: application.company_id,
-          name: application.companies?.name || ''
+          name: (application as any).companies?.name || ''
         },
-        topic: application.topic,
+        application_number: application.application_number,
+        title: application.title,
         status: application.status,
-        is_plus: application.is_plus,
+        submission_date: application.submission_date,
+        start_date: application.start_date,
+        end_date: application.end_date,
         created_at: application.created_at
       }
     }, { status: 201 })
