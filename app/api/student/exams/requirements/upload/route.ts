@@ -12,15 +12,15 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const requirementId = formData.get('requirementId') as string
+    const requirement_id = formData.get('requirementId') as string
     let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch {} }
-    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    
-    console.log(`📤 Upload attempt - UserId: ${user_id}, RequirementId: ${requirementId}`)
-    
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch {} }
+    if (!user_id) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
+    console.log(`📤 Upload attempt - UserId: ${user_id}, RequirementId: ${requirement_id}`)
+
     const student = await prisma.students.findUnique({
       where: { user_id },
       select: { id: true, nim: true }
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     const student_id = student.id
     console.log(`✅ Found student ID: ${student_id} (NIM: ${student.nim})`)
 
-    if (!file || !requirementId || !studentId) {
+    if (!file || !requirement_id || !student_id) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get requirement details to determine exam type
-    const requirement = await prisma.examRequirement.findUnique({
-      where: { id: requirementId }
+    const requirement = await prisma.exam_requirements.findUnique({
+      where: { id: requirement_id }
     })
 
     if (!requirement) {
@@ -73,9 +73,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create directory structure based on exam type
-    const examTypeFolder = `ujian-${requirement.examType}`
+    const examTypeFolder = `ujian-${requirement.exam_type}`
     const uploadDir = join(process.cwd(), 'public', 'uploads', examTypeFolder)
-    
+
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true })
     }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now()
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-    const fileName = `${student_id}_${requirementId}_${timestamp}_${sanitizedFileName}`
+    const fileName = `${student_id}_${requirement_id}_${timestamp}_${sanitizedFileName}`
     const filePath = join(uploadDir, fileName)
     const fileUrl = `/uploads/${examTypeFolder}/${fileName}`
 
@@ -93,39 +93,40 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer)
 
     // Update or create student requirement record
-    console.log(`💾 Upserting student requirement - StudentId: ${student_id}, RequirementId: ${requirementId}`)
-    
-    const studentRequirement = await prisma.examStudentRequirement.upsert({
+    console.log(`💾 Upserting student requirement - StudentId: ${student_id}, RequirementId: ${requirement_id}`)
+
+    const studentRequirement = await prisma.exam_student_requirements.upsert({
       where: {
-        studentId_requirementId: {
+        student_id_requirement_id: {
           student_id,
-          requirementId
+          requirement_id
         }
       },
       update: {
         completed: true,
-        completedAt: new Date(),
-        fileUrl,
-        fileName: file.name,
-        fileSize: file.size,
-        uploadedAt: new Date()
+        completed_at: new Date(),
+        file_url: fileUrl,
+        file_name: file.name,
+        file_size: file.size,
+        uploaded_at: new Date()
       },
       create: {
+        id: `examstureq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         student_id,
-        requirementId,
+        requirement_id,
         completed: true,
-        completedAt: new Date(),
-        fileUrl,
-        fileName: file.name,
-        fileSize: file.size,
-        uploadedAt: new Date()
+        completed_at: new Date(),
+        file_url: fileUrl,
+        file_name: file.name,
+        file_size: file.size,
+        uploaded_at: new Date()
       }
     })
 
     console.log(`✅ Student requirement updated successfully:`, {
       id: studentRequirement.id,
       completed: studentRequirement.completed,
-      fileName: studentRequirement.fileName
+      file_name: studentRequirement.file_name
     })
 
     return NextResponse.json({
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
         fileUrl,
         fileName: file.name,
         fileSize: file.size,
-        uploadedAt: studentRequirement.uploadedAt
+        uploadedAt: studentRequirement.uploaded_at
       }
     })
 
@@ -150,9 +151,9 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const requirementId = searchParams.get('requirementId')
+    const requirement_id = searchParams.get('requirementId')
 
-    if (!requirementId) {
+    if (!requirement_id) {
       return NextResponse.json(
         { success: false, error: 'Missing requirement ID' },
         { status: 400 }
@@ -163,8 +164,8 @@ export async function DELETE(request: NextRequest) {
     let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch {} }
-    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch {} }
+    if (!user_id) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     const student = await prisma.students.findUnique({
       where: { user_id },
       select: { id: true }
@@ -178,14 +179,14 @@ export async function DELETE(request: NextRequest) {
     }
 
     const student_id = student.id
-    console.log(`🗑️ Delete attempt - StudentId: ${student_id}, RequirementId: ${requirementId}`)
+    console.log(`🗑️ Delete attempt - StudentId: ${student_id}, RequirementId: ${requirement_id}`)
 
     // Find the student requirement record
-    const studentRequirement = await prisma.examStudentRequirement.findUnique({
+    const studentRequirement = await prisma.exam_student_requirements.findUnique({
       where: {
-        studentId_requirementId: {
+        student_id_requirement_id: {
           student_id,
-          requirementId
+          requirement_id
         }
       }
     })
@@ -198,8 +199,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete physical file if exists
-    if (studentRequirement.fileUrl) {
-      const filePath = join(process.cwd(), 'public', studentRequirement.fileUrl)
+    if (studentRequirement.file_url) {
+      const filePath = join(process.cwd(), 'public', studentRequirement.file_url)
       try {
         const fs = await import('fs/promises')
         await fs.unlink(filePath)
@@ -210,20 +211,20 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Update database record
-    await prisma.examStudentRequirement.update({
+    await prisma.exam_student_requirements.update({
       where: {
-        studentId_requirementId: {
+        student_id_requirement_id: {
           student_id,
-          requirementId
+          requirement_id
         }
       },
       data: {
         completed: false,
-        completedAt: null,
-        fileUrl: null,
-        fileName: null,
-        fileSize: null,
-        uploadedAt: null
+        completed_at: null,
+        file_url: null,
+        file_name: null,
+        file_size: null,
+        uploaded_at: null
       }
     })
 

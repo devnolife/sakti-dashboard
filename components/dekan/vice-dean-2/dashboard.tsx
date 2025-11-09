@@ -1,19 +1,11 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BudgetAllocationChart } from "./budget-allocation-chart"
 import { ExamApplicationsChart } from "./exam-applications-chart"
 import { LabFeePaymentsChart } from "./lab-fee-payments-chart"
-import { BudgetSummaryCards } from "./budget-summary-cards"
-import { DepartmentFinancialTable } from "./department-financial-table"
 import { RecentTransactions } from "./recent-transactions"
-import { FinancialMetricsCards } from "./financial-metrics-cards"
-import { PaymentReports } from "./payment-reports"
 import {
-  BarChart3,
-  PieChart,
-  LineChart,
   ArrowUpRight,
   TrendingUp,
   Wallet,
@@ -24,7 +16,7 @@ import {
 
 export function ViceDean2Dashboard() {
   return (
-    <div className="pb-5 space-y-6">
+    <div className="space-y-6">
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="overflow-hidden transition-all border-none shadow-md bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">
@@ -112,116 +104,52 @@ export function ViceDean2Dashboard() {
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Ikhtisar
-          </TabsTrigger>
-          <TabsTrigger value="budget">
-            <PieChart className="w-4 h-4 mr-2" />
-            Anggaran
-          </TabsTrigger>
-          <TabsTrigger value="academic">
-            <LineChart className="w-4 h-4 mr-2" />
-            Akademik
-          </TabsTrigger>
-          <TabsTrigger value="payments">
-            <Wallet className="w-4 h-4 mr-2" />
-            Laporan Pembayaran
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="lg:col-span-4">
-              <CardHeader>
-                <CardTitle>Alokasi Anggaran Fakultas</CardTitle>
-                <CardDescription>Distribusi anggaran berdasarkan departemen dan kategori</CardDescription>
-              </CardHeader>
-              <CardContent className="pl-2">
-                <BudgetAllocationChart />
-              </CardContent>
-            </Card>
-
-            <Card className="lg:col-span-3">
-              <CardHeader>
-                <CardTitle>Pendaftar Ujian per Departemen</CardTitle>
-                <CardDescription>Jumlah mahasiswa yang mendaftar ujian semester ini</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ExamApplicationsChart />
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="lg:col-span-3">
-              <CardHeader>
-                <CardTitle>Pembayaran Biaya Laboratorium</CardTitle>
-                <CardDescription>Perbandingan pembayaran biaya lab per departemen</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <LabFeePaymentsChart />
-              </CardContent>
-            </Card>
-
-            <Card className="lg:col-span-4">
-              <CardHeader>
-                <CardTitle>Transaksi Terbaru</CardTitle>
-                <CardDescription>10 transaksi keuangan terbaru fakultas</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RecentTransactions />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="budget" className="space-y-4">
-          <BudgetSummaryCards />
-
-          <Card>
+      {/* Overview Charts */}
+      <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="lg:col-span-4">
             <CardHeader>
-              <CardTitle>Rincian Keuangan Departemen</CardTitle>
-              <CardDescription>Perbandingan anggaran, pengeluaran, dan sisa dana per departemen</CardDescription>
+              <CardTitle>Alokasi Anggaran Fakultas</CardTitle>
+              <CardDescription>Distribusi anggaran berdasarkan departemen dan kategori</CardDescription>
             </CardHeader>
-            <CardContent>
-              <DepartmentFinancialTable />
+            <CardContent className="pl-2">
+              <BudgetAllocationChart />
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="academic" className="space-y-4">
-          <FinancialMetricsCards />
+          <Card className="lg:col-span-3">
+            <CardHeader>
+              <CardTitle>Pendaftar Ujian per Departemen</CardTitle>
+              <CardDescription>Jumlah mahasiswa yang mendaftar ujian semester ini</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExamApplicationsChart />
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pendaftar Ujian per Departemen</CardTitle>
-                <CardDescription>Tren pendaftaran ujian dalam 6 bulan terakhir</CardDescription>
-              </CardHeader>
-              <CardContent className="h-[300px]">
-                <ExamApplicationsChart variant="line" />
-              </CardContent>
-            </Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="lg:col-span-3">
+            <CardHeader>
+              <CardTitle>Pembayaran Biaya Laboratorium</CardTitle>
+              <CardDescription>Perbandingan pembayaran biaya lab per departemen</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LabFeePaymentsChart />
+            </CardContent>
+          </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Pembayaran Biaya Laboratorium</CardTitle>
-                <CardDescription>Tren pembayaran biaya lab dalam 6 bulan terakhir</CardDescription>
-              </CardHeader>
-              <CardContent className="h-[300px]">
-                <LabFeePaymentsChart variant="line" />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="payments" className="space-y-4">
-          <PaymentReports />
-        </TabsContent>
-      </Tabs>
+          <Card className="lg:col-span-4">
+            <CardHeader>
+              <CardTitle>Transaksi Terbaru</CardTitle>
+              <CardDescription>10 transaksi keuangan terbaru fakultas</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RecentTransactions />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

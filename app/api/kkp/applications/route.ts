@@ -9,8 +9,7 @@ const createKkpApplicationSchema = z.object({
   start_date: z.string().datetime(),
   end_date: z.string().datetime(),
   student_id: z.string(),
-  companyId: z.string(),
-  groupMembers: z.array(z.string()).optional(),
+  company_id: z.string(),
   notes: z.string().optional()
 })
 
@@ -24,8 +23,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const status = searchParams.get('status')
-    const student_id = searchParams.get('studentId')
-    const supervisor_id = searchParams.get('supervisorId')
+    const studentIdParam = searchParams.get('studentId')
+    const supervisorIdParam = searchParams.get('supervisorId')
     const search = searchParams.get('search')
 
     const skip = (page - 1) * limit
@@ -39,14 +38,14 @@ export async function GET(request: NextRequest) {
         where: { user_id: token.sub }
       })
       if (student) {
-        where.studentId = student.id
+        where.student_id = student.id
       } else {
         return NextResponse.json({ data: [], pagination: { total: 0, page, limit, totalPages: 0 } })
       }
     } else if (token.role === 'dosen') {
       // Lecturers can see applications they supervise
-      if (supervisorId) {
-        where.supervisorId = supervisorId
+      if (supervisorIdParam) {
+        where.supervisor_id = supervisorIdParam
       }
     }
 
@@ -54,15 +53,15 @@ export async function GET(request: NextRequest) {
       where.status = status
     }
 
-    if (studentId && hasPermission(token.role as string, 'read', 'applications')) {
-      where.studentId = studentId
+    if (studentIdParam && hasPermission(token.role as string, 'read', 'applications')) {
+      where.student_id = studentIdParam
     }
 
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
-        { applicationNumber: { contains: search, mode: 'insensitive' } },
-        { student: { user: { name: { contains: search, mode: 'insensitive' } } } }
+        { application_number: { contains: search, mode: 'insensitive' } },
+        { students: { users: { name: { contains: search, mode: 'insensitive' } } } }
       ]
     }
 
@@ -72,9 +71,9 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         include: {
-          student: {
+          students: {
             include: {
-              user: {
+              users: {
                 select: {
                   id: true,
                   name: true,
@@ -83,9 +82,9 @@ export async function GET(request: NextRequest) {
               }
             }
           },
-          supervisor: {
+          lecturers: {
             include: {
-              user: {
+              users: {
                 select: {
                   id: true,
                   name: true,
@@ -94,18 +93,18 @@ export async function GET(request: NextRequest) {
               }
             }
           },
-          company: true,
-          documents: {
+          companies: true,
+          kkp_documents: {
             select: {
               id: true,
               name: true,
               type: true,
               status: true,
-              uploadDate: true
+              upload_date: true
             }
           },
-          approvals: {
-            orderBy: { approvedAt: 'desc' }
+          kkp_approvals: {
+            orderBy: { approved_at: 'desc' }
           }
         },
         orderBy: { submission_date: 'desc' }
@@ -146,25 +145,25 @@ export async function POST(request: NextRequest) {
     const currentYear = new Date().getFullYear()
     const lastApplication = await prisma.kkp_applications.findFirst({
       where: {
-        applicationNumber: {
+        application_number: {
           startsWith: `KKP-${currentYear}`
         }
       },
-      orderBy: { applicationNumber: 'desc' }
+      orderBy: { application_number: 'desc' }
     })
 
     let nextNumber = 1
     if (lastApplication) {
-      const lastNumber = parseInt(lastApplication.applicationNumber.split('-')[2])
+      const lastNumber = parseInt(lastApplication.application_number.split('-')[2])
       nextNumber = lastNumber + 1
     }
 
-    const applicationNumber = `KKP-${currentYear}-${nextNumber.toString().padStart(3, '0')}`
+    const application_number = `KKP-${currentYear}-${nextNumber.toString().padStart(3, '0')}`
 
     // Validate student and company exist
     const [student, company] = await Promise.all([
-      prisma.students.findUnique({ where: { id: validatedData.studentId } }),
-      prisma.companies.findUnique({ where: { id: validatedData.companyId } })
+      prisma.students.findUnique({ where: { id: validatedData.student_id } }),
+      prisma.companies.findUnique({ where: { id: validatedData.company_id } })
     ])
 
     if (!student) {
@@ -178,24 +177,21 @@ export async function POST(request: NextRequest) {
     // Create application with initial approval workflow
     const application = await prisma.kkp_applications.create({
       data: {
-        ...validatedData,
-        applicationNumber,
-        start_date: new Date(validatedData.startDate),
-        end_date: new Date(validatedData.endDate),
-        groupMembers: validatedData.groupMembers || [],
-        approvals: {
-          create: [
-            {
-              approverRole: 'staff_tu',
-              status: 'pending'
-            }
-          ]
-        }
+        id: `kkp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        title: validatedData.title,
+        description: validatedData.description,
+        application_number,
+        start_date: new Date(validatedData.start_date),
+        end_date: new Date(validatedData.end_date),
+        student_id: validatedData.student_id,
+        company_id: validatedData.company_id,
+        notes: validatedData.notes,
+        updated_at: new Date()
       },
       include: {
-        student: {
+        students: {
           include: {
-            user: {
+            users: {
               select: {
                 id: true,
                 name: true,
@@ -204,15 +200,15 @@ export async function POST(request: NextRequest) {
             }
           }
         },
-        company: true,
-        approvals: true
+        companies: true,
+        kkp_approvals: true
       }
     })
 
     return NextResponse.json(application, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
+      return NextResponse.json({ error: error.issues }, { status: 400 })
     }
     console.error('Error creating KKP application:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

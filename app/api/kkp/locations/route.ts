@@ -6,18 +6,18 @@ import { getServerActionUserId } from "@/lib/auth-utils"
 // GET - Ambil semua lokasi KKP yang tersedia
 export async function GET() {
   try {
-    const locations = await prisma.kkpLocation.findMany({
+    const locations = await prisma.kkp_locations.findMany({
       where: {
         is_active: true,
       },
       include: {
-        company: true,
-        createdBy: {
+        companies: true,
+        students: {
           select: {
             id: true,
             nim: true,
             user_id: true,
-            user: {
+            users: {
               select: {
                 id: true,
                 name: true,
@@ -25,12 +25,7 @@ export async function GET() {
             },
           },
         },
-        subLocations: true,
-        _count: {
-          select: {
-            documents: true,
-          },
-        },
+        kkp_sub_locations: true
       },
       orderBy: {
         created_at: "desc",
@@ -73,10 +68,10 @@ export async function POST(request: NextRequest) {
       user_id = token.sub
     }
     // Fallback ke cookie JWT server action helper bila authMiddleware gagal (token adalah NextResponse)
-    if (!userId) {
+    if (!user_id) {
       try { user_id = await getServerActionUserId() } catch {}
     }
-    if (!userId) {
+    if (!user_id) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
     
@@ -134,7 +129,7 @@ export async function POST(request: NextRequest) {
     const cleanDescription = description && description.trim() ? description : null
 
     // Check for duplicate location (same name and address)
-    const existingLocation = await prisma.kkpLocation.findFirst({
+    const existingLocation = await prisma.kkp_locations.findFirst({
       where: {
         name,
         address,
@@ -153,8 +148,9 @@ export async function POST(request: NextRequest) {
 
     // Create the location with sub-locations in a transaction
     const result = await prisma.$transaction(async (tx) => {
-      const location = await tx.kkpLocation.create({
+      const location = await tx.kkp_locations.create({
         data: {
+          id: `kkploc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           name,
           address,
           city,
@@ -163,36 +159,40 @@ export async function POST(request: NextRequest) {
           positions,
           quota: quota || 0,
           remaining: quota || 0,
-          contactPerson: cleanContactPerson,
-          contactEmail: cleanContactEmail,
-          contactPhone: cleanContactPhone,
+          contact_person: cleanContactPerson,
+          contact_email: cleanContactEmail,
+          contact_phone: cleanContactPhone,
           description: cleanDescription,
-          companyId: cleanCompanyId,
-          createdById: student.id,
+          company_id: cleanCompanyId,
+          created_by_id: student.id,
         },
       })
 
       // Create sub-locations if provided
       if (subLocations.length > 0) {
-        await tx.kkpSubLocation.createMany({
-          data: subLocations.map((subLoc: any) => ({
-            ...subLoc,
-            locationId: location.id,
+        await tx.kkp_sub_locations.createMany({
+          data: subLocations.map((subLoc: any, index: number) => ({
+            id: `kkpsubloc_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+            name: subLoc.name,
+            address: subLoc.address,
+            quota: subLoc.quota || 0,
+            remaining: subLoc.remaining || subLoc.quota || 0,
+            location_id: location.id,
           })),
         })
       }
 
       // Fetch the complete location with relations
-      return await tx.kkpLocation.findUnique({
+      return await tx.kkp_locations.findUnique({
         where: { id: location.id },
         include: {
-          company: true,
-          createdBy: {
+          companies: true,
+          students: {
             select: {
               id: true,
               nim: true,
               user_id: true,
-              user: {
+              users: {
                 select: {
                   id: true,
                   name: true,
@@ -200,12 +200,7 @@ export async function POST(request: NextRequest) {
               },
             },
           },
-          subLocations: true,
-          _count: {
-            select: {
-              documents: true,
-            },
-          },
+          kkp_sub_locations: true
         },
       })
     })

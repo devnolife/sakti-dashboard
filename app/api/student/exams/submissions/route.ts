@@ -9,8 +9,8 @@ export async function GET(request: NextRequest) {
     let user_id: string | null = null
     const token = await authMiddleware(request)
     if (!(token instanceof NextResponse)) user_id = token.sub
-    if (!userId) { try { user_id = await getServerActionUserId() } catch { } }
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!user_id) { try { user_id = await getServerActionUserId() } catch { } }
+    if (!user_id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') // all, pending, approved, completed, rejected
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     // Build where clause based on status filter
     let whereClause: any = {
-      student_id: studentId
+      student_id: student_id
     }
 
     if (status && status !== 'all') {
@@ -52,26 +52,26 @@ export async function GET(request: NextRequest) {
     const examSubmissions = await prisma.exam_applications.findMany({
       where: whereClause,
       include: {
-        advisor1: {
+        lecturers_exam_applications_advisor_1_id_to_lecturers: {
           include: {
-            user: true
+            users: true
           }
         },
-        advisor2: {
+        lecturers_exam_applications_advisor_2_id_to_lecturers: {
           include: {
-            user: true
+            users: true
           }
         },
-        committees: {
+        exam_committees: {
           include: {
-            lecturer: {
+            lecturers: {
               include: {
-                user: true
+                users: true
               }
             }
           }
         },
-        documents: true
+        exam_documents: true
       },
       orderBy: {
         created_at: 'desc'
@@ -85,14 +85,14 @@ export async function GET(request: NextRequest) {
         exam.type === 'result' ? 'Ujian Hasil' :
           exam.type === 'closing' ? 'Ujian Tertutup' : 'Ujian Lainnya',
       title: exam.title,
-      submittedDate: exam.submissionDate.toISOString().split('T')[0],
-      scheduled_date: exam.scheduledDate ? exam.scheduledDate.toISOString().split('T')[0] : null,
-      scheduledTime: exam.scheduledDate ?
-        `${exam.scheduledDate.getHours().toString().padStart(2, '0')}:${exam.scheduledDate.getMinutes().toString().padStart(2, '0')} - ${(exam.scheduledDate.getHours() + 2).toString().padStart(2, '0')}:${exam.scheduledDate.getMinutes().toString().padStart(2, '0')}` : null,
+      submittedDate: exam.submission_date.toISOString().split('T')[0],
+      scheduled_date: exam.scheduled_date ? exam.scheduled_date.toISOString().split('T')[0] : null,
+      scheduledTime: exam.scheduled_date ?
+        `${exam.scheduled_date.getHours().toString().padStart(2, '0')}:${exam.scheduled_date.getMinutes().toString().padStart(2, '0')} - ${(exam.scheduled_date.getHours() + 2).toString().padStart(2, '0')}:${exam.scheduled_date.getMinutes().toString().padStart(2, '0')}` : null,
       status: mapStatus(exam.status),
       location: exam.location,
-      committee: exam.committees.map(committee => ({
-        name: committee.lecturer.user.name,
+      committee: exam.exam_committees.map(committee => ({
+        name: committee.lecturers.users.name,
         role: committee.role === 'chairman' ? 'Ketua' :
           committee.role === 'secretary' ? 'Sekretaris' : 'Anggota'
       })),

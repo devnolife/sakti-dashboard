@@ -289,6 +289,63 @@ async function syncMahasiswaFromGraphQL(nim: string, graphqlPassword: string) {
   }
 }
 
+/**
+ * Get user include options based on their role
+ */
+function getUserIncludeByRole(role?: string) {
+  // If role is dosen/lecturer
+  if (role === 'dosen') {
+    return {
+      lecturers: {
+        include: {
+          prodi: true
+        }
+      }
+    }
+  }
+
+  // If role is mahasiswa/student
+  if (role === 'mahasiswa') {
+    return {
+      students: {
+        include: {
+          prodi: true
+        }
+      }
+    }
+  }
+
+  // If role is staff
+  if (role === 'staff') {
+    return {
+      staff: {
+        include: {
+          prodi: true
+        }
+      }
+    }
+  }
+
+  // Default: include all (for when we don't know the role yet)
+  return {
+    students: {
+      include: {
+        prodi: true
+      }
+    },
+    lecturers: {
+      include: {
+        prodi: true
+      }
+    },
+    staff: {
+      include: {
+        prodi: true
+      }
+    }
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { username, password, selectedRole } = await request.json()
@@ -312,27 +369,20 @@ export async function POST(request: NextRequest) {
     let user = null
     let isNewUser = false
 
-    // Step 1: Try to find user in local database
-    user = await prisma.users.findUnique({
-      where: { username },
-      include: {
-        students: {
-          include: {
-            prodi: true
-          }
-        },
-        lecturers: {
-          include: {
-            prodi: true
-          }
-        },
-        staff: {
-          include: {
-            prodi: true
-          }
-        }
-      }
+    // Step 1: Try to find user in local database (without includes first to get role)
+    const userBasic = await prisma.users.findUnique({
+      where: { username }
     })
+
+    console.log('User found in local DB:', userBasic ? { username: userBasic.username, role: userBasic.role } : 'Not found')
+
+    // Step 2: If user exists, fetch with appropriate includes based on role
+    if (userBasic) {
+      user = await prisma.users.findUnique({
+        where: { username },
+        include: getUserIncludeByRole(userBasic.role)
+      })
+    }
 
     console.log('User found in local DB:', user ? { username: user.username, role: user.role } : 'Not found')
 
@@ -383,26 +433,10 @@ export async function POST(request: NextRequest) {
         try {
           await syncMahasiswaFromGraphQL(username, password)
 
-          // Re-fetch user with all relations after sync
+          // Re-fetch user with appropriate includes based on role
           const updatedUser = await prisma.users.findUnique({
             where: { id: user.id },
-            include: {
-              students: {
-                include: {
-                  prodi: true
-                }
-              },
-              lecturers: {
-                include: {
-                  prodi: true
-                }
-              },
-              staff: {
-                include: {
-                  prodi: true
-                }
-              }
-            }
+            include: getUserIncludeByRole(user.role)
           })
 
           if (updatedUser) {
@@ -470,26 +504,10 @@ export async function POST(request: NextRequest) {
           )
         }
 
-        // Re-fetch user with all relations to ensure students data is loaded
+        // Re-fetch user with appropriate includes based on role
         user = await prisma.users.findUnique({
           where: { id: syncedUser.id },
-          include: {
-            students: {
-              include: {
-                prodi: true
-              }
-            },
-            lecturers: {
-              include: {
-                prodi: true
-              }
-            },
-            staff: {
-              include: {
-                prodi: true
-              }
-            }
-          }
+          include: getUserIncludeByRole(syncedUser.role)
         })
 
         if (!user) {

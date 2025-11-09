@@ -5,8 +5,8 @@ import { useAuth } from "@/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect } from "react"
 import { AppLayout } from "@/components/shared"
-import { menuItems } from "@/config/menu-items"
-import type { Role } from "@/types/role"
+import { menuItems, dosenSubRoleMenuItems } from "@/config/menu-items"
+import type { Role, DosenSubRole } from "@/types/role"
 import { DosenSubRoleProvider } from "@/context/dosen-subrole-context"
 import { GlobalLoading } from "@/components/ui/global-loading"
 
@@ -26,8 +26,47 @@ export function DashboardLayoutClient({
   const roleFromPath = pathname.split('/')[2] // /dashboard/[role]/...
   const userRole = user?.role
 
-  // Function to get menu items based on role
+  // Function to get menu items based on role and sub-role
   const getMenuItems = (role: string) => {
+    // For dosen role, determine menu based on current path OR user's sub-role
+    if (role === 'dosen') {
+      // First priority: Check current path for specific wakil dekan routes
+      // This allows any dosen to see the correct menu when navigating to WD pages
+      if (pathname.includes('/vice-dean-1')) {
+        return dosenSubRoleMenuItems.wakil_dekan_1
+      }
+      if (pathname.includes('/vice-dean-2')) {
+        return dosenSubRoleMenuItems.wakil_dekan_2
+      }
+      if (pathname.includes('/vice-dean-3')) {
+        return dosenSubRoleMenuItems.wakil_dekan_3
+      }
+      if (pathname.includes('/vice-dean-4')) {
+        return dosenSubRoleMenuItems.wakil_dekan_4
+      }
+      if (pathname.includes('/dekan') && !pathname.includes('/vice-dean')) {
+        return dosenSubRoleMenuItems.dekan
+      }
+      if (pathname.includes('/gkm')) {
+        return dosenSubRoleMenuItems.gkm
+      }
+      if (pathname.includes('/prodi')) {
+        return dosenSubRoleMenuItems.prodi
+      }
+      if (pathname.includes('/sekretaris-prodi')) {
+        return dosenSubRoleMenuItems.sekretaris_prodi
+      }
+
+      // Second priority: If user has sub-role, use their primary sub-role menu
+      if (user?.subRole) {
+        const primarySubRole = user.subRole.split(',')[0].trim() as DosenSubRole
+        return dosenSubRoleMenuItems[primarySubRole] || menuItems.dosen
+      }
+
+      // Default: regular dosen menu
+      return menuItems.dosen
+    }
+
     return menuItems[role as Role] || []
   }
 

@@ -42,10 +42,8 @@ export async function GET(request: NextRequest) {
     const sessionToken = authHeader?.replace('Bearer ', '')
     if (sessionToken && token.username) {
       console.log('Syncing dosen data from GraphQL...')
-      const syncResult = await syncDosenFromGraphQL(token.username, sessionToken)
-      if (syncResult) {
-        lecturer = syncResult.lecturer
-      }
+      await syncDosenFromGraphQL(token.username, sessionToken)
+      // Don't replace lecturer object - it already has the data we need with proper includes
     }
 
     // Sync mahasiswa PA from GraphQL
@@ -113,7 +111,7 @@ export async function GET(request: NextRequest) {
             }
           ],
           status: {
-            in: ['approved', 'scheduled']
+            in: ['pending', 'scheduled']
           },
           scheduled_date: {
             gte: new Date()
@@ -273,7 +271,7 @@ async function getRecentActivities(lecturerId: string) {
         }
       ],
       status: {
-        in: ['approved', 'scheduled']
+        in: ['pending', 'scheduled']
       },
       scheduled_date: {
         gte: new Date(),
@@ -316,14 +314,13 @@ async function getUpcomingSchedules(lecturerId: string) {
   // Academic consultations
   const consultations = await prisma.academic_consultations.findMany({
     where: {
-      lecturer_id: lecturerId,
-      scheduled_date: {
+      advisor_id: lecturerId,
+      date: {
         gte: new Date()
-      },
-      status: 'scheduled'
+      }
     },
     take: 5,
-    orderBy: { scheduled_date: 'asc' },
+    orderBy: { date: 'asc' },
     include: {
       students: {
         include: {
@@ -339,8 +336,8 @@ async function getUpcomingSchedules(lecturerId: string) {
     id: consult.id,
     title: 'Bimbingan Akademik',
     student: consult.students.users.name,
-    time: new Date(consult.scheduled_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-    date: formatDate(consult.scheduled_date),
+    time: new Date(consult.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    date: formatDate(consult.date),
     type: 'bimbingan'
   })))
 
@@ -363,7 +360,7 @@ async function getUpcomingSchedules(lecturerId: string) {
         lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       },
       status: {
-        in: ['approved', 'scheduled']
+        in: ['pending', 'scheduled']
       }
     },
     take: 5,
