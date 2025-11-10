@@ -225,7 +225,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
             <DialogTitle>Memuat data...</DialogTitle>
           </VisuallyHidden>
           <div className="flex items-center justify-center p-6">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="w-8 h-8 border-b-2 rounded-full animate-spin border-primary"></div>
           </div>
         </DialogContent>
       </Dialog>
@@ -262,7 +262,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
           </TabsList>
 
           {/* Tab Generate Nomor */}
-          <TabsContent value="generate" className="space-y-4 mt-4">
+          <TabsContent value="generate" className="mt-4 space-y-4">
           <div className="grid gap-4">
             <div>
               <Label>Jenis Surat *</Label>
@@ -320,7 +320,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
                 </SelectContent>
               </Select>
               {!selectedJenis && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Pilih jenis surat terlebih dahulu
                 </p>
               )}
@@ -337,7 +337,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
           </div>
 
             {previewNumber && (
-              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
+              <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Eye className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -362,7 +362,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
           </TabsContent>
 
           {/* Tab Data Master */}
-          <TabsContent value="master-data" className="space-y-4 mt-4">
+          <TabsContent value="master-data" className="mt-4 space-y-4">
             <div className="grid gap-4">
               {/* Jenis Surat */}
               <Card>
@@ -370,9 +370,9 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
                   <CardTitle className="text-base">Jenis Surat</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                     {jenisSurat.map((jenis) => (
-                      <div key={jenis.id} className="flex items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border">
+                      <div key={jenis.id} className="flex items-center gap-2 p-3 border rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
                         <Badge className="text-lg font-bold">{jenis.kode}</Badge>
                         <span className="text-sm font-medium">{jenis.nama}</span>
                       </div>
@@ -387,9 +387,9 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
                   <CardTitle className="text-base">Masalah Surat</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                     {masalahSurat.map((masalah) => (
-                      <div key={masalah.id} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                      <div key={masalah.id} className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-gray-900">
                         <Badge variant="outline" className="font-mono">{masalah.kode}</Badge>
                         <span className="text-xs text-muted-foreground">{masalah.nama}</span>
                       </div>
@@ -404,7 +404,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
                   <CardTitle className="text-base">Tujuan Surat</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
                     {[1, 2, 3, 4].map((jenisId) => {
                       const jenisName = jenisSurat.find(j => j.id === jenisId)?.nama || `Jenis ${jenisId}`
                       const tujuanByJenis = tujuanList.filter(t => t.id_jenis === jenisId)
@@ -432,29 +432,27 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
           </TabsContent>
 
           {/* Tab Info Format */}
-          <TabsContent value="info" className="space-y-4 mt-4">
+          <TabsContent value="info" className="mt-4 space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Format Penomoran Surat</CardTitle>
-              </CardHeader>
+      
               <CardContent className="space-y-4">
-                <div className="flex flex-wrap items-center gap-1 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+                <div className="flex flex-wrap items-center gap-1 p-3 border-2 border-blue-200 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800">
                   <Badge className="font-mono text-xs bg-blue-600 hover:bg-blue-700">counter</Badge>
-                  <span className="text-gray-400 font-bold">/</span>
+                  <span className="font-bold text-gray-400">/</span>
                   <Badge className="font-mono text-xs bg-green-600 hover:bg-green-700">jenis</Badge>
-                  <span className="text-gray-400 font-bold">/</span>
+                  <span className="font-bold text-gray-400">/</span>
                   <Badge className="font-mono text-xs bg-purple-600 hover:bg-purple-700">prodi</Badge>
-                  <span className="text-gray-400 font-bold">/</span>
+                  <span className="font-bold text-gray-400">/</span>
                   <Badge className="font-mono text-xs bg-orange-600 hover:bg-orange-700">bulan</Badge>
-                  <span className="text-gray-400 font-bold">/</span>
+                  <span className="font-bold text-gray-400">/</span>
                   <Badge className="font-mono text-xs bg-pink-600 hover:bg-pink-700">hijri</Badge>
-                  <span className="text-gray-400 font-bold">/</span>
+                  <span className="font-bold text-gray-400">/</span>
                   <Badge className="font-mono text-xs bg-cyan-600 hover:bg-cyan-700">gregorian</Badge>
                 </div>
 
-                <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700 rounded-lg shadow-lg">
+                <div className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700">
                   <span className="text-xs font-semibold text-white">Contoh:</span>
-                  <span className="font-mono font-bold text-lg text-white">
+                  <span className="font-mono text-lg font-bold text-white">
                     001/A/{prodiKode}/I/1446/2024
                   </span>
                 </div>
@@ -479,7 +477,7 @@ export function NumberingConfigDialog({ open, onOpenChange }: NumberingConfigDia
 
         <Separator />
 
-        <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="p-4 border border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
           <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>💡 Info:</strong> Semua data master diambil langsung dari database. Counter akan otomatis bertambah setiap kali nomor surat dibuat.
           </p>

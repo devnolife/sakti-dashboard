@@ -13,201 +13,17 @@ import { CheckCircle, Clock, FileText, X, Mail, Hash, Settings } from "lucide-re
 import { LetterDetailView } from "@/components/correspondence/letter-detail-view"
 import { NumberingSystemCard } from "@/components/correspondence/numbering-system-card"
 import { NumberingConfigDialog } from "@/components/correspondence/numbering-config-dialog"
+import { NextNumbersCard } from "@/components/correspondence/next-numbers-card"
+import { getLetterRequestsByProdi } from "@/app/actions/correspondence/letter-requests"
+import { useAuth } from "@/context/auth-context"
+import { useToast } from "@/hooks/use-toast"
 
 // Types
 import type { LetterRequest } from "@/types/correspondence"
 
-// Mock data
-const mockRequests: LetterRequest[] = [
-  {
-    id: "1",
-    studentId: "1",
-    studentName: "Ahmad Fauzi",
-    studentNIM: "1234567890",
-    title: "Surat Keterangan Aktif Kuliah",
-    purpose: "Untuk keperluan beasiswa",
-    description: "Dibutuhkan untuk persyaratan pengajuan beasiswa PPA",
-    requestDate: "2023-06-15T08:30:00Z",
-    status: "completed",
-    type: "active_student",
-    attachments: [],
-    studentMajor: "Teknik Informatika",
-    approvalRole: "staff_tu",
-  },
-  {
-    id: "2",
-    studentId: "2",
-    studentName: "Budi Santoso",
-    studentNIM: "0987654321",
-    title: "Surat Izin Penelitian",
-    purpose: "Untuk keperluan penelitian tugas akhir",
-    description: "Dibutuhkan untuk melakukan penelitian di PT. ABC",
-    requestDate: "2023-06-14T10:15:00Z",
-    status: "in-review",
-    type: "research_permission",
-    attachments: [],
-    studentMajor: "Teknik Elektro",
-    approvalRole: "prodi",
-  },
-  {
-    id: "3",
-    studentId: "3",
-    studentName: "Citra Dewi",
-    studentNIM: "2345678901",
-    title: "Surat Keterangan Cuti",
-    purpose: "Untuk keperluan cuti semester",
-    description: "Dibutuhkan untuk mengajukan cuti semester ganjil 2023/2024",
-    requestDate: "2023-06-13T14:45:00Z",
-    status: "submitted",
-    type: "leave_absence",
-    attachments: [],
-    studentMajor: "Psikologi",
-    approvalRole: "staff_tu",
-  },
-  {
-    id: "4",
-    studentId: "4",
-    studentName: "Dian Purnama",
-    studentNIM: "3456789012",
-    title: "Surat Rekomendasi Magang",
-    purpose: "Untuk keperluan magang",
-    description: "Dibutuhkan untuk melamar magang di Kementerian Komunikasi dan Informatika",
-    requestDate: "2023-06-12T09:20:00Z",
-    status: "approved",
-    type: "internship_recommendation",
-    attachments: [],
-    studentMajor: "Ilmu Komunikasi",
-    approvalRole: "prodi",
-  },
-  {
-    id: "5",
-    studentId: "5",
-    studentName: "Eko Prasetyo",
-    studentNIM: "4567890123",
-    title: "Surat Keterangan Lulus",
-    purpose: "Untuk keperluan melamar pekerjaan",
-    description: "Dibutuhkan sebagai persyaratan melamar pekerjaan di PT. XYZ",
-    requestDate: "2023-06-11T11:10:00Z",
-    status: "rejected",
-    type: "graduation_letter",
-    attachments: [],
-    studentMajor: "Manajemen",
-    approvalRole: "staff_tu",
-    rejectedReason: "Data tidak lengkap, mohon lengkapi transkrip nilai",
-  },
-  {
-    id: "6",
-    studentId: "6",
-    studentName: "Fitri Handayani",
-    studentNIM: "5678901234",
-    title: "Surat Keterangan Aktif Kuliah",
-    purpose: "Untuk keperluan administrasi keluarga",
-    description: "Dibutuhkan untuk persyaratan administrasi tunjangan orang tua",
-    requestDate: "2023-06-10T13:25:00Z",
-    status: "completed",
-    type: "active_student",
-    attachments: [],
-    studentMajor: "Akuntansi",
-    approvalRole: "staff_tu",
-    approvedDate: "2023-06-12T10:30:00Z",
-    completedDate: "2023-06-13T14:20:00Z",
-  },
-  {
-    id: "7",
-    studentId: "7",
-    studentName: "Gunawan Wibisono",
-    studentNIM: "6789012345",
-    title: "Surat Rekomendasi Beasiswa",
-    purpose: "Untuk keperluan beasiswa LPDP",
-    description: "Dibutuhkan untuk melengkapi persyaratan beasiswa LPDP",
-    requestDate: "2023-06-09T15:40:00Z",
-    status: "in-review",
-    type: "scholarship_recommendation",
-    attachments: [],
-    studentMajor: "Teknik Sipil",
-    approvalRole: "staff_tu",
-  },
-  {
-    id: "8",
-    studentId: "8",
-    studentName: "Hani Fujianti",
-    studentNIM: "7890123456",
-    title: "Surat Keterangan Nilai",
-    purpose: "Untuk keperluan transfer kredit",
-    description: "Dibutuhkan untuk mengajukan transfer kredit ke universitas lain",
-    requestDate: "2023-06-08T10:05:00Z",
-    status: "submitted",
-    type: "transcript_request",
-    attachments: [],
-    studentMajor: "Sastra Inggris",
-    approvalRole: "staff_tu",
-  },
-  {
-    id: "9",
-    studentId: "9",
-    studentName: "Irfan Hakim",
-    studentNIM: "8901234567",
-    title: "Surat Izin Tidak Masuk Kuliah",
-    purpose: "Untuk keperluan izin sakit",
-    description: "Dibutuhkan untuk izin tidak mengikuti ujian karena sakit",
-    requestDate: "2023-06-07T08:50:00Z",
-    status: "approved",
-    type: "leave_absence",
-    attachments: [],
-    studentMajor: "Kedokteran",
-    approvalRole: "staff_tu",
-    approvedDate: "2023-06-09T11:25:00Z",
-  },
-  {
-    id: "10",
-    studentId: "10",
-    studentName: "Joko Widodo",
-    studentNIM: "9012345678",
-    title: "Surat Keterangan Aktif Kuliah",
-    purpose: "Untuk keperluan visa",
-    description: "Dibutuhkan untuk mengajukan visa studi ke luar negeri",
-    requestDate: "2023-06-06T14:15:00Z",
-    status: "completed",
-    type: "active_student",
-    attachments: [],
-    studentMajor: "Hubungan Internasional",
-    approvalRole: "staff_tu",
-    approvedDate: "2023-06-08T09:45:00Z",
-    completedDate: "2023-06-09T13:30:00Z",
-  },
-  {
-    id: "11",
-    studentId: "11",
-    studentName: "Kartika Sari",
-    studentNIM: "0123456789",
-    title: "Surat Keterangan Lulus",
-    purpose: "Untuk keperluan melamar pekerjaan",
-    description: "Dibutuhkan untuk melamar pekerjaan di instansi pemerintah",
-    requestDate: "2023-06-05T11:30:00Z",
-    status: "in-review",
-    type: "graduation_letter",
-    attachments: [],
-    studentMajor: "Ilmu Hukum",
-    approvalRole: "staff_tu",
-  },
-  {
-    id: "12",
-    studentId: "12",
-    studentName: "Lukman Hakim",
-    studentNIM: "1234509876",
-    title: "Surat Rekomendasi Penelitian",
-    purpose: "Untuk keperluan penelitian",
-    description: "Dibutuhkan untuk mengajukan penelitian di laboratorium universitas lain",
-    requestDate: "2023-06-04T09:45:00Z",
-    status: "submitted",
-    type: "research_permission",
-    attachments: [],
-    studentMajor: "Kimia",
-    approvalRole: "prodi",
-  },
-]
-
 export function CorrespondenceStaffDashboard() {
+  const { user, isLoading: authLoading } = useAuth()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState<LetterRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<LetterRequest[]>([])
@@ -220,17 +36,58 @@ export function CorrespondenceStaffDashboard() {
   const [selectedLetter, setSelectedLetter] = useState<LetterRequest | null>(null)
   const [viewMode, setViewMode] = useState<"list" | "detail">("list")
   const [showNumberingConfig, setShowNumberingConfig] = useState(false)
+  const [prodiId, setProdiId] = useState<string>("")
 
-  // Simulate loading data
+  // Fetch letter requests from database
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setRequests(mockRequests)
-      setFilteredRequests(mockRequests)
-      setLoading(false)
-    }, 1000)
+    async function fetchLetterRequests() {
+      if (authLoading || !user?.id) {
+        return
+      }
 
-    return () => clearTimeout(timer)
-  }, [])
+      try {
+        setLoading(true)
+
+        // Get staff_tu's prodi_id from user data
+        const response = await fetch('/api/users/profile')
+        if (!response.ok) {
+          throw new Error('Failed to fetch user profile')
+        }
+
+        const userData = await response.json()
+        const userProdiId = userData.staff_tu?.prodi_id
+
+        if (!userProdiId) {
+          toast({
+            title: "Error",
+            description: "Prodi ID tidak ditemukan untuk user ini",
+            variant: "destructive",
+          })
+          setLoading(false)
+          return
+        }
+
+        // Set prodi ID for next numbers card
+        setProdiId(userProdiId)
+
+        // Fetch letter requests for this prodi
+        const data = await getLetterRequestsByProdi(userProdiId)
+        setRequests(data)
+        setFilteredRequests(data)
+      } catch (error) {
+        console.error("Error fetching letter requests:", error)
+        toast({
+          title: "Error",
+          description: "Gagal mengambil data permohonan surat",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchLetterRequests()
+  }, [authLoading, user?.id, toast])
 
   // Filter requests based on active tab and filters
   useEffect(() => {
@@ -440,8 +297,11 @@ export function CorrespondenceStaffDashboard() {
         </div>
       </div>
 
-      {/* Numbering System */}
-      <NumberingSystemCard />
+      {/* Next Numbers Preview & Numbering System */}
+      <div className="space-y-6">
+        <NumberingSystemCard />
+        {prodiId && <NextNumbersCard prodiId={prodiId} />}
+      </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">

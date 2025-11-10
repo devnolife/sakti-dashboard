@@ -22,7 +22,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import type { DynamicField } from "@/types/correspondence"
+import type { DynamicField, LetterType as LetterTypeImport } from "@/types/correspondence"
+import { useAuth } from "@/context/auth-context"
 
 // Define schemas for each form type
 const activeLetterSchema = z.object({
@@ -61,16 +62,6 @@ const customLetterSchema = z.object({
   letterType: z.string().min(1, { message: "Pilih jenis surat" }),
 })
 
-interface LetterType {
-  id: string
-  title: string
-  description: string
-  approval_role: string
-  estimated_days: number
-  required_documents: string[]
-  additional_fields?: DynamicField[]
-}
-
 // Define props type (void element - no children)
 type CorrespondenceFormTabsProps = {
   onSubmit: (data: any) => void
@@ -83,24 +74,43 @@ export function CorrespondenceFormTabs({
   isSubmitting = false,
   defaultTab = "active",
 }: CorrespondenceFormTabsProps) {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState(defaultTab)
   const [isParentCivilServant, setIsParentCivilServant] = useState<"yes" | "no">("no")
-  const [customLetterTypes, setCustomLetterTypes] = useState<LetterType[]>([])
+  const [customLetterTypes, setCustomLetterTypes] = useState<LetterTypeImport[]>([])
   const [isLoadingTypes, setIsLoadingTypes] = useState(false)
-  const [selectedDynamicType, setSelectedDynamicType] = useState<LetterType | null>(null)
+  const [selectedDynamicType, setSelectedDynamicType] = useState<LetterTypeImport | null>(null)
   const [dynamicFormData, setDynamicFormData] = useState<Record<string, any>>({})
+  const [userProdiId, setUserProdiId] = useState<string | undefined>(undefined)
 
-  // Fetch custom letter types from API when custom tab is active
+  // Fetch user's prodi_id
+  useEffect(() => {
+    async function fetchUserProdi() {
+      if (!user?.id) return
+
+      try {
+        const response = await fetch('/api/users/profile')
+        if (response.ok) {
+          const userData = await response.json()
+          setUserProdiId(userData.students?.prodi_id)
+        }
+      } catch (error) {
+        console.error('Error fetching user prodi:', error)
+      }
+    }
+
+    fetchUserProdi()
+  }, [user?.id])
+
+  // Fetch custom letter types from server action when custom tab is active
   useEffect(() => {
     const fetchLetterTypes = async () => {
       try {
         setIsLoadingTypes(true)
-        const response = await fetch('/api/correspondence/letter-types')
-        const result = await response.json()
-
-        if (result.success) {
-          setCustomLetterTypes(result.data)
-        }
+        // Import getLetterTypes from server action
+        const { getLetterTypes } = await import('@/app/actions/correspondence-actions')
+        const types = await getLetterTypes(userProdiId)
+        setCustomLetterTypes(types)
       } catch (error) {
         console.error('Error fetching letter types:', error)
         toast({
@@ -116,7 +126,7 @@ export function CorrespondenceFormTabs({
     if (activeTab === "custom" && customLetterTypes.length === 0) {
       fetchLetterTypes()
     }
-  }, [activeTab, customLetterTypes.length])
+  }, [activeTab, customLetterTypes.length, userProdiId])
 
   // Initialize forms for each tab
   const activeForm = useForm<z.infer<typeof activeLetterSchema>>({
@@ -235,10 +245,13 @@ export function CorrespondenceFormTabs({
   }
 
   const validateDynamicForm = (): boolean => {
-    if (!selectedDynamicType?.additional_fields) return true
+    if (!selectedDynamicType?.additionalFields) return true
 
-    for (const field of selectedDynamicType.additional_fields) {
-      if (field.required && !dynamicFormData[field.id]) {
+    for (const field of selectedDynamicType.additionalFields) {
+      const fieldAny = field as any
+      const fieldId = fieldAny.id || fieldAny.name
+
+      if (field.required && !dynamicFormData[fieldId]) {
         toast({
           title: "Validasi Gagal",
           description: `Field "${field.label}" wajib diisi`,
@@ -247,30 +260,30 @@ export function CorrespondenceFormTabs({
         return false
       }
 
-      if (dynamicFormData[field.id]) {
-        const value = dynamicFormData[field.id]
+      if (dynamicFormData[fieldId]) {
+        const value = dynamicFormData[fieldId]
 
         if (field.type === "number") {
           const numValue = parseFloat(value)
-          if (field.validation?.min !== undefined && numValue < field.validation.min) {
+          if (fieldAny.validation?.min !== undefined && numValue < fieldAny.validation.min) {
             toast({
               title: "Validasi Gagal",
-              description: `${field.label} harus minimal ${field.validation.min}`,
+              description: `${field.label} harus minimal ${fieldAny.validation.min}`,
               variant: "destructive"
             })
             return false
           }
-          if (field.validation?.max !== undefined && numValue > field.validation.max) {
+          if (fieldAny.validation?.max !== undefined && numValue > fieldAny.validation.max) {
             toast({
               title: "Validasi Gagal",
-              description: `${field.label} harus maksimal ${field.validation.max}`,
+              description: `${field.label} harus maksimal ${fieldAny.validation.max}`,
               variant: "destructive"
             })
             return false
           }
         }
 
-        if (field.type === "email") {
+        if (fieldAny.type === "email") {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
           if (!emailRegex.test(value)) {
             toast({
@@ -282,7 +295,7 @@ export function CorrespondenceFormTabs({
           }
         }
 
-        if (field.type === "phone") {
+        if (fieldAny.type === "phone") {
           const phoneRegex = /^[0-9+\-\s()]+$/
           if (!phoneRegex.test(value)) {
             toast({
@@ -1283,11 +1296,11 @@ export function CorrespondenceFormTabs({
               </Button>
             </div>
 
-            {selectedDynamicType.required_documents && selectedDynamicType.required_documents.length > 0 && (
+            {selectedDynamicType.requiredDocuments && selectedDynamicType.requiredDocuments.length > 0 && (
               <div className="p-4 border rounded-lg bg-muted/50">
                 <p className="mb-2 text-sm font-medium">Dokumen yang diperlukan:</p>
                 <div className="flex flex-wrap gap-2">
-                  {selectedDynamicType.required_documents.map((doc, idx) => (
+                  {selectedDynamicType.requiredDocuments.map((doc: string, idx: number) => (
                     <Badge key={idx} variant="secondary">
                       {doc}
                     </Badge>
@@ -1296,9 +1309,9 @@ export function CorrespondenceFormTabs({
               </div>
             )}
 
-            {selectedDynamicType.additional_fields && selectedDynamicType.additional_fields.length > 0 && (
+            {selectedDynamicType.additionalFields && selectedDynamicType.additionalFields.length > 0 && (
               <div className="space-y-4">
-                {selectedDynamicType.additional_fields.map((field) => (
+                {selectedDynamicType.additionalFields.map((field: any) => (
                   <div key={field.id} className="space-y-2">
                     <Label>
                       {field.label}
@@ -1317,7 +1330,7 @@ export function CorrespondenceFormTabs({
               <Button onClick={handleDynamicSubmit} disabled={isSubmitting} className="w-full">
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Mengirim...
                   </>
                 ) : (
@@ -1331,7 +1344,7 @@ export function CorrespondenceFormTabs({
             <CardContent className="py-12 text-center">
               <AlertCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground">Belum ada jenis surat lainnya tersedia</p>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Hubungi admin untuk menambahkan jenis surat baru
               </p>
             </CardContent>
@@ -1343,7 +1356,7 @@ export function CorrespondenceFormTabs({
               {customLetterTypes.map((type) => (
                 <Card
                   key={type.id}
-                  className="cursor-pointer transition-shadow hover:shadow-md"
+                  className="transition-shadow cursor-pointer hover:shadow-md"
                   onClick={() => setSelectedDynamicType(type)}
                 >
                   <CardHeader>
@@ -1351,7 +1364,7 @@ export function CorrespondenceFormTabs({
                       <FileText className="w-8 h-8 text-primary" />
                       <Badge variant="outline" className="ml-2">
                         <Clock className="w-3 h-3 mr-1" />
-                        {type.estimated_days} hari
+                        {type.estimatedDays} hari
                       </Badge>
                     </div>
                     <CardTitle className="mt-4">{type.title}</CardTitle>
@@ -1359,19 +1372,19 @@ export function CorrespondenceFormTabs({
                       {type.description}
                     </CardDescription>
                   </CardHeader>
-                  {type.required_documents && type.required_documents.length > 0 && (
+                  {type.requiredDocuments && type.requiredDocuments.length > 0 && (
                     <CardContent>
                       <div className="space-y-1">
                         <p className="text-sm font-medium">Dokumen diperlukan:</p>
                         <div className="flex flex-wrap gap-1">
-                          {type.required_documents.slice(0, 3).map((doc, idx) => (
+                          {type.requiredDocuments.slice(0, 3).map((doc: string, idx: number) => (
                             <Badge key={idx} variant="secondary" className="text-xs">
                               {doc}
                             </Badge>
                           ))}
-                          {type.required_documents.length > 3 && (
+                          {type.requiredDocuments.length > 3 && (
                             <Badge variant="secondary" className="text-xs">
-                              +{type.required_documents.length - 3}
+                              +{type.requiredDocuments.length - 3}
                             </Badge>
                           )}
                         </div>

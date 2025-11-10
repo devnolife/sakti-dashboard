@@ -14,10 +14,10 @@ interface SuratStatistics {
   totalThisMonth: number
   totalThisYear: number
   categories: Array<{
-    id: number
-    nama: string
-    kode: string
-    total: number
+    id: string
+    title: string
+    nomor_surat: string
+    created_at: string
   }>
   counters: Array<{
     id: number
@@ -110,9 +110,9 @@ export function NumberingSystemCard() {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="animate-pulse space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+          <div className="space-y-3 animate-pulse">
+            <div className="w-1/4 h-4 bg-gray-200 rounded"></div>
+            <div className="w-1/2 h-8 bg-gray-200 rounded"></div>
             <div className="grid grid-cols-4 gap-4">
               <div className="h-16 bg-gray-200 rounded"></div>
               <div className="h-16 bg-gray-200 rounded"></div>
@@ -139,36 +139,11 @@ export function NumberingSystemCard() {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6">
-          {/* Info Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <h4 className="font-semibold text-sm text-muted-foreground mb-3">Format Penomoran</h4>
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-1 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-                <Badge className="font-mono text-xs bg-blue-600 hover:bg-blue-700">counter</Badge>
-                <span className="text-gray-400 font-bold">/</span>
-                <Badge className="font-mono text-xs bg-green-600 hover:bg-green-700">jenis</Badge>
-                <span className="text-gray-400 font-bold">/</span>
-                <Badge className="font-mono text-xs bg-purple-600 hover:bg-purple-700">prodi</Badge>
-                <span className="text-gray-400 font-bold">/</span>
-                <Badge className="font-mono text-xs bg-orange-600 hover:bg-orange-700">bulan</Badge>
-                <span className="text-gray-400 font-bold">/</span>
-                <Badge className="font-mono text-xs bg-pink-600 hover:bg-pink-700">hijri</Badge>
-                <span className="text-gray-400 font-bold">/</span>
-                <Badge className="font-mono text-xs bg-cyan-600 hover:bg-cyan-700">gregorian</Badge>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700 rounded-lg shadow-lg">
-                <span className="text-xs font-semibold text-white">Contoh:</span>
-                <span className="font-mono font-bold text-lg text-white">
-                  001/A/{prodiKode}/I/1446/2024
-                </span>
-              </div>
-            </div>
-          </div>
 
           {/* Jenis Surat */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <h4 className="font-semibold text-sm text-muted-foreground mb-3">Jenis Surat</h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
+            <h4 className="mb-3 text-sm font-semibold text-muted-foreground">Jenis Surat</h4>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {[
                 { kode: 'A', nama: 'UNSUR PIMPINAN', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
                 { kode: 'B', nama: 'Muhammadiyah', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
@@ -176,7 +151,7 @@ export function NumberingSystemCard() {
                 { kode: 'D', nama: 'SURAT KELUAR', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' }
               ].map((jenis) => (
                 <div key={jenis.kode} className={`p-3 rounded-lg ${jenis.color}`}>
-                  <div className="text-2xl font-bold mb-1">{jenis.kode}</div>
+                  <div className="mb-1 text-2xl font-bold">{jenis.kode}</div>
                   <div className="text-xs font-medium">{jenis.nama}</div>
                 </div>
               ))}
@@ -184,9 +159,9 @@ export function NumberingSystemCard() {
           </div>
 
           {/* Tujuan Surat */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <h4 className="font-semibold text-sm text-muted-foreground mb-3">Tujuan Surat</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
+            <h4 className="mb-3 text-sm font-semibold text-muted-foreground">Tujuan Surat</h4>
+            <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
               {[
                 { kategori: 'Internal (A)', items: ['A.1 - Rektor, BPH, Wakil Rektor', 'A.2 - Dekan', 'A.3 - Karyawan', 'A.4 - Dosen', 'A.5 - Mahasiswa', 'A.6 - Dan Lain-lain'] },
                 { kategori: 'Muhammadiyah (B)', items: ['B.1 - Pimpinan Pusat', 'B.2 - Pimpinan Wilayah', 'B.3 - Ortom Muhammadiyah', 'B.4 - Dan Lain-lain'] },
@@ -209,9 +184,9 @@ export function NumberingSystemCard() {
           </div>
 
           {/* Masalah Surat */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <h4 className="font-semibold text-sm text-muted-foreground mb-3">Kategori Masalah Surat</h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
+            <h4 className="mb-3 text-sm font-semibold text-muted-foreground">Kategori Masalah Surat</h4>
+            <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
               {[
                 { kode: 'I', nama: 'Masalah Pimpinan' },
                 { kode: 'II', nama: 'Perlengkapan & Pengajaran' },
@@ -222,7 +197,7 @@ export function NumberingSystemCard() {
                 { kode: 'VII', nama: 'Keuangan' },
                 { kode: 'VIII', nama: 'Dan Lain-lain' }
               ].map((masalah) => (
-                <div key={masalah.kode} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                <div key={masalah.kode} className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-gray-900">
                   <Badge variant="outline" className="font-mono">{masalah.kode}</Badge>
                   <span className="text-xs text-muted-foreground">{masalah.nama}</span>
                 </div>
@@ -239,7 +214,7 @@ export function NumberingSystemCard() {
   if (!statistics || (statistics.totalThisYear === 0 && statistics.lastUsed === 'Belum ada')) {
     return (
       <>
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+        <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 dark:border-blue-800">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
@@ -253,30 +228,30 @@ export function NumberingSystemCard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="flex items-center gap-3 p-3 bg-white border rounded-lg dark:bg-gray-800">
+                <div className="p-2 bg-blue-100 rounded-full dark:bg-blue-900/30">
                   <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Bulan Ini</p>
-                  <p className="font-bold text-lg">0</p>
+                  <p className="text-lg font-bold">0</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
+              <div className="flex items-center gap-3 p-3 bg-white border rounded-lg dark:bg-gray-800">
+                <div className="p-2 bg-green-100 rounded-full dark:bg-green-900/30">
                   <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Tahun Ini</p>
-                  <p className="font-bold text-lg">0</p>
+                  <p className="text-lg font-bold">0</p>
                 </div>
               </div>
 
-              <div className="col-span-2 flex items-center justify-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center justify-center col-span-2 p-4 border border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
                 <div className="text-center">
-                  <p className="text-sm text-blue-700 dark:text-blue-300 font-medium mb-1">
+                  <p className="mb-1 text-sm font-medium text-blue-700 dark:text-blue-300">
                     📝 Belum ada surat yang diterbitkan
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -294,12 +269,12 @@ export function NumberingSystemCard() {
 
   return (
     <>
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+      <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 dark:border-blue-800">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
               <Hash className="w-5 h-5" />
-              Sistem Penomoran Surat
+              Nomor Terakhir Digunakan
             </CardTitle>
             <Button variant="outline" size="sm" onClick={() => setShowInfoDialog(true)}>
               <Info className="w-4 h-4 mr-2" />
@@ -307,11 +282,11 @@ export function NumberingSystemCard() {
             </Button>
           </div>
         </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">Nomor Terakhir Digunakan</p>
-            <p className="text-xl font-bold text-blue-700 dark:text-blue-300 font-mono">
+        <CardContent className="space-y-4">
+          {/* Nomor Terakhir */}
+          <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
+            <p className="mb-2 text-sm font-medium text-muted-foreground">Nomor Terakhir</p>
+            <p className="mb-1 font-mono text-2xl font-bold text-blue-700 dark:text-blue-300">
               {statistics.lastUsed}
             </p>
             <p className="text-xs text-muted-foreground">
@@ -319,101 +294,34 @@ export function NumberingSystemCard() {
             </p>
           </div>
 
-          <div className="space-y-3">
-            <p className="text-sm font-medium text-muted-foreground">Format Penomoran</p>
-            <div className="flex flex-wrap items-center gap-1 p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-              <Badge variant="secondary" className="font-mono text-xs">counter</Badge>
-              <span className="text-gray-400">/</span>
-              <Badge variant="secondary" className="font-mono text-xs">jenis</Badge>
-              <span className="text-gray-400">/</span>
-              <Badge variant="secondary" className="font-mono text-xs">prodi</Badge>
-              <span className="text-gray-400">/</span>
-              <Badge variant="secondary" className="font-mono text-xs">bulan</Badge>
-              <span className="text-gray-400">/</span>
-              <Badge variant="secondary" className="font-mono text-xs">hijri</Badge>
-              <span className="text-gray-400">/</span>
-              <Badge variant="secondary" className="font-mono text-xs">gregorian</Badge>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-              <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Contoh:</span>
-              <span className="font-mono font-bold text-sm text-blue-600 dark:text-blue-400">
-                001/A/{prodiKode}/I/1446/2024
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Bulan Ini</p>
-              <p className="font-bold text-lg">{statistics.totalThisMonth}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
-            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-              <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Tahun Ini</p>
-              <p className="font-bold text-lg">{statistics.totalThisYear}</p>
-            </div>
-          </div>
-
-          {statistics.categories.slice(0, 2).map((category, index) => (
-            <div key={category.id} className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
-              <div className={`p-2 rounded-full ${
-                index === 0 ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-orange-100 dark:bg-orange-900/30'
-              }`}>
-                <Hash className={`w-4 h-4 ${
-                  index === 0 ? 'text-purple-600 dark:text-purple-400' : 'text-orange-600 dark:text-orange-400'
-                }`} />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground truncate">{category.nama}</p>
-                <p className="font-bold text-lg">{category.total}</p>
+          {/* Nomor Terakhir per Ketentuan Surat */}
+          {statistics.categories.length > 0 && (
+            <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
+              <h4 className="mb-3 text-sm font-semibold text-muted-foreground">Nomor Terakhir Per Ketentuan Surat</h4>
+              <div className="space-y-3">
+                {statistics.categories.map((category) => (
+                  <div key={category.id} className="p-3 transition-colors border rounded-lg bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <p className="mb-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          {category.title}
+                        </p>
+                        <p className="mb-1 font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
+                          {category.nomor_surat}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(category.created_at)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-
-        {statistics.categories.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <h4 className="font-semibold text-sm text-muted-foreground mb-3">Kategori Jenis Surat</h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              {statistics.categories.map((category) => (
-                <div key={category.id}>
-                  <p className="font-medium">{category.nama}</p>
-                  <p className="text-muted-foreground">Kode: {category.kode}</p>
-                  <p className="text-blue-600 dark:text-blue-400 font-medium">
-                    Total: {category.total} surat
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {statistics.counters.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-4">
-            <h4 className="font-semibold text-sm text-muted-foreground mb-3">Counter Penomoran Aktif</h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-              {statistics.counters.map((counter) => (
-                <div key={counter.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded">
-                  <span className="font-medium">{counter.jenis}</span>
-                  <Badge variant="secondary">{String(counter.counter).padStart(3, '0')}</Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-    {renderInfoDialog()}
+          )}
+        </CardContent>
+      </Card>
+      {renderInfoDialog()}
     </>
   )
 }

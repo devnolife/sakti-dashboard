@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { getCurrentYears, getBulanRomawi } from '@/lib/utils/date-utils'
-
-const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
@@ -48,29 +46,71 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Get statistics by jenis_surat
-    const statistikByJenis = await prisma.surat.groupBy({
-      by: ['id_jenis_surat'],
+    // Get latest surat per letter_type (ketentuan surat)
+    const suratWithLetterType = await prisma.surat.findMany({
       where: {
         id_prodi: prodiId,
-        tahun_masehi: tahunSekarang.toString()
+        letter_request_id: { not: null }
       },
-      _count: {
-        id: true
+      select: {
+        id: true,
+        nomor_surat: true,
+        letter_request_id: true,
+        created_at: true
+      },
+      orderBy: {
+        created_at: 'desc'
       }
     })
 
-    // Get jenis_surat names
-    const jenisSurat = await prisma.jenis_surat.findMany()
-    const jenisMap = Object.fromEntries(
-      jenisSurat.map(j => [j.id, { nama: j.nama, kode: j.kode }])
+    // Get letter_requests to map to letter_types
+    const letterRequestIds = suratWithLetterType
+      .map(s => s.letter_request_id)
+      .filter((id): id is string => id !== null)
+
+    const letterRequests = await prisma.correspondence_requests.findMany({
+      where: {
+        id: { in: letterRequestIds }
+      },
+      select: {
+        id: true,
+        letter_type_id: true,
+        letter_types: {
+          select: {
+            id: true,
+            title: true
+          }
+        }
+      }
+    })
+
+    const letterRequestMap = Object.fromEntries(
+      letterRequests.map(lr => [lr.id, { letter_type_id: lr.letter_type_id, title: lr.letter_types.title }])
     )
 
-    const kategorisWithNames = statistikByJenis.map(stat => ({
-      id: stat.id_jenis_surat,
-      nama: jenisMap[stat.id_jenis_surat || 0]?.nama || 'Unknown',
-      kode: jenisMap[stat.id_jenis_surat || 0]?.kode || '?',
-      total: stat._count.id
+    // Group by letter_type and get latest nomor_surat
+    const letterTypeMap = new Map<string, { title: string; nomor_surat: string; created_at: Date }>()
+
+    for (const surat of suratWithLetterType) {
+      if (!surat.letter_request_id) continue
+      const letterInfo = letterRequestMap[surat.letter_request_id]
+      if (!letterInfo) continue
+
+      const existing = letterTypeMap.get(letterInfo.letter_type_id)
+      if (!existing || surat.created_at > existing.created_at) {
+        letterTypeMap.set(letterInfo.letter_type_id, {
+          title: letterInfo.title,
+          nomor_surat: surat.nomor_surat,
+          created_at: surat.created_at
+        })
+      }
+    }
+
+    const kategorisWithNames = Array.from(letterTypeMap.entries()).map(([id, data]) => ({
+      id,
+      title: data.title,
+      nomor_surat: data.nomor_surat,
+      created_at: data.created_at
     }))
 
     // Get latest surat number
