@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -30,7 +29,6 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
   const [selectedLetterType, setSelectedLetterType] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [activeTab, setActiveTab] = useState("all")
 
   // Removed hardcoded userId
   const [studentId, setStudentId] = useState<string | null>(null)
@@ -52,6 +50,8 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
         if (response.ok) {
           const student = await response.json()
           setStudentId(student.id)
+
+          // Fetch letter requests
           const data = await getStudentLetterRequests(student.id)
           setRequests(data)
           setFilteredRequests(data)
@@ -83,15 +83,6 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
       filtered = filtered.filter((req) => req.status === statusFilter)
     }
 
-    // Filter by tab
-    if (activeTab === "active") {
-      filtered = filtered.filter((req) => req.status === "submitted" || req.status === "in-review")
-    } else if (activeTab === "completed") {
-      filtered = filtered.filter((req) => req.status === "completed" || req.status === "approved")
-    } else if (activeTab === "rejected") {
-      filtered = filtered.filter((req) => req.status === "rejected")
-    }
-
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
@@ -104,7 +95,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
     }
 
     setFilteredRequests(filtered)
-  }, [requests, searchQuery, statusFilter, activeTab])
+  }, [requests, searchQuery, statusFilter])
 
   const handleViewDetails = (request: LetterRequest) => {
     setSelectedRequest(request)
@@ -120,41 +111,41 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
     switch (status) {
       case "submitted":
         return (
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200 font-medium">
-            <Clock className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-200 text-xs font-medium shrink-0 dark:text-blue-400 dark:border-blue-800">
+            <Clock className="mr-1 h-2.5 w-2.5" />
             Diajukan
           </Badge>
         )
       case "in-review":
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200 font-medium">
-            <AlertCircle className="mr-1 h-3 w-3" />
-            Dalam Review
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200 text-xs font-medium shrink-0 dark:text-amber-400 dark:border-amber-800">
+            <AlertCircle className="mr-1 h-2.5 w-2.5" />
+            Review
           </Badge>
         )
       case "approved":
         return (
-          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200 font-medium">
-            <CheckCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200 text-xs font-medium shrink-0 dark:text-green-400 dark:border-green-800">
+            <CheckCircle className="mr-1 h-2.5 w-2.5" />
             Disetujui
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200 font-medium">
-            <XCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-200 text-xs font-medium shrink-0 dark:text-red-400 dark:border-red-800">
+            <XCircle className="mr-1 h-2.5 w-2.5" />
             Ditolak
           </Badge>
         )
       case "completed":
         return (
-          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200 font-medium">
-            <CheckCircle className="mr-1 h-3 w-3" />
+          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200 text-xs font-medium shrink-0 dark:text-green-400 dark:border-green-800">
+            <CheckCircle className="mr-1 h-2.5 w-2.5" />
             Selesai
           </Badge>
         )
       default:
-        return <Badge variant="outline">Unknown</Badge>
+        return <Badge variant="outline" className="text-xs">Unknown</Badge>
     }
   }
 
@@ -164,36 +155,33 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-3">
+      <div className="space-y-5">
+        <div className="grid gap-3 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="overflow-hidden border-none shadow-md">
-              <CardHeader className="pb-2">
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-4 w-48" />
+            <Card key={i} className="overflow-hidden border-none shadow-sm">
+              <CardHeader className="pb-3 pt-4 px-4">
+                <Skeleton className="h-5 w-28" />
+                <Skeleton className="h-3 w-36 mt-1" />
               </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-16" />
-              </CardContent>
             </Card>
           ))}
         </div>
 
-        <Card className="border-none shadow-md">
-          <CardHeader className="border-b pb-3">
+        <Card className="border-none shadow-sm">
+          <CardHeader className="border-b pb-4 pt-5 px-5">
             <div className="flex items-center justify-between">
               <div>
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-3 w-40 mt-1" />
               </div>
-              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-9 w-9 rounded" />
             </div>
           </CardHeader>
-          <CardContent className="pt-6">
-            <Skeleton className="h-10 w-full mb-6" />
-            <div className="space-y-4">
+          <CardContent className="pt-4 px-5 pb-5">
+            <Skeleton className="h-9 w-full mb-4" />
+            <div className="space-y-2.5">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24 w-full" />
+                <Skeleton key={i} className="h-20 w-full" />
               ))}
             </div>
           </CardContent>
@@ -204,95 +192,93 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-5">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Layanan Surat</h1>
-          <p className="text-muted-foreground">Ajukan dan pantau status permohonan surat Anda</p>
+          <h1 className="text-2xl font-bold tracking-tight">Layanan Surat</h1>
+          <p className="text-sm text-muted-foreground">Ajukan dan pantau status permohonan surat Anda</p>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={() => openLetterDialog("active")}
-            className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
-          >
-            <Plus className="h-4 w-4" />
-            Buat Surat Baru
-          </Button>
-        </div>
+        <Button
+          onClick={() => openLetterDialog("active")}
+          className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary h-9"
+        >
+          <Plus className="h-4 w-4" />
+          Buat Surat Baru
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 mb-6">
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-blue-50 to-blue-100 shadow-md transition-all hover:shadow-lg dark:from-blue-950/40 dark:to-blue-900/40">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-800/50">
-                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+      <div className="grid gap-3 md:grid-cols-3 mb-5">
+        <Card className="overflow-hidden border-none bg-gradient-to-br from-blue-50 to-blue-100 shadow-sm transition-all hover:shadow-md dark:from-blue-950/40 dark:to-blue-900/40">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-blue-500/10 p-2 dark:bg-blue-800/50">
+                  <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-semibold">Aktif</CardTitle>
+                  <CardDescription className="text-xs">Sedang diproses</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-lg">Permohonan Aktif</CardTitle>
-                <CardDescription>Permohonan yang sedang diproses</CardDescription>
-              </div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{pendingRequests.length}</div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{pendingRequests.length}</div>
-          </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-green-50 to-green-100 shadow-md transition-all hover:shadow-lg dark:from-green-950/40 dark:to-green-900/40">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-green-100 p-2 dark:bg-green-800/50">
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+        <Card className="overflow-hidden border-none bg-gradient-to-br from-green-50 to-green-100 shadow-sm transition-all hover:shadow-md dark:from-green-950/40 dark:to-green-900/40">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-green-500/10 p-2 dark:bg-green-800/50">
+                  <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-semibold">Selesai</CardTitle>
+                  <CardDescription className="text-xs">Telah disetujui</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-lg">Permohonan Selesai</CardTitle>
-                <CardDescription>Permohonan yang telah disetujui</CardDescription>
-              </div>
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{completedRequests.length}</div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400">{completedRequests.length}</div>
-          </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-none bg-gradient-to-br from-red-50 to-red-100 shadow-md transition-all hover:shadow-lg dark:from-red-950/40 dark:to-red-900/40">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-red-100 p-2 dark:bg-red-800/50">
-                <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+        <Card className="overflow-hidden border-none bg-gradient-to-br from-red-50 to-red-100 shadow-sm transition-all hover:shadow-md dark:from-red-950/40 dark:to-red-900/40">
+          <CardHeader className="pb-3 pt-4 px-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-red-500/10 p-2 dark:bg-red-800/50">
+                  <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-semibold">Ditolak</CardTitle>
+                  <CardDescription className="text-xs">Tidak disetujui</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-lg">Permohonan Ditolak</CardTitle>
-                <CardDescription>Permohonan yang ditolak</CardDescription>
-              </div>
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">{rejectedRequests.length}</div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-red-600 dark:text-red-400">{rejectedRequests.length}</div>
-          </CardContent>
         </Card>
       </div>
 
-      <Card className="border-none shadow-md mb-6">
-        <CardHeader className="border-b pb-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <Card className="border-none shadow-sm">
+        <CardHeader className="border-b pb-4 pt-5 px-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
-              <CardTitle>Permohonan Surat</CardTitle>
-              <CardDescription>Daftar permohonan surat Anda</CardDescription>
+              <CardTitle className="text-lg font-semibold">Daftar Permohonan</CardTitle>
+              <CardDescription className="text-xs mt-0.5">Semua permohonan surat Anda</CardDescription>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Cari permohonan..."
-                  className="pl-9 w-full sm:w-[250px] rounded-full"
+                  className="pl-8 h-9 w-full sm:w-[200px] text-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-[180px] rounded-full">
+                <SelectTrigger className="h-9 w-full sm:w-[150px] text-sm">
                   <SelectValue placeholder="Filter Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -307,86 +293,79 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pt-6">
-          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid grid-cols-4 w-full sm:w-auto">
-              <TabsTrigger value="all">Semua</TabsTrigger>
-              <TabsTrigger value="active">Aktif</TabsTrigger>
-              <TabsTrigger value="completed">Selesai</TabsTrigger>
-              <TabsTrigger value="rejected">Ditolak</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value={activeTab} className="space-y-4">
-              {filteredRequests.length > 0 ? (
-                filteredRequests.map((request) => (
-                  <div
-                    key={request.id}
-                    className="flex items-start gap-4 rounded-xl border border-border/50 bg-card p-4 shadow-sm transition-all hover:shadow-md"
-                  >
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="grid gap-1 flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">{request.title}</p>
-                        {getStatusBadge(request.status)}
+        <CardContent className="pt-4 px-5 pb-5">
+          <div className="space-y-3">
+            {filteredRequests.length > 0 ? (
+              filteredRequests.map((request) => (
+                <Card
+                  key={request.id}
+                  className="group border border-border/50 shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                        <FileText className="h-5 w-5 text-primary" />
                       </div>
-                      <p className="text-xs text-muted-foreground">{request.purpose}</p>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                        <p className="text-xs text-muted-foreground flex items-center">
-                          <Calendar className="h-3 w-3 mr-1 text-muted-foreground" />
-                          Diajukan pada {formatDate(request.requestDate)}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <CardTitle className="text-base font-semibold leading-tight">{request.title}</CardTitle>
+                          {getStatusBadge(request.status)}
+                        </div>
+                        <CardDescription className="text-xs mt-1">{request.purpose}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0 pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {formatDate(request.requestDate)}
                         </p>
                         {request.approvedDate && (
-                          <p className="text-xs text-muted-foreground flex items-center">
-                            <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
-                            Disetujui pada {formatDate(request.approvedDate)}
+                          <p className="text-xs text-green-600 flex items-center gap-1.5 dark:text-green-400">
+                            <CheckCircle className="h-3.5 w-3.5" />
+                            Disetujui {formatDate(request.approvedDate)}
                           </p>
                         )}
                         {request.completedDate && (
-                          <p className="text-xs text-muted-foreground flex items-center">
-                            <FileText className="h-3 w-3 mr-1 text-blue-500" />
-                            Selesai pada {formatDate(request.completedDate)}
+                          <p className="text-xs text-blue-600 flex items-center gap-1.5 dark:text-blue-400">
+                            <FileText className="h-3.5 w-3.5" />
+                            Selesai {formatDate(request.completedDate)}
                           </p>
                         )}
                       </div>
-                      <div className="mt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewDetails(request)}
-                          className="rounded-full hover:bg-primary/10 hover:text-primary"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Lihat Detail
-                        </Button>
-                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewDetails(request)}
+                        className="h-8 px-3 text-xs hover:bg-primary/10 hover:text-primary shrink-0"
+                      >
+                        <Eye className="mr-1.5 h-3.5 w-3.5" />
+                        Detail
+                      </Button>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8 px-4">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
-                    <FileText className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-1">Tidak ada permohonan surat</h3>
-                  <p className="text-muted-foreground mb-4">
-                    {activeTab === "all"
-                      ? "Anda belum mengajukan permohonan surat apapun."
-                      : activeTab === "active"
-                        ? "Anda tidak memiliki permohonan surat yang sedang aktif."
-                        : activeTab === "completed"
-                          ? "Anda belum memiliki permohonan surat yang selesai."
-                          : "Anda tidak memiliki permohonan surat yang ditolak."}
-                  </p>
-                  <Button onClick={() => openLetterDialog("active")}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Buat Permohonan Baru
-                  </Button>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="text-center py-12 px-4">
+                <div className="mx-auto w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mb-3">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
                 </div>
-              )}
-            </TabsContent>
-          </Tabs>
+                <h3 className="text-base font-semibold mb-1">Tidak ada permohonan</h3>
+                <p className="text-xs text-muted-foreground mb-4">
+                  {searchQuery || statusFilter !== "all"
+                    ? "Tidak ada permohonan surat yang sesuai dengan filter."
+                    : "Anda belum mengajukan permohonan surat apapun."}
+                </p>
+                <Button onClick={() => openLetterDialog("active")} size="sm">
+                  <Plus className="mr-1.5 h-4 w-4" />
+                  Buat Permohonan Baru
+                </Button>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 

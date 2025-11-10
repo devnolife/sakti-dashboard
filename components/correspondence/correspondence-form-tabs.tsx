@@ -9,7 +9,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { FileText, CalendarIcon, CreditCard, FileCheck, Upload } from "lucide-react"
+import { FileText, CalendarIcon, CreditCard, FileCheck, Upload, Loader2, AlertCircle, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
@@ -18,6 +18,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import useFormField from "@/hooks/use-form-field"
 import { FormFieldError } from "@/components/ui/form-field-error"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
+import { toast } from "@/hooks/use-toast"
+import type { DynamicField } from "@/types/correspondence"
 
 // Define schemas for each form type
 const activeLetterSchema = z.object({
@@ -56,6 +61,16 @@ const customLetterSchema = z.object({
   letterType: z.string().min(1, { message: "Pilih jenis surat" }),
 })
 
+interface LetterType {
+  id: string
+  title: string
+  description: string
+  approval_role: string
+  estimated_days: number
+  required_documents: string[]
+  additional_fields?: DynamicField[]
+}
+
 // Define props type (void element - no children)
 type CorrespondenceFormTabsProps = {
   onSubmit: (data: any) => void
@@ -70,10 +85,12 @@ export function CorrespondenceFormTabs({
 }: CorrespondenceFormTabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab)
   const [isParentCivilServant, setIsParentCivilServant] = useState<"yes" | "no">("no")
-  const [customLetterTypes, setCustomLetterTypes] = useState<any[]>([])
-  const [isLoadingTypes, setIsLoadingTypes] = useState(true)
+  const [customLetterTypes, setCustomLetterTypes] = useState<LetterType[]>([])
+  const [isLoadingTypes, setIsLoadingTypes] = useState(false)
+  const [selectedDynamicType, setSelectedDynamicType] = useState<LetterType | null>(null)
+  const [dynamicFormData, setDynamicFormData] = useState<Record<string, any>>({})
 
-  // Fetch custom letter types from API
+  // Fetch custom letter types from API when custom tab is active
   useEffect(() => {
     const fetchLetterTypes = async () => {
       try {
@@ -86,13 +103,20 @@ export function CorrespondenceFormTabs({
         }
       } catch (error) {
         console.error('Error fetching letter types:', error)
+        toast({
+          title: "Error",
+          description: "Gagal memuat jenis surat",
+          variant: "destructive"
+        })
       } finally {
         setIsLoadingTypes(false)
       }
     }
 
-    fetchLetterTypes()
-  }, [])
+    if (activeTab === "custom" && customLetterTypes.length === 0) {
+      fetchLetterTypes()
+    }
+  }, [activeTab, customLetterTypes.length])
 
   // Initialize forms for each tab
   const activeForm = useForm<z.infer<typeof activeLetterSchema>>({
@@ -142,22 +166,28 @@ export function CorrespondenceFormTabs({
 
   // Handle form submissions
   const handleActiveSubmit = (data: z.infer<typeof activeLetterSchema>) => {
+    console.log("Active form submitted:", data)
     onSubmit({
       type: "active",
+      title: "Surat Keterangan Aktif Kuliah",
       ...data,
     })
   }
 
   const handleLeaveSubmit = (data: z.infer<typeof leaveLetterSchema>) => {
+    console.log("Leave form submitted:", data)
     onSubmit({
       type: "leave",
+      title: "Surat Permohonan Cuti",
       ...data,
     })
   }
 
   const handlePaymentSubmit = (data: z.infer<typeof paymentLetterSchema>) => {
+    console.log("Payment form submitted:", data)
     onSubmit({
       type: "payment",
+      title: "Surat Keterangan Pembayaran",
       ...data,
     })
   }
@@ -169,10 +199,225 @@ export function CorrespondenceFormTabs({
     })
   }
 
+  // Handle dynamic letter type submission
+  const handleDynamicSubmit = () => {
+    if (!selectedDynamicType) {
+      toast({
+        title: "Error",
+        description: "Pilih jenis surat terlebih dahulu",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (!validateDynamicForm()) return
+
+    onSubmit({
+      type: "dynamic",
+      letter_type_id: selectedDynamicType.id,
+      title: selectedDynamicType.title,
+      form_data: dynamicFormData,
+    })
+  }
+
   // Handle parent civil servant change
   const handleParentCivilServantChange = (value: "yes" | "no") => {
     setIsParentCivilServant(value)
     activeForm.setValue("isParentCivilServant", value)
+  }
+
+  // Dynamic form handlers
+  const handleDynamicFieldChange = (fieldId: string, value: any) => {
+    setDynamicFormData(prev => ({
+      ...prev,
+      [fieldId]: value
+    }))
+  }
+
+  const validateDynamicForm = (): boolean => {
+    if (!selectedDynamicType?.additional_fields) return true
+
+    for (const field of selectedDynamicType.additional_fields) {
+      if (field.required && !dynamicFormData[field.id]) {
+        toast({
+          title: "Validasi Gagal",
+          description: `Field "${field.label}" wajib diisi`,
+          variant: "destructive"
+        })
+        return false
+      }
+
+      if (dynamicFormData[field.id]) {
+        const value = dynamicFormData[field.id]
+
+        if (field.type === "number") {
+          const numValue = parseFloat(value)
+          if (field.validation?.min !== undefined && numValue < field.validation.min) {
+            toast({
+              title: "Validasi Gagal",
+              description: `${field.label} harus minimal ${field.validation.min}`,
+              variant: "destructive"
+            })
+            return false
+          }
+          if (field.validation?.max !== undefined && numValue > field.validation.max) {
+            toast({
+              title: "Validasi Gagal",
+              description: `${field.label} harus maksimal ${field.validation.max}`,
+              variant: "destructive"
+            })
+            return false
+          }
+        }
+
+        if (field.type === "email") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          if (!emailRegex.test(value)) {
+            toast({
+              title: "Validasi Gagal",
+              description: `${field.label} harus berupa email yang valid`,
+              variant: "destructive"
+            })
+            return false
+          }
+        }
+
+        if (field.type === "phone") {
+          const phoneRegex = /^[0-9+\-\s()]+$/
+          if (!phoneRegex.test(value)) {
+            toast({
+              title: "Validasi Gagal",
+              description: `${field.label} harus berupa nomor telepon yang valid`,
+              variant: "destructive"
+            })
+            return false
+          }
+        }
+      }
+    }
+
+    return true
+  }
+
+  const renderDynamicField = (field: DynamicField) => {
+    const value = dynamicFormData[field.id] || ""
+
+    switch (field.type) {
+      case "text":
+      case "email":
+      case "phone":
+        return (
+          <Input
+            type={field.type}
+            value={value}
+            onChange={(e) => handleDynamicFieldChange(field.id, e.target.value)}
+            placeholder={field.placeholder}
+            required={field.required}
+          />
+        )
+
+      case "number":
+        return (
+          <Input
+            type="number"
+            value={value}
+            onChange={(e) => handleDynamicFieldChange(field.id, e.target.value)}
+            placeholder={field.placeholder}
+            min={field.validation?.min}
+            max={field.validation?.max}
+            required={field.required}
+          />
+        )
+
+      case "date":
+        return (
+          <Input
+            type="date"
+            value={value}
+            onChange={(e) => handleDynamicFieldChange(field.id, e.target.value)}
+            required={field.required}
+          />
+        )
+
+      case "textarea":
+        return (
+          <Textarea
+            value={value}
+            onChange={(e) => handleDynamicFieldChange(field.id, e.target.value)}
+            placeholder={field.placeholder}
+            rows={4}
+            required={field.required}
+          />
+        )
+
+      case "select":
+        return (
+          <Select
+            value={value}
+            onValueChange={(val) => handleDynamicFieldChange(field.id, val)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={field.placeholder || "Pilih..."} />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options?.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )
+
+      case "file":
+        return (
+          <div className="space-y-2">
+            <Input
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  if (field.validation?.fileTypes?.length) {
+                    const fileExt = file.name.split('.').pop()?.toLowerCase()
+                    if (!field.validation.fileTypes.includes(fileExt || "")) {
+                      toast({
+                        title: "File Tidak Valid",
+                        description: `Hanya file ${field.validation.fileTypes.join(", ")} yang diizinkan`,
+                        variant: "destructive"
+                      })
+                      return
+                    }
+                  }
+
+                  if (field.validation?.maxFileSize) {
+                    const maxSize = field.validation.maxFileSize * 1024 * 1024
+                    if (file.size > maxSize) {
+                      toast({
+                        title: "File Terlalu Besar",
+                        description: `Ukuran file maksimal ${field.validation.maxFileSize} MB`,
+                        variant: "destructive"
+                      })
+                      return
+                    }
+                  }
+
+                  handleDynamicFieldChange(field.id, file)
+                }
+              }}
+              required={field.required}
+            />
+            {field.validation?.fileTypes && (
+              <p className="text-xs text-muted-foreground">
+                Format: {field.validation.fileTypes.join(", ")}
+                {field.validation?.maxFileSize && ` • Maks: ${field.validation.maxFileSize} MB`}
+              </p>
+            )}
+          </div>
+        )
+
+      default:
+        return null
+    }
   }
 
   // useFormField instances must be declared outside of render functions
@@ -289,7 +534,23 @@ export function CorrespondenceFormTabs({
 
       <TabsContent value="active" className="mt-0">
         <Form {...activeForm}>
-          <form onSubmit={activeForm.handleSubmit(handleActiveSubmit)} className="space-y-6">
+          <form
+            onSubmit={activeForm.handleSubmit(
+              handleActiveSubmit,
+              (errors) => {
+                console.log("Form validation errors:", errors)
+                const firstError = Object.values(errors)[0]
+                if (firstError) {
+                  toast({
+                    title: "Validasi Gagal",
+                    description: firstError.message || "Mohon lengkapi semua field yang diperlukan",
+                    variant: "destructive"
+                  })
+                }
+              }
+            )}
+            className="space-y-6"
+          >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={activeForm.control}
@@ -519,10 +780,10 @@ export function CorrespondenceFormTabs({
               {isSubmitting ? (
                 <>
                   <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
-                  Memproses...
+                  Mengirim...
                 </>
               ) : (
-                "Lanjutkan"
+                "Ajukan Surat"
               )}
             </Button>
           </form>
@@ -531,7 +792,23 @@ export function CorrespondenceFormTabs({
 
       <TabsContent value="leave" className="mt-0">
         <Form {...leaveForm}>
-          <form onSubmit={leaveForm.handleSubmit(handleLeaveSubmit)} className="space-y-6">
+          <form
+            onSubmit={leaveForm.handleSubmit(
+              handleLeaveSubmit,
+              (errors) => {
+                console.log("Form validation errors:", errors)
+                const firstError = Object.values(errors)[0]
+                if (firstError) {
+                  toast({
+                    title: "Validasi Gagal",
+                    description: firstError.message || "Mohon lengkapi semua field yang diperlukan",
+                    variant: "destructive"
+                  })
+                }
+              }
+            )}
+            className="space-y-6"
+          >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={leaveForm.control}
@@ -740,10 +1017,10 @@ export function CorrespondenceFormTabs({
               {isSubmitting ? (
                 <>
                   <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
-                  Memproses...
+                  Mengirim...
                 </>
               ) : (
-                "Lanjutkan"
+                "Ajukan Surat"
               )}
             </Button>
           </form>
@@ -752,7 +1029,23 @@ export function CorrespondenceFormTabs({
 
       <TabsContent value="payment" className="mt-0">
         <Form {...paymentForm}>
-          <form onSubmit={paymentForm.handleSubmit(handlePaymentSubmit)} className="space-y-6">
+          <form
+            onSubmit={paymentForm.handleSubmit(
+              handlePaymentSubmit,
+              (errors) => {
+                console.log("Form validation errors:", errors)
+                const firstError = Object.values(errors)[0]
+                if (firstError) {
+                  toast({
+                    title: "Validasi Gagal",
+                    description: firstError.message || "Mohon lengkapi semua field yang diperlukan",
+                    variant: "destructive"
+                  })
+                }
+              }
+            )}
+            className="space-y-6"
+          >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={paymentForm.control}
@@ -960,10 +1253,10 @@ export function CorrespondenceFormTabs({
               {isSubmitting ? (
                 <>
                   <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
-                  Memproses...
+                  Mengirim...
                 </>
               ) : (
-                "Lanjutkan"
+                "Ajukan Surat"
               )}
             </Button>
           </form>
@@ -971,209 +1264,125 @@ export function CorrespondenceFormTabs({
       </TabsContent>
 
       <TabsContent value="custom" className="mt-0">
-        <Form {...customForm}>
-          <form onSubmit={customForm.handleSubmit(handleCustomSubmit)} className="space-y-6">
-            <FormField
-              control={customForm.control}
-              name="letterType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Jenis Surat</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      letterTypeFieldCustom.handleChange({ target: { value } } as any)
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Pilih jenis surat" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="recommendation">Surat Rekomendasi</SelectItem>
-                      <SelectItem value="introduction">Surat Pengantar</SelectItem>
-                      <SelectItem value="request">Surat Permohonan</SelectItem>
-                      <SelectItem value="statement">Surat Keterangan</SelectItem>
-                      <SelectItem value="other">Lainnya</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Pilih jenis surat yang ingin Anda buat</FormDescription>
-                  {letterTypeFieldCustom.isInvalid && <FormFieldError message={letterTypeFieldCustom.error} />}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={customForm.control}
-              name="letterTitle"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Judul Surat</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Contoh: Permohonan Magang di PT XYZ"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e)
-                        titleFieldCustom.handleChange(e)
-                      }}
-                      onBlur={(e) => {
-                        field.onBlur()
-                        titleFieldCustom.handleBlur(e)
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>Berikan judul yang jelas dan singkat untuk surat Anda</FormDescription>
-                  {titleFieldCustom.isInvalid && <FormFieldError message={titleFieldCustom.error} />}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField
-                control={customForm.control}
-                name="recipient"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Penerima Surat</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Nama/Jabatan penerima surat"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e)
-                          recipientFieldCustom.handleChange(e)
-                        }}
-                        onBlur={(e) => {
-                          field.onBlur()
-                          recipientFieldCustom.handleBlur(e)
-                        }}
-                      />
-                    </FormControl>
-                    {recipientFieldCustom.isInvalid && <FormFieldError message={recipientFieldCustom.error} />}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={customForm.control}
-                name="recipientAddress"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Alamat Penerima</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Alamat lengkap penerima surat"
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e)
-                          addressFieldCustom.handleChange(e)
-                        }}
-                        onBlur={(e) => {
-                          field.onBlur()
-                          addressFieldCustom.handleBlur(e)
-                        }}
-                      />
-                    </FormControl>
-                    {addressFieldCustom.isInvalid && <FormFieldError message={addressFieldCustom.error} />}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        {isLoadingTypes ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : selectedDynamicType ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">{selectedDynamicType.title}</h3>
+                <p className="text-sm text-muted-foreground">{selectedDynamicType.description}</p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => {
+                setSelectedDynamicType(null)
+                setDynamicFormData({})
+              }}>
+                Kembali
+              </Button>
             </div>
 
-            <FormField
-              control={customForm.control}
-              name="letterPurpose"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tujuan Surat</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Jelaskan tujuan pembuatan surat ini"
-                      {...field}
-                      className="min-h-[80px]"
-                      onChange={(e) => {
-                        field.onChange(e)
-                        purposeFieldCustom.handleChange(e)
-                      }}
-                      onBlur={(e) => {
-                        field.onBlur()
-                        purposeFieldCustom.handleBlur(e)
-                      }}
-                    />
-                  </FormControl>
-                  {purposeFieldCustom.isInvalid && <FormFieldError message={purposeFieldCustom.error} />}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={customForm.control}
-              name="letterContent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Isi Surat</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Tuliskan isi surat secara lengkap"
-                      {...field}
-                      className="min-h-[150px]"
-                      onChange={(e) => {
-                        field.onChange(e)
-                        contentFieldCustom.handleChange(e)
-                      }}
-                      onBlur={(e) => {
-                        field.onBlur()
-                        contentFieldCustom.handleBlur(e)
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>Tuliskan isi surat secara detail dan jelas</FormDescription>
-                  {contentFieldCustom.isInvalid && <FormFieldError message={contentFieldCustom.error} />}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div>
-              <FormLabel>Dokumen Pendukung (Opsional)</FormLabel>
-              <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
-                <div className="text-center">
-                  <Upload className="w-10 h-10 mx-auto text-primary/30" />
-                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="custom-file-upload"
-                      className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
-                    >
-                      <span>Unggah file</span>
-                      <input id="custom-file-upload" name="custom-file-upload" type="file" className="sr-only" />
-                    </label>
-                    <p className="pl-1">atau drag and drop</p>
-                  </div>
-                  <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
+            {selectedDynamicType.required_documents && selectedDynamicType.required_documents.length > 0 && (
+              <div className="p-4 border rounded-lg bg-muted/50">
+                <p className="mb-2 text-sm font-medium">Dokumen yang diperlukan:</p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedDynamicType.required_documents.map((doc, idx) => (
+                    <Badge key={idx} variant="secondary">
+                      {doc}
+                    </Badge>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
-                  Memproses...
-                </>
-              ) : (
-                "Lanjutkan"
-              )}
-            </Button>
-          </form>
-        </Form>
+            {selectedDynamicType.additional_fields && selectedDynamicType.additional_fields.length > 0 && (
+              <div className="space-y-4">
+                {selectedDynamicType.additional_fields.map((field) => (
+                  <div key={field.id} className="space-y-2">
+                    <Label>
+                      {field.label}
+                      {field.required && <span className="ml-1 text-red-500">*</span>}
+                    </Label>
+                    {renderDynamicField(field)}
+                    {field.helpText && (
+                      <p className="text-xs text-muted-foreground">{field.helpText}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end">
+              <Button onClick={handleDynamicSubmit} disabled={isSubmitting} className="w-full">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Mengirim...
+                  </>
+                ) : (
+                  "Ajukan Surat"
+                )}
+              </Button>
+            </div>
+          </div>
+        ) : customLetterTypes.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="py-12 text-center">
+              <AlertCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">Belum ada jenis surat lainnya tersedia</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Hubungi admin untuk menambahkan jenis surat baru
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">Pilih jenis surat yang ingin Anda ajukan:</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              {customLetterTypes.map((type) => (
+                <Card
+                  key={type.id}
+                  className="cursor-pointer transition-shadow hover:shadow-md"
+                  onClick={() => setSelectedDynamicType(type)}
+                >
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <FileText className="w-8 h-8 text-primary" />
+                      <Badge variant="outline" className="ml-2">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {type.estimated_days} hari
+                      </Badge>
+                    </div>
+                    <CardTitle className="mt-4">{type.title}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {type.description}
+                    </CardDescription>
+                  </CardHeader>
+                  {type.required_documents && type.required_documents.length > 0 && (
+                    <CardContent>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium">Dokumen diperlukan:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {type.required_documents.slice(0, 3).map((doc, idx) => (
+                            <Badge key={idx} variant="secondary" className="text-xs">
+                              {doc}
+                            </Badge>
+                          ))}
+                          {type.required_documents.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{type.required_documents.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </TabsContent>
     </Tabs>
   )

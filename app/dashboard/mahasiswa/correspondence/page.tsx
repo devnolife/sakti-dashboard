@@ -1,12 +1,8 @@
 "use client"
 
-import { StudentCorrespondenceForm } from "@/components/student/student-correspondence-form"
+import { MahasiswaCorrespondence } from "@/components/correspondence/mahasiswa-correspondence"
 
 export default function CorrespondencePage() {
-  return (
-    <div className="container py-6">
-      <StudentCorrespondenceForm />
-    </div>
-  )
+  return <MahasiswaCorrespondence />
 }
 

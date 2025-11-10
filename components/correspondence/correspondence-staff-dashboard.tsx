@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CorrespondenceTable } from "@/components/staff_tu/correspondence-table"
 import { CorrespondenceFilters } from "@/components/correspondence/correspondence-filters"
@@ -13,6 +14,7 @@ import { CheckCircle, Clock, FileText, X, Mail, Hash, Settings } from "lucide-re
 import { LetterDetailView } from "@/components/correspondence/letter-detail-view"
 import { NumberingSystemCard } from "@/components/correspondence/numbering-system-card"
 import { NumberingConfigDialog } from "@/components/correspondence/numbering-config-dialog"
+import { getLetterRequestsByProdi } from "@/app/actions/correspondence/letter-requests"
 
 // Types
 import type { LetterRequest } from "@/types/correspondence"
@@ -208,6 +210,7 @@ const mockRequests: LetterRequest[] = [
 ]
 
 export function CorrespondenceStaffDashboard() {
+  const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState<LetterRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<LetterRequest[]>([])
@@ -221,16 +224,41 @@ export function CorrespondenceStaffDashboard() {
   const [viewMode, setViewMode] = useState<"list" | "detail">("list")
   const [showNumberingConfig, setShowNumberingConfig] = useState(false)
 
-  // Simulate loading data
+  // Fetch real data based on staff prodi
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setRequests(mockRequests)
-      setFilteredRequests(mockRequests)
-      setLoading(false)
-    }, 1000)
+    async function fetchData() {
+      try {
+        if (!user?.id) return
 
-    return () => clearTimeout(timer)
-  }, [])
+        // Fetch staff profile to get prodi_id
+        const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
+        const response = await fetch('/api/staff/profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({ userId: user.id })
+        })
+
+        if (response.ok) {
+          const staff = await response.json()
+          if (staff.prodi_id) {
+            // Fetch letter requests for this prodi
+            const letterRequests = await getLetterRequestsByProdi(staff.prodi_id)
+            setRequests(letterRequests)
+            setFilteredRequests(letterRequests)
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching letter requests:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [user?.id])
 
   // Filter requests based on active tab and filters
   useEffect(() => {
