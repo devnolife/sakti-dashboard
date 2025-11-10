@@ -323,7 +323,24 @@ export const staffTuMenuItems = [
     id: "correspondence",
     title: "Pelayanan Surat",
     href: "/dashboard/staff_tu/correspondence",
-    icon: Mail
+    icon: Mail,
+    children: [
+      {
+        id: "correspondence-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/staff_tu/correspondence",
+      },
+      {
+        id: "correspondence-numbering",
+        title: "Buat Ketentuan Surat",
+        href: "/dashboard/staff_tu/correspondence/ketentuan",
+      },
+      {
+        id: "correspondence-master-data",
+        title: "Data Master",
+        href: "/dashboard/staff_tu/correspondence/master-data",
+      },
+    ],
   },
   {
     id: "exams",

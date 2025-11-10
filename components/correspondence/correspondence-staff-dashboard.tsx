@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAuth } from "@/context/auth-context"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CorrespondenceTable } from "@/components/staff_tu/correspondence-table"
 import { CorrespondenceFilters } from "@/components/correspondence/correspondence-filters"
@@ -14,7 +13,6 @@ import { CheckCircle, Clock, FileText, X, Mail, Hash, Settings } from "lucide-re
 import { LetterDetailView } from "@/components/correspondence/letter-detail-view"
 import { NumberingSystemCard } from "@/components/correspondence/numbering-system-card"
 import { NumberingConfigDialog } from "@/components/correspondence/numbering-config-dialog"
-import { SuratListTable } from "@/components/correspondence/surat-list-table"
 
 // Types
 import type { LetterRequest } from "@/types/correspondence"
