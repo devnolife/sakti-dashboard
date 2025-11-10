@@ -1,6 +1,7 @@
 import { PrismaClient } from '../lib/generated/prisma'
 import { seedMasterData } from './seeds/master-data-seed'
 import { seedUsers } from './seeds/users'
+import { seedLetterMasterData } from './seeds/letter-master-data'
 
 const prisma = new PrismaClient()
 
@@ -15,6 +16,10 @@ async function main() {
     // 2. Seed all users with their roles and sub-roles
     console.log('\n👥 Seeding Users...')
     await seedUsers(prisma)
+
+    // 3. Seed letter master data
+    console.log('\n📬 Seeding Letter Master Data...')
+    await seedLetterMasterData(prisma)
 
     console.log('\n✅ Database seeding completed successfully!')
   } catch (error) {

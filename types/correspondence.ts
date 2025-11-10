@@ -8,6 +8,8 @@ export type LetterStatus =
 export type ApprovalRole = "staff_tu" | "prodi" | "dekan" | "none"
 
 export interface LetterAttachment {
+  size: string
+  size: string
   id: string
   name: string
   uploadDate: string
@@ -15,6 +17,12 @@ export interface LetterAttachment {
 }
 
 export interface LetterRequest {
+  reviewDate: string
+  rejectedDate: string
+  studentFaculty: string
+  studentSemester: string
+  academicYear: string
+  letterUrl: string | undefined
   id: string
   type: string
   title: string

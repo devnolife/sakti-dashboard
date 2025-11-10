@@ -1,0 +1,3 @@
+"id"	"nomor_surat"	"id_jenis_surat"	"id_instansi"	"id_kode_kategori"	"id_masalah_surat"	"bulan"	"tahun_hijriah"	"tahun_masehi"	"perihal"	"keterangan"	"created_at"	"id_prodi"	"updated_at"
+"2"	"002/55202/UIN/EXT-KP/IX/1446/2025"		"15"	"1"	"1"	"IX"	"1446"	"2025"	"Test Surat Dengan Prodi"		"4/9/2025 11:12:32.771"	"1"	"4/9/2025 11:12:32.771"
+"1"	"001/TEST/UIN/EXT-KP/IX/1446/2025"		"15"	"1"	"1"	"IX"	"1446"	"2025"	"Test Surat Tanpa Prodi"		"4/9/2025 11:12:32.484"	"1"	"4/9/2025 11:12:34.475"

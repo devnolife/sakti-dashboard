@@ -146,28 +146,6 @@ export const mahasiswaMenuItems = [
     title: "Layanan Surat",
     href: "/dashboard/mahasiswa/correspondence",
     icon: Mail,
-    children: [
-      {
-        id: "correspondence-general",
-        title: "Surat Umum",
-        href: "/dashboard/mahasiswa/correspondence",
-      },
-      {
-        id: "correspondence-transfer",
-        title: "Surat Pindah",
-        href: "/dashboard/mahasiswa/correspondence/transfer",
-      },
-      {
-        id: "correspondence-survey",
-        title: "Surat Pengantar Survey",
-        href: "/dashboard/mahasiswa/correspondence/survey",
-      },
-      {
-        id: "correspondence-generate",
-        title: "Buat Surat",
-        href: "/dashboard/mahasiswa/correspondence/generate",
-      },
-    ],
   },
   {
     id: "exams",
@@ -345,7 +323,24 @@ export const staffTuMenuItems = [
     id: "correspondence",
     title: "Pelayanan Surat",
     href: "/dashboard/staff_tu/correspondence",
-    icon: Mail
+    icon: Mail,
+    children: [
+      {
+        id: "correspondence-dashboard",
+        title: "Dashboard",
+        href: "/dashboard/staff_tu/correspondence",
+      },
+      {
+        id: "correspondence-numbering",
+        title: "Buat Ketentuan Surat",
+        href: "/dashboard/staff_tu/correspondence/ketentuan",
+      },
+      {
+        id: "correspondence-master-data",
+        title: "Data Master",
+        href: "/dashboard/staff_tu/correspondence/master-data",
+      },
+    ],
   },
   {
     id: "exams",

@@ -12,21 +12,21 @@ function transformLetterRequest(req: any): LetterRequest {
     purpose: req.purpose,
     description: req.description,
     status: req.status as any,
-    requestDate: req.requestDate.toISOString(),
-    approvedDate: req.approvedDate?.toISOString(),
-    completedDate: req.completedDate?.toISOString(),
-    student_id: req.studentId,
-    studentName: req.student.user.name,
-    studentNIM: req.student.nim,
-    studentMajor: req.student.major || 'Unknown',
-    approvalRole: req.approvalRole as any,
-    approvedBy: req.approvedBy || undefined,
-    rejectedReason: req.rejectedReason || undefined,
-    additionalInfo: req.additionalInfo as any,
-    attachments: req.attachments?.map((att: any) => ({
+    requestDate: req.request_date.toISOString(),
+    approvedDate: req.approved_date?.toISOString(),
+    completedDate: req.completed_date?.toISOString(),
+    student_id: req.student_id,
+    studentName: req.students?.users?.name || 'Unknown',
+    studentNIM: req.students?.nim || 'Unknown',
+    studentMajor: req.students?.prodi?.name || 'Unknown',
+    approvalRole: req.approval_role as any,
+    approvedBy: req.approved_by || undefined,
+    rejectedReason: req.rejected_reason || undefined,
+    additionalInfo: req.additional_info as any,
+    attachments: req.letter_attachments?.map((att: any) => ({
       id: att.id,
       name: att.name,
-      uploadDate: att.uploadDate.toISOString(),
+      uploadDate: att.created_at.toISOString(),
       url: att.url
     })) || []
   }
@@ -34,23 +34,24 @@ function transformLetterRequest(req: any): LetterRequest {
 
 // Get letter requests that need approval by a specific role
 export async function getLetterRequestsForApproval(role: string): Promise<LetterRequest[]> {
-  const requests = await prisma.letterRequest.findMany({
+  const requests = await prisma.letter_requests.findMany({
     where: {
-      approvalRole: role as any,
+      approval_role: role as any,
       status: {
         in: ['submitted', 'in_review']
       }
     },
     include: {
-      student: {
+      students: {
         include: {
-          user: true
+          users: true,
+          prodi: true
         }
       },
-      attachments: true
+      letter_attachments: true
     },
     orderBy: {
-      requestDate: 'desc'
+      request_date: 'desc'
     }
   })
 
@@ -59,20 +60,46 @@ export async function getLetterRequestsForApproval(role: string): Promise<Letter
 
 // Get letter requests submitted by a specific student
 export async function getStudentLetterRequests(studentId: string): Promise<LetterRequest[]> {
-  const requests = await prisma.letterRequest.findMany({
+  const requests = await prisma.letter_requests.findMany({
     where: {
       student_id: studentId
     },
     include: {
-      student: {
+      students: {
         include: {
-          user: true
+          users: true,
+          prodi: true
         }
       },
-      attachments: true
+      letter_attachments: true
     },
     orderBy: {
-      requestDate: 'desc'
+      request_date: 'desc'
+    }
+  })
+
+  return requests.map(transformLetterRequest)
+}
+
+// Get letter requests for staff_tu filtered by prodi
+export async function getLetterRequestsByProdi(prodiId: string): Promise<LetterRequest[]> {
+  const requests = await prisma.letter_requests.findMany({
+    where: {
+      students: {
+        prodi_id: prodiId
+      }
+    },
+    include: {
+      students: {
+        include: {
+          users: true,
+          prodi: true
+        }
+      },
+      letter_attachments: true
+    },
+    orderBy: {
+      request_date: 'desc'
     }
   })
 
@@ -81,15 +108,16 @@ export async function getStudentLetterRequests(studentId: string): Promise<Lette
 
 // Get a specific letter request by its ID
 export async function getLetterRequestById(requestId: string): Promise<LetterRequest | null> {
-  const request = await prisma.letterRequest.findUnique({
+  const request = await prisma.letter_requests.findUnique({
     where: { id: requestId },
     include: {
-      student: {
+      students: {
         include: {
-          user: true
+          users: true,
+          prodi: true
         }
       },
-      attachments: true
+      letter_attachments: true
     }
   })
 

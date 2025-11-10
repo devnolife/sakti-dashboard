@@ -280,15 +280,63 @@ export async function seedUsers(prisma: PrismaClient) {
   // ========================================
   console.log('\n👥 Creating Staff users...')
 
-  // Staff TU (one per prodi)
-  for (const prodi of allProdi) {
-    const username = `stafftu_${prodi.kode.toLowerCase()}`
+  // Staff TU / Admin Prodi (Real Data - one per prodi)
+  const staffTuData = [
+    {
+      username: 'admin_if',
+      name: 'Siti Nurhaliza, S.Kom',
+      prodi_kode: '55202', // Informatika
+      phone: '+628126543210'
+    },
+    {
+      username: 'admin_te',
+      name: 'Ahmad Fauzi, S.T',
+      prodi_kode: '55201', // Teknik Elektro
+      phone: '+628126543211'
+    },
+    {
+      username: 'admin_ar',
+      name: 'Dewi Lestari, S.T',
+      prodi_kode: '55203', // Arsitektur
+      phone: '+628126543212'
+    },
+    {
+      username: 'admin_tp',
+      name: 'Budi Santoso, S.T',
+      prodi_kode: '55204', // Teknik Pengairan
+      phone: '+628126543213'
+    },
+    {
+      username: 'admin_pwk',
+      name: 'Rina Wulandari, S.T',
+      prodi_kode: '55205', // Perencanaan Wilayah dan Kota
+      phone: '+628126543214'
+    }
+  ]
+
+  for (const staffData of staffTuData) {
+    const prodi = allProdi.find(p => p.kode === staffData.prodi_kode)
+    if (!prodi) {
+      console.log(`  ⚠️  Prodi ${staffData.prodi_kode} not found, skipping ${staffData.username}`)
+      continue
+    }
+
+    // Check if user already exists
+    const existingUser = await prisma.users.findUnique({
+      where: { username: staffData.username }
+    })
+
+    if (existingUser) {
+      console.log(`  ⏭️  Skipping ${staffData.username} - already exists`)
+      continue
+    }
+
     const user = await prisma.users.create({
       data: {
         id: nanoid(),
-        username,
+        username: staffData.username,
         password: defaultPassword,
-        name: `${indonesianNames[Math.floor(Math.random() * indonesianNames.length)]}`,
+        name: staffData.name,
         role: Role.staff_tu,
         is_active: true,
         created_at: new Date(),
@@ -300,15 +348,15 @@ export async function seedUsers(prisma: PrismaClient) {
       data: {
         id: nanoid(),
         user_id: user.id,
-        nip: `NIPTU${Date.now()}${Math.floor(Math.random() * 1000)}`,
+        nip: `STAFF${Date.now()}${Math.floor(Math.random() * 10000)}`, // Generate unique NIP untuk staff
         department: prodi.nama,
         prodi_id: prodi.kode,
-        position: `Staff Tata Usaha ${prodi.nama}`,
-        phone: `+62812${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`,
+        position: `Admin Prodi ${prodi.nama}`,
+        phone: staffData.phone,
         office: `Sekretariat ${prodi.nama}`
       }
     })
-    console.log(`  ✅ Staff TU: ${prodi.nama}`)
+    console.log(`  ✅ Admin Prodi ${prodi.nama}: ${staffData.name} (${staffData.username})`)
   }
 
   // Kepala Tata Usaha
