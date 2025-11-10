@@ -348,7 +348,10 @@ function getUserIncludeByRole(role?: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password, selectedRole } = await request.json()
+    const { username: rawUsername, password, selectedRole } = await request.json()
+
+    // Trim username to remove leading/trailing spaces
+    const username = rawUsername?.trim()
 
     console.log('========================================')
     console.log('🔐 Login attempt:', { username, selectedRole })
@@ -456,7 +459,20 @@ export async function POST(request: NextRequest) {
         }
       }
     } else {
-      console.log('User not in local DB, checking GraphQL...')
+      // User not found in local DB
+      // Only check GraphQL if username looks like NIM (numeric or starts with year)
+      const looksLikeNIM = /^\d+$/.test(username) || /^20\d{2}/.test(username)
+
+      if (!looksLikeNIM) {
+        // Not a NIM format, don't check GraphQL
+        console.log('❌ User not found in local DB and username is not NIM format')
+        return NextResponse.json(
+          { error: 'Akun tidak ditemukan. Periksa kembali username Anda.' },
+          { status: 401 }
+        )
+      }
+
+      console.log('User not in local DB, checking GraphQL (username looks like NIM)...')
 
       try {
         // Query GraphQL for mahasiswa user

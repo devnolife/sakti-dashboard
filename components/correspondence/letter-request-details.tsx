@@ -372,14 +372,55 @@ export function LetterRequestDetails({
                 <CardContent>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {Object.entries(request.additionalInfo).map(([key, value]) => {
+                      // Skip internal fields
+                      if (key === 'type' || key === 'title') return null
+
                       // Find the field definition to get the label
                       const fieldDef = letterTypeInfo.additionalFields?.find((f) => f.name === key)
-                      const label = fieldDef?.label || key
+
+                      // Mapping for Indonesian labels
+                      const labelMapping: Record<string, string> = {
+                        semester: 'Semester',
+                        academicYear: 'Tahun Akademik',
+                        purpose: 'Tujuan',
+                        parentPosition: 'Jabatan Orang Tua',
+                        parentInstitution: 'Instansi Orang Tua',
+                        isParentCivilServant: 'PNS',
+                        company: 'Perusahaan',
+                        position: 'Posisi',
+                        startDate: 'Tanggal Mulai',
+                        endDate: 'Tanggal Selesai',
+                        internshipType: 'Jenis Magang',
+                        reason: 'Alasan',
+                        leaveStartDate: 'Tanggal Mulai Cuti',
+                        leaveEndDate: 'Tanggal Selesai Cuti',
+                        researchTitle: 'Judul Penelitian',
+                        researchLocation: 'Lokasi Penelitian',
+                        researchPeriod: 'Periode Penelitian',
+                        scholarshipName: 'Nama Beasiswa',
+                        scholarshipProvider: 'Penyedia Beasiswa',
+                        destination: 'Tujuan',
+                        eventName: 'Nama Acara',
+                        eventDate: 'Tanggal Acara',
+                        eventLocation: 'Lokasi Acara',
+                        organizerName: 'Nama Penyelenggara',
+                        transcriptType: 'Jenis Transkrip'
+                      }
+
+                      const label = fieldDef?.label || labelMapping[key] || key
+
+                      // Format value for display
+                      let displayValue = value?.toString() || '-'
+
+                      // Format boolean values
+                      if (key === 'isParentCivilServant') {
+                        displayValue = value === 'yes' || value === true ? 'Ya' : 'Tidak'
+                      }
 
                       return (
                         <div key={key}>
                           <div className="text-sm text-muted-foreground">{label}</div>
-                          <div className="font-medium">{value?.toString()}</div>
+                          <div className="font-medium">{displayValue}</div>
                         </div>
                       )
                     })}
