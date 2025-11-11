@@ -13,7 +13,7 @@ export default function HRPage() {
       value: "156",
       description: "Dosen & Staff aktif",
       trend: "+8 tahun ini",
-      icon: <Users className="h-5 w-5 text-blue-600" />,
+      icon: <Users className="w-5 h-5 text-blue-600" />,
       color: "bg-blue-100 dark:bg-blue-900"
     },
     {
@@ -21,7 +21,7 @@ export default function HRPage() {
       value: "1:23",
       description: "Dosen per mahasiswa",
       trend: "Target: 1:20",
-      icon: <TrendingUp className="h-5 w-5 text-green-600" />,
+      icon: <TrendingUp className="w-5 h-5 text-green-600" />,
       color: "bg-green-100 dark:bg-green-900"
     },
     {
@@ -29,7 +29,7 @@ export default function HRPage() {
       value: "12",
       description: "Posisi terbuka",
       trend: "8 dosen, 4 staff",
-      icon: <UserPlus className="h-5 w-5 text-purple-600" />,
+      icon: <UserPlus className="w-5 h-5 text-purple-600" />,
       color: "bg-purple-100 dark:bg-purple-900"
     },
     {
@@ -37,7 +37,7 @@ export default function HRPage() {
       value: "4.1/5.0",
       description: "Rata-rata kinerja SDM",
       trend: "+0.2 dari tahun lalu",
-      icon: <Award className="h-5 w-5 text-orange-600" />,
+      icon: <Award className="w-5 h-5 text-orange-600" />,
       color: "bg-orange-100 dark:bg-orange-900"
     }
   ]
@@ -46,7 +46,7 @@ export default function HRPage() {
     <StatusCardsTemplate
       title="Sumber Daya Manusia"
       description="Manajemen dan pengembangan dosen serta staff fakultas"
-      icon={<Users className="h-6 w-6 text-blue-600" />}
+      icon={<Users className="w-6 h-6 text-blue-600" />}
       cards={statusCards}
     >
       <Tabs defaultValue="overview" className="space-y-4">
@@ -72,7 +72,7 @@ export default function HRPage() {
                   { dept: "Matematika & Fisika", faculty: 32, staff: 8, ratio: "1:24" },
                   { dept: "Kimia & Biologi", faculty: 28, staff: 6, ratio: "1:19" }
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{item.dept}</p>
                       <p className="text-sm text-muted-foreground">
@@ -101,7 +101,7 @@ export default function HRPage() {
                   { level: "S1/Sarjana", count: 0, percentage: 0, color: "bg-orange-500" }
                 ].map((qual, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="font-medium">{qual.level}</span>
                       <span className="text-sm font-semibold">{qual.count} ({qual.percentage}%)</span>
                     </div>
@@ -109,7 +109,7 @@ export default function HRPage() {
                   </div>
                 ))}
 
-                <div className="mt-4 p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                <div className="p-3 mt-4 rounded-lg bg-green-50 dark:bg-green-950">
                   <p className="text-sm text-green-700 dark:text-green-400">
                     ✅ 100% dosen bergelar minimal S2 sesuai standar nasional
                   </p>
@@ -140,7 +140,7 @@ export default function HRPage() {
                       <div className="w-20">
                         <Progress value={age.percentage} className="h-2" />
                       </div>
-                      <span className="text-sm font-semibold w-12">{age.count}</span>
+                      <span className="w-12 text-sm font-semibold">{age.count}</span>
                     </div>
                   </div>
                 ))}
@@ -155,34 +155,34 @@ export default function HRPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 rounded-lg bg-green-50 dark:bg-green-950">
+                  <div className="p-3 text-center rounded-lg bg-green-50 dark:bg-green-950">
                     <div className="text-2xl font-bold text-green-600">94%</div>
                     <p className="text-xs text-green-700">Kinerja Memuaskan</p>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-blue-50 dark:bg-blue-950">
+                  <div className="p-3 text-center rounded-lg bg-blue-50 dark:bg-blue-950">
                     <div className="text-2xl font-bold text-blue-600">87%</div>
                     <p className="text-xs text-blue-700">Target KPI Tercapai</p>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-purple-50 dark:bg-purple-950">
+                  <div className="p-3 text-center rounded-lg bg-purple-50 dark:bg-purple-950">
                     <div className="text-2xl font-bold text-purple-600">156</div>
                     <p className="text-xs text-purple-700">Jam Pengembangan</p>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-orange-50 dark:bg-orange-950">
+                  <div className="p-3 text-center rounded-lg bg-orange-50 dark:bg-orange-950">
                     <div className="text-2xl font-bold text-orange-600">23</div>
                     <p className="text-xs text-orange-700">Sertifikasi Baru</p>
                   </div>
                 </div>
 
-                <div className="space-y-3 mt-4">
-                  <div className="flex justify-between items-center">
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-center justify-between">
                     <span className="font-medium">Teaching Excellence</span>
                     <span className="text-sm font-semibold">4.3/5.0</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="font-medium">Research Output</span>
                     <span className="text-sm font-semibold">4.1/5.0</span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="font-medium">Service Contribution</span>
                     <span className="text-sm font-semibold">3.9/5.0</span>
                   </div>
@@ -199,10 +199,10 @@ export default function HRPage() {
               <CardDescription>Profil lengkap dosen dan staff berdasarkan departemen</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Users className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Faculty Directory</h3>
-                <p className="text-muted-foreground mb-4">
+              <div className="py-8 text-center">
+                <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                <h3 className="mb-2 text-lg font-semibold">Faculty Directory</h3>
+                <p className="mb-4 text-muted-foreground">
                   Direktori lengkap profil, kualifikasi, dan spesialisasi faculty
                 </p>
                 <Button>
@@ -219,7 +219,7 @@ export default function HRPage() {
             <CardHeader>
               <CardTitle>Active Recruitment</CardTitle>
               <CardDescription>Posisi terbuka dan proses rekrutmen</CardDescription>
-            </CardContent>
+            </CardHeader>
             <CardContent className="space-y-4">
               {[
                 {
@@ -247,7 +247,7 @@ export default function HRPage() {
                   deadline: "10 Jan 2025"
                 }
               ].map((job, index) => (
-                <div key={index} className="p-4 rounded-lg border">
+                <div key={index} className="p-4 border rounded-lg">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold">{job.position}</h4>
@@ -261,7 +261,7 @@ export default function HRPage() {
                     </Badge>
                   </div>
 
-                  <p className="text-sm mb-3">{job.requirements}</p>
+                  <p className="mb-3 text-sm">{job.requirements}</p>
 
                   <div className="flex items-center justify-between text-sm">
                     <span>{job.applications} aplikasi</span>
@@ -308,7 +308,7 @@ export default function HRPage() {
                   completion: 100
                 }
               ].map((prog, index) => (
-                <div key={index} className="p-4 rounded-lg border">
+                <div key={index} className="p-4 border rounded-lg">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold">{prog.program}</h4>
