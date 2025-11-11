@@ -1,0 +1,127 @@
+"use server"
+
+import { LetterRequest } from "@/types/correspondence"
+import { prisma } from "@/lib/prisma"
+
+// Helper function to transform database record to LetterRequest type
+function transformLetterRequest(req: any): LetterRequest {
+  return {
+    id: req.id,
+    type: req.type,
+    title: req.title,
+    purpose: req.purpose,
+    description: req.description,
+    status: req.status as any,
+    requestDate: req.request_date.toISOString(),
+    approvedDate: req.approved_date?.toISOString(),
+    completedDate: req.completed_date?.toISOString(),
+    student_id: req.student_id,
+    studentName: req.students?.users?.name || 'Unknown',
+    studentNIM: req.students?.nim || 'Unknown',
+    studentMajor: req.students?.prodi?.name || 'Unknown',
+    approvalRole: req.approval_role as any,
+    approvedBy: req.approved_by || undefined,
+    rejectedReason: req.rejected_reason || undefined,
+    additionalInfo: req.additional_info as any,
+    attachments: req.letter_attachments?.map((att: any) => ({
+      id: att.id,
+      name: att.name,
+      uploadDate: att.created_at.toISOString(),
+      url: att.url
+    })) || []
+  }
+}
+
+// Get letter requests that need approval by a specific role
+export async function getLetterRequestsForApproval(role: string): Promise<LetterRequest[]> {
+  const requests = await prisma.letter_requests.findMany({
+    where: {
+      approval_role: role as any,
+      status: {
+        in: ['submitted', 'in_review']
+      }
+    },
+    include: {
+      students: {
+        include: {
+          users: true,
+          prodi: true
+        }
+      },
+      letter_attachments: true
+    },
+    orderBy: {
+      request_date: 'desc'
+    }
+  })
+
+  return requests.map(transformLetterRequest)
+}
+
+// Get letter requests submitted by a specific student
+export async function getStudentLetterRequests(studentId: string): Promise<LetterRequest[]> {
+  const requests = await prisma.letter_requests.findMany({
+    where: {
+      student_id: studentId
+    },
+    include: {
+      students: {
+        include: {
+          users: true,
+          prodi: true
+        }
+      },
+      letter_attachments: true
+    },
+    orderBy: {
+      request_date: 'desc'
+    }
+  })
+
+  return requests.map(transformLetterRequest)
+}
+
+// Get letter requests for staff_tu filtered by prodi
+export async function getLetterRequestsByProdi(prodiId: string): Promise<LetterRequest[]> {
+  const requests = await prisma.letter_requests.findMany({
+    where: {
+      students: {
+        prodi_id: prodiId
+      }
+    },
+    include: {
+      students: {
+        include: {
+          users: true,
+          prodi: true
+        }
+      },
+      letter_attachments: true
+    },
+    orderBy: {
+      request_date: 'desc'
+    }
+  })
+
+  return requests.map(transformLetterRequest)
+}
+
+// Get a specific letter request by its ID
+export async function getLetterRequestById(requestId: string): Promise<LetterRequest | null> {
+  const request = await prisma.letter_requests.findUnique({
+    where: { id: requestId },
+    include: {
+      students: {
+        include: {
+          users: true,
+          prodi: true
+        }
+      },
+      letter_attachments: true
+    }
+  })
+
+  if (!request) return null
+
+  return transformLetterRequest(request)
+}
