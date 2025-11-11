@@ -658,6 +658,27 @@ model correspondence_requests {
   approver        users?            @relation("ApprovedBy", fields: [approved_by], references: [id])
 }
 
+model workflow_history {
+  id                 String          @id
+  letter_request_id  String
+  action             String          // submitted, reviewed, forwarded, approved, rejected
+  actor_id           String
+  actor_role         String
+  notes              String?
+  created_at         DateTime        @default(now())
+  letter_requests    letter_requests @relation(fields: [letter_request_id], references: [id], onDelete: Cascade)
+}
+
+model role_assignments {
+  id              String       @id
+  letter_type_id  String
+  initial_role    String       // admin_umum, admin_akademik, staff_tu
+  approval_role   String       // wd1, wd2, wd3, dekan
+  is_active       Boolean      @default(true)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+}
+
 model notifications {
   id         String           @id
   user_id    String

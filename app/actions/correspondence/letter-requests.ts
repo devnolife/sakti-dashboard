@@ -2,6 +2,7 @@
 
 import { LetterRequest } from "@/types/correspondence"
 import { prisma } from "@/lib/prisma"
+import { assignLetterRequest, forwardToWD1, approveByWD1, rejectLetterRequest, returnForRevision } from "./workflow"
 
 // Helper function to transform database record to LetterRequest type
 function transformLetterRequest(req: any): LetterRequest {
@@ -124,4 +125,56 @@ export async function getLetterRequestById(requestId: string): Promise<LetterReq
   if (!request) return null
 
   return transformLetterRequest(request)
+}
+
+// Forward letter request to WD1 (from Admin Umum)
+export async function forwardLetterToWD1(requestId: string, userId: string, notes?: string) {
+  return await forwardToWD1(requestId, userId, notes)
+}
+
+// Approve letter request (by WD1)
+export async function approveLetterRequest(requestId: string, userId: string, notes?: string) {
+  return await approveByWD1(requestId, userId, notes)
+}
+
+// Reject letter request
+export async function rejectRequest(requestId: string, userId: string, reason: string) {
+  return await rejectLetterRequest(requestId, userId, reason)
+}
+
+// Return letter for revision
+export async function returnLetterForRevision(requestId: string, userId: string, notes: string) {
+  return await returnForRevision(requestId, userId, notes)
+}
+
+// Create new letter request with auto-assignment
+export async function createLetterRequest(data: {
+  studentId: string
+  type: string
+  title: string
+  purpose: string
+  description: string
+  additionalInfo?: any
+}) {
+  const request = await prisma.letter_requests.create({
+    data: {
+      id: require('nanoid').nanoid(),
+      student_id: data.studentId,
+      type: data.type,
+      title: data.title,
+      purpose: data.purpose,
+      description: data.description,
+      additional_info: data.additionalInfo,
+      approval_role: 'staff_tu', // Default, will be updated by workflow
+      status: 'submitted',
+      request_date: new Date(),
+      created_at: new Date(),
+      updated_at: new Date()
+    }
+  })
+
+  // Auto-assign to appropriate role based on letter type
+  await assignLetterRequest(request.id, data.type)
+
+  return request
 }

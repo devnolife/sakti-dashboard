@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma"
 import { getServerActionUserId } from "@/lib/auth-utils"
 import { generateId } from "@/lib/utils"
 import { students } from "@/components/dekan/vice-dean-4/mock-data";
+import { createLetterRequest } from "./letter-requests"
 
-// Submit a new letter request
+// Submit a new letter request with workflow auto-assignment
 export async function submitLetterRequest(
   type: string,
   title: string,
@@ -44,20 +45,17 @@ export async function submitLetterRequest(
 
     const approvalRole = letterType?.approval_role || 'staff_tu'
 
-    // Create letter request
-    const letterRequest = await prisma.letter_requests.create({
-      data: {
-        id: generateId(),
-        type,
-        title,
-        purpose,
-        description,
-        student_id: user.students.id,
-        approval_role: approvalRole as any,
-        additional_info: additionalInfo || {},
-        status: 'submitted',
-        updated_at: new Date()
-      }
+    // Use new workflow-enabled createLetterRequest function
+    // This will automatically assign to admin_umum or staff_tu based on letter type
+    const letterRequest = await createLetterRequest({
+      type,
+      title,
+      purpose,
+      description,
+      student_id: user.students.id,
+      approval_role: approvalRole as any,
+      additional_info: additionalInfo || {},
+      status: 'submitted',
     })
 
     // Create attachments if provided
@@ -76,7 +74,7 @@ export async function submitLetterRequest(
 
     return {
       success: true,
-      message: "Permohonan surat berhasil diajukan",
+      message: "Permohonan surat berhasil diajukan dan telah diteruskan ke admin untuk review",
       requestId: letterRequest.id,
     }
   } catch (error) {
