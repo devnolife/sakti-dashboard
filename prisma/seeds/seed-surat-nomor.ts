@@ -1,128 +1,153 @@
-import { prisma } from '../../lib/prisma'
-import { getCurrentYears, getBulanRomawi, arabicToLatin } from '../../lib/utils/date-utils'
+import { PrismaClient } from '../../lib/generated/prisma'
+import { generateNomorSurat } from '../../lib/utils/surat-generator'
+import { nanoid } from 'nanoid'
+
+const prisma = new PrismaClient()
 
 async function seedSuratNomor() {
-  console.log('🌱 Seeding nomor surat...')
+  console.log('==== Seeding nomor surat dengan format baru...')
 
   try {
-    // Get current dates
-    const { hijri, gregorian } = getCurrentYears()
-    const bulanRomawi = getBulanRomawi()
-    const tahunMasehi = gregorian.toString()
-    const tahunHijri = arabicToLatin(hijri.toString())
-
-    // Get jenis_surat yang ada
-    const jenisSurat = await prisma.jenis_surat.findMany({
-      orderBy: { kode: 'asc' }
-    })
-
-    if (jenisSurat.length === 0) {
-      console.log('⚠️  Tidak ada jenis_surat, jalankan seed-jenis-surat.ts terlebih dahulu')
-      return
-    }
-
-    // Get prodi untuk testing (55202)
     const prodiKode = '55202'
     const prodi = await prisma.prodi.findUnique({
-      where: {
-        kode: prodiKode
-      }
+      where: { kode: prodiKode }
     })
 
     if (!prodi) {
-      console.log(`⚠️  Prodi dengan kode ${prodiKode} tidak ditemukan, skip seeding`)
+      console.log('Prodi tidak ditemukan')
       return
     }
 
-    console.log(`📍 Menggunakan Prodi: ${prodi.nama} (${prodi.kode})`)
+    console.log('Testing dengan Prodi: ' + prodi.nama)
 
-    // Create surat dan update counter untuk setiap jenis
-    for (const jenis of jenisSurat) {
-      // Cek apakah sudah ada counter untuk jenis ini
-      let counter = await prisma.count_surat.findUnique({
-        where: {
-          jenis_tahun_prodi_id: {
-            jenis: jenis.kode,
-            tahun: tahunMasehi,
-            prodi_id: prodi.kode
-          }
-        }
-      })
+    const letterTypes = await prisma.letter_types.findMany({
+      where: {
+        OR: [
+          { prodi_id: prodiKode, is_active: true },
+          { is_global: true, is_active: true }
+        ]
+      },
+      include: { jenis_surat_link: true }
+    })
 
-      // Jika belum ada, buat counter baru
-      if (!counter) {
-        counter = await prisma.count_surat.create({
+    if (letterTypes.length === 0) {
+      console.log('Tidak ada letter_types')
+      return
+    }
+
+    const students = await prisma.students.findMany({
+      where: { prodi_id: prodiKode },
+      take: 5
+    })
+
+    if (students.length === 0) {
+      console.log('Tidak ada students')
+      return
+    }
+
+    // Get admin user untuk approved_by
+    const adminUser = await prisma.users.findFirst({
+      where: { role: 'admin' }
+    })
+
+    if (!adminUser) {
+      console.log('Tidak ada admin user')
+      return
+    }
+
+    for (const letterType of letterTypes) {
+      console.log('Processing: ' + letterType.title)
+
+      const jenisKode = letterType.jenis_surat_link?.kode || 'A'
+      const scope = letterType.scope as 'fakultas' | 'prodi'
+      const jumlahSurat = Math.floor(Math.random() * 3) + 2
+
+      for (let i = 0; i < jumlahSurat; i++) {
+        const student = students[Math.floor(Math.random() * students.length)]
+
+        const request = await prisma.correspondence_requests.create({
           data: {
-            jenis: jenis.kode,
-            counter: 0,
-            tahun: tahunMasehi,
-            prodi_id: prodi.kode
+            id: nanoid(),
+            letter_type_id: letterType.id,
+            student_id: student.id,
+            form_data: { perihal: 'Testing' },
+            status: 'approved',
+            approved_by: adminUser.id,
+            approved_at: new Date()
           }
         })
-        console.log(`✅ Created counter for ${jenis.kode}: 0`)
-      }
 
-      // Buat 3-5 surat untuk setiap jenis
-      const jumlahSurat = Math.floor(Math.random() * 3) + 3 // 3-5 surat
+        const jenis = scope === 'fakultas' ? 'FAKULTAS' : 'PRODI_' + prodiKode
+        const prodi_id = scope === 'fakultas' ? null : prodiKode
 
-      for (let i = 1; i <= jumlahSurat; i++) {
-        const newCounter = counter.counter + i
-        const paddedCounter = newCounter.toString().padStart(3, '0')
-
-        // Format nomor surat: XXX/KODE/BULAN/HIJRI/MASEHI
-        const nomorSurat = `${paddedCounter}/${jenis.kode}/${bulanRomawi}/${tahunHijri}/${tahunMasehi}`
-
-        // Cek apakah nomor surat sudah ada
-        const existing = await prisma.surat.findUnique({
-          where: { nomor_surat: nomorSurat }
+        let counterRecord = await prisma.count_surat.findFirst({
+          where: {
+            jenis,
+            tahun: new Date().getFullYear().toString(),
+            prodi_id
+          }
         })
 
-        if (existing) {
-          console.log(`⏭️  Skip ${nomorSurat} (sudah ada)`)
-          continue
+        if (!counterRecord) {
+          counterRecord = await prisma.count_surat.create({
+            data: {
+              jenis,
+              counter: 0,
+              tahun: new Date().getFullYear().toString(),
+              prodi_id
+            }
+          })
         }
 
-        // Buat surat baru
+        const updatedCounter = await prisma.count_surat.update({
+          where: { id: counterRecord.id },
+          data: { counter: { increment: 1 } }
+        })
+
+        const nomorSurat = generateNomorSurat({
+          counter: updatedCounter.counter,
+          jenisKode,
+          scope,
+          kodeProdi: scope === 'prodi' ? 'IF' : undefined
+        })
+
+        const parts = nomorSurat.split('/')
+        const bulan = scope === 'fakultas' ? parts[3] : parts[3]
+        const hijri = scope === 'fakultas' ? parts[4] : parts[4]
+        const masehi = scope === 'fakultas' ? parts[5] : parts[5]
+
         await prisma.surat.create({
           data: {
             nomor_surat: nomorSurat,
-            id_jenis_surat: counter.id,
-            id_kode_kategori: jenis.id,
-            bulan: bulanRomawi,
-            tahun_hijriah: tahunHijri,
-            tahun_masehi: tahunMasehi,
-            perihal: `Surat ${jenis.nama} ${newCounter}`,
-            keterangan: `Surat testing untuk jenis ${jenis.nama}`,
-            id_prodi: prodi.kode,
-            created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) // Random dalam 30 hari terakhir
+            id_jenis_surat: counterRecord.id,
+            id_kode_kategori: letterType.jenis_surat_link?.id,
+            bulan,
+            tahun_hijriah: hijri,
+            tahun_masehi: masehi,
+            perihal: 'Testing',
+            keterangan: 'Testing surat',
+            id_prodi: prodiKode,
+            kode_prodi: scope === 'prodi' ? 'IF' : null,
+            letter_request_id: request.id,
+            created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
           }
         })
 
-        console.log(`✅ Created surat: ${nomorSurat}`)
+        console.log('  OK: ' + nomorSurat)
       }
-
-      // Update counter ke nomor terakhir
-      await prisma.count_surat.update({
-        where: { id: counter.id },
-        data: { counter: counter.counter + jumlahSurat }
-      })
-
-      console.log(`✅ Updated counter ${jenis.kode}: ${counter.counter} → ${counter.counter + jumlahSurat}`)
     }
 
-    console.log('\n✅ Seeding nomor surat completed!')
-    console.log(`📊 Total jenis surat: ${jenisSurat.length}`)
-    console.log(`📝 Format nomor: XXX/${jenisSurat[0]?.kode || 'KODE'}/${bulanRomawi}/${tahunHijri}/${tahunMasehi}`)
+    console.log('Seeding completed!')
 
   } catch (error) {
-    console.error('❌ Error seeding nomor surat:', error)
+    console.error('Error:', error)
     throw error
   }
 }
 
 seedSuratNomor()
-  .catch((e) => {
-    console.error('❌ Error:', e)
+  .catch((error) => {
+    console.error(error)
     process.exit(1)
   })
   .finally(async () => {

@@ -286,10 +286,6 @@ export function CorrespondenceStaffDashboard() {
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-2xl font-bold tracking-tight">Manajemen Korespondensi</h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowNumberingConfig(true)}>
-            <Settings className="w-4 h-4 mr-2" />
-            Atur Nomor
-          </Button>
           <Button onClick={() => setShowCreateDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Buat Surat

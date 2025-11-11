@@ -605,10 +605,19 @@ model letter_requests {
   approved_by        String?
   generated_letter   String?
   letter_number      String?
+  // Workflow fields
+  workflow_stage     String               @default("initial_review") // initial_review, wd1_approval, completed
+  assigned_to        String?
+  forwarded_by       String?
+  forwarded_at       DateTime?
+  wd1_approved_by    String?
+  wd1_approved_at    DateTime?
+  wd1_notes          String?
   created_at         DateTime             @default(now())
   updated_at         DateTime
   letter_attachments letter_attachments[]
   students           students             @relation(fields: [student_id], references: [id])
+  workflow_history   workflow_history[]
 }
 
 model letter_types {
@@ -623,9 +632,12 @@ model letter_types {
   is_global               Boolean                   @default(false)
   is_active               Boolean                   @default(true)
   template                String?
+  jenis_surat_id          Int?                      // Link ke jenis_surat (A/B/C/D)
+  scope                   String                    @default("fakultas") // "fakultas" atau "prodi"
   created_at              DateTime                  @default(now())
   updated_at              DateTime                  @updatedAt
   prodi                   prodi?                    @relation(fields: [prodi_id], references: [kode])
+  jenis_surat_link        jenis_surat?              @relation("LetterTypeJenisSurat", fields: [jenis_surat_id], references: [id])
   correspondence_requests correspondence_requests[]
 }
 
@@ -1508,8 +1520,10 @@ model surat {
   perihal          String
   keterangan       String?
   id_prodi         String?
+  kode_prodi       String?         // Kode prodi untuk format nomor (IF, SI, TI, dll)
   letter_request_id String?
   signed_document_id String?
+  scope            String          @default("fakultas") // "fakultas" atau "prodi"
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
 
@@ -1527,11 +1541,12 @@ model count_surat {
   counter   Int               @default(0)
   tahun     String?
   prodi_id  String?
+  scope     String            @default("fakultas") // "fakultas" atau "prodi"
 
   ketentuan ketentuan_surat[]
   surat     surat[]
 
-  @@unique([jenis, tahun, prodi_id])
+  @@unique([jenis, tahun, prodi_id, scope])
 }
 
 // Table untuk masalah/kategori surat
@@ -1565,6 +1580,7 @@ model jenis_surat {
   ketentuan ketentuan_surat[]
   surat     surat[]
   tujuan    tujuan[]
+  letter_types letter_types[] @relation("LetterTypeJenisSurat")
 }
 
 // Table untuk ketentuan format nomor surat

@@ -8,23 +8,22 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Hash, TrendingUp, Calendar, FileText, Info } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 
+interface LetterTypeStat {
+  id: string
+  title: string
+  nomor_surat: string
+  jenis_kode: string // A, B, C, D
+  jenis_nama: string // UNSUR PIMPINAN, dll
+  scope: 'fakultas' | 'prodi'
+  created_at: string
+}
+
 interface SuratStatistics {
   lastUsed: string
   lastUsedDate: string | null
   totalThisMonth: number
   totalThisYear: number
-  categories: Array<{
-    id: string
-    title: string
-    nomor_surat: string
-    created_at: string
-  }>
-  counters: Array<{
-    id: number
-    jenis: string
-    counter: number
-    tahun: string
-  }>
+  letterTypes: LetterTypeStat[]
 }
 
 export function NumberingSystemCard() {
@@ -211,51 +210,51 @@ export function NumberingSystemCard() {
   )
 
   // Show empty state with simple UI if no data
-  if (!statistics || (statistics.totalThisYear === 0 && statistics.lastUsed === 'Belum ada')) {
+  if (!statistics || (statistics.totalThisYear === 0 && statistics.lastUsed === 'Belum ada' && (!statistics.letterTypes || statistics.letterTypes.length === 0))) {
     return (
       <>
         <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 dark:border-blue-800">
-          <CardHeader>
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
-                <Hash className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 text-base text-blue-800 dark:text-blue-200">
+                <Hash className="w-4 h-4" />
                 Sistem Penomoran Surat
               </CardTitle>
-              <Button variant="outline" size="sm" onClick={() => setShowInfoDialog(true)}>
-                <Info className="w-4 h-4 mr-2" />
-                Lihat Panduan
+              <Button variant="ghost" size="sm" onClick={() => setShowInfoDialog(true)} className="h-8">
+                <Info className="w-3.5 h-3.5 mr-1.5" />
+                Panduan
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <div className="flex items-center gap-3 p-3 bg-white border rounded-lg dark:bg-gray-800">
-                <div className="p-2 bg-blue-100 rounded-full dark:bg-blue-900/30">
-                  <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <CardContent className="pt-0 space-y-3">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+              <div className="flex items-center gap-2 p-2 bg-white border rounded-lg dark:bg-gray-800">
+                <div className="p-1.5 bg-blue-100 rounded dark:bg-blue-900/30">
+                  <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Bulan Ini</p>
-                  <p className="text-lg font-bold">0</p>
+                  <p className="text-xs text-muted-foreground">Bulan Ini</p>
+                  <p className="text-base font-bold">0</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-white border rounded-lg dark:bg-gray-800">
-                <div className="p-2 bg-green-100 rounded-full dark:bg-green-900/30">
-                  <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <div className="flex items-center gap-2 p-2 bg-white border rounded-lg dark:bg-gray-800">
+                <div className="p-1.5 bg-green-100 rounded dark:bg-green-900/30">
+                  <TrendingUp className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Tahun Ini</p>
-                  <p className="text-lg font-bold">0</p>
+                  <p className="text-xs text-muted-foreground">Tahun Ini</p>
+                  <p className="text-base font-bold">0</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-center col-span-2 p-4 border border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
+              <div className="flex items-center justify-center col-span-2 p-2 border border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
                 <div className="text-center">
-                  <p className="mb-1 text-sm font-medium text-blue-700 dark:text-blue-300">
+                  <p className="mb-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
                     📝 Belum ada surat yang diterbitkan
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Sistem penomoran akan otomatis bekerja saat surat pertama dibuat
+                    Sistem penomoran akan otomatis bekerja
                   </p>
                 </div>
               </div>
@@ -270,50 +269,80 @@ export function NumberingSystemCard() {
   return (
     <>
       <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 dark:border-blue-800">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
-              <Hash className="w-5 h-5" />
-              Nomor Terakhir Digunakan
+            <CardTitle className="flex items-center gap-2 text-base text-blue-800 dark:text-blue-200">
+              <Hash className="w-4 h-4" />
+              Sistem Penomoran Surat
             </CardTitle>
-            <Button variant="outline" size="sm" onClick={() => setShowInfoDialog(true)}>
-              <Info className="w-4 h-4 mr-2" />
-              Lihat Panduan
+            <Button variant="ghost" size="sm" onClick={() => setShowInfoDialog(true)} className="h-8">
+              <Info className="w-3.5 h-3.5 mr-1.5" />
+              Panduan
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Nomor Terakhir */}
-          <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
-            <p className="mb-2 text-sm font-medium text-muted-foreground">Nomor Terakhir</p>
-            <p className="mb-1 font-mono text-2xl font-bold text-blue-700 dark:text-blue-300">
-              {statistics.lastUsed}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {statistics.lastUsedDate ? formatDate(statistics.lastUsedDate) : 'Belum ada surat'}
-            </p>
+        <CardContent className="pt-0 space-y-3">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+            <div className="flex items-center gap-2 p-2 bg-white border rounded-lg dark:bg-gray-800">
+              <div className="p-1.5 bg-blue-100 rounded dark:bg-blue-900/30">
+                <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Bulan Ini</p>
+                <p className="text-base font-bold">{statistics.totalThisMonth}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 p-2 bg-white border rounded-lg dark:bg-gray-800">
+              <div className="p-1.5 bg-green-100 rounded dark:bg-green-900/30">
+                <TrendingUp className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Tahun Ini</p>
+                <p className="text-base font-bold">{statistics.totalThisYear}</p>
+              </div>
+            </div>
+            <div className="flex items-center col-span-2 gap-2 p-2 bg-white border rounded-lg dark:bg-gray-800">
+              <div className="p-1.5 bg-purple-100 rounded dark:bg-purple-900/30">
+                <Hash className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground">Terakhir Digunakan</p>
+                <p className="font-mono text-sm font-bold text-blue-600 truncate dark:text-blue-400">
+                  {statistics.lastUsed}
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Nomor Terakhir per Ketentuan Surat */}
-          {statistics.categories.length > 0 && (
-            <div className="p-4 bg-white border rounded-lg dark:bg-gray-800">
-              <h4 className="mb-3 text-sm font-semibold text-muted-foreground">Nomor Terakhir Per Ketentuan Surat</h4>
-              <div className="space-y-3">
-                {statistics.categories.map((category) => (
-                  <div key={category.id} className="p-3 transition-colors border rounded-lg bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <p className="mb-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          {category.title}
-                        </p>
-                        <p className="mb-1 font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
-                          {category.nomor_surat}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(category.created_at)}
-                        </p>
-                      </div>
+          {/* Letter Types Grid - Compact */}
+          {statistics.letterTypes && statistics.letterTypes.length > 0 && (
+            <div className="p-3 bg-white border rounded-lg dark:bg-gray-800">
+              <h4 className="mb-2 text-xs font-semibold text-muted-foreground">Nomor Terakhir Per Jenis</h4>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
+                {statistics.letterTypes.map((letterType) => (
+                  <div key={letterType.id} className="p-2 transition-colors border rounded bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <div className="flex items-center justify-between mb-1">
+                      <Badge
+                        variant="outline"
+                        className={`h-5 text-xs font-bold ${letterType.jenis_kode === 'A' ? 'border-blue-500 text-blue-700 dark:text-blue-400' :
+                          letterType.jenis_kode === 'B' ? 'border-green-500 text-green-700 dark:text-green-400' :
+                            letterType.jenis_kode === 'C' ? 'border-purple-500 text-purple-700 dark:text-purple-400' :
+                              'border-orange-500 text-orange-700 dark:text-orange-400'
+                          }`}
+                      >
+                        {letterType.jenis_kode}
+                      </Badge>
+                      <span className="text-xs">
+                        {letterType.scope === 'fakultas' ? '🏛️' : '📚'}
+                      </span>
                     </div>
+                    <p className="mb-1 text-xs font-medium text-gray-900 truncate dark:text-gray-100" title={letterType.title}>
+                      {letterType.title}
+                    </p>
+                    <p className="font-mono text-xs font-bold text-blue-600 truncate dark:text-blue-400" title={letterType.nomor_surat}>
+                      {letterType.nomor_surat}
+                    </p>
                   </div>
                 ))}
               </div>

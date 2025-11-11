@@ -85,45 +85,76 @@ export async function seedLetterMasterData(prisma: PrismaClient) {
     console.log(`  ✅ ${tujuan.nama} (${tujuan.kode})`)
   }
 
-  // 4. Seed ketentuan_surat (Aturan format)
-  console.log('\n⚙️  Seeding ketentuan_surat...')
-  const ketentuanData = [
+  // 4. Seed letter_types dengan jenis_surat_id dan scope
+  console.log('\n📋 Seeding letter_types...')
+
+  // Get prodi untuk testing
+  const prodiInformatika = await prisma.prodi.findUnique({
+    where: { kode: '55202' }
+  })
+
+  const letterTypesData = [
     {
-      id: 1,
-      id_tujuan: 30,
-      id_masalah: 2,
-      kode: 'KKP',
-      nama: 'Kuliah Kerja Profesi',
-      id_jenis: 3,
-      format_template: '{counter}/{prodi}/UIN/EXT-KP/{bulan}/{tahun_h}/{tahun_m}'
+      id: 'lt_kkp_001',
+      title: 'Kuliah Kerja Profesi (KKP)',
+      description: 'Surat permohonan KKP untuk mahasiswa',
+      approval_role: 'staff_tu' as any,
+      estimated_days: 3,
+      required_documents: ['Transkrip Nilai', 'KTP'],
+      jenis_surat_id: 3, // C - PERGURUAN TINGGI & INSTANSI SEPIHAK
+      scope: 'prodi' as any,
+      prodi_id: prodiInformatika?.kode,
+      is_global: false,
+      is_active: true
     },
     {
-      id: 2,
-      id_tujuan: 21,
-      id_masalah: 6,
-      kode: 'SK',
-      nama: 'Surat Keputusan',
-      id_jenis: 2,
-      format_template: '{counter}/{prodi}/MUH/SK-MHS/{bulan}/{tahun_h}/{tahun_m}'
+      id: 'lt_ujian_proposal_001',
+      title: 'Permohonan Ujian Proposal',
+      description: 'Surat permohonan ujian proposal skripsi/tugas akhir',
+      approval_role: 'staff_tu' as any,
+      estimated_days: 5,
+      required_documents: ['Draft Proposal', 'KRS'],
+      jenis_surat_id: 1, // A - UNSUR PIMPINAN
+      scope: 'prodi' as any,
+      prodi_id: prodiInformatika?.kode,
+      is_global: false,
+      is_active: true
     },
     {
-      id: 3,
-      id_tujuan: 21,
-      id_masalah: 6,
-      kode: 'SKA',
-      nama: 'Surat Keterangan Aktif',
-      id_jenis: 1,
-      format_template: '{counter}/{prodi}/UIN/INT-SKA/{bulan}/{tahun_h}/{tahun_m}'
+      id: 'lt_cuti_kuliah_001',
+      title: 'Cuti Kuliah',
+      description: 'Surat permohonan cuti kuliah',
+      approval_role: 'staff_tu' as any,
+      estimated_days: 7,
+      required_documents: ['Surat Keterangan Orang Tua', 'Bukti Pembayaran'],
+      jenis_surat_id: 2, // B - Berhubungan dengan Muhammadiyah
+      scope: 'prodi' as any,
+      prodi_id: prodiInformatika?.kode,
+      is_global: false,
+      is_active: true
+    },
+    {
+      id: 'lt_aktif_kuliah_001',
+      title: 'Surat Keterangan Aktif Kuliah',
+      description: 'Surat keterangan untuk mahasiswa aktif',
+      approval_role: 'staff_tu' as any,
+      estimated_days: 1,
+      required_documents: ['KTM', 'Bukti Pembayaran'],
+      jenis_surat_id: 4, // D - SURAT KELUAR
+      scope: 'fakultas' as any,
+      prodi_id: null,
+      is_global: true,
+      is_active: true
     }
   ]
 
-  for (const ketentuan of ketentuanData) {
-    await prisma.ketentuan_surat.upsert({
-      where: { id: ketentuan.id },
-      update: ketentuan,
-      create: ketentuan
+  for (const letterType of letterTypesData) {
+    await prisma.letter_types.upsert({
+      where: { id: letterType.id },
+      update: letterType,
+      create: letterType
     })
-    console.log(`  ✅ ${ketentuan.nama} (${ketentuan.kode})`)
+    console.log(`  ✅ ${letterType.title} (Scope: ${letterType.scope}, Jenis: ${letterType.jenis_surat_id})`)
   }
 
   console.log('\n✅ Letter master data seeding completed!')
