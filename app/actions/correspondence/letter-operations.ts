@@ -48,14 +48,12 @@ export async function submitLetterRequest(
     // Use new workflow-enabled createLetterRequest function
     // This will automatically assign to admin_umum or staff_tu based on letter type
     const letterRequest = await createLetterRequest({
+      studentId: user.students.id,
       type,
       title,
       purpose,
       description,
-      student_id: user.students.id,
-      approval_role: approvalRole as any,
-      additional_info: additionalInfo || {},
-      status: 'submitted',
+      additionalInfo: additionalInfo || {},
     })
 
     // Create attachments if provided

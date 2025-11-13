@@ -25,7 +25,14 @@ import {
   Printer,
   Eye,
   History,
+  Trash2,
 } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import type { LetterRequest, LetterStatus } from "@/types/correspondence"
 import { formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -37,6 +44,7 @@ interface LetterRequestDetailsProps {
   onClose: () => void
   onStatusChange?: (requestId: string, status: LetterStatus, notes?: string) => void
   onCreateTemplate?: (requestId: string) => void
+  onDelete?: (requestId: string) => void
   role?: string
 }
 
@@ -46,10 +54,12 @@ export function LetterRequestDetails({
   onClose,
   onStatusChange,
   onCreateTemplate,
+  onDelete,
   role = "mahasiswa", // Changed default role to mahasiswa
 }: LetterRequestDetailsProps) {
   const [rejectReason, setRejectReason] = useState("")
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("details")
 
   const getStatusBadge = (status: string) => {
@@ -63,7 +73,7 @@ export function LetterRequestDetails({
       case "in-review":
         return (
           <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-            Dalam Review
+            Diproses
           </Badge>
         )
       case "approved":
@@ -148,6 +158,18 @@ export function LetterRequestDetails({
     }
   }
 
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (onDelete) {
+      onDelete(request.id)
+    }
+    setIsDeleteDialogOpen(false)
+    onClose()
+  }
+
   // Timeline events based on request status and dates
   const timelineEvents = [
     {
@@ -216,10 +238,29 @@ export function LetterRequestDetails({
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2 mt-2 sm:mt-0">
-              <Button variant="outline" size="sm" onClick={() => window.print()} className="hidden sm:flex">
-                <Printer className="w-4 h-4 mr-2" />
-                Cetak
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="hidden sm:inline-block">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.print()}
+                        className="flex"
+                        disabled={request.status !== "completed"}
+                      >
+                        <Printer className="w-4 h-4 mr-2" />
+                        Cetak
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  {request.status !== "completed" && (
+                    <TooltipContent>
+                      <p>Surat hanya dapat dicetak setelah selesai diproses</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </DialogHeader>
@@ -266,7 +307,7 @@ export function LetterRequestDetails({
                       {request.status === "submitted"
                         ? "Diajukan"
                         : request.status === "in-review"
-                          ? "Dalam Review"
+                          ? "Diproses"
                           : request.status === "approved"
                             ? "Disetujui"
                             : request.status === "rejected"
@@ -602,11 +643,23 @@ export function LetterRequestDetails({
         </Tabs>
 
         <DialogFooter className="flex flex-col-reverse gap-2 pt-4 mt-4 border-t sm:flex-row sm:gap-0">
-          {/* For student role, only show the close button and download button if available */}
+          {/* For student role, show close, delete (if submitted), and download button (if completed) */}
           <div className="flex w-full gap-2">
             <Button variant="outline" onClick={onClose} className="flex-1 border-muted">
               Tutup
             </Button>
+
+            {/* Show delete button for submitted letters */}
+            {role === "mahasiswa" && request.status === "submitted" && onDelete && (
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                className="flex-1"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Hapus
+              </Button>
+            )}
 
             {/* Only show download button for completed letters */}
             {role === "mahasiswa" && request.status === "completed" && (
@@ -685,6 +738,42 @@ export function LetterRequestDetails({
               </Button>
               <Button variant="destructive" onClick={confirmReject}>
                 Tolak Permohonan
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Delete Confirmation Dialog - for students */}
+      {role === "mahasiswa" && (
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-[500px] bg-white dark:bg-card rounded-lg shadow-lg border-0">
+            <DialogHeader>
+              <DialogTitle>Hapus Permohonan Surat</DialogTitle>
+              <DialogDescription>
+                Apakah Anda yakin ingin menghapus permohonan surat ini? Tindakan ini tidak dapat dibatalkan.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="p-4 border rounded-lg bg-destructive/10 border-destructive/20">
+                <div className="flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Permohonan akan dihapus permanen</p>
+                    <p className="text-sm text-muted-foreground">
+                      Semua data terkait permohonan surat "{request.title}" akan dihapus dan tidak dapat dipulihkan.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                Batal
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                Hapus Permohonan
               </Button>
             </DialogFooter>
           </DialogContent>

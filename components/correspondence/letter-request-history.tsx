@@ -78,8 +78,8 @@ export function LetterRequestHistory() {
         )
       case "in-review":
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-            Dalam Review
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200">
+            Diproses
           </Badge>
         )
       case "approved":
@@ -168,7 +168,7 @@ export function LetterRequestHistory() {
               <SelectContent>
                 <SelectItem value="all">Semua Status</SelectItem>
                 <SelectItem value="submitted">Diajukan</SelectItem>
-                <SelectItem value="in-review">Dalam Review</SelectItem>
+                <SelectItem value="in-review">Diproses</SelectItem>
                 <SelectItem value="approved">Disetujui</SelectItem>
                 <SelectItem value="completed">Selesai</SelectItem>
                 <SelectItem value="rejected">Ditolak</SelectItem>

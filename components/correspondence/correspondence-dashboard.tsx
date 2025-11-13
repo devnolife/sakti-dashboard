@@ -53,8 +53,8 @@ export function CorrespondenceDashboard() {
         )
       case "in-review":
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-            Dalam Review
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200">
+            Diproses
           </Badge>
         )
       case "approved":

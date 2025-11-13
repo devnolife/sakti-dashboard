@@ -379,7 +379,7 @@ export function CorrespondenceStaffDashboard() {
         <TabsList className="grid grid-cols-6 mb-4">
           <TabsTrigger value="all">Semua</TabsTrigger>
           <TabsTrigger value="submitted">Diajukan</TabsTrigger>
-          <TabsTrigger value="in-review">Dalam Review</TabsTrigger>
+          <TabsTrigger value="in-review">Diproses</TabsTrigger>
           <TabsTrigger value="approved">Disetujui</TabsTrigger>
           <TabsTrigger value="completed">Selesai</TabsTrigger>
           <TabsTrigger value="sent">Terkirim</TabsTrigger>

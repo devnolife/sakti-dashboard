@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { ArrowLeft, Download, FileText, Printer, Share2 } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import type { LetterRequest } from "@/types/correspondence"
@@ -110,9 +116,8 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
               <p>Fakultas: Ilmu Komputer</p>
             </div>
             
-            <p>Telah diberikan izin cuti kuliah pada Semester ${letter.additionalInfo?.semester || "Ganjil"} Tahun Akademik 2023/2024 terhitung mulai tanggal ${
-              letter.additionalInfo?.startDate || "1 September 2023"
-            } sampai dengan ${letter.additionalInfo?.endDate || "28 Februari 2024"}.</p>
+            <p>Telah diberikan izin cuti kuliah pada Semester ${letter.additionalInfo?.semester || "Ganjil"} Tahun Akademik 2023/2024 terhitung mulai tanggal ${letter.additionalInfo?.startDate || "1 September 2023"
+          } sampai dengan ${letter.additionalInfo?.endDate || "28 Februari 2024"}.</p>
             
             <p>Alasan cuti: ${letter.additionalInfo?.reason || letter.description}</p>
             
@@ -174,14 +179,50 @@ export function LetterDetailView({ letter, onBack }: LetterDetailViewProps) {
           Kembali ke Daftar Surat
         </Button>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => window.print()} className="gap-2">
-            <Printer className="w-4 h-4" />
-            Cetak
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Unduh PDF
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="outline"
+                    onClick={() => window.print()}
+                    className="gap-2"
+                    disabled={letter.status !== "completed" && letter.status !== "approved"}
+                  >
+                    <Printer className="w-4 h-4" />
+                    Cetak
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {letter.status !== "completed" && letter.status !== "approved" && (
+                <TooltipContent>
+                  <p>Surat hanya dapat dicetak setelah disetujui atau selesai</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    disabled={letter.status !== "completed" && letter.status !== "approved"}
+                  >
+                    <Download className="w-4 h-4" />
+                    Unduh PDF
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {letter.status !== "completed" && letter.status !== "approved" && (
+                <TooltipContent>
+                  <p>Surat hanya dapat diunduh setelah disetujui atau selesai</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
           <Button variant="outline" className="gap-2">
             <Share2 className="w-4 h-4" />
             Bagikan

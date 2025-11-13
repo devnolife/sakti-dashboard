@@ -194,11 +194,11 @@ async function main() {
   console.log('👨‍🏫 Creating Kepala Prodi...')
 
   const kaprodiData = [
-    { prodi: '55201', name: 'AHMAD FAUZI', nip: 'KP55201' },
+    { prodi: '20201', name: 'AHMAD FAUZI', nip: 'KP20201' },
+    { prodi: '22201', name: 'DEWI SUSANTI', nip: 'KP22201' },
+    { prodi: '23201', name: 'BUDI SANTOSO', nip: 'KP23201' },
     { prodi: '55202', name: 'SITI RAHAYU', nip: 'KP55202' },
-    { prodi: '55203', name: 'BUDI SANTOSO', nip: 'KP55203' },
-    { prodi: '55204', name: 'DEWI SUSANTI', nip: 'KP55204' },
-    { prodi: '55205', name: 'EKO PRASETYO', nip: 'KP55205' },
+    { prodi: '35201', name: 'EKO PRASETYO', nip: 'KP35201' },
   ]
 
   for (const kp of kaprodiData) {

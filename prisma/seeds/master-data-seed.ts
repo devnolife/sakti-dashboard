@@ -6,8 +6,29 @@ export async function seedMasterData() {
   console.log('🌱 Seeding master data...')
 
   try {
-    // Seed Program Studi (Data dari CSV Dosen SINTA - Universitas Muhammadiyah Makassar)
+    // Seed Program Studi (REAL DATA - Universitas Muhammadiyah Makassar)
     const prodiData = [
+      {
+        kode: '20201',
+        nama: 'Teknik Elektro',
+        jenjang: 'S1',
+        fakultas: 'Fakultas Teknik',
+        akreditasi: 'B',
+      },
+      {
+        kode: '22201',
+        nama: 'Teknik Pengairan',
+        jenjang: 'S1',
+        fakultas: 'Fakultas Teknik',
+        akreditasi: 'B',
+      },
+      {
+        kode: '23201',
+        nama: 'Arsitektur',
+        jenjang: 'S1',
+        fakultas: 'Fakultas Teknik',
+        akreditasi: 'B',
+      },
       {
         kode: '55202',
         nama: 'Informatika',
@@ -16,28 +37,7 @@ export async function seedMasterData() {
         akreditasi: 'B',
       },
       {
-        kode: '55201',
-        nama: 'Teknik Elektro',
-        jenjang: 'S1',
-        fakultas: 'Fakultas Teknik',
-        akreditasi: 'B',
-      },
-      {
-        kode: '55203',
-        nama: 'Arsitektur',
-        jenjang: 'S1',
-        fakultas: 'Fakultas Teknik',
-        akreditasi: 'B',
-      },
-      {
-        kode: '55204',
-        nama: 'Teknik Sipil',
-        jenjang: 'S1',
-        fakultas: 'Fakultas Teknik',
-        akreditasi: 'B',
-      },
-      {
-        kode: '55205',
+        kode: '35201',
         nama: 'Perencanaan Wilayah dan Kota',
         jenjang: 'S1',
         fakultas: 'Fakultas Teknik',
