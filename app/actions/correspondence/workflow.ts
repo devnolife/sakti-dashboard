@@ -9,7 +9,7 @@ import { WORKFLOW_STAGES, WORKFLOW_ACTIONS, LETTER_TYPE_ROLES } from "./workflow
  */
 export async function getRoleAssignment(letterType: string) {
   const typeKey = letterType.toLowerCase()
-  return LETTER_TYPE_ROLES[typeKey] || { initialRole: 'staff_tu', approvalRole: 'wd1' }
+  return LETTER_TYPE_ROLES[typeKey] || { initialRole: 'staff_tu', approvalRole: 'wakil_dekan_1' }
 }
 
 /**
@@ -59,13 +59,18 @@ export async function forwardToWD1(
   forwardedBy: string,
   notes?: string
 ) {
-  // Find WD1 user
+  // Find WD1 user (Wakil Dekan 1) - using sub_role
   const wd1User = await prisma.users.findFirst({
-    where: { role: 'wd1' as any }
+    where: {
+      role: 'dosen',
+      sub_role: {
+        contains: 'wakil_dekan_1'
+      }
+    }
   })
 
   if (!wd1User) {
-    throw new Error('No WD1 user found')
+    throw new Error('No WD1 (Wakil Dekan 1) user found')
   }
 
   // Get current request
@@ -90,7 +95,7 @@ export async function forwardToWD1(
       assigned_to: wd1User.id,
       forwarded_by: forwardedBy,
       forwarded_at: new Date(),
-      status: 'in_review' as any
+      status: 'in-review' as any
     }
   })
 
@@ -152,7 +157,7 @@ export async function approveByWD1(
       letter_request_id: letterRequestId,
       action: WORKFLOW_ACTIONS.APPROVED,
       actor_id: approvedBy,
-      actor_role: 'wd1',
+      actor_role: 'wakil_dekan_1',
       notes: notes || 'Approved by WD1'
     }
   })
@@ -270,7 +275,7 @@ export async function returnForRevision(
     data: {
       workflow_stage: previousStage,
       assigned_to: reassignTo?.id,
-      status: 'in_review' as any
+      status: 'in-review' as any
     }
   })
 
@@ -281,7 +286,7 @@ export async function returnForRevision(
       letter_request_id: letterRequestId,
       action: 'returned_for_revision',
       actor_id: returnedBy,
-      actor_role: 'wd1',
+      actor_role: 'wakil_dekan_1',
       notes: notes
     }
   })

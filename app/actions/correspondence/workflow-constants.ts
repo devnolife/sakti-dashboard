@@ -20,8 +20,8 @@ export const WORKFLOW_ACTIONS = {
 
 // Role mappings for letter types
 export const LETTER_TYPE_ROLES: Record<string, { initialRole: string; approvalRole: string }> = {
-  'aktif': { initialRole: 'admin_umum', approvalRole: 'wd1' },
-  'kkp': { initialRole: 'staff_tu', approvalRole: 'wd1' },
-  'ujian': { initialRole: 'staff_tu', approvalRole: 'wd1' },
-  'cuti': { initialRole: 'staff_tu', approvalRole: 'wd1' },
+  'aktif': { initialRole: 'admin_umum', approvalRole: 'wakil_dekan_1' },
+  'kkp': { initialRole: 'staff_tu', approvalRole: 'wakil_dekan_1' },
+  'ujian': { initialRole: 'staff_tu', approvalRole: 'wakil_dekan_1' },
+  'cuti': { initialRole: 'staff_tu', approvalRole: 'wakil_dekan_1' },
 }

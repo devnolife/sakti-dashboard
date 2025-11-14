@@ -2,10 +2,11 @@
 // The "use server" directive is in those individual files instead of here
 
 // Letter request query functions
-export { 
+export {
   getLetterRequestsForApproval,
   getStudentLetterRequests,
-  getLetterRequestById
+  getLetterRequestById,
+  getAllLetterRequests
 } from './correspondence/letter-requests';
 
 // Letter operation functions

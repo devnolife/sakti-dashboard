@@ -30,7 +30,3 @@ next-env.d.ts
 /.github/
 
 /public/uploads
-
-# Windows
-nul
-NUL

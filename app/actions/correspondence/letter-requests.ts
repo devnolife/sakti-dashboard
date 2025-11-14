@@ -113,6 +113,26 @@ export async function getLetterRequestsByProdi(prodiId: string): Promise<LetterR
   return requests.map(transformLetterRequest)
 }
 
+// Get all letter requests for admin_umum (administrasi umum)
+export async function getAllLetterRequests(): Promise<LetterRequest[]> {
+  const requests = await prisma.letter_requests.findMany({
+    include: {
+      students: {
+        include: {
+          users: true,
+          prodi: true
+        }
+      },
+      letter_attachments: true
+    },
+    orderBy: {
+      request_date: 'desc'
+    }
+  })
+
+  return requests.map(transformLetterRequest)
+}
+
 // Get a specific letter request by its ID
 export async function getLetterRequestById(requestId: string): Promise<LetterRequest | null> {
   const request = await prisma.letter_requests.findUnique({
