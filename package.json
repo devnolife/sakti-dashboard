@@ -20,7 +20,10 @@
     "sync:prodi": "tsx scripts/sync-prodi.ts",
     "seed:prodi": "tsx scripts/seed-prodi.ts",
     "fetch:prodi": "tsx scripts/fetch-prodi.ts",
-    "import:prodi": "tsx scripts/import-prodi.ts"
+    "import:prodi": "tsx scripts/import-prodi.ts",
+    "minio:start": "docker-compose -f docker-compose.minio.yml up -d",
+    "minio:stop": "docker-compose -f docker-compose.minio.yml down",
+    "minio:logs": "docker-compose -f docker-compose.minio.yml logs -f"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -87,6 +90,7 @@
     "jspdf": "^3.0.2",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.10.0",
+    "minio": "^8.0.6",
     "moment": "^2.30.1",
     "moment-hijri": "^3.0.0",
     "next": "^14.2.18",

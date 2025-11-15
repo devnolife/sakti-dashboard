@@ -263,7 +263,7 @@ export function StudentCorrespondenceForm() {
           <div className="space-y-2">
             <Input
               type="file"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0]
                 if (file) {
                   // Validate file type
@@ -275,6 +275,7 @@ export function StudentCorrespondenceForm() {
                         description: `Hanya file ${field.validation.fileTypes.join(", ")} yang diizinkan`,
                         variant: "destructive"
                       })
+                      e.target.value = ''
                       return
                     }
                   }
@@ -288,15 +289,47 @@ export function StudentCorrespondenceForm() {
                         description: `Ukuran file maksimal ${field.validation.maxFileSize} MB`,
                         variant: "destructive"
                       })
+                      e.target.value = ''
                       return
                     }
                   }
 
-                  handleFieldChange(field.id, file)
+                  // Convert file to base64 for JSON serialization
+                  try {
+                    const reader = new FileReader()
+                    reader.onloadend = () => {
+                      const base64String = reader.result as string
+                      handleFieldChange(field.id, {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: base64String
+                      })
+                    }
+                    reader.onerror = () => {
+                      toast({
+                        title: "Error",
+                        description: "Gagal membaca file",
+                        variant: "destructive"
+                      })
+                    }
+                    reader.readAsDataURL(file)
+                  } catch (error) {
+                    toast({
+                      title: "Error",
+                      description: "Gagal memproses file",
+                      variant: "destructive"
+                    })
+                  }
                 }
               }}
               required={field.required}
             />
+            {formData[field.id] && (
+              <p className="text-xs text-green-600">
+                ✓ {formData[field.id].name} ({(formData[field.id].size / 1024).toFixed(2)} KB)
+              </p>
+            )}
             {field.validation?.fileTypes && (
               <p className="text-xs text-muted-foreground">
                 Format: {field.validation.fileTypes.join(", ")}

@@ -61,6 +61,8 @@ export function LetterRequestDetails({
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("details")
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null)
+  const [isPdfPreviewOpen, setIsPdfPreviewOpen] = useState(false)
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -416,41 +418,157 @@ export function LetterRequestDetails({
                       // Skip internal fields
                       if (key === 'type' || key === 'title') return null
 
+                      // Check if value is a file object
+                      const isFileObject = typeof value === 'object' && value !== null && 'name' in value && 'data' in value
+
                       // Find the field definition to get the label
                       const fieldDef = letterTypeInfo.additionalFields?.find((f) => f.name === key)
 
-                      // Mapping for Indonesian labels
-                      const labelMapping: Record<string, string> = {
+                      // Comprehensive mapping for Indonesian field labels
+                      const fieldNameMapping: Record<string, string> = {
+                        // General fields
+                        type: 'Jenis',
+                        active: 'Aktif',
+                        title: 'Judul',
+                        purpose: 'Tujuan',
+                        reason: 'Alasan',
+                        description: 'Keterangan',
+
+                        // Academic fields
                         semester: 'Semester',
                         academicYear: 'Tahun Akademik',
-                        purpose: 'Tujuan',
+                        academic_year: 'Tahun Akademik',
+                        gpa: 'IPK',
+                        ipk: 'IPK',
+                        credits: 'SKS',
+                        sks: 'SKS',
+                        major: 'Program Studi',
+                        studyProgram: 'Program Studi',
+                        study_program: 'Program Studi',
+                        faculty: 'Fakultas',
+
+                        // Parent/Guardian fields
+                        parentName: 'Nama Orang Tua',
+                        parent_name: 'Nama Orang Tua',
                         parentPosition: 'Jabatan Orang Tua',
+                        parent_position: 'Jabatan Orang Tua',
                         parentInstitution: 'Instansi Orang Tua',
-                        isParentCivilServant: 'PNS',
-                        company: 'Perusahaan',
-                        position: 'Posisi',
+                        parent_institution: 'Instansi Orang Tua',
+                        parentCivilServant: 'Orang Tua PNS',
+                        parent_civil_servant: 'Orang Tua PNS',
+                        isParentCivilServant: 'Orang Tua PNS',
+                        is_parent_civil_servant: 'Orang Tua PNS',
+
+                        // Document fields
+                        skDocument: 'Dokumen SK PNS/ASN',
+                        sk_document: 'Dokumen SK PNS/ASN',
+                        supportingDocument: 'Dokumen Pendukung',
+                        supporting_document: 'Dokumen Pendukung',
+                        paymentProof: 'Bukti Pembayaran',
+                        payment_proof: 'Bukti Pembayaran',
+
+                        // Date fields
                         startDate: 'Tanggal Mulai',
+                        start_date: 'Tanggal Mulai',
                         endDate: 'Tanggal Selesai',
-                        internshipType: 'Jenis Magang',
-                        reason: 'Alasan',
+                        end_date: 'Tanggal Selesai',
+                        date: 'Tanggal',
                         leaveStartDate: 'Tanggal Mulai Cuti',
                         leaveEndDate: 'Tanggal Selesai Cuti',
+
+                        // Leave fields
+                        leaveType: 'Jenis Cuti',
+                        leave_type: 'Jenis Cuti',
+
+                        // Payment fields
+                        paymentType: 'Jenis Pembayaran',
+                        payment_type: 'Jenis Pembayaran',
+                        paymentDate: 'Tanggal Pembayaran',
+                        payment_date: 'Tanggal Pembayaran',
+                        amount: 'Jumlah',
+
+                        // Internship fields
+                        company: 'Perusahaan',
+                        position: 'Posisi',
+                        internshipType: 'Jenis Magang',
+
+                        // Research fields
                         researchTitle: 'Judul Penelitian',
                         researchLocation: 'Lokasi Penelitian',
                         researchPeriod: 'Periode Penelitian',
+
+                        // Scholarship fields
                         scholarshipName: 'Nama Beasiswa',
                         scholarshipProvider: 'Penyedia Beasiswa',
+
+                        // Event fields
                         destination: 'Tujuan',
                         eventName: 'Nama Acara',
                         eventDate: 'Tanggal Acara',
                         eventLocation: 'Lokasi Acara',
                         organizerName: 'Nama Penyelenggara',
+
+                        // Custom letter fields
+                        letterTitle: 'Judul Surat',
+                        letter_title: 'Judul Surat',
+                        recipient: 'Penerima',
+                        letterContent: 'Isi Surat',
+                        letter_content: 'Isi Surat',
                         transcriptType: 'Jenis Transkrip'
                       }
 
-                      const label = fieldDef?.label || labelMapping[key] || key
+                      const formatFieldName = (name: string): string => {
+                        // Check for exact match
+                        if (fieldNameMapping[name]) {
+                          return fieldNameMapping[name]
+                        }
 
-                      // Format value for display
+                        // Check for case-insensitive match
+                        const lowerName = name.toLowerCase()
+                        if (fieldNameMapping[lowerName]) {
+                          return fieldNameMapping[lowerName]
+                        }
+
+                        // Fallback: Convert snake_case or camelCase to Title Case
+                        return name
+                          .replace(/_/g, ' ')
+                          .replace(/([A-Z])/g, ' $1')
+                          .trim()
+                          .split(' ')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                          .join(' ')
+                      }
+
+                      const label = fieldDef?.label || formatFieldName(key)
+
+                      // Handle file objects
+                      if (isFileObject) {
+                        const fileObj = value as any
+
+                        return (
+                          <div key={key} className="col-span-2">
+                            <div className="text-sm text-muted-foreground mb-2">{label}</div>
+                            <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/30">
+                              <FileText className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm font-medium flex-1">{fileObj.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                ({(fileObj.size / 1024).toFixed(2)} KB)
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setActiveTab("documents")}
+                                className="ml-2"
+                              >
+                                <Eye className="w-3 h-3 mr-1" />
+                                Lihat
+                              </Button>
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      // Format value for display (non-file)
                       let displayValue = value?.toString() || '-'
 
                       // Format boolean values
@@ -545,17 +663,154 @@ export function LetterRequestDetails({
           </TabsContent>
 
           <TabsContent value="documents" className="space-y-4">
-            {/* Attachments */}
-            {request.attachments && request.attachments.length > 0 ? (
-              <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
-                    Dokumen Pendukung
-                  </CardTitle>
-                  <CardDescription>Dokumen yang dilampirkan oleh mahasiswa</CardDescription>
-                </CardHeader>
-                <CardContent>
+            {/* Files from additionalInfo */}
+            {(() => {
+              const filesFromAdditionalInfo: Array<{key: string, label: string, file: any}> = []
+
+              if (request.additionalInfo) {
+                Object.entries(request.additionalInfo).forEach(([key, value]) => {
+                  const isFileObject = typeof value === 'object' && value !== null && 'name' in value && 'data' in value
+                  if (isFileObject) {
+                    const fieldNameMapping: Record<string, string> = {
+                      skDocument: 'SK PNS/ASN',
+                      sk_document: 'SK PNS/ASN',
+                      supportingDocument: 'Dokumen Pendukung Cuti',
+                      supporting_document: 'Dokumen Pendukung Cuti',
+                      paymentProof: 'Bukti Pembayaran',
+                      payment_proof: 'Bukti Pembayaran',
+                    }
+
+                    const formatFieldName = (name: string): string => {
+                      if (fieldNameMapping[name]) return fieldNameMapping[name]
+                      const lowerName = name.toLowerCase()
+                      if (fieldNameMapping[lowerName]) return fieldNameMapping[lowerName]
+                      return name
+                        .replace(/_/g, ' ')
+                        .replace(/([A-Z])/g, ' $1')
+                        .trim()
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ')
+                    }
+
+                    filesFromAdditionalInfo.push({
+                      key,
+                      label: formatFieldName(key),
+                      file: value as any
+                    })
+                  }
+                })
+              }
+
+              const hasFiles = filesFromAdditionalInfo.length > 0 || (request.attachments && request.attachments.length > 0)
+
+              if (!hasFiles) {
+                return (
+                  <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <FileText className="w-5 h-5 text-muted-foreground" />
+                        Dokumen Pendukung
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="py-6 text-center text-muted-foreground">
+                        Tidak ada dokumen pendukung yang dilampirkan
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              }
+
+              return (
+                <>
+                  {/* Files from form submission */}
+                  {filesFromAdditionalInfo.length > 0 && (
+                    <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <FileText className="w-5 h-5 text-muted-foreground" />
+                          Dokumen Pendukung
+                        </CardTitle>
+                        <CardDescription>Dokumen yang dilampirkan saat pengajuan</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {filesFromAdditionalInfo.map(({ key, label, file }) => {
+                          const isPdf = file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf')
+                          const isImage = file.type?.includes('image') || /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name || '')
+
+                          return (
+                            <div key={key} className="p-4 border rounded-lg">
+                              <div className="mb-3">
+                                <p className="text-sm font-medium text-muted-foreground mb-1">{label}</p>
+                                <div className="flex items-center gap-2">
+                                  <FileText className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium">{file.name}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    ({(file.size / 1024).toFixed(2)} KB)
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2 mb-3">
+                                {(isPdf || isImage) && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setPreviewPdfUrl(file.data)
+                                      setIsPdfPreviewOpen(true)
+                                    }}
+                                  >
+                                    <Eye className="w-3 h-3 mr-1" />
+                                    Preview
+                                  </Button>
+                                )}
+                                <Button size="sm" variant="outline" asChild>
+                                  <a href={file.data} download={file.name}>
+                                    <Download className="w-3 h-3 mr-1" />
+                                    Download
+                                  </a>
+                                </Button>
+                              </div>
+
+                              {/* Inline Preview */}
+                              {isImage && (
+                                <div className="overflow-hidden border rounded-lg bg-background">
+                                  <img
+                                    src={file.data}
+                                    alt={file.name}
+                                    className="object-contain w-full max-h-[400px]"
+                                  />
+                                </div>
+                              )}
+                              {isPdf && (
+                                <div className="overflow-hidden border rounded-lg bg-background">
+                                  <iframe
+                                    src={`${file.data}#view=FitH`}
+                                    className="w-full h-[500px]"
+                                    title={file.name}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Attachments */}
+                  {request.attachments && request.attachments.length > 0 && (
+                    <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <FileText className="w-5 h-5 text-muted-foreground" />
+                          Lampiran Tambahan
+                        </CardTitle>
+                        <CardDescription>Dokumen tambahan yang dilampirkan</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -566,45 +821,96 @@ export function LetterRequestDetails({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {request.attachments.map((attachment) => (
-                        <TableRow key={attachment.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-muted-foreground" />
-                              <span>{attachment.name}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{formatDate(attachment.uploadDate)}</TableCell>
-                          <TableCell>{attachment.size || "2.3 MB"}</TableCell>
-                          <TableCell className="text-right">
-                            <a href={attachment.url} target="_blank" rel="noopener noreferrer">
-                              <Button variant="ghost" size="sm">
-                                <Download className="w-4 h-4" />
-                                <span className="sr-only">Download</span>
-                              </Button>
-                            </a>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {request.attachments.map((attachment) => {
+                        const isPdf = attachment.name.toLowerCase().endsWith('.pdf')
+                        const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.name)
+
+                        return (
+                          <TableRow key={attachment.id}>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <FileText className="w-4 h-4 text-muted-foreground" />
+                                <span>{attachment.name}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>{formatDate(attachment.uploadDate)}</TableCell>
+                            <TableCell>{attachment.size || "2.3 MB"}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                {(isPdf || isImage) && attachment.url && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      setPreviewPdfUrl(attachment.url || null)
+                                      setIsPdfPreviewOpen(true)
+                                    }}
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    <span className="sr-only">Preview</span>
+                                  </Button>
+                                )}
+                                {attachment.url && (
+                                  <a href={attachment.url} download target="_blank" rel="noopener noreferrer">
+                                    <Button variant="ghost" size="sm">
+                                      <Download className="w-4 h-4" />
+                                      <span className="sr-only">Download</span>
+                                    </Button>
+                                  </a>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
                     </TableBody>
                   </Table>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="transition-shadow duration-200 border shadow-sm border-border/50 hover:shadow">
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
-                    Dokumen Pendukung
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="py-6 text-center text-muted-foreground">
-                    Tidak ada dokumen pendukung yang dilampirkan
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+
+                  {/* PDF/Image Previews */}
+                  {request.attachments.some(att =>
+                    att.url && (att.name.toLowerCase().endsWith('.pdf') || /\.(jpg|jpeg|png|gif|webp)$/i.test(att.name))
+                  ) && (
+                      <div className="pt-4 space-y-3 border-t">
+                        <p className="text-sm font-medium">Preview Dokumen</p>
+                        <div className="grid grid-cols-1 gap-4">
+                          {request.attachments.map((attachment) => {
+                            const isPdf = attachment.name.toLowerCase().endsWith('.pdf')
+                            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.name)
+
+                            if (!attachment.url || (!isPdf && !isImage)) return null
+
+                            return (
+                              <div key={`preview-${attachment.id}`} className="space-y-2">
+                                <p className="text-xs font-medium text-muted-foreground">{attachment.name}</p>
+                                {isPdf ? (
+                                  <div className="overflow-hidden border rounded-lg bg-background">
+                                    <iframe
+                                      src={`${attachment.url}#view=FitH`}
+                                      className="w-full h-[500px]"
+                                      title={attachment.name}
+                                    />
+                                  </div>
+                                ) : isImage ? (
+                                  <div className="overflow-hidden border rounded-lg bg-background">
+                                    <img
+                                      src={attachment.url}
+                                      alt={attachment.name}
+                                      className="object-contain w-full max-h-[500px]"
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              )
+            })()}
 
             {/* Generated Letter */}
             {request.status === "completed" && (
@@ -779,6 +1085,54 @@ export function LetterRequestDetails({
           </DialogContent>
         </Dialog>
       )}
+
+      {/* PDF Preview Dialog */}
+      <Dialog open={isPdfPreviewOpen} onOpenChange={setIsPdfPreviewOpen}>
+        <DialogContent className="max-w-6xl h-[90vh] flex flex-col">
+          <DialogHeader className="pb-3 border-b">
+            <DialogTitle>Preview Dokumen</DialogTitle>
+            <DialogDescription>
+              Tampilan dokumen lampiran
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-hidden">
+            {previewPdfUrl && (
+              <>
+                {previewPdfUrl.toLowerCase().includes('.pdf') || previewPdfUrl.includes('application/pdf') ? (
+                  <iframe
+                    src={`${previewPdfUrl}#view=FitH`}
+                    className="w-full h-full border-0"
+                    title="PDF Preview"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-muted">
+                    <img
+                      src={previewPdfUrl}
+                      alt="Preview"
+                      className="object-contain max-w-full max-h-full"
+                    />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          <DialogFooter className="pt-3 border-t">
+            {previewPdfUrl && (
+              <Button variant="outline" asChild>
+                <a href={previewPdfUrl} download target="_blank" rel="noopener noreferrer">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </a>
+              </Button>
+            )}
+            <Button onClick={() => setIsPdfPreviewOpen(false)} variant="secondary">
+              Tutup
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   )
 }

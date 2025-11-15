@@ -69,7 +69,7 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="semester"
@@ -121,7 +121,7 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="faculty"
@@ -172,7 +172,7 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="studentName"
@@ -240,7 +240,7 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
                         field.onChange("yes")
                         handleParentCivilServantChange("yes")
                       }}
-                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                      className="w-4 h-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <label htmlFor="parent-yes" className="text-sm font-normal">
                       Ya
@@ -258,7 +258,7 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
                         field.onChange("no")
                         handleParentCivilServantChange("no")
                       }}
-                      className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                      className="w-4 h-4 border-gray-300 text-primary focus:ring-primary"
                     />
                     <label htmlFor="parent-no" className="text-sm font-normal">
                       Tidak
@@ -272,10 +272,10 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
         />
 
         {isParentCivilServant === "yes" && (
-          <div className="space-y-6 rounded-lg border p-4 bg-muted/30">
+          <div className="p-4 space-y-6 border rounded-lg bg-muted/30">
             <h3 className="text-sm font-medium">Informasi PNS/ASN Orang Tua</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="parentInstitution"
@@ -306,14 +306,14 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
             </div>
 
             <div>
-              <FormLabel>Unggah SK PNS/ASN</FormLabel>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-primary/20 bg-primary/5 px-6 py-8 transition-colors hover:bg-primary/10">
+              <FormLabel>Unggah SK PNS/ASN </FormLabel>
+              <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
                 <div className="text-center">
-                  <Upload className="mx-auto h-10 w-10 text-primary/30" />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                  <Upload className="w-10 h-10 mx-auto text-primary/30" />
+                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
                     <label
                       htmlFor="file-upload"
-                      className="relative cursor-pointer rounded-md bg-transparent font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
+                      className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                     >
                       <span>Unggah file</span>
                       <input id="file-upload" name="file-upload" type="file" className="sr-only" />
@@ -330,7 +330,7 @@ export function ActiveCollegeForm({ onSubmit, isSubmitting = false, faculties, m
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+              <span className="w-4 h-4 mr-2 border-2 rounded-full animate-spin border-primary border-t-transparent"></span>
               Memproses...
             </>
           ) : (

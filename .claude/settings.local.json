@@ -11,7 +11,11 @@
       "Bash(npm run dev:*)",
       "Bash(curl:*)",
       "Bash(nul)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(\"d:\\devnolife\\apps-ft\\dashboard\\components\\admin-umum\\correspondence-drafts-management.tsx.tmp\")",
+      "Bash(npm install:*)",
+      "Bash(.env)",
+      "Bash(npm pkg set:*)"
     ],
     "deny": [],
     "ask": []

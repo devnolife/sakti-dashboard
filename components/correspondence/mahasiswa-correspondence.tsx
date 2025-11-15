@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,10 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { FileText, Clock, CheckCircle, XCircle, AlertCircle, Eye, Plus, Search, Calendar, Trash2 } from "lucide-react"
 import { getStudentLetterRequests, deleteLetterRequest } from "@/app/actions/correspondence-actions"
+import { getUserNotifications, markNotificationAsRead } from "@/app/actions/notifications"
 import { formatDate } from "@/lib/utils"
 import type { LetterRequest } from "@/types/correspondence"
 import { LetterRequestDetails } from "./letter-request-details"
-import { LetterCreationDialog } from "./letter-creation-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
@@ -31,22 +32,48 @@ type MahasiswaCorrespondenceProps = Record<string, never>
 
 
 export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
+  const router = useRouter()
   const { user, isLoading: authLoading } = useAuth()
   const [requests, setRequests] = useState<LetterRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<LetterRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedRequest, setSelectedRequest] = useState<LetterRequest | null>(null)
   const [showDetails, setShowDetails] = useState(false)
-  const [letterDialogOpen, setLetterDialogOpen] = useState(false)
-  const [selectedLetterType, setSelectedLetterType] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [requestToDelete, setRequestToDelete] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  // Removed hardcoded userId
   const [studentId, setStudentId] = useState<string | null>(null)
+
+  // Check for new notifications
+  useEffect(() => {
+    async function checkNotifications() {
+      if (!user?.id) return
+
+      try {
+        const notifications = await getUserNotifications(user.id, 5)
+        const unreadNotifications = notifications.filter(n => !n.is_read)
+
+        // Show unread notifications as toasts
+        for (const notification of unreadNotifications) {
+          toast({
+            title: notification.title,
+            description: notification.message,
+            variant: notification.type === 'error' ? 'destructive' : 'default',
+          })
+
+          // Mark as read
+          await markNotificationAsRead(notification.id)
+        }
+      } catch (error) {
+        console.error("Error checking notifications:", error)
+      }
+    }
+
+    checkNotifications()
+  }, [user?.id])
 
   useEffect(() => {
     async function fetchStudentAndRequests() {
@@ -117,9 +144,8 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
     setShowDetails(true)
   }
 
-  const openLetterDialog = (type: string) => {
-    setSelectedLetterType(type)
-    setLetterDialogOpen(true)
+  const navigateToNewLetter = () => {
+    router.push('/dashboard/mahasiswa/correspondence/new')
   }
 
   const handleDeleteClick = (requestId: string) => {
@@ -177,7 +203,8 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
             Diajukan
           </Badge>
         )
-      case "in-review":
+      case "in_review":
+      case "in-review": // Support both formats
         return (
           <Badge variant="outline" className="text-xs font-medium bg-amber-500/10 text-amber-600 border-amber-200 shrink-0 dark:text-amber-400 dark:border-amber-800">
             <AlertCircle className="mr-1 h-2.5 w-2.5" />
@@ -211,7 +238,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
   }
 
   const submittedRequests = requests.filter((req) => req.status === "submitted")
-  const inReviewRequests = requests.filter((req) => req.status === "in-review")
+  const inReviewRequests = requests.filter((req) => req.status === "in_review" || req.status === "in-review")
   const approvedRequests = requests.filter((req) => req.status === "approved")
   const completedRequests = requests.filter((req) => req.status === "completed")
   const rejectedRequests = requests.filter((req) => req.status === "rejected")
@@ -219,7 +246,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
   if (loading) {
     return (
       <div className="space-y-5">
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {[1, 2, 3, 4, 5].map((i) => (
             <Card key={i} className="overflow-hidden border-none shadow-sm">
               <CardHeader className="px-4 pt-4 pb-3">
@@ -262,7 +289,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
         </div>
 
         <Button
-          onClick={() => openLetterDialog("active")}
+          onClick={navigateToNewLetter}
           className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary h-9"
         >
           <Plus className="w-4 h-4" />
@@ -270,7 +297,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
         </Button>
       </div>
 
-      <div className="grid gap-3 mb-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 mb-5 sm:grid-cols-3 lg:grid-cols-5">
         <Card className="overflow-hidden transition-all border-none shadow-sm bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-md dark:from-blue-950/40 dark:to-blue-900/40">
           <CardHeader className="px-4 pt-4 pb-3">
             <div className="flex items-center justify-between">
@@ -381,7 +408,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
                 <SelectContent>
                   <SelectItem value="all">Semua Status</SelectItem>
                   <SelectItem value="submitted">Diajukan</SelectItem>
-                  <SelectItem value="in-review">Diproses</SelectItem>
+                  <SelectItem value="in_review">Diproses</SelectItem>
                   <SelectItem value="approved">Disetujui</SelectItem>
                   <SelectItem value="completed">Selesai</SelectItem>
                   <SelectItem value="rejected">Ditolak</SelectItem>
@@ -469,7 +496,7 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
                     ? "Tidak ada permohonan surat yang sesuai dengan filter."
                     : "Anda belum mengajukan permohonan surat apapun."}
                 </p>
-                <Button onClick={() => openLetterDialog("active")} size="sm">
+                <Button onClick={navigateToNewLetter} size="sm">
                   <Plus className="mr-1.5 h-4 w-4" />
                   Buat Permohonan Baru
                 </Button>
@@ -488,13 +515,6 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
           role="mahasiswa"
         />
       )}
-
-      <LetterCreationDialog
-        open={letterDialogOpen}
-        onOpenChange={setLetterDialogOpen}
-        letterType={selectedLetterType}
-        existingRequests={requests}
-      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

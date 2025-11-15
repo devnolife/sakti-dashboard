@@ -90,6 +90,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { letter_type_id, form_data, attachments } = body
 
+    // Note: File uploads in form_data are now sent as objects with:
+    // { name: string, type: string, size: number, data: string (base64) }
+    // This allows JSON serialization of file data
+
     // Validation
     if (!letter_type_id || !form_data) {
       return NextResponse.json(

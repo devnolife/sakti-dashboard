@@ -1,6 +1,7 @@
 export type LetterStatus =
   | "submitted" // Just submitted, waiting for review
-  | "in-review" // Being reviewed by staff/prodi/dekan
+  | "in-review" // Being reviewed by staff/prodi/dekan (legacy format)
+  | "in_review" // Being reviewed by staff/prodi/dekan (database format)
   | "approved" // Approved but letter not yet generated
   | "completed" // Letter has been generated and ready for pickup/download
   | "rejected" // Request was rejected
@@ -8,10 +9,9 @@ export type LetterStatus =
 export type ApprovalRole = "staff_tu" | "prodi" | "dekan" | "none"
 
 export interface LetterAttachment {
-  size: string
-  size: string
   id: string
   name: string
+  size: string
   uploadDate: string
   url?: string
 }

@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { nanoid } from "nanoid"
 import { WORKFLOW_STAGES, WORKFLOW_ACTIONS, LETTER_TYPE_ROLES } from "./workflow-constants"
+import { createNotification } from "../notifications"
 
 /**
  * Get role assignment based on letter type
@@ -95,7 +96,7 @@ export async function forwardToWD1(
       assigned_to: wd1User.id,
       forwarded_by: forwardedBy,
       forwarded_at: new Date(),
-      status: 'in-review' as any
+      status: 'in_review' as any
     }
   })
 
@@ -110,6 +111,19 @@ export async function forwardToWD1(
       notes: notes || 'Forwarded to WD1 for approval'
     }
   })
+
+  // Send notification to student
+  await createNotification(
+    request.student_id,
+    "Permohonan Diteruskan ke WD1",
+    `Permohonan surat "${request.title}" Anda telah diteruskan ke Wakil Dekan 1 untuk persetujuan.`,
+    "info",
+    {
+      letterRequestId: request.id,
+      letterTitle: request.title,
+      action: 'forwarded_to_wd1'
+    }
+  )
 
   return { success: true, forwardedTo: wd1User }
 }
@@ -131,9 +145,15 @@ export async function approveByWD1(
     throw new Error('Letter request not found')
   }
 
+  // Debug log
+  console.log('=== DEBUG APPROVE BY WD1 ===')
+  console.log('Request ID:', letterRequestId)
+  console.log('Current workflow_stage:', request.workflow_stage)
+  console.log('Expected workflow_stage:', WORKFLOW_STAGES.WD1_APPROVAL)
+
   // Validate: can only approve from wd1_approval stage
   if (request.workflow_stage !== WORKFLOW_STAGES.WD1_APPROVAL) {
-    throw new Error('Can only approve requests in wd1_approval stage')
+    throw new Error(`Can only approve requests in wd1_approval stage. Current stage: ${request.workflow_stage}`)
   }
 
   // Update letter request
@@ -161,6 +181,20 @@ export async function approveByWD1(
       notes: notes || 'Approved by WD1'
     }
   })
+
+  // Send notification to student
+  await createNotification(
+    request.student_id,
+    "Permohonan Surat Disetujui! 🎉",
+    `Selamat! Permohonan surat "${request.title}" Anda telah disetujui oleh Wakil Dekan 1. Surat Anda akan segera diproses.`,
+    "success",
+    {
+      letterRequestId: request.id,
+      letterTitle: request.title,
+      action: 'approved',
+      approvalNotes: notes
+    }
+  )
 
   // TODO: Generate letter number and PDF here
 
@@ -208,6 +242,20 @@ export async function rejectLetterRequest(
       notes: reason
     }
   })
+
+  // Send notification to student
+  await createNotification(
+    request.student_id,
+    "Permohonan Surat Ditolak",
+    `Permohonan surat "${request.title}" Anda ditolak. Alasan: ${reason}`,
+    "error",
+    {
+      letterRequestId: request.id,
+      letterTitle: request.title,
+      action: 'rejected',
+      rejectionReason: reason
+    }
+  )
 
   return { success: true }
 }
@@ -275,7 +323,7 @@ export async function returnForRevision(
     data: {
       workflow_stage: previousStage,
       assigned_to: reassignTo?.id,
-      status: 'in-review' as any
+      status: 'in_review' as any
     }
   })
 
@@ -290,6 +338,20 @@ export async function returnForRevision(
       notes: notes
     }
   })
+
+  // Send notification to student
+  await createNotification(
+    request.student_id,
+    "Permohonan Perlu Revisi",
+    `Permohonan surat "${request.title}" Anda dikembalikan untuk revisi. Catatan: ${notes}`,
+    "warning",
+    {
+      letterRequestId: request.id,
+      letterTitle: request.title,
+      action: 'returned_for_revision',
+      revisionNotes: notes
+    }
+  )
 
   return { success: true, reassignedTo: reassignTo }
 }

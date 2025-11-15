@@ -82,6 +82,9 @@ export function CorrespondenceFormTabs({
   const [selectedDynamicType, setSelectedDynamicType] = useState<LetterTypeImport | null>(null)
   const [dynamicFormData, setDynamicFormData] = useState<Record<string, any>>({})
   const [userProdiId, setUserProdiId] = useState<string | undefined>(undefined)
+  const [uploadedFileActive, setUploadedFileActive] = useState<any>(null)
+  const [uploadedFileLeave, setUploadedFileLeave] = useState<any>(null)
+  const [uploadedFilePayment, setUploadedFilePayment] = useState<any>(null)
 
   // Fetch user's prodi_id
   useEffect(() => {
@@ -177,29 +180,41 @@ export function CorrespondenceFormTabs({
   // Handle form submissions
   const handleActiveSubmit = (data: z.infer<typeof activeLetterSchema>) => {
     console.log("Active form submitted:", data)
-    onSubmit({
+    const submitData: any = {
       type: "active",
       title: "Surat Keterangan Aktif Kuliah",
       ...data,
-    })
+    }
+    if (uploadedFileActive) {
+      submitData.skDocument = uploadedFileActive
+    }
+    onSubmit(submitData)
   }
 
   const handleLeaveSubmit = (data: z.infer<typeof leaveLetterSchema>) => {
     console.log("Leave form submitted:", data)
-    onSubmit({
+    const submitData: any = {
       type: "leave",
       title: "Surat Permohonan Cuti",
       ...data,
-    })
+    }
+    if (uploadedFileLeave) {
+      submitData.supportingDocument = uploadedFileLeave
+    }
+    onSubmit(submitData)
   }
 
   const handlePaymentSubmit = (data: z.infer<typeof paymentLetterSchema>) => {
     console.log("Payment form submitted:", data)
-    onSubmit({
+    const submitData: any = {
       type: "payment",
       title: "Surat Keterangan Pembayaran",
       ...data,
-    })
+    }
+    if (uploadedFilePayment) {
+      submitData.paymentProof = uploadedFilePayment
+    }
+    onSubmit(submitData)
   }
 
   const handleCustomSubmit = (data: z.infer<typeof customLetterSchema>) => {
@@ -387,7 +402,7 @@ export function CorrespondenceFormTabs({
           <div className="space-y-2">
             <Input
               type="file"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0]
                 if (file) {
                   if (field.validation?.fileTypes?.length) {
@@ -398,6 +413,7 @@ export function CorrespondenceFormTabs({
                         description: `Hanya file ${field.validation.fileTypes.join(", ")} yang diizinkan`,
                         variant: "destructive"
                       })
+                      e.target.value = ''
                       return
                     }
                   }
@@ -410,15 +426,47 @@ export function CorrespondenceFormTabs({
                         description: `Ukuran file maksimal ${field.validation.maxFileSize} MB`,
                         variant: "destructive"
                       })
+                      e.target.value = ''
                       return
                     }
                   }
 
-                  handleDynamicFieldChange(field.id, file)
+                  // Convert file to base64 for JSON serialization
+                  try {
+                    const reader = new FileReader()
+                    reader.onloadend = () => {
+                      const base64String = reader.result as string
+                      handleDynamicFieldChange(field.id, {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: base64String
+                      })
+                    }
+                    reader.onerror = () => {
+                      toast({
+                        title: "Error",
+                        description: "Gagal membaca file",
+                        variant: "destructive"
+                      })
+                    }
+                    reader.readAsDataURL(file)
+                  } catch (error) {
+                    toast({
+                      title: "Error",
+                      description: "Gagal memproses file",
+                      variant: "destructive"
+                    })
+                  }
                 }
               }}
               required={field.required}
             />
+            {dynamicFormData[field.id] && (
+              <p className="text-xs text-green-600">
+                ✓ {dynamicFormData[field.id].name} ({(dynamicFormData[field.id].size / 1024).toFixed(2)} KB)
+              </p>
+            )}
             {field.validation?.fileTypes && (
               <p className="text-xs text-muted-foreground">
                 Format: {field.validation.fileTypes.join(", ")}
@@ -766,23 +814,97 @@ export function CorrespondenceFormTabs({
                     )}
                   />
                 </div>
-
                 <div>
                   <FormLabel>Unggah SK PNS/ASN</FormLabel>
                   <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
-                    <div className="text-center">
+                    <div className="w-full text-center">
                       <Upload className="w-10 h-10 mx-auto text-primary/30" />
-                      <div className="flex mt-4 text-sm leading-6 text-gray-600">
+                      <div className="flex justify-center mt-4 text-sm leading-6 text-gray-600">
                         <label
                           htmlFor="file-upload"
                           className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                         >
                           <span>Unggah file</span>
-                          <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            className="sr-only"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0]
+                              if (file) {
+                                const maxSize = 5 * 1024 * 1024
+                                if (file.size > maxSize) {
+                                  toast({
+                                    title: "File Terlalu Besar",
+                                    description: "Ukuran file maksimal 5 MB",
+                                    variant: "destructive"
+                                  })
+                                  e.target.value = ''
+                                  return
+                                }
+
+                                try {
+                                  const reader = new FileReader()
+                                  reader.onloadend = () => {
+                                    const base64String = reader.result as string
+                                    setUploadedFileActive({
+                                      name: file.name,
+                                      type: file.type,
+                                      size: file.size,
+                                      data: base64String
+                                    })
+                                  }
+                                  reader.onerror = () => {
+                                    toast({
+                                      title: "Error",
+                                      description: "Gagal membaca file",
+                                      variant: "destructive"
+                                    })
+                                  }
+                                  reader.readAsDataURL(file)
+                                } catch (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: "Gagal memproses file",
+                                    variant: "destructive"
+                                  })
+                                }
+                              }
+                            }}
+                          />
                         </label>
                         <p className="pl-1">atau drag and drop</p>
                       </div>
                       <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
+                      {uploadedFileActive && (
+                        <div className="mt-4 space-y-3">
+                          <p className="text-xs font-medium text-green-600">
+                            ✓ {uploadedFileActive.name} ({(uploadedFileActive.size / 1024).toFixed(2)} KB)
+                          </p>
+                          {uploadedFileActive.type?.includes('image') && (
+                            <div className="mt-2">
+                              <img
+                                src={uploadedFileActive.data}
+                                alt={uploadedFileActive.name}
+                                className="max-w-full mx-auto border rounded max-h-32"
+                              />
+                            </div>
+                          )}
+                          {uploadedFileActive.type === 'application/pdf' && (
+                            <div className="mt-2">
+                              <p className="mb-2 text-xs font-medium">Preview PDF:</p>
+                              <embed
+                                src={uploadedFileActive.data}
+                                type="application/pdf"
+                                className="w-full border rounded"
+                                style={{ height: '400px' }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1009,19 +1131,94 @@ export function CorrespondenceFormTabs({
             <div>
               <FormLabel>Dokumen Pendukung</FormLabel>
               <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
-                <div className="text-center">
+                <div className="w-full text-center">
                   <Upload className="w-10 h-10 mx-auto text-primary/30" />
-                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
+                  <div className="flex justify-center mt-4 text-sm leading-6 text-gray-600">
                     <label
                       htmlFor="leave-file-upload"
                       className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                     >
                       <span>Unggah file</span>
-                      <input id="leave-file-upload" name="leave-file-upload" type="file" className="sr-only" multiple />
+                      <input
+                        id="leave-file-upload"
+                        name="leave-file-upload"
+                        type="file"
+                        className="sr-only"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            const maxSize = 5 * 1024 * 1024
+                            if (file.size > maxSize) {
+                              toast({
+                                title: "File Terlalu Besar",
+                                description: "Ukuran file maksimal 5 MB",
+                                variant: "destructive"
+                              })
+                              e.target.value = ''
+                              return
+                            }
+
+                            try {
+                              const reader = new FileReader()
+                              reader.onloadend = () => {
+                                const base64String = reader.result as string
+                                setUploadedFileLeave({
+                                  name: file.name,
+                                  type: file.type,
+                                  size: file.size,
+                                  data: base64String
+                                })
+                              }
+                              reader.onerror = () => {
+                                toast({
+                                title: "Error",
+                                  description: "Gagal membaca file",
+                                  variant: "destructive"
+                                })
+                              }
+                              reader.readAsDataURL(file)
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: "Gagal memproses file",
+                                variant: "destructive"
+                              })
+                            }
+                          }
+                        }}
+                      />
                     </label>
                     <p className="pl-1">atau drag and drop</p>
                   </div>
                   <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
+                  {uploadedFileLeave && (
+                    <div className="mt-4 space-y-3">
+                      <p className="text-xs font-medium text-green-600">
+                        ✓ {uploadedFileLeave.name} ({(uploadedFileLeave.size / 1024).toFixed(2)} KB)
+                      </p>
+                      {uploadedFileLeave.type?.includes('image') && (
+                        <div className="mt-2">
+                          <img
+                            src={uploadedFileLeave.data}
+                            alt={uploadedFileLeave.name}
+                            className="max-w-full mx-auto border rounded max-h-32"
+                          />
+                        </div>
+                      )}
+                      {uploadedFileLeave.type === 'application/pdf' && (
+                        <div className="mt-2">
+                          <p className="mb-2 text-xs font-medium">Preview PDF:</p>
+                          <embed
+                            src={uploadedFileLeave.data}
+                            type="application/pdf"
+                            className="w-full border rounded"
+                            style={{ height: '400px' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1245,19 +1442,94 @@ export function CorrespondenceFormTabs({
             <div>
               <FormLabel>Bukti Pembayaran</FormLabel>
               <div className="flex justify-center px-6 py-8 mt-2 transition-colors border border-dashed rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10">
-                <div className="text-center">
+                <div className="w-full text-center">
                   <Upload className="w-10 h-10 mx-auto text-primary/30" />
-                  <div className="flex mt-4 text-sm leading-6 text-gray-600">
+                  <div className="flex justify-center mt-4 text-sm leading-6 text-gray-600">
                     <label
                       htmlFor="payment-file-upload"
                       className="relative font-semibold bg-transparent rounded-md cursor-pointer text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary/80"
                     >
                       <span>Unggah file</span>
-                      <input id="payment-file-upload" name="payment-file-upload" type="file" className="sr-only" />
+                      <input
+                        id="payment-file-upload"
+                        name="payment-file-upload"
+                        type="file"
+                        className="sr-only"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            const maxSize = 5 * 1024 * 1024
+                            if (file.size > maxSize) {
+                              toast({
+                                title: "File Terlalu Besar",
+                                description: "Ukuran file maksimal 5 MB",
+                                variant: "destructive"
+                              })
+                              e.target.value = ''
+                              return
+                            }
+
+                            try {
+                              const reader = new FileReader()
+                              reader.onloadend = () => {
+                                const base64String = reader.result as string
+                                setUploadedFilePayment({
+                                  name: file.name,
+                                  type: file.type,
+                                  size: file.size,
+                                  data: base64String
+                                })
+                              }
+                              reader.onerror = () => {
+                                toast({
+                                  title: "Error",
+                                  description: "Gagal membaca file",
+                                  variant: "destructive"
+                                })
+                              }
+                              reader.readAsDataURL(file)
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: "Gagal memproses file",
+                                variant: "destructive"
+                              })
+                            }
+                          }
+                        }}
+                      />
                     </label>
                     <p className="pl-1">atau drag and drop</p>
                   </div>
                   <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
+                  {uploadedFilePayment && (
+                    <div className="mt-4 space-y-3">
+                      <p className="text-xs font-medium text-green-600">
+                        ✓ {uploadedFilePayment.name} ({(uploadedFilePayment.size / 1024).toFixed(2)} KB)
+                      </p>
+                      {uploadedFilePayment.type?.includes('image') && (
+                        <div className="mt-2">
+                          <img
+                            src={uploadedFilePayment.data}
+                            alt={uploadedFilePayment.name}
+                            className="max-w-full mx-auto border rounded max-h-32"
+                          />
+                        </div>
+                      )}
+                      {uploadedFilePayment.type === 'application/pdf' && (
+                        <div className="mt-2">
+                          <p className="mb-2 text-xs font-medium">Preview PDF:</p>
+                          <embed
+                            src={uploadedFilePayment.data}
+                            type="application/pdf"
+                            className="w-full border rounded"
+                            style={{ height: '400px' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
