@@ -38,8 +38,12 @@ import {
   Edit,
   Trash2,
   Plus,
-  FileCheck
+  FileCheck,
+  Eye,
+  Edit2
 } from "lucide-react"
+import { TemplateVariableEditor } from "@/components/templates/template-variable-editor"
+import { TemplatePreviewDialog } from "@/components/templates/template-preview-dialog"
 import { ColumnDef } from "@tanstack/react-table"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
@@ -74,6 +78,9 @@ export default function ProdiTemplatesPage() {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null)
+  const [variableEditorOpen, setVariableEditorOpen] = useState(false)
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
+  const [selectedTemplateForEdit, setSelectedTemplateForEdit] = useState<Template | null>(null)
 
   // Filter states
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
@@ -352,6 +359,30 @@ export default function ProdiTemplatesPage() {
             <Button
               variant="ghost"
               size="icon"
+              onClick={() => {
+                setSelectedTemplateForEdit(row.original)
+                setPreviewDialogOpen(true)
+              }}
+              title="Preview"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            {canEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setSelectedTemplateForEdit(row.original)
+                  setVariableEditorOpen(true)
+                }}
+                title="Edit Variables"
+              >
+                <Edit2 className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => window.open(row.original.file_url, "_blank")}
               title="Download"
             >
@@ -572,6 +603,25 @@ export default function ProdiTemplatesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Variable Editor Dialog */}
+      {selectedTemplateForEdit && (
+        <TemplateVariableEditor
+          templateId={selectedTemplateForEdit.id}
+          open={variableEditorOpen}
+          onOpenChange={setVariableEditorOpen}
+          onSave={fetchTemplates}
+        />
+      )}
+
+      {/* Preview Dialog */}
+      {selectedTemplateForEdit && (
+        <TemplatePreviewDialog
+          templateId={selectedTemplateForEdit.id}
+          open={previewDialogOpen}
+          onOpenChange={setPreviewDialogOpen}
+        />
+      )}
     </div>
   )
 }

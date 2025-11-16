@@ -953,6 +953,7 @@ model template_uploads {
   is_active       Boolean   @default(true)
   detected_fields Json?     // From TemplateAnalyzer
   metadata        Json?
+  variable_mapping Json?    // Store variable definitions with positions
   version         Int       @default(1)
   uploaded_by     String
   created_at      DateTime  @default(now())
