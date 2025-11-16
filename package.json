@@ -21,9 +21,7 @@
     "seed:prodi": "tsx scripts/seed-prodi.ts",
     "fetch:prodi": "tsx scripts/fetch-prodi.ts",
     "import:prodi": "tsx scripts/import-prodi.ts",
-    "minio:start": "docker-compose -f docker-compose.minio.yml up -d",
-    "minio:stop": "docker-compose -f docker-compose.minio.yml down",
-    "minio:logs": "docker-compose -f docker-compose.minio.yml logs -f"
+    "minio:test": "npx tsx --env-file=.env scripts/test-minio.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -122,6 +120,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/xlsx": "^0.0.36",
+    "dotenv": "^17.2.3",
     "postcss": "^8",
     "prisma": "^6.17.1",
     "tailwindcss": "^3.4.17",

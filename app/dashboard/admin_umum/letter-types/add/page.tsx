@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,14 +9,29 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Save, Loader2 } from "lucide-react"
+import { ArrowLeft, Save, Loader2, FileText, Download } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { DynamicFieldsBuilder } from "@/components/admin-umum/dynamic-fields-builder"
 import type { DynamicField } from "@/types/correspondence"
+import { Badge } from "@/components/ui/badge"
+
+interface TemplateUpload {
+  id: string
+  name: string
+  description: string | null
+  file_url: string
+  category: string
+  is_global: boolean
+  prodi?: {
+    nama: string
+  }
+}
 
 export default function AddLetterTypePage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [templates, setTemplates] = useState<TemplateUpload[]>([])
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("")
   const [formData, setFormData] = useState<{
     title: string
     description: string
@@ -35,8 +50,33 @@ export default function AddLetterTypePage() {
     required_documents: [],
     additional_fields: [],
     is_global: true,
-    template: ""
+    template: "",
+    template_id: ""
   })
+
+  useEffect(() => {
+    fetchTemplates()
+  }, [])
+
+  const fetchTemplates = async () => {
+    try {
+      const response = await fetch('/api/templates?category=surat')
+      const data = await response.json()
+      if (data.success) {
+        setTemplates(data.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch templates:', error)
+    }
+  }
+
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplateId(templateId)
+    const template = templates.find(t => t.id === templateId)
+    if (template) {
+      setFormData({ ...formData, template: template.file_url, template_id: templateId })
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -241,8 +281,60 @@ export default function AddLetterTypePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
+              <Label htmlFor="template_select">
+                Pilih Template DOCX (Opsional)
+              </Label>
+              <Select
+                value={selectedTemplateId}
+                onValueChange={handleTemplateSelect}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih template yang sudah diupload" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Tidak menggunakan template</SelectItem>
+                  {templates.map((template) => (
+                    <SelectItem key={template.id} value={template.id}>
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        {template.name}
+                        {template.is_global ? (
+                          <Badge variant="default" className="ml-2">Global</Badge>
+                        ) : template.prodi ? (
+                          <Badge variant="secondary" className="ml-2">{template.prodi.nama}</Badge>
+                        ) : null}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedTemplateId && selectedTemplateId !== "none" && (
+                <div className="flex items-center gap-2 p-2 border rounded-lg bg-muted/50">
+                  <FileText className="w-4 h-4" />
+                  <span className="flex-1 text-sm">
+                    {templates.find(t => t.id === selectedTemplateId)?.name}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      const template = templates.find(t => t.id === selectedTemplateId)
+                      if (template) window.open(template.file_url, '_blank')
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Pilih template DOCX yang sudah diupload atau buat template manual dibawah
+              </p>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="template">
-                Template Surat (Opsional)
+                Atau Template Manual (Opsional)
               </Label>
               <Textarea
                 id="template"
@@ -252,7 +344,7 @@ export default function AddLetterTypePage() {
                 rows={6}
               />
               <p className="text-xs text-muted-foreground">
-                Template ini akan digunakan sebagai dasar pembuatan surat
+                Template manual ini akan digunakan jika tidak ada template DOCX yang dipilih
               </p>
             </div>
 

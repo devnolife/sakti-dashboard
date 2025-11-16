@@ -15,7 +15,10 @@
       "Bash(\"d:\\devnolife\\apps-ft\\dashboard\\components\\admin-umum\\correspondence-drafts-management.tsx.tmp\")",
       "Bash(npm install:*)",
       "Bash(.env)",
-      "Bash(npm pkg set:*)"
+      "Bash(npm pkg set:*)",
+      "Bash(cat:*)",
+      "Bash(npm pkg:*)",
+      "Bash(npm run minio:test:*)"
     ],
     "deny": [],
     "ask": []

@@ -9,10 +9,23 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Save, Loader2 } from "lucide-react"
+import { ArrowLeft, Save, Loader2, FileText, Download } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { DynamicFieldsBuilder } from "@/components/admin-umum/dynamic-fields-builder"
 import type { DynamicField } from "@/types/correspondence"
+import { Badge } from "@/components/ui/badge"
+
+interface TemplateUpload {
+  id: string
+  name: string
+  description: string | null
+  file_url: string
+  category: string
+  is_global: boolean
+  prodi?: {
+    nama: string
+  }
+}
 
 interface LetterType {
   id: string
@@ -35,6 +48,8 @@ export default function EditLetterTypePage() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [templates, setTemplates] = useState<TemplateUpload[]>([])
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("")
   const [formData, setFormData] = useState<Partial<LetterType>>({
     title: "",
     description: "",
@@ -51,7 +66,28 @@ export default function EditLetterTypePage() {
     if (id) {
       fetchLetterType()
     }
+    fetchTemplates()
   }, [id])
+
+  const fetchTemplates = async () => {
+    try {
+      const response = await fetch('/api/templates?category=surat')
+      const data = await response.json()
+      if (data.success) {
+        setTemplates(data.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch templates:', error)
+    }
+  }
+
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplateId(templateId)
+    const template = templates.find(t => t.id === templateId)
+    if (template) {
+      setFormData({ ...formData, template: template.file_url, template_id: templateId })
+    }
+  }
 
   const fetchLetterType = async () => {
     try {
@@ -278,8 +314,60 @@ export default function EditLetterTypePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
+              <Label htmlFor="template_select">
+                Pilih Template DOCX (Opsional)
+              </Label>
+              <Select
+                value={selectedTemplateId}
+                onValueChange={handleTemplateSelect}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih template yang sudah diupload" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Tidak menggunakan template</SelectItem>
+                  {templates.map((template) => (
+                    <SelectItem key={template.id} value={template.id}>
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        {template.name}
+                        {template.is_global ? (
+                          <Badge variant="default" className="ml-2">Global</Badge>
+                        ) : template.prodi ? (
+                          <Badge variant="secondary" className="ml-2">{template.prodi.nama}</Badge>
+                        ) : null}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedTemplateId && selectedTemplateId !== "none" && (
+                <div className="flex items-center gap-2 p-2 border rounded-lg bg-muted/50">
+                  <FileText className="w-4 h-4" />
+                  <span className="flex-1 text-sm">
+                    {templates.find(t => t.id === selectedTemplateId)?.name}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      const template = templates.find(t => t.id === selectedTemplateId)
+                      if (template) window.open(template.file_url, '_blank')
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Pilih template DOCX yang sudah diupload atau buat template manual dibawah
+              </p>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="template">
-                Template Surat (Opsional)
+                Atau Template Manual (Opsional)
               </Label>
               <Textarea
                 id="template"
@@ -288,6 +376,9 @@ export default function EditLetterTypePage() {
                 placeholder="Template konten surat (dalam format HTML atau text)"
                 rows={6}
               />
+              <p className="text-xs text-muted-foreground">
+                Template manual ini akan digunakan jika tidak ada template DOCX yang dipilih
+              </p>
             </div>
 
             <div className="p-4 space-y-3 rounded-lg bg-muted/50">

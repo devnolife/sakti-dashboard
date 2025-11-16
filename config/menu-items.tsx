@@ -505,7 +505,19 @@ export const prodiMenuItems = [
     id: "correspondence",
     title: "Pelayanan Surat",
     href: "/dashboard/prodi/correspondence",
-    icon: Mail
+    icon: Mail,
+    children: [
+      {
+        id: "correspondence-requests",
+        title: "Permintaan Surat",
+        href: "/dashboard/prodi/correspondence",
+      },
+      {
+        id: "template-documents",
+        title: "Template Dokumen",
+        href: "/dashboard/prodi/templates",
+      },
+    ],
   },
   {
     id: "kkp-management",
@@ -995,8 +1007,8 @@ export const adminUmumMenuItems = [
       },
       {
         id: "templates",
-        title: "Template Surat",
-        href: "/dashboard/admin_umum/correspondence/templates",
+        title: "Template Dokumen",
+        href: "/dashboard/admin_umum/templates",
       },
       {
         id: "archive",

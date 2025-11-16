@@ -613,11 +613,19 @@ model letter_requests {
   wd1_approved_by    String?
   wd1_approved_at    DateTime?
   wd1_notes          String?
+  // Digital signature fields
+  signature          String?
+  signature_data     Json?
+  qr_code_url        String?
+  signed_at          DateTime?
+  signed_by          String?
+  verification_count Int                  @default(0)
   created_at         DateTime             @default(now())
   updated_at         DateTime
   letter_attachments letter_attachments[]
   students           students             @relation(fields: [student_id], references: [id])
   workflow_history   workflow_history[]
+  signature_verifications signature_verifications[]
 }
 
 model letter_types {
@@ -667,6 +675,18 @@ model workflow_history {
   notes              String?
   created_at         DateTime        @default(now())
   letter_requests    letter_requests @relation(fields: [letter_request_id], references: [id], onDelete: Cascade)
+}
+
+model signature_verifications {
+  id                String          @id @default(cuid())
+  letter_request_id String
+  verified_at       DateTime        @default(now())
+  ip_address        String?
+  user_agent        String?
+  is_valid          Boolean         @default(true)
+  letter_requests   letter_requests @relation(fields: [letter_request_id], references: [id], onDelete: Cascade)
+  
+  @@index([letter_request_id])
 }
 
 model role_assignments {
@@ -753,6 +773,7 @@ model prodi {
   announcements         announcements[]
   classrooms            classrooms[]
   rekomendasi_judul     rekomendasi_judul[]
+  template_uploads      template_uploads[]
 }
 
 model sessions {
@@ -915,6 +936,35 @@ model users {
   laboratory_admins       laboratory_admins[]
   reading_room_admins     reading_room_admins[]
   approved_correspondences correspondence_requests[] @relation("ApprovedBy")
+  template_uploads        template_uploads[]
+}
+
+model template_uploads {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  file_url        String
+  file_name       String
+  file_size       Int
+  file_type       String    @default("docx")
+  category        String    @default("surat") // surat, sertifikat, laporan
+  prodi_id        String?
+  is_global       Boolean   @default(false)
+  is_active       Boolean   @default(true)
+  detected_fields Json?     // From TemplateAnalyzer
+  metadata        Json?
+  version         Int       @default(1)
+  uploaded_by     String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  
+  prodi           prodi?    @relation(fields: [prodi_id], references: [kode])
+  uploader        users     @relation(fields: [uploaded_by], references: [id])
+
+  @@index([prodi_id])
+  @@index([uploaded_by])
+  @@index([is_active])
+  @@index([category])
 }
 
 model role_configurations {
