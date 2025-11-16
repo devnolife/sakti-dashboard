@@ -36,17 +36,16 @@ import {
   Upload,
   Download,
   Edit,
-  Trash2,
   Eye,
-  FileCheck,
   Plus,
-  Edit2
+  Edit2,
+  Info
 } from "lucide-react"
 import { TemplateVariableEditorWrapper } from "@/components/templates/template-variable-editor-wrapper"
 import { TemplatePreviewDialog } from "@/components/templates/template-preview-dialog"
 import { ColumnDef } from "@tanstack/react-table"
 import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface Template {
   id: string
@@ -72,14 +71,14 @@ interface Template {
   }
 }
 
-interface Prodi {
+interface UserProdi {
   kode: string
   nama: string
 }
 
-export default function TemplatesPage() {
+export default function StaffTUTemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([])
-  const [prodi, setProdi] = useState<Prodi[]>([])
+  const [userProdi, setUserProdi] = useState<UserProdi | null>(null)
   const [loading, setLoading] = useState(true)
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
@@ -90,7 +89,6 @@ export default function TemplatesPage() {
 
   // Filter states
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
-  const [prodiFilter, setProdiFilter] = useState<string>("all")
   const [scopeFilter, setScopeFilter] = useState<string>("all")
 
   // Upload form states
@@ -98,8 +96,6 @@ export default function TemplatesPage() {
     name: "",
     description: "",
     category: "surat",
-    prodi_id: "",
-    is_global: false,
   })
   const [uploadedFile, setUploadedFile] = useState<{ url: string; name: string } | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -109,20 +105,53 @@ export default function TemplatesPage() {
     name: "",
     description: "",
     category: "surat",
-    is_active: true,
   })
 
   useEffect(() => {
-    fetchTemplates()
-    fetchProdi()
-  }, [categoryFilter, prodiFilter, scopeFilter])
+    fetchUserProdi()
+  }, [])
+
+  useEffect(() => {
+    if (userProdi) {
+      fetchTemplates()
+    }
+  }, [categoryFilter, scopeFilter, userProdi])
+
+  const fetchUserProdi = async () => {
+    try {
+      const response = await fetch("/api/user/prodi")
+      const data = await response.json()
+
+      if (data.success && data.data) {
+        setUserProdi(data.data)
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to fetch your prodi information",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Failed to fetch user prodi:", error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch your prodi information",
+        variant: "destructive",
+      })
+    }
+  }
 
   const fetchTemplates = async () => {
+    if (!userProdi) return
+
     try {
       setLoading(true)
       const params = new URLSearchParams()
+
+      // Always filter by user's prodi
+      params.append("prodi_id", userProdi.kode)
+
       if (categoryFilter !== "all") params.append("category", categoryFilter)
-      if (prodiFilter !== "all") params.append("prodi_id", prodiFilter)
       if (scopeFilter === "global") params.append("is_global", "true")
       if (scopeFilter === "prodi") params.append("is_global", "false")
 
@@ -149,20 +178,8 @@ export default function TemplatesPage() {
     }
   }
 
-  const fetchProdi = async () => {
-    try {
-      const response = await fetch("/api/prodi")
-      const data = await response.json()
-      if (data.success) {
-        setProdi(data.data)
-      }
-    } catch (error) {
-      console.error("Failed to fetch prodi:", error)
-    }
-  }
-
   const handleUploadSubmit = async () => {
-    if (!uploadedFile) {
+    if (!uploadedFile || !userProdi) {
       toast({
         title: "Error",
         description: "Please upload a file first",
@@ -193,10 +210,8 @@ export default function TemplatesPage() {
       formData.append("name", uploadForm.name)
       formData.append("description", uploadForm.description)
       formData.append("category", uploadForm.category)
-      formData.append("is_global", uploadForm.is_global.toString())
-      if (!uploadForm.is_global && uploadForm.prodi_id) {
-        formData.append("prodi_id", uploadForm.prodi_id)
-      }
+      formData.append("is_global", "false") // Staff TU can only create prodi-specific templates
+      formData.append("prodi_id", userProdi.kode)
 
       const response = await fetch("/api/templates/upload", {
         method: "POST",
@@ -267,45 +282,11 @@ export default function TemplatesPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this template?")) return
-
-    try {
-      const response = await fetch(`/api/templates/${id}`, {
-        method: "DELETE",
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        toast({
-          title: "Success",
-          description: "Template deleted successfully",
-        })
-        fetchTemplates()
-      } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to delete template",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete template",
-        variant: "destructive",
-      })
-    }
-  }
-
   const resetUploadForm = () => {
     setUploadForm({
       name: "",
       description: "",
       category: "surat",
-      prodi_id: "",
-      is_global: false,
     })
     setUploadedFile(null)
   }
@@ -316,7 +297,6 @@ export default function TemplatesPage() {
       name: template.name,
       description: template.description || "",
       category: template.category,
-      is_active: template.is_active,
     })
     setEditDialogOpen(true)
   }
@@ -355,7 +335,7 @@ export default function TemplatesPage() {
       header: "Scope",
       cell: ({ row }) => (
         <Badge variant={row.original.is_global ? "default" : "secondary"}>
-          {row.original.is_global ? "Global" : row.original.prodi?.nama || "Prodi"}
+          {row.original.is_global ? "Global" : "Prodi"}
         </Badge>
       ),
     },
@@ -413,22 +393,16 @@ export default function TemplatesPage() {
           >
             <Download className="w-4 h-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => openEditDialog(row.original)}
-            title="Edit"
-          >
-            <Edit className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleDelete(row.original.id)}
-            title="Delete"
-          >
-            <Trash2 className="w-4 h-4 text-destructive" />
-          </Button>
+          {!row.original.is_global && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => openEditDialog(row.original)}
+              title="Edit"
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       ),
     },
@@ -440,7 +414,7 @@ export default function TemplatesPage() {
         <div>
           <h1 className="text-3xl font-bold">Template Dokumen</h1>
           <p className="text-muted-foreground">
-            Kelola template dokumen untuk pembuatan surat
+            Kelola template dokumen untuk {userProdi?.nama || "prodi Anda"}
           </p>
         </div>
         <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
@@ -454,33 +428,42 @@ export default function TemplatesPage() {
             <DialogHeader>
               <DialogTitle>Upload Template Baru</DialogTitle>
               <DialogDescription>
-                Upload file .docx untuk dijadikan template dokumen
+                Upload template dokumen DOCX untuk prodi {userProdi?.nama}
               </DialogDescription>
             </DialogHeader>
-            <div className="py-4 space-y-4">
+
+            <div className="space-y-4">
+              <Alert>
+                <Info className="w-4 h-4" />
+                <AlertTitle>Info</AlertTitle>
+                <AlertDescription>
+                  Template yang Anda upload hanya akan tersedia untuk prodi {userProdi?.nama}
+                </AlertDescription>
+              </Alert>
+
               <div className="space-y-2">
-                <Label htmlFor="name">Nama Template *</Label>
+                <Label htmlFor="template-name">Nama Template *</Label>
                 <Input
-                  id="name"
+                  id="template-name"
                   value={uploadForm.name}
                   onChange={(e) => setUploadForm({ ...uploadForm, name: e.target.value })}
-                  placeholder="Contoh: Template Surat Keterangan Aktif"
+                  placeholder="Contoh: Surat Keterangan Mahasiswa Aktif"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Deskripsi</Label>
+                <Label htmlFor="template-description">Deskripsi</Label>
                 <Textarea
-                  id="description"
+                  id="template-description"
                   value={uploadForm.description}
                   onChange={(e) => setUploadForm({ ...uploadForm, description: e.target.value })}
-                  placeholder="Deskripsi template..."
+                  placeholder="Deskripsi singkat tentang template ini"
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category">Kategori</Label>
+                <Label htmlFor="template-category">Kategori</Label>
                 <Select
                   value={uploadForm.category}
                   onValueChange={(value) => setUploadForm({ ...uploadForm, category: value })}
@@ -490,129 +473,107 @@ export default function TemplatesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="surat">Surat</SelectItem>
-                    <SelectItem value="sertifikat">Sertifikat</SelectItem>
-                    <SelectItem value="laporan">Laporan</SelectItem>
+                    <SelectItem value="sk">SK (Surat Keputusan)</SelectItem>
+                    <SelectItem value="berita_acara">Berita Acara</SelectItem>
+                    <SelectItem value="undangan">Undangan</SelectItem>
+                    <SelectItem value="lainnya">Lainnya</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="is_global"
-                  checked={uploadForm.is_global}
-                  onCheckedChange={(checked) => setUploadForm({ ...uploadForm, is_global: checked })}
-                />
-                <Label htmlFor="is_global">Template Global (untuk semua prodi)</Label>
-              </div>
-
-              {!uploadForm.is_global && (
-                <div className="space-y-2">
-                  <Label htmlFor="prodi">Program Studi</Label>
-                  <Select
-                    value={uploadForm.prodi_id}
-                    onValueChange={(value) => setUploadForm({ ...uploadForm, prodi_id: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih prodi" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {prodi.map((p) => (
-                        <SelectItem key={p.kode} value={p.kode}>
-                          {p.nama}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
               <div className="space-y-2">
-                <Label>Upload File Template (.docx)</Label>
+                <Label>File DOCX *</Label>
                 <FileUploadMinio
-                  label="Upload Template DOCX"
-                  accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  maxSize={10}
-                  onUploadComplete={(url, fileName) => {
+                  accept=".docx"
+                  onUploadComplete={(url) => {
+                    const fileName = url.split('/').pop() || 'uploaded-file.docx'
                     setUploadedFile({ url, name: fileName })
                   }}
-                  currentFile={uploadedFile}
-                  onRemove={() => setUploadedFile(null)}
+                  maxSize={10 * 1024 * 1024}
                 />
+                {uploadedFile && (
+                  <div className="flex items-center gap-2 p-2 text-sm border rounded-lg bg-muted">
+                    <FileText className="w-4 h-4" />
+                    <span className="flex-1 truncate">{uploadedFile.name}</span>
+                  </div>
+                )}
               </div>
             </div>
+
             <DialogFooter>
-              <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setUploadDialogOpen(false)
+                  resetUploadForm()
+                }}
+              >
                 Batal
               </Button>
-              <Button onClick={handleUploadSubmit} disabled={uploading}>
-                {uploading ? "Uploading..." : "Upload Template"}
+              <Button onClick={handleUploadSubmit} disabled={uploading || !uploadedFile}>
+                {uploading ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-b-2 border-white rounded-full animate-spin"></div>
+                    Mengupload...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
+      {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filter Templates</CardTitle>
+          <CardTitle>Filter</CardTitle>
           <CardDescription>Filter templates berdasarkan kategori dan scope</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label>Kategori</Label>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Kategori</SelectItem>
-                  <SelectItem value="surat">Surat</SelectItem>
-                  <SelectItem value="sertifikat">Sertifikat</SelectItem>
-                  <SelectItem value="laporan">Laporan</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <CardContent className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[200px]">
+            <Label>Kategori</Label>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Kategori</SelectItem>
+                <SelectItem value="surat">Surat</SelectItem>
+                <SelectItem value="sk">SK</SelectItem>
+                <SelectItem value="berita_acara">Berita Acara</SelectItem>
+                <SelectItem value="undangan">Undangan</SelectItem>
+                <SelectItem value="lainnya">Lainnya</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="space-y-2">
-              <Label>Scope</Label>
-              <Select value={scopeFilter} onValueChange={setScopeFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Scope</SelectItem>
-                  <SelectItem value="global">Global</SelectItem>
-                  <SelectItem value="prodi">Prodi</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Program Studi</Label>
-              <Select value={prodiFilter} onValueChange={setProdiFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Prodi</SelectItem>
-                  {prodi.map((p) => (
-                    <SelectItem key={p.kode} value={p.kode}>
-                      {p.nama}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex-1 min-w-[200px]">
+            <Label>Scope</Label>
+            <Select value={scopeFilter} onValueChange={setScopeFilter}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua</SelectItem>
+                <SelectItem value="global">Global</SelectItem>
+                <SelectItem value="prodi">Prodi Saya</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
 
+      {/* Templates Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Daftar Templates</CardTitle>
+          <CardTitle>Daftar Template</CardTitle>
           <CardDescription>
-            Total {templates.length} templates
+            {loading ? "Memuat..." : `${templates.length} template tersedia`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -627,6 +588,7 @@ export default function TemplatesPage() {
         </CardContent>
       </Card>
 
+      {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -635,7 +597,8 @@ export default function TemplatesPage() {
               Update informasi template
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4 space-y-4">
+
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="edit-name">Nama Template</Label>
               <Input
@@ -666,23 +629,23 @@ export default function TemplatesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="surat">Surat</SelectItem>
-                  <SelectItem value="sertifikat">Sertifikat</SelectItem>
-                  <SelectItem value="laporan">Laporan</SelectItem>
+                  <SelectItem value="sk">SK</SelectItem>
+                  <SelectItem value="berita_acara">Berita Acara</SelectItem>
+                  <SelectItem value="undangan">Undangan</SelectItem>
+                  <SelectItem value="lainnya">Lainnya</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="edit-is_active"
-                checked={editForm.is_active}
-                onCheckedChange={(checked) => setEditForm({ ...editForm, is_active: checked })}
-              />
-              <Label htmlFor="edit-is_active">Template Aktif</Label>
-            </div>
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditDialogOpen(false)
+                setSelectedTemplate(null)
+              }}
+            >
               Batal
             </Button>
             <Button onClick={handleEditSubmit}>
