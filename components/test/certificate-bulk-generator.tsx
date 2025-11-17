@@ -61,10 +61,11 @@ export default function CertificateBulkGenerator() {
 
       const parsedRecipients = lines.map((line, index) => {
         const parts = line.split(',').map(p => p.trim())
+        const certNumber = String(index + 1).padStart(3, '0')
         return {
           name: parts[0] || `Peserta ${index + 1}`,
           courseName: parts[1] || "Pelatihan Laboratorium",
-          certificateId: parts[2] || `CERT-LAB-${new Date().getFullYear()}-${String(index + 1).padStart(3, '0')}`
+          certificateId: parts[2] || `${certNumber}/LAB-INFORMATIKA/UNHAS/${new Date().getFullYear()}`
         }
       })
 

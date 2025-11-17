@@ -1,21 +1,34 @@
 "use client"
 
-import { Montserrat, Poppins, Open_Sans } from "next/font/google"
+import { Playfair_Display, Inter, Cormorant_Garamond, Space_Grotesk } from "next/font/google"
 import Image from "next/image"
-import { Monitor, Lightbulb, Clock, Users, Calendar, CheckCircle, BarChart3, Activity, Printer } from "lucide-react"
+import { Monitor, Lightbulb, Clock, Users, Calendar, CheckCircle, BarChart3, Activity, Printer, Award, Sparkles } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import QRCode from "qrcode"
 
-const montserrat = Montserrat({
-  weight: ['700', '800', '900'],
+// Elegant serif for headings
+const playfair = Playfair_Display({
+  weight: ['400', '600', '700', '900'],
+  subsets: ["latin"],
+  style: ['normal', 'italic']
+})
+
+// Modern sans-serif for body
+const inter = Inter({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ["latin"]
 })
 
-const poppins = Poppins({
-  weight: ['300', '400', '600'],
-  subsets: ["latin"]
+// Elegant serif for names
+const cormorant = Cormorant_Garamond({
+  weight: ['300', '400', '600', '700'],
+  subsets: ["latin"],
+  style: ['normal', 'italic']
 })
 
-const openSans = Open_Sans({
-  weight: ['400', '500'],
+// Modern geometric for accents
+const spaceGrotesk = Space_Grotesk({
+  weight: ['400', '500', '600', '700'],
   subsets: ["latin"]
 })
 
@@ -46,7 +59,7 @@ interface LabCertificateTemplateProps {
 const getRandomBadgeColor = () => {
   const colors = [
     "bg-blue-100 text-blue-700 border-blue-200",
-    "bg-green-100 text-green-700 border-green-200", 
+    "bg-green-100 text-green-700 border-green-200",
     "bg-purple-100 text-purple-700 border-purple-200",
     "bg-pink-100 text-pink-700 border-pink-200",
     "bg-yellow-100 text-yellow-700 border-yellow-200",
@@ -100,10 +113,10 @@ const CleanCircularProgress = ({ percentage = 100, size = 110, strokeWidth = 8 }
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={`text-2xl font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent ${montserrat.className}`}>
+        <span className={`text-2xl font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent ${playfair.className}`}>
           231h
         </span>
-        <span className={`text-xs text-gray-600 font-medium ${poppins.className}`}>
+        <span className={`text-xs text-gray-600 font-medium ${inter.className}`}>
           Total
         </span>
       </div>
@@ -161,6 +174,51 @@ const Sparkline = ({ data, color = "#10b981" }: SparklineProps) => {
 }
 
 export default function LabCertificateTemplate({ data, template, showBack = false }: LabCertificateTemplateProps) {
+  const signatureQRRef = useRef<HTMLCanvasElement>(null)
+  const verificationQRRef = useRef<HTMLCanvasElement>(null)
+  const [qrLoaded, setQrLoaded] = useState(false)
+
+  // Generate QR codes
+  useEffect(() => {
+    const generateQRCodes = async () => {
+      try {
+        // QR Code for digital signature verification
+        const signatureVerificationURL = `https://lab-informatika.unhas.ac.id/verify/signature/${data.certificateId}`
+
+        // QR Code for certificate verification (existing one in footer)
+        const certificateVerificationURL = `https://lab-informatika.unhas.ac.id/verify/${data.certificateId}`
+
+        if (signatureQRRef.current) {
+          await QRCode.toCanvas(signatureQRRef.current, signatureVerificationURL, {
+            width: 80,
+            margin: 1,
+            color: {
+              dark: '#1f2937',
+              light: '#ffffff'
+            }
+          })
+        }
+
+        if (verificationQRRef.current) {
+          await QRCode.toCanvas(verificationQRRef.current, certificateVerificationURL, {
+            width: 48,
+            margin: 0,
+            color: {
+              dark: '#1f2937',
+              light: '#ffffff'
+            }
+          })
+        }
+
+        setQrLoaded(true)
+      } catch (error) {
+        console.error('Error generating QR codes:', error)
+      }
+    }
+
+    generateQRCodes()
+  }, [data.certificateId])
+
   // Generate some mock analytics data
   const mockStats = {
     meetings: data.meetingsAttended || 10,
@@ -180,7 +238,7 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
       level: "Expert"
     },
     {
-      name: "Kemampuan Analisis dan Evaluasi (KAE)", 
+      name: "Kemampuan Analisis dan Evaluasi (KAE)",
       value: 30,
       startColor: "#06b6d4",
       endColor: "#0891b2",
@@ -189,7 +247,7 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
     {
       name: "Kreativitas dalam Pemecahan Masalah (KPM)",
       value: 25,
-      startColor: "#10b981", 
+      startColor: "#10b981",
       endColor: "#059669",
       level: "Advanced"
     },
@@ -215,364 +273,578 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
   const weeklyData = [45, 52, 38, 61, 47, 55, 43, 38, 52, 45]
 
   return (
-    <div className="overflow-hidden bg-white rounded-lg shadow-2xl" style={{ width: '297mm', height: '210mm' }}>
-      <div className="relative h-full p-8">
-        {/* Single Decorative Border */}
-        <div className="absolute border-4 border-black pointer-events-none inset-6 rounded-3xl"></div>
+    <>
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4 landscape;
+            margin: 0;
+          }
 
-        {!showBack ? (
-          // Certificate Front - A4 Landscape Layout
-          <div className="relative z-10 flex flex-col justify-between h-full p-8">
-            {/* Header with Badge */}
-            <div className="flex flex-col items-center mt-4">
-              <div className="relative mb-2">
-                <div className="relative w-56 h-40">
-                  <Image
-                    src="/certificate-badge.png"
-                    alt="Informatics Laboratory Badge"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              </div>
-            </div>
+          body {
+            margin: 0;
+            padding: 0;
+            background: white !important;
+          }
 
-            {/* Main Content */}
-            <div className="flex flex-col justify-center flex-grow">
-              {/* Title Section */}
-              <div className="mb-2 text-center">
-                <p className={`text-gray-600 text-sm font-light tracking-widest mb-1 ${poppins.className}`}>
-                  PROFESSIONAL CERTIFICATION
-                </p>
-                <h1 className={`text-6xl font-black text-gray-900 mb-2 ${montserrat.className}`}>
-                  {template === "backend_dev_1" ? "Backend Developer I" :
-                   template === "frontend_dev_1" ? "Frontend Developer I" :
-                   template === "fullstack_dev_1" ? "Full Stack Developer I" :
-                   template === "data_science_1" ? "Data Science I" :
-                   "Backend Developer I"}
-                </h1>
-              </div>
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
 
-              {/* Recipient Section */}
-              <div className="mb-2 text-center">
-                <p className="mb-1 text-base text-gray-600">ISSUED TO</p>
-                <h2 className={`text-5xl font-bold text-gray-900 mb-2 ${montserrat.className}`}>
-                  {data.name}
-                </h2>
-              </div>
+          .certificate-container {
+            width: 297mm !important;
+            height: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-after: always;
+            page-break-inside: avoid;
+            overflow: visible !important;
+          }
 
-              {/* Description */}
-              <div className="max-w-2xl mx-auto mb-2 text-center">
-                <p className={`text-gray-700 text-lg leading-relaxed ${openSans.className}`}>
-                  The bearer of this professional certificate has demonstrated a fundamental
-                  level of {data.program} mastery and passed the core competencies for each
-                  programming specialty in laboratory practices.
-                </p>
-              </div>
-            </div>
+          /* Hide all shadows in print */
+          .shadow-2xl, .shadow-xl, .shadow-lg {
+            box-shadow: none !important;
+          }
 
-            {/* Footer Section */}
-            <div className="flex items-end justify-between mt-auto">
-              {/* Signature */}
-              <div className="flex flex-col items-start">
-                <div className="mb-2">
-                  <svg
-                    width="100"
-                    height="30"
-                    viewBox="0 0 100 30"
-                    className="text-gray-800"
-                  >
-                    <path
-                      d="M10,22 Q18,8 25,18 Q32,12 40,22"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
+          /* Ensure borders print properly */
+          .border-4 {
+            border-width: 4px !important;
+            border-color: #000 !important;
+          }
+
+          .border-2 {
+            border-width: 2px !important;
+          }
+
+          /* Ensure backgrounds and gradients print */
+          .bg-gradient-to-br,
+          .bg-gradient-to-r,
+          .bg-gray-900,
+          .bg-gray-800,
+          .bg-gray-200,
+          .bg-gray-100,
+          .bg-gray-50,
+          .bg-green-500,
+          .bg-green-400,
+          .bg-blue-100,
+          .bg-blue-50,
+          .bg-green-100,
+          .bg-purple-100,
+          .bg-pink-100,
+          .bg-yellow-100,
+          .bg-indigo-100,
+          .bg-red-100,
+          .bg-cyan-100,
+          .bg-lime-400,
+          .bg-yellow-400,
+          .bg-white,
+          [class*="bg-"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Ensure text colors print */
+          [class*="text-"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* SVG elements - ensure they print */
+          svg, svg * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            vector-effect: non-scaling-stroke;
+          }
+
+          /* Circle progress bars */
+          circle {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Linear gradients */
+          linearGradient,
+          stop {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* QR Code and similar elements */
+          .bg-gray-800 > div,
+          [class*="grid-cols"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Badge colors */
+          .rounded-full {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Progress bars */
+          [style*="background"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Images - ensure they print at full quality */
+          img {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            max-width: 100% !important;
+            height: auto !important;
+            page-break-inside: avoid;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+          }
+
+          /* Canvas elements (QR codes) - ensure they print */
+          canvas {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            page-break-inside: avoid;
+          }
+
+          /* Remove any interactive elements in print */
+          button, .cursor-pointer {
+            display: none !important;
+          }
+
+          /* Ensure proper font rendering */
+          * {
+            font-smoothing: antialiased;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+          }
+
+          /* Font weights - ensure they render properly */
+          .font-black {
+            font-weight: 900 !important;
+          }
+
+          .font-bold {
+            font-weight: 700 !important;
+          }
+
+          .font-semibold {
+            font-weight: 600 !important;
+          }
+
+          .font-medium {
+            font-weight: 500 !important;
+          }
+
+          /* Page breaks */
+          .page-break {
+            page-break-after: always;
+            page-break-inside: avoid;
+          }
+
+          /* Keep all rounded corners for professional look */
+          .rounded, .rounded-sm, .rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl, .rounded-full {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            /* Keep original border radius */
+          }
+
+          /* Ensure border radius is preserved on main container */
+          .certificate-container {
+            border-radius: 0.5rem !important;
+          }
+
+          /* Main decorative border keeps its radius */
+          .border-4.rounded-3xl {
+            border-radius: 1.5rem !important;
+          }
+
+          /* Opacity - ensure visible in print */
+          [class*="opacity-"] {
+            opacity: 1 !important;
+          }
+
+          /* Transitions and animations - disable for print */
+          *,
+          *::before,
+          *::after {
+            animation: none !important;
+            transition: none !important;
+          }
+
+          /* Sparkline and charts */
+          polyline,
+          path {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Ensure spacing is preserved */
+          .space-y-1 > * + *,
+          .space-y-2 > * + *,
+          .space-y-3 > * + *,
+          .space-y-4 > * + * {
+            margin-top: inherit !important;
+          }
+
+          /* Grid layouts */
+          .grid {
+            display: grid !important;
+          }
+
+          /* Flex layouts */
+          .flex {
+            display: flex !important;
+          }
+        }
+      `}</style>
+
+      <div className="overflow-hidden bg-white rounded-lg shadow-2xl certificate-container" style={{ width: '297mm', height: '210mm' }}>
+        <div className="relative h-full p-8">
+          {/* Single Decorative Border - Keeps radius for professional look */}
+          <div className="absolute border-4 border-black pointer-events-none inset-6 rounded-3xl"></div>
+
+          {!showBack ? (
+            // Certificate Front - A4 Landscape Layout
+            <div className="relative z-10 flex flex-col justify-between h-full p-8">
+              {/* Header with Badge */}
+              <div className="flex flex-col items-center mt-4">
+                <div className="relative mb-2">
+                  <div className="relative w-56 h-40">
+                    <Image
+                      src="/certificate-badge.png"
+                      alt="Informatics Laboratory Badge"
+                      fill
+                      className="object-contain"
+                      priority
                     />
-                    <path
-                      d="M45,18 Q52,12 60,18 Q68,15 75,20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content */}
+              <div className="flex flex-col justify-center flex-grow">
+                {/* Title Section */}
+                <div className="mb-2 text-center">
+                  <p className={`text-gray-600 text-sm font-light tracking-widest mb-1 ${inter.className}`}>
+                    PROFESSIONAL CERTIFICATION
+                  </p>
+                  <h1 className={`text-6xl font-black text-gray-900 mb-2 ${playfair.className}`}>
+                    {template === "backend_dev_1" ? "Backend Developer I" :
+                      template === "frontend_dev_1" ? "Frontend Developer I" :
+                        template === "fullstack_dev_1" ? "Full Stack Developer I" :
+                          template === "data_science_1" ? "Data Science I" :
+                            "Backend Developer I"}
+                  </h1>
+                </div>
+
+                {/* Recipient Section */}
+                <div className="mb-2 text-center">
+                  <p className="mb-1 text-base text-gray-600">ISSUED TO</p>
+                  <h2 className={`text-5xl font-bold text-gray-900 mb-2 ${playfair.className}`}>
+                    {data.name}
+                  </h2>
+                </div>
+
+                {/* Description */}
+                <div className="max-w-2xl mx-auto mb-2 text-center">
+                  <p className={`text-gray-700 text-lg leading-relaxed ${inter.className}`}>
+                    The bearer of this professional certificate has demonstrated a fundamental
+                    level of {data.program} mastery and passed the core competencies for each
+                    programming specialty in laboratory practices.
+                  </p>
+                </div>
+              </div>
+
+              {/* Footer Section */}
+              <div className="flex items-end justify-between mt-auto">
+                {/* Digital Signature QR Code - Left */}
+                <div className="flex flex-col items-start">
+                  <div className="flex flex-col items-center mb-2">
+                    <canvas
+                      ref={signatureQRRef}
+                      className="mb-1 border-2 border-gray-300 rounded"
+                      style={{ width: '70px', height: '70px' }}
                     />
-                  </svg>
-                </div>
-                <p className={`text-xs text-gray-600 ${poppins.className}`}>
-                  {data.instructorName || "Founders, Uxcel"}
-                </p>
-              </div>
-
-              {/* Center Logo */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center justify-center w-10 h-10 mb-2 bg-gray-900 rounded-full">
-                  <span className="text-sm font-bold text-white">ux</span>
-                </div>
-                <p className={`text-xs text-gray-600 font-medium ${poppins.className}`}>
-                  {data.organizationName || "uxcel"}
-                </p>
-              </div>
-
-              {/* Date and QR */}
-              <div className="flex flex-col items-end">
-                <div className="flex items-center justify-center w-12 h-12 mb-2 bg-gray-200">
-                  <div className="w-10 h-10 bg-gray-800">
-                    <div className="grid grid-cols-4 gap-px p-1">
-                      {Array.from({ length: 16 }, (_, i) => (
-                        <div
-                          key={i}
-                          className={`w-0.5 h-0.5 ${Math.random() > 0.5 ? "bg-white" : "bg-gray-800"}`}
-                        />
-                      ))}
-                    </div>
+                    <span className={`text-[9px] text-gray-500 ${inter.className}`}>Digital Signature</span>
                   </div>
-                </div>
-                <div className={`text-right text-xs text-gray-600 ${poppins.className}`}>
-                  <p>Issued: {new Date(data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                  <p>ID: {data.certificateId || "123Z353467"}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Certificate Back - Enhanced A4 Layout with all features
-          <div className="relative flex flex-col h-full overflow-hidden p-8">
-            {/* Subtle Background Pattern */}
-            <div className="absolute inset-8 opacity-5">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `radial-gradient(circle at 1px 1px, #6b7280 1px, transparent 0)`,
-                backgroundSize: '20px 20px'
-              }} />
-            </div>
-
-            {/* Header with Enhanced Info */}
-            <div className="relative z-10 mb-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h1 className={`text-lg font-bold text-gray-900 ${montserrat.className}`}>
-                      Sertifikat Laboratorium, {data.name}
-                    </h1>
-                    <span className="text-lg">🤝</span>
-                  </div>
-                  <p className={`text-gray-600 text-sm mb-2 ${openSans.className}`}>
-                    {data.achievement}
+                  <p className={`text-xs text-gray-800 font-semibold ${inter.className}`}>
+                    {data.instructorName || "Muhyiddin A.M Hayat, S.Kom., M.T"}
                   </p>
-                  <p className={`text-sm font-semibold text-gray-800 ${montserrat.className}`}>
-                    {data.program}
+                  <p className={`text-[10px] text-gray-600 ${inter.className}`}>
+                    Kepala Laboratorium Informatika
                   </p>
                 </div>
 
-                {/* QR Code and Verification */}
-                <div className="text-right">
-                  <div className="flex items-center justify-center w-12 h-12 mb-2 bg-gray-800 rounded">
-                    <div className="grid grid-cols-4 gap-px p-1">
-                      {Array.from({ length: 16 }, (_, i) => (
-                        <div key={i} className={`w-0.5 h-0.5 ${Math.random() > 0.5 ? "bg-white" : "bg-gray-800"}`} />
-                      ))}
-                    </div>
-                  </div>
-                  <div className={`text-xs text-gray-600 ${poppins.className}`}>
-                    <p>Diterbitkan: {new Date(data.date).toLocaleDateString('id-ID')}</p>
-                    <p>ID: {data.certificateId || "CERT-2024-001"}</p>
-                  </div>
+                {/* Center - Organization Name */}
+                <div className="flex flex-col items-center justify-end pb-1">
+                  <p className={`text-sm text-gray-700 font-semibold ${inter.className}`}>
+                    {data.organizationName || "Laboratorium Informatika"}
+                  </p>
+                  <p className={`text-xs text-gray-500 ${inter.className}`}>
+                    Universitas Muhammadiyah Makassar
+                  </p>
                 </div>
-              </div>
 
-              {/* Technology Tags with Grade */}
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2">
-                  {(data.technologies || ["TypeScript", "NodeJS", "Docker", "PostgreSQL"]).map((tech, index) => (
-                    <div key={index} className={`px-3 py-1 text-sm font-medium rounded-full border ${getRandomBadgeColor()} ${poppins.className} transition-all duration-200 hover:scale-105`}>
-                      {tech}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-sm text-gray-600 ${poppins.className}`}>Nilai Keseluruhan:</span>
-                  <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
-                    {mockGrades.overall}
+                {/* Right - Certificate Number and Verification QR */}
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center justify-center p-1 mb-2 bg-white border-2 border-gray-300 rounded">
+                    <canvas
+                      ref={verificationQRRef}
+                      style={{ width: '48px', height: '48px' }}
+                    />
+                  </div>
+                  <div className={`text-right text-xs text-gray-600 ${inter.className}`}>
+                    <p className="text-[10px] text-gray-500 mb-1">Scan untuk verifikasi</p>
+                    <p className="font-semibold text-gray-800">No. Surat: {data.certificateId || "001/LAB/2024"}</p>
+                    <p className="text-[10px]">Issued: {new Date(data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                   </div>
                 </div>
               </div>
             </div>
+          ) : (
+            // Certificate Back - Enhanced A4 Layout with all features
+            <div className="relative flex flex-col h-full p-8 overflow-hidden">
+              {/* Subtle Background Pattern */}
+              <div className="absolute inset-8 opacity-5">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `radial-gradient(circle at 1px 1px, #6b7280 1px, transparent 0)`,
+                  backgroundSize: '20px 20px'
+                }} />
+              </div>
 
-            {/* Enhanced Stats Grid */}
-            <div className="relative z-10 grid grid-cols-6 gap-4 mb-6">
-              {[
-                { icon: Monitor, label: "Pertemuan", value: mockStats.meetings, bgColor: "#3b82f6" },
-                { icon: Lightbulb, label: "Nilai", value: mockStats.totalScore, bgColor: "#06b6d4", sparkline: true },
-                { icon: Clock, label: "Materi", value: mockStats.materials, bgColor: "#f97316" },
-                { icon: Calendar, label: "Kehadiran", value: `${mockStats.attendanceRate}%`, bgColor: "#22c55e" },
-                { icon: CheckCircle, label: "Tugas", value: `${mockStats.assignmentCompletion}%`, bgColor: "#a855f7" },
-                { icon: Users, label: "Partisipasi", value: `${mockStats.participationScore}%`, bgColor: "#ec4899" }
-              ].map((stat, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div className="w-6 h-6 rounded-lg flex items-center justify-center mb-1" style={{ backgroundColor: stat.bgColor }}>
-                    <stat.icon className="w-3 h-3 text-white" />
-                  </div>
-                  <div className="text-center">
-                    <p className={`text-xs font-bold text-gray-900 ${montserrat.className}`}>{stat.value}</p>
-                    <p className={`text-xs text-gray-600 ${poppins.className}`}>{stat.label}</p>
-                    {stat.sparkline && (
-                      <Sparkline data={weeklyData.slice(0, 5)} color="#06b6d4" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Main Content Grid */}
-            <div className="relative z-10 grid flex-grow grid-cols-12 gap-5">
-              {/* Left Column - Competencies */}
-              <div className="col-span-7">
-                <div className="flex items-center gap-2 mb-4">
-                  <BarChart3 className="w-5 h-5 text-gray-700" />
-                  <h3 className={`text-base font-black text-gray-800 ${montserrat.className}`}>
-                    Penguasaan Kompetensi
-                  </h3>
-                </div>
-
-                <div className="space-y-2">
-                  {mockCompetencies.map((competency, index) => (
-                    <div key={index} className="group relative hover:scale-[1.01] transition-all duration-300">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full" style={{
-                            background: `linear-gradient(90deg, ${competency.startColor} 0%, ${competency.endColor} 100%)`
-                          }} />
-                          <span className={`text-xs font-medium text-gray-800 ${poppins.className}`}>
-                            {competency.name}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            competency.level === 'Expert' ? 'bg-green-100 text-green-700' :
-                            competency.level === 'Advanced' ? 'bg-blue-100 text-blue-700' :
-                            competency.level === 'Intermediate' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-gray-100 text-gray-700'
-                          } ${poppins.className}`}>
-                            {competency.level}
-                          </span>
-                          <span className={`text-xs font-bold text-gray-900 ${montserrat.className}`}>
-                            {competency.value}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="relative h-2 overflow-hidden bg-gray-200 rounded-full">
-                        <div className="h-full transition-all duration-1000 ease-out rounded-full" style={{
-                          background: `linear-gradient(90deg, ${competency.startColor} 0%, ${competency.endColor} 100%)`,
-                          width: `${competency.value}%`
-                        }} />
-                      </div>
+              {/* Header with Enhanced Info */}
+              <div className="relative z-10 mb-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h1 className={`text-lg font-bold text-gray-900 ${playfair.className}`}>
+                        Sertifikat Laboratorium, {data.name}
+                      </h1>
+                      <span className="text-lg">🤝</span>
                     </div>
-                  ))}
+                    <p className={`text-gray-600 text-sm mb-2 ${inter.className}`}>
+                      {data.achievement}
+                    </p>
+                    <p className={`text-sm font-semibold text-gray-800 ${playfair.className}`}>
+                      {data.program}
+                    </p>
+                  </div>
+
+                  {/* QR Code and Verification */}
+                  <div className="text-right">
+                    <div className="flex items-center justify-center p-1 mb-2 bg-white border-2 border-gray-300 rounded">
+                      <canvas
+                        ref={verificationQRRef}
+                        style={{ width: '48px', height: '48px' }}
+                      />
+                    </div>
+                    <div className={`text-xs text-gray-600 ${inter.className}`}>
+                      <p className="text-[10px] text-gray-500 mb-1">Scan untuk verifikasi</p>
+                      <p>Diterbitkan: {new Date(data.date).toLocaleDateString('id-ID')}</p>
+                      <p className="font-mono">ID: {data.certificateId || "CERT-2024-001"}</p>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Grade Breakdown */}
-                <div className="mt-3">
-                  <h4 className={`text-xs font-bold text-gray-800 mb-2 ${montserrat.className}`}>Grade Breakdown</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {mockGrades.breakdown.map((grade, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
-                        <span className={`text-xs text-gray-700 ${poppins.className}`}>{grade.subject}</span>
-                        <div className="flex items-center gap-2">
-                          <div className={`w-6 h-6 ${
-                            grade.grade === 'A+' ? 'bg-green-500' :
-                            grade.grade === 'A' ? 'bg-green-400' :
-                            grade.grade === 'A-' ? 'bg-lime-400' :
-                            grade.grade === 'B+' ? 'bg-yellow-400' :
-                            'bg-gray-400'
-                          } rounded-full flex items-center justify-center text-white font-bold text-xs`}>
-                            {grade.grade}
+                {/* Technology Tags with Grade */}
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    {(data.technologies || ["TypeScript", "NodeJS", "Docker", "PostgreSQL"]).map((tech, index) => (
+                      <div key={index} className={`px-3 py-1 text-sm font-medium rounded-full border ${getRandomBadgeColor()} ${inter.className} transition-all duration-200 hover:scale-105`}>
+                        {tech}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm text-gray-600 ${inter.className}`}>Nilai Keseluruhan:</span>
+                    <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
+                      {mockGrades.overall}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Stats Grid */}
+              <div className="relative z-10 grid grid-cols-6 gap-4 mb-6">
+                {[
+                  { icon: Monitor, label: "Pertemuan", value: mockStats.meetings, bgColor: "#3b82f6" },
+                  { icon: Lightbulb, label: "Nilai", value: mockStats.totalScore, bgColor: "#06b6d4", sparkline: true },
+                  { icon: Clock, label: "Materi", value: mockStats.materials, bgColor: "#f97316" },
+                  { icon: Calendar, label: "Kehadiran", value: `${mockStats.attendanceRate}%`, bgColor: "#22c55e" },
+                  { icon: CheckCircle, label: "Tugas", value: `${mockStats.assignmentCompletion}%`, bgColor: "#a855f7" },
+                  { icon: Users, label: "Partisipasi", value: `${mockStats.participationScore}%`, bgColor: "#ec4899" }
+                ].map((stat, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div className="flex items-center justify-center w-6 h-6 mb-1 rounded-lg" style={{ backgroundColor: stat.bgColor }}>
+                      <stat.icon className="w-3 h-3 text-white" />
+                    </div>
+                    <div className="text-center">
+                      <p className={`text-xs font-bold text-gray-900 ${playfair.className}`}>{stat.value}</p>
+                      <p className={`text-xs text-gray-600 ${inter.className}`}>{stat.label}</p>
+                      {stat.sparkline && (
+                        <Sparkline data={weeklyData.slice(0, 5)} color="#06b6d4" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Main Content Grid */}
+              <div className="relative z-10 grid flex-grow grid-cols-12 gap-5">
+                {/* Left Column - Competencies */}
+                <div className="col-span-7">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BarChart3 className="w-5 h-5 text-gray-700" />
+                    <h3 className={`text-base font-black text-gray-800 ${playfair.className}`}>
+                      Penguasaan Kompetensi
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2">
+                    {mockCompetencies.map((competency, index) => (
+                      <div key={index} className="group relative hover:scale-[1.01] transition-all duration-300">
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full" style={{
+                              background: `linear-gradient(90deg, ${competency.startColor} 0%, ${competency.endColor} 100%)`
+                            }} />
+                            <span className={`text-xs font-medium text-gray-800 ${inter.className}`}>
+                              {competency.name}
+                            </span>
                           </div>
-                          <span className="text-xs text-gray-600">{grade.score}%</span>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${competency.level === 'Expert' ? 'bg-green-100 text-green-700' :
+                              competency.level === 'Advanced' ? 'bg-blue-100 text-blue-700' :
+                                competency.level === 'Intermediate' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-gray-100 text-gray-700'
+                              } ${inter.className}`}>
+                              {competency.level}
+                            </span>
+                            <span className={`text-xs font-bold text-gray-900 ${playfair.className}`}>
+                              {competency.value}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="relative h-2 overflow-hidden bg-gray-200 rounded-full">
+                          <div className="h-full transition-all duration-1000 ease-out rounded-full" style={{
+                            background: `linear-gradient(90deg, ${competency.startColor} 0%, ${competency.endColor} 100%)`,
+                            width: `${competency.value}%`
+                          }} />
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
 
-              {/* Center Column - Analytics */}
-              <div className="col-span-3">
-                <div className="flex items-center gap-2 mb-4">
-                  <Activity className="w-5 h-5 text-emerald-600" />
-                  <h3 className={`text-base font-black text-emerald-700 ${montserrat.className}`}>Analitik</h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-sm text-gray-600 ${poppins.className}`}>Kecepatan Belajar</span>
-                      <span className={`text-sm font-bold text-emerald-600 ${montserrat.className}`}>85%</span>
-                    </div>
-                    <div className="h-3 bg-gray-200 rounded-full">
-                      <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600" style={{ width: '85%' }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-sm text-gray-600 ${poppins.className}`}>Problem Solving</span>
-                      <span className={`text-sm font-bold text-blue-600 ${montserrat.className}`}>92%</span>
-                    </div>
-                    <div className="h-3 bg-gray-200 rounded-full">
-                      <div className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: '92%' }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-sm text-gray-600 ${poppins.className}`}>Kolaborasi</span>
-                      <span className={`text-sm font-bold text-purple-600 ${montserrat.className}`}>78%</span>
-                    </div>
-                    <div className="h-3 bg-gray-200 rounded-full">
-                      <div className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600" style={{ width: '78%' }} />
+                  {/* Grade Breakdown */}
+                  <div className="mt-3">
+                    <h4 className={`text-xs font-bold text-gray-800 mb-2 ${playfair.className}`}>Grade Breakdown</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {mockGrades.breakdown.map((grade, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
+                          <span className={`text-xs text-gray-700 ${inter.className}`}>{grade.subject}</span>
+                          <div className="flex items-center gap-2">
+                            <div className={`w-6 h-6 ${grade.grade === 'A+' ? 'bg-green-500' :
+                              grade.grade === 'A' ? 'bg-green-400' :
+                                grade.grade === 'A-' ? 'bg-lime-400' :
+                                  grade.grade === 'B+' ? 'bg-yellow-400' :
+                                    'bg-gray-400'
+                              } rounded-full flex items-center justify-center text-white font-bold text-xs`}>
+                              {grade.grade}
+                            </div>
+                            <span className="text-xs text-gray-600">{grade.score}%</span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Column - Time & Performance */}
-              <div className="col-span-2">
-                <div className="mb-4 text-center">
-                  <h3 className={`text-sm font-black text-gray-800 mb-2 ${montserrat.className}`}>Waktu Belajar</h3>
-                  <div className="flex justify-center">
-                    <CleanCircularProgress percentage={100} size={80} />
+                {/* Center Column - Analytics */}
+                <div className="col-span-3">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Activity className="w-5 h-5 text-emerald-600" />
+                    <h3 className={`text-base font-black text-emerald-700 ${playfair.className}`}>Analitik</h3>
                   </div>
-                  <div className="mt-2 flex justify-center">
-                    <Sparkline data={weeklyData} color="#10b981" />
-                  </div>
-                </div>
 
-                <div className="mb-4">
-                  <h4 className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}>Performa</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 rounded bg-green-50">
-                      <span className={`text-sm text-green-700 ${poppins.className}`}>Overall</span>
-                      <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
-                        {mockGrades.overall}
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-sm text-gray-600 ${inter.className}`}>Kecepatan Belajar</span>
+                        <span className={`text-sm font-bold text-emerald-600 ${playfair.className}`}>85%</span>
+                      </div>
+                      <div className="h-3 bg-gray-200 rounded-full">
+                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600" style={{ width: '85%' }} />
                       </div>
                     </div>
-                    <div className="flex items-center justify-between p-2 rounded bg-blue-50">
-                      <span className={`text-sm text-blue-700 ${poppins.className}`}>Kehadiran</span>
-                      <span className={`text-sm font-bold text-blue-600 ${montserrat.className}`}>{mockStats.attendanceRate}%</span>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-sm text-gray-600 ${inter.className}`}>Problem Solving</span>
+                        <span className={`text-sm font-bold text-blue-600 ${playfair.className}`}>92%</span>
+                      </div>
+                      <div className="h-3 bg-gray-200 rounded-full">
+                        <div className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: '92%' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-sm text-gray-600 ${inter.className}`}>Kolaborasi</span>
+                        <span className={`text-sm font-bold text-purple-600 ${playfair.className}`}>78%</span>
+                      </div>
+                      <div className="h-3 bg-gray-200 rounded-full">
+                        <div className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600" style={{ width: '78%' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column - Time & Performance */}
+                <div className="col-span-2">
+                  <div className="mb-4 text-center">
+                    <h3 className={`text-sm font-black text-gray-800 mb-2 ${playfair.className}`}>Waktu Belajar</h3>
+                    <div className="flex justify-center">
+                      <CleanCircularProgress percentage={100} size={80} />
+                    </div>
+                    <div className="flex justify-center mt-2">
+                      <Sparkline data={weeklyData} color="#10b981" />
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className={`text-sm font-bold text-gray-800 mb-2 ${playfair.className}`}>Performa</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 rounded bg-green-50">
+                        <span className={`text-sm text-green-700 ${inter.className}`}>Overall</span>
+                        <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
+                          {mockGrades.overall}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-2 rounded bg-blue-50">
+                        <span className={`text-sm text-blue-700 ${inter.className}`}>Kehadiran</span>
+                        <span className={`text-sm font-bold text-blue-600 ${playfair.className}`}>{mockStats.attendanceRate}%</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Footer with Instructor Feedback */}
-            <div className="relative z-10 p-4 mt-4 rounded bg-gray-50">
-              <h4 className={`text-sm font-bold text-gray-800 mb-2 ${montserrat.className}`}>Umpan Balik Instruktur</h4>
-              <p className={`text-sm text-gray-700 italic ${openSans.className}`}>
-                Menunjukkan pemahaman yang sangat baik dalam pengembangan {data.program} dan kemampuan problem-solving yang excellent.
-              </p>
+              {/* Footer with Instructor Feedback */}
+              <div className="relative z-10 p-4 mt-4 rounded bg-gray-50">
+                <h4 className={`text-sm font-bold text-gray-800 mb-2 ${playfair.className}`}>Umpan Balik Instruktur</h4>
+                <p className={`text-sm text-gray-700 italic ${inter.className}`}>
+                  Menunjukkan pemahaman yang sangat baik dalam pengembangan {data.program} dan kemampuan problem-solving yang excellent.
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

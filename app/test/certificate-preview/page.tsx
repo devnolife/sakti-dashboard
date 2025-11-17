@@ -18,7 +18,7 @@ export default function CertificatePreviewPage() {
   // Get data from URL params or use default
   const name = searchParams.get('name') || "Ahmad Fauzi Rahman"
   const program = searchParams.get('program') || "Laboratorium Backend Development"
-  const certificateId = searchParams.get('id') || `CERT-LAB-${new Date().getFullYear()}-001`
+  const certificateId = searchParams.get('id') || `001/LAB-INFORMATIKA/UNHAS/${new Date().getFullYear()}`
 
   const labCertData = {
     name: name,
@@ -37,12 +37,30 @@ export default function CertificatePreviewPage() {
   }
 
   const handlePrint = () => {
-    window.print()
+    // Show print instructions
+    const printInstructions = `
+📄 Panduan Print Sertifikat:
+
+1. Pastikan ukuran kertas: A4 Landscape
+2. Margin: None (0mm)
+3. Background graphics: ON
+4. Color: ON
+5. Scale: 100%
+
+Klik OK untuk melanjutkan ke Print Dialog
+    `.trim()
+
+    if (confirm(printInstructions)) {
+      // Add a small delay to ensure styles are applied
+      setTimeout(() => {
+        window.print()
+      }, 100)
+    }
   }
 
   const handleDownload = () => {
-    // Implement download logic here
-    alert("Download feature will be implemented")
+    // Implement download logic here - for now show coming soon
+    alert("📥 Fitur Download PDF akan segera hadir!\n\nUntuk saat ini, gunakan Print > Save as PDF dari browser Anda.")
   }
 
   return (
@@ -207,6 +225,47 @@ export default function CertificatePreviewPage() {
               </CardContent>
             </Card>
 
+            {/* Print Instructions */}
+            <Card className="bg-blue-50 border-blue-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2 text-blue-900">
+                  <Printer className="w-4 h-4" />
+                  Panduan Print
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="space-y-1 text-xs text-blue-800">
+                  <p className="font-semibold">Setting Printer:</p>
+                  <ul className="space-y-1 ml-3">
+                    <li className="flex items-start gap-1">
+                      <span>•</span>
+                      <span>Ukuran: <strong>A4 Landscape</strong></span>
+                    </li>
+                    <li className="flex items-start gap-1">
+                      <span>•</span>
+                      <span>Margin: <strong>None (0mm)</strong></span>
+                    </li>
+                    <li className="flex items-start gap-1">
+                      <span>•</span>
+                      <span>Background: <strong>ON</strong></span>
+                    </li>
+                    <li className="flex items-start gap-1">
+                      <span>•</span>
+                      <span>Color: <strong>ON</strong></span>
+                    </li>
+                    <li className="flex items-start gap-1">
+                      <span>•</span>
+                      <span>Scale: <strong>100%</strong></span>
+                    </li>
+                  </ul>
+                </div>
+                <Separator className="bg-blue-200" />
+                <p className="text-xs text-blue-700">
+                  💡 Untuk PDF: Print → Save as PDF
+                </p>
+              </CardContent>
+            </Card>
+
             {/* Actions */}
             <Card>
               <CardHeader className="pb-3">
@@ -234,7 +293,7 @@ export default function CertificatePreviewPage() {
                 <Button
                   size="sm"
                   onClick={handlePrint}
-                  className="w-full gap-2"
+                  className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
                 >
                   <Printer className="w-4 h-4" />
                   Print Sertifikat
@@ -245,20 +304,163 @@ export default function CertificatePreviewPage() {
         </div>
       </div>
 
-      {/* Print Styles */}
+      {/* Enhanced Print Styles */}
       <style jsx global>{`
         @media print {
-          body {
-            background: white;
+          /* Page setup for A4 landscape */
+          @page {
+            size: A4 landscape;
+            margin: 0;
           }
-          .print\\:hidden {
+
+          /* Reset body and html */
+          html, body {
+            margin: 0;
+            padding: 0;
+            background: white !important;
+            width: 297mm;
+            height: 210mm;
+          }
+
+          /* Enable color printing */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+
+          /* Hide navigation and UI elements */
+          .print\\:hidden,
+          nav,
+          header,
+          footer,
+          .no-print {
             display: none !important;
           }
+
+          /* Remove shadows and borders from containers */
           .print\\:shadow-none {
             box-shadow: none !important;
           }
+
           .print\\:border-0 {
             border: 0 !important;
+          }
+
+          /* Main container adjustments */
+          .container {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          /* Card adjustments for print */
+          .shadow-xl {
+            box-shadow: none !important;
+          }
+
+          /* Remove all padding from main content wrapper */
+          .min-h-screen {
+            min-height: auto !important;
+          }
+
+          /* Grid adjustments */
+          .grid {
+            display: block !important;
+          }
+
+          .lg\\:col-span-3,
+          .lg\\:col-span-4 {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+
+          /* Ensure certificate fills the page */
+          .certificate-container {
+            width: 297mm !important;
+            height: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-after: always;
+            page-break-inside: avoid;
+            overflow: visible !important;
+          }
+
+          /* Background and color preservation */
+          .bg-gradient-to-br,
+          .bg-gradient-to-r,
+          .bg-white,
+          [class*="bg-"],
+          [class*="text-"],
+          [class*="border-"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Font rendering */
+          * {
+            font-smoothing: antialiased;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+
+          /* Remove interactive elements */
+          button,
+          input,
+          select,
+          textarea,
+          .cursor-pointer,
+          [role="button"] {
+            display: none !important;
+          }
+
+          /* Page breaks */
+          .page-break {
+            page-break-after: always;
+            page-break-inside: avoid;
+          }
+
+          /* Ensure images print */
+          img {
+            max-width: 100% !important;
+            page-break-inside: avoid;
+          }
+
+          /* SVG and graphics */
+          svg {
+            max-width: 100% !important;
+          }
+
+          /* Keep rounded corners for professional look */
+          .rounded, .rounded-sm, .rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl, .rounded-full {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            /* Border radius is preserved */
+          }
+
+          /* Ensure proper spacing */
+          .gap-6,
+          .space-y-4,
+          .space-y-8 {
+            gap: 0 !important;
+            margin: 0 !important;
+          }
+
+          /* Remove padding from outer containers */
+          .px-4,
+          .py-4,
+          .py-8,
+          .p-4,
+          .p-0 {
+            padding: 0 !important;
+          }
+        }
+
+        /* Print preview mode (when using browser print preview) */
+        @media screen {
+          .print-preview-mode .print\\:hidden {
+            opacity: 0.3;
+            pointer-events: none;
           }
         }
       `}</style>
