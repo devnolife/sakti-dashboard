@@ -66,8 +66,8 @@ Klik OK untuk melanjutkan ke Print Dialog
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header Navigation */}
-      <div className="border-b bg-white shadow-sm print:hidden">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-white border-b shadow-sm print:hidden">
+        <div className="container px-4 py-4 mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
@@ -83,7 +83,7 @@ Klik OK untuk melanjutkan ke Print Dialog
               <div className="flex items-center gap-2">
                 <Award className="w-5 h-5 text-blue-600" />
                 <div>
-                  <h1 className="font-semibold text-lg">Preview Sertifikat</h1>
+                  <h1 className="text-lg font-semibold">Preview Sertifikat</h1>
                   <p className="text-xs text-muted-foreground">{name}</p>
                 </div>
               </div>
@@ -127,13 +127,13 @@ Klik OK untuk melanjutkan ke Print Dialog
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="container px-4 py-8 mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Certificate Preview - Main */}
           <div className="lg:col-span-3">
             <Card className="shadow-xl print:shadow-none print:border-0">
               <CardContent className="p-0">
-                <div className="bg-white rounded-lg overflow-hidden">
+                <div className="overflow-hidden bg-white rounded-lg">
                   <LabCertificateTemplate
                     data={labCertData}
                     template="lab_certificate"
@@ -145,7 +145,7 @@ Klik OK untuk melanjutkan ke Print Dialog
           </div>
 
           {/* Info Panel - Sidebar */}
-          <div className="lg:col-span-1 space-y-4 print:hidden">
+          <div className="space-y-4 lg:col-span-1 print:hidden">
             {/* Certificate Info */}
             <Card>
               <CardHeader className="pb-3">
@@ -189,19 +189,19 @@ Klik OK untuk melanjutkan ke Print Dialog
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Nilai Akhir</span>
                     <Badge variant="default" className="bg-green-500">{labCertData.finalScore}</Badge>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Kehadiran</span>
                     <Badge variant="secondary">{labCertData.attendanceScore}%</Badge>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Tugas</span>
                     <Badge variant="secondary">{labCertData.assignmentScore}%</Badge>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Pertemuan</span>
                     <Badge variant="outline">{labCertData.meetingsAttended}x</Badge>
                   </div>
@@ -226,9 +226,9 @@ Klik OK untuk melanjutkan ke Print Dialog
             </Card>
 
             {/* Print Instructions */}
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="border-blue-200 bg-blue-50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-blue-900">
+                <CardTitle className="flex items-center gap-2 text-base text-blue-900">
                   <Printer className="w-4 h-4" />
                   Panduan Print
                 </CardTitle>
@@ -236,7 +236,7 @@ Klik OK untuk melanjutkan ke Print Dialog
               <CardContent className="space-y-2">
                 <div className="space-y-1 text-xs text-blue-800">
                   <p className="font-semibold">Setting Printer:</p>
-                  <ul className="space-y-1 ml-3">
+                  <ul className="ml-3 space-y-1">
                     <li className="flex items-start gap-1">
                       <span>•</span>
                       <span>Ukuran: <strong>A4 Landscape</strong></span>

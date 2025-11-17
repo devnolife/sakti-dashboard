@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import { Award, GraduationCap, Star } from "lucide-react"
 import CanvasCertificate from "./canvas-certificate"
 import CertificateDownload from "./certificate-download"
 
@@ -21,11 +22,11 @@ interface CertificatePreviewProps {
   height?: number
 }
 
-const CertificatePreview: React.FC<CertificatePreviewProps> = ({ 
-  template, 
-  data, 
-  width = 800, 
-  height = 600 
+const CertificatePreview: React.FC<CertificatePreviewProps> = ({
+  template,
+  data,
+  width = 800,
+  height = 600
 }) => {
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
 
@@ -56,8 +57,8 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
           onCanvasReady={handleCanvasReady}
         />
         <div className="flex justify-center">
-          <CertificateDownload 
-            canvas={canvas} 
+          <CertificateDownload
+            canvas={canvas}
             fileName={`certificate-${data.recipientName.toLowerCase().replace(/\s+/g, '-')}`}
             className="w-fit"
           />
@@ -72,10 +73,10 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
     const scaleX = width / 800
     const scaleY = height / 600
     return (
-      <div 
+      <div
         className="relative bg-gradient-to-br from-blue-50 to-indigo-50 border-4 border-indigo-200 rounded-[15px] overflow-hidden font-inter"
-        style={{ 
-          width: `${width}px`, 
+        style={{
+          width: `${width}px`,
           height: `${height}px`,
           transform: `scale(${Math.min(scaleX, scaleY)})`,
           transformOrigin: 'top left'
@@ -89,11 +90,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* University/Institution Header */}
-        <div 
+        <div
           className="absolute font-bold text-center text-indigo-700"
-          style={{ 
-            left: `${400 * scaleX}px`, 
-            top: `${120 * scaleY}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
+            top: `${120 * scaleY}px`,
             transform: 'translate(-50%, 0)',
             fontSize: `${16 * Math.min(scaleX, scaleY)}px`,
             letterSpacing: '1px'
@@ -103,11 +104,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Certificate Title */}
-        <div 
+        <div
           className="absolute font-light tracking-wider text-center text-indigo-900"
-          style={{ 
-            left: `${400 * scaleX}px`, 
-            top: `${150 * scaleY}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
+            top: `${150 * scaleY}px`,
             transform: 'translate(-50%, 0)',
             fontSize: `${14 * Math.min(scaleX, scaleY)}px`,
             letterSpacing: '3px'
@@ -117,11 +118,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Course Name */}
-        <div 
+        <div
           className="absolute font-bold text-center text-gray-800"
-          style={{ 
-            left: `${400 * scaleX}px`, 
-            top: `${200 * scaleY}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
+            top: `${200 * scaleY}px`,
             transform: 'translate(-50%, 0)',
             fontSize: `${36 * Math.min(scaleX, scaleY)}px`,
             lineHeight: '1.2'
@@ -131,11 +132,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Issued To */}
-        <div 
+        <div
           className="absolute text-center text-gray-600"
-          style={{ 
-            left: `${400 * scaleX}px`, 
-            top: `${250 * scaleY}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
+            top: `${250 * scaleY}px`,
             transform: 'translate(-50%, 0)',
             fontSize: `${14 * Math.min(scaleX, scaleY)}px`
           }}
@@ -144,11 +145,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Recipient Name */}
-        <div 
+        <div
           className="absolute pb-2 font-semibold text-center text-gray-800 border-b-2 border-gray-300"
-          style={{ 
-            left: `${400 * scaleX}px`, 
-            top: `${280 * scaleY}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
+            top: `${280 * scaleY}px`,
             transform: 'translate(-50%, 0)',
             fontSize: `${28 * Math.min(scaleX, scaleY)}px`,
             minWidth: `${300 * scaleX}px`
@@ -158,11 +159,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Description */}
-        <div 
+        <div
           className="absolute leading-relaxed text-center text-gray-700"
-          style={{ 
-            left: `${400 * scaleX}px`, 
-            top: `${340 * scaleY}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
+            top: `${340 * scaleY}px`,
             transform: 'translate(-50%, 0)',
             fontSize: `${14 * Math.min(scaleX, scaleY)}px`,
             maxWidth: `${500 * scaleX}px`,
@@ -173,10 +174,10 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Date and Location */}
-        <div 
+        <div
           className="absolute text-gray-600"
-          style={{ 
-            left: `${150 * scaleX}px`, 
+          style={{
+            left: `${150 * scaleX}px`,
             top: `${450 * scaleY}px`,
             fontSize: `${12 * Math.min(scaleX, scaleY)}px`
           }}
@@ -185,21 +186,21 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Signature */}
-        <div 
+        <div
           className="absolute text-center"
-          style={{ 
-            left: `${400 * scaleX}px`, 
+          style={{
+            left: `${400 * scaleX}px`,
             top: `${470 * scaleY}px`,
             transform: 'translate(-50%, 0)'
           }}
         >
-          <div 
+          <div
             className="mb-2 text-gray-800 font-dancing-script"
             style={{ fontSize: `${20 * Math.min(scaleX, scaleY)}px` }}
           >
             {data.signatory || "Dr. Rektor Universitas"}
           </div>
-          <div 
+          <div
             className="text-gray-600"
             style={{ fontSize: `${12 * Math.min(scaleX, scaleY)}px` }}
           >
@@ -208,18 +209,18 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* University Seal */}
-        <div 
+        <div
           className="absolute"
-          style={{ 
-            left: `${650 * scaleX}px`, 
-            top: `${470 * scaleY}px`, 
+          style={{
+            left: `${650 * scaleX}px`,
+            top: `${470 * scaleY}px`,
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <div 
+          <div
             className="flex items-center justify-center bg-indigo-100 border-2 border-indigo-300 rounded-full"
-            style={{ 
-              width: `${60 * scaleX}px`, 
+            style={{
+              width: `${60 * scaleX}px`,
               height: `${60 * scaleY}px`
             }}
           >
@@ -228,10 +229,10 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
         </div>
 
         {/* Certificate ID */}
-        <div 
+        <div
           className="absolute text-right text-gray-500"
-          style={{ 
-            right: `${50 * scaleX}px`, 
+          style={{
+            right: `${50 * scaleX}px`,
             bottom: `${30 * scaleY}px`,
             fontSize: `${10 * Math.min(scaleX, scaleY)}px`
           }}
@@ -246,10 +247,10 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
   const scaleX = width / 800
   const scaleY = height / 600
   return (
-    <div 
+    <div
       className="relative bg-gradient-to-br from-violet-50 to-indigo-100 border-2 border-violet-200 rounded-[20px] overflow-hidden font-inter shadow-xl"
-      style={{ 
-        width: `${width}px`, 
+      style={{
+        width: `${width}px`,
         height: `${height}px`,
         transform: `scale(${Math.min(scaleX, scaleY)})`,
         transformOrigin: 'top left'
@@ -263,11 +264,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
       </div>
 
       {/* Modern Header */}
-      <div 
+      <div
         className="absolute font-semibold text-center text-violet-700"
-        style={{ 
-          left: `${400 * scaleX}px`, 
-          top: `${140 * scaleY}px`, 
+        style={{
+          left: `${400 * scaleX}px`,
+          top: `${140 * scaleY}px`,
           transform: 'translate(-50%, 0)',
           fontSize: `${14 * Math.min(scaleX, scaleY)}px`,
           letterSpacing: '2px'
@@ -277,11 +278,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
       </div>
 
       {/* Course Name */}
-      <div 
+      <div
         className="absolute font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600"
-        style={{ 
-          left: `${400 * scaleX}px`, 
-          top: `${190 * scaleY}px`, 
+        style={{
+          left: `${400 * scaleX}px`,
+          top: `${190 * scaleY}px`,
           transform: 'translate(-50%, 0)',
           fontSize: `${42 * Math.min(scaleX, scaleY)}px`,
           lineHeight: '1.1'
@@ -291,11 +292,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
       </div>
 
       {/* Recipient Name */}
-      <div 
+      <div
         className="absolute font-semibold text-center text-gray-800"
-        style={{ 
-          left: `${400 * scaleX}px`, 
-          top: `${270 * scaleY}px`, 
+        style={{
+          left: `${400 * scaleX}px`,
+          top: `${270 * scaleY}px`,
           transform: 'translate(-50%, 0)',
           fontSize: `${30 * Math.min(scaleX, scaleY)}px`
         }}
@@ -304,11 +305,11 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
       </div>
 
       {/* Description */}
-      <div 
+      <div
         className="absolute leading-relaxed text-center text-gray-600"
-        style={{ 
-          left: `${400 * scaleX}px`, 
-          top: `${330 * scaleY}px`, 
+        style={{
+          left: `${400 * scaleX}px`,
+          top: `${330 * scaleY}px`,
           transform: 'translate(-50%, 0)',
           fontSize: `${14 * Math.min(scaleX, scaleY)}px`,
           maxWidth: `${480 * scaleX}px`,
@@ -322,18 +323,18 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
       <div className="absolute bottom-0 left-0 right-0 p-8 bg-white/50 backdrop-blur-sm">
         <div className="flex items-end justify-between">
           <div className="text-center">
-            <div 
+            <div
               className="mb-2 border-b-2 border-gray-400"
               style={{ width: `${120 * scaleX}px`, height: '1px' }}
             ></div>
-            <div 
+            <div
               className="text-gray-700 font-dancing-script"
               style={{ fontSize: `${16 * Math.min(scaleX, scaleY)}px` }}
             >
               {data.signatory || "Digital Signature"}
             </div>
           </div>
-          <div 
+          <div
             className="text-gray-600"
             style={{ fontSize: `${12 * Math.min(scaleX, scaleY)}px` }}
           >
