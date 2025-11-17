@@ -83,14 +83,14 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
       >
         {/* Academic Badge */}
         <div className="absolute" style={{ left: `${400 * scaleX}px`, top: `${70 * scaleY}px`, transform: 'translate(-50%, -50%)' }}>
-          <div className="bg-indigo-600 rounded-full p-4 shadow-lg">
+          <div className="p-4 bg-indigo-600 rounded-full shadow-lg">
             <GraduationCap className="text-white" style={{ width: `${32 * scaleX}px`, height: `${32 * scaleY}px` }} />
           </div>
         </div>
 
         {/* University/Institution Header */}
         <div 
-          className="absolute text-indigo-700 font-bold text-center"
+          className="absolute font-bold text-center text-indigo-700"
           style={{ 
             left: `${400 * scaleX}px`, 
             top: `${120 * scaleY}px`, 
@@ -104,7 +104,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
         {/* Certificate Title */}
         <div 
-          className="absolute text-indigo-900 font-light text-center tracking-wider"
+          className="absolute font-light tracking-wider text-center text-indigo-900"
           style={{ 
             left: `${400 * scaleX}px`, 
             top: `${150 * scaleY}px`, 
@@ -118,7 +118,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
         {/* Course Name */}
         <div 
-          className="absolute text-gray-800 font-bold text-center"
+          className="absolute font-bold text-center text-gray-800"
           style={{ 
             left: `${400 * scaleX}px`, 
             top: `${200 * scaleY}px`, 
@@ -132,7 +132,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
         {/* Issued To */}
         <div 
-          className="absolute text-gray-600 text-center"
+          className="absolute text-center text-gray-600"
           style={{ 
             left: `${400 * scaleX}px`, 
             top: `${250 * scaleY}px`, 
@@ -145,7 +145,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
         {/* Recipient Name */}
         <div 
-          className="absolute text-gray-800 font-semibold text-center border-b-2 border-gray-300 pb-2"
+          className="absolute pb-2 font-semibold text-center text-gray-800 border-b-2 border-gray-300"
           style={{ 
             left: `${400 * scaleX}px`, 
             top: `${280 * scaleY}px`, 
@@ -159,7 +159,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
         {/* Description */}
         <div 
-          className="absolute text-gray-700 text-center leading-relaxed"
+          className="absolute leading-relaxed text-center text-gray-700"
           style={{ 
             left: `${400 * scaleX}px`, 
             top: `${340 * scaleY}px`, 
@@ -194,7 +194,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
           }}
         >
           <div 
-            className="text-gray-800 font-dancing-script mb-2"
+            className="mb-2 text-gray-800 font-dancing-script"
             style={{ fontSize: `${20 * Math.min(scaleX, scaleY)}px` }}
           >
             {data.signatory || "Dr. Rektor Universitas"}
@@ -217,7 +217,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
           }}
         >
           <div 
-            className="bg-indigo-100 border-2 border-indigo-300 rounded-full flex items-center justify-center"
+            className="flex items-center justify-center bg-indigo-100 border-2 border-indigo-300 rounded-full"
             style={{ 
               width: `${60 * scaleX}px`, 
               height: `${60 * scaleY}px`
@@ -229,7 +229,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
         {/* Certificate ID */}
         <div 
-          className="absolute text-gray-500 text-right"
+          className="absolute text-right text-gray-500"
           style={{ 
             right: `${50 * scaleX}px`, 
             bottom: `${30 * scaleY}px`,
@@ -257,14 +257,14 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
     >
       {/* Modern Badge */}
       <div className="absolute" style={{ left: `${400 * scaleX}px`, top: `${80 * scaleY}px`, transform: 'translate(-50%, -50%)' }}>
-        <div className="bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full p-4 shadow-lg">
+        <div className="p-4 rounded-full shadow-lg bg-gradient-to-r from-violet-500 to-indigo-500">
           <Award className="text-white" style={{ width: `${28 * scaleX}px`, height: `${28 * scaleY}px` }} />
         </div>
       </div>
 
       {/* Modern Header */}
       <div 
-        className="absolute text-violet-700 font-semibold text-center"
+        className="absolute font-semibold text-center text-violet-700"
         style={{ 
           left: `${400 * scaleX}px`, 
           top: `${140 * scaleY}px`, 
@@ -278,7 +278,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
       {/* Course Name */}
       <div 
-        className="absolute bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600 font-bold text-center"
+        className="absolute font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600"
         style={{ 
           left: `${400 * scaleX}px`, 
           top: `${190 * scaleY}px`, 
@@ -292,7 +292,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
       {/* Recipient Name */}
       <div 
-        className="absolute text-gray-800 font-semibold text-center"
+        className="absolute font-semibold text-center text-gray-800"
         style={{ 
           left: `${400 * scaleX}px`, 
           top: `${270 * scaleY}px`, 
@@ -305,7 +305,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
       {/* Description */}
       <div 
-        className="absolute text-gray-600 text-center leading-relaxed"
+        className="absolute leading-relaxed text-center text-gray-600"
         style={{ 
           left: `${400 * scaleX}px`, 
           top: `${330 * scaleY}px`, 
@@ -320,10 +320,10 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({
 
       {/* Signature and Date */}
       <div className="absolute bottom-0 left-0 right-0 p-8 bg-white/50 backdrop-blur-sm">
-        <div className="flex justify-between items-end">
+        <div className="flex items-end justify-between">
           <div className="text-center">
             <div 
-              className="border-b-2 border-gray-400 mb-2"
+              className="mb-2 border-b-2 border-gray-400"
               style={{ width: `${120 * scaleX}px`, height: '1px' }}
             ></div>
             <div 

@@ -298,6 +298,7 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
             height: 210mm !important;
             margin: 0 !important;
             padding: 0 !important;
+            aspect-ratio: auto !important;
             page-break-after: always;
             page-break-inside: avoid;
             overflow: visible !important;
@@ -503,8 +504,8 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
         }
       `}</style>
 
-      <div className="overflow-hidden bg-white rounded-lg shadow-2xl certificate-container" style={{ width: '297mm', height: '210mm' }}>
-        <div className="relative h-full p-8">
+      <div className="bg-white rounded-lg shadow-2xl certificate-container w-full" style={{ aspectRatio: '297/210' }}>
+        <div className="relative w-full h-full p-6">
           {/* Single Decorative Border - Keeps radius for professional look */}
           <div className="absolute border-4 border-black pointer-events-none inset-6 rounded-3xl"></div>
 
@@ -524,6 +525,10 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
                     />
                   </div>
                 </div>
+                {/* Certificate Number - Right below badge */}
+                <p className={`font-mono text-xs font-semibold text-gray-500 tracking-wider ${spaceGrotesk.className}`}>
+                  {data.certificateId || "001/LAB/2024"}
+                </p>
               </div>
 
               {/* Main Content */}
@@ -562,16 +567,15 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
 
               {/* Footer Section */}
               <div className="flex items-end justify-between mt-auto">
-                {/* Digital Signature QR Code - Left */}
-                <div className="flex flex-col items-start">
-                  <div className="flex flex-col items-center mb-2">
+                {/* Left - QR Code above Instructor Name */}
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center justify-center p-1 mb-2 bg-white border-2 border-gray-300 rounded">
                     <canvas
                       ref={signatureQRRef}
-                      className="mb-1 border-2 border-gray-300 rounded"
-                      style={{ width: '70px', height: '70px' }}
+                      style={{ width: '60px', height: '60px' }}
                     />
-                    <span className={`text-[9px] text-gray-500 ${inter.className}`}>Digital Signature</span>
                   </div>
+                  <span className={`text-[9px] text-gray-500 mb-1 ${inter.className}`}>Digital Signature</span>
                   <p className={`text-xs text-gray-800 font-semibold ${inter.className}`}>
                     {data.instructorName || "Muhyiddin A.M Hayat, S.Kom., M.T"}
                   </p>
@@ -580,8 +584,8 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
                   </p>
                 </div>
 
-                {/* Center - Organization Name */}
-                <div className="flex flex-col items-center justify-end pb-1">
+                {/* Right - Laboratory */}
+                <div className="flex flex-col items-end">
                   <p className={`text-sm text-gray-700 font-semibold ${inter.className}`}>
                     {data.organizationName || "Laboratorium Informatika"}
                   </p>
@@ -589,28 +593,71 @@ export default function LabCertificateTemplate({ data, template, showBack = fals
                     Universitas Muhammadiyah Makassar
                   </p>
                 </div>
-
-                {/* Right - Certificate Number and Verification QR */}
-                <div className="flex flex-col items-end">
-                  <div className="flex items-center justify-center p-1 mb-2 bg-white border-2 border-gray-300 rounded">
-                    <canvas
-                      ref={verificationQRRef}
-                      style={{ width: '48px', height: '48px' }}
-                    />
-                  </div>
-                  <div className={`text-right text-xs text-gray-600 ${inter.className}`}>
-                    <p className="text-[10px] text-gray-500 mb-1">Scan untuk verifikasi</p>
-                    <p className="font-semibold text-gray-800">No. Surat: {data.certificateId || "001/LAB/2024"}</p>
-                    <p className="text-[10px]">Issued: {new Date(data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
-                  </div>
-                </div>
               </div>
             </div>
           ) : (
             // Certificate Back - Enhanced A4 Layout with all features
             <div className="relative flex flex-col h-full p-8 overflow-hidden">
+              {/* Colorful Code Watermark Background */}
+              <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-full opacity-[0.25]">
+                  {/* Multiple code snippets with different colors and rotations */}
+                  <pre className="absolute font-mono text-sm leading-relaxed text-blue-500 top-10 left-10 rotate-12 whitespace-pre">
+                    {`const express = require('express');\nconst app = express();\napp.listen(3000);`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-green-500 top-32 right-20 -rotate-6 whitespace-pre">
+                    {`function fibonacci(n) {\n  if (n <= 1) return n;\n  return fib(n-1) + fib(n-2);\n}`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-purple-500 rotate-3 bottom-32 left-16 whitespace-pre">
+                    {`SELECT * FROM users\nWHERE active = true\nORDER BY created_at DESC;`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-pink-500 top-48 left-1/3 -rotate-12 whitespace-pre">
+                    {`import React from 'react';\nexport default function App() {\n  return <h1>Hello World</h1>;\n}`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-orange-500 bottom-20 right-32 rotate-6 whitespace-pre">
+                    {`class Student:\n  def __init__(self, name):\n    self.name = name\n  def study(self):\n    return True`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-cyan-500 top-24 right-1/4 rotate-15 whitespace-pre">
+                    {`async function getData() {\n  const res = await fetch('/api');\n  return res.json();\n}`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-amber-500 -rotate-3 bottom-48 left-1/4 whitespace-pre">
+                    {`for (let i = 0; i < 10; i++) {\n  console.log(i);\n}`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-red-500 top-64 right-16 rotate-9 whitespace-pre">
+                    {`<!DOCTYPE html>\n<html>\n<body>\n  <h1>Web Dev</h1>\n</body>\n</html>`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-indigo-500 bottom-16 left-48 -rotate-9 whitespace-pre">
+                    {`def quicksort(arr):\n  if len(arr) <= 1:\n    return arr\n  pivot = arr[0]`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-teal-500 rotate-12 top-72 left-64 whitespace-pre">
+                    {`interface User {\n  id: number;\n  name: string;\n  email: string;\n}`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-lime-600 bottom-64 right-48 -rotate-6 whitespace-pre">
+                    {`const api = axios.create({\n  baseURL: '/api/v1',\n  timeout: 5000\n});`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-fuchsia-500 top-96 right-64 rotate-3 whitespace-pre">
+                    {`@app.route('/login')\ndef login():\n  return render_template('login.html')`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-emerald-500 top-20 left-1/2 -rotate-15 whitespace-pre">
+                    {`git commit -m "feat: add feature"\ngit push origin main`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-violet-500 bottom-40 right-1/3 rotate-6 whitespace-pre">
+                    {`const [state, setState] = \n  useState(null);`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-rose-500 top-52 left-20 rotate-9 whitespace-pre">
+                    {`UPDATE products SET\nprice = price * 1.1\nWHERE category = 'tech';`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-sky-500 bottom-28 left-1/3 -rotate-12 whitespace-pre">
+                    {`npm install express\nnpm run dev\nnpm test`}
+                  </pre>
+                  <pre className="absolute font-mono text-sm leading-relaxed text-amber-600 top-40 right-40 rotate-15 whitespace-pre">
+                    {`class Controller {\n  public function index()\n  {\n    return view('home');\n  }\n}`}
+                  </pre>
+                </div>
+              </div>
+
               {/* Subtle Background Pattern */}
-              <div className="absolute inset-8 opacity-5">
+              <div className="absolute inset-8 z-0 opacity-3">
                 <div className="absolute inset-0" style={{
                   backgroundImage: `radial-gradient(circle at 1px 1px, #6b7280 1px, transparent 0)`,
                   backgroundSize: '20px 20px'
