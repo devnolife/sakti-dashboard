@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "@/hooks/use-toast"
 import mammoth from "mammoth"
 import { saveAs } from "file-saver"
-import { Upload, FileText, Edit2, Eye, MousePointer2, Hand, Undo2, Redo2, Download } from "lucide-react"
+import { Upload, FileText, Edit2, Eye, MousePointer2, Hand, Undo2, Redo2, Download, Award } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +16,7 @@ import { Trash2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
+import CertificateBulkGenerator from "@/components/test/certificate-bulk-generator"
 
 interface MockTemplate {
   id: string
@@ -506,7 +507,27 @@ export default function TestTemplatePage() {
   }
 
   return (
-    <div className="container max-w-4xl py-8 mx-auto">
+    <div className="container py-8 mx-auto space-y-8 max-w-7xl">
+      {/* Certificate Bulk Generator Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award className="w-5 h-5" />
+            Bulk Certificate Generator
+          </CardTitle>
+          <CardDescription>
+            Upload CSV/TXT file untuk generate multiple sertifikat sekaligus
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CertificateBulkGenerator />
+        </CardContent>
+      </Card>
+
+      {/* Separator */}
+      <Separator className="my-8" />
+
+      {/* Template Variable Editor Section */}
       <Card>
         <CardHeader>
           <CardTitle>Test Template Variable Editor</CardTitle>
