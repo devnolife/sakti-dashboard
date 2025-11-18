@@ -18,26 +18,26 @@ interface AppLayoutProps {
 export function AppLayout({ children, role, menuItems: initialMenuItems, defaultSidebarOpen = true }: AppLayoutProps) {
   const { currentSubRole, availableSubRoles } = useDosenSubRole()
   
-  // Use the menu items that were already correctly determined by layout-client.tsx
-  // Don't override them here - layout-client.tsx already handles path-based menu selection
+  // Determine effective role based on currentSubRole
+  // If user has multiple sub-roles and is switching, use the currentSubRole
   let effectiveRole: Role = role as Role
   let effectiveMenuItems = initialMenuItems
-
-  // Only change role for header/config purposes, but keep the menuItems from layout-client
+  
+  // Only apply sub-role logic if user is dosen or has dosen-related sub-roles
   if (role === 'dosen' || availableSubRoles.length > 0) {
-    // Map sub-roles to their effective roles (for header display only)
+    // Map sub-roles to their effective roles
     switch (currentSubRole) {
       case 'dekan':
         effectiveRole = 'dekan'
-        // Don't override menuItems - use what was passed from layout-client
+        effectiveMenuItems = allMenuItems['dekan'] || initialMenuItems
         break
       case 'gkm':
         effectiveRole = 'gkm'
-        // Don't override menuItems - use what was passed from layout-client
+        effectiveMenuItems = allMenuItems['gkm'] || initialMenuItems
         break
       case 'prodi':
         effectiveRole = 'prodi'
-        // Don't override menuItems - use what was passed from layout-client
+        effectiveMenuItems = allMenuItems['prodi'] || initialMenuItems
         break
       case 'wakil_dekan_1':
       case 'wakil_dekan_2':
@@ -46,11 +46,11 @@ export function AppLayout({ children, role, menuItems: initialMenuItems, default
       case 'sekretaris_prodi':
       case 'dosen':
         effectiveRole = 'dosen'
-        // Don't override menuItems - use what was passed from layout-client
+        effectiveMenuItems = allMenuItems['dosen'] || initialMenuItems
         break
       default:
         effectiveRole = role as Role
-        // Don't override menuItems - use what was passed from layout-client
+        effectiveMenuItems = initialMenuItems
     }
   }
 

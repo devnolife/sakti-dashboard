@@ -16,11 +16,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Experimental features disabled to prevent memory issues during build
   experimental: {
-    // webpackBuildWorker: true,
-    // parallelServerBuildTraces: true,
-    // parallelServerCompiles: true,
+    webpackBuildWorker: true,
+    parallelServerBuildTraces: true,
+    parallelServerCompiles: true,
   },
 }
 
