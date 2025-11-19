@@ -8,22 +8,21 @@ import * as Minio from 'minio'
 async function testMinioConnection() {
   console.log('🔍 Testing MinIO Connection...\n')
 
-  // Create MinIO client with explicit config
+  // Create MinIO client - use IP for API connection
   const minioClient = new Minio.Client({
     endPoint: '103.151.145.21',
     port: 990,
-    useSSL: true,
+    useSSL: false,
     accessKey: 'NfTGaBQHPnetL8lNZvrb',
     secretKey: 'B2ypIasMJA3zD3ofbneA9Ov3brvF3m37cvz6KYsj',
   })
 
-  const bucketName = 'correspondence-files'
+  const bucketName = 'simtekmu'
 
-  console.log('📋 Environment Configuration:')
-  console.log('   MINIO_ENDPOINT: 103.151.145.21')
-  console.log('   MINIO_PORT: 990')
-  console.log('   MINIO_USE_SSL: true')
-  console.log('   MINIO_BUCKET_NAME:', bucketName)
+  console.log('📋 MinIO Configuration:')
+  console.log('   API Endpoint: 103.151.145.21:990 (HTTP)')
+  console.log('   Public URL: http://minio.if.unismuh.ac.id:9000')
+  console.log('   Bucket: ', bucketName)
   console.log('')
 
   try {
@@ -40,7 +39,21 @@ async function testMinioConnection() {
     // Test 3: Initialize bucket (create if not exists)
     if (!exists) {
       console.log('\n📦 Test 3: Creating bucket...')
-      await initializeBucket()
+      await minioClient.makeBucket(bucketName, 'us-east-1')
+
+      // Set bucket policy to allow public read
+      const policy = {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: { AWS: ['*'] },
+            Action: ['s3:GetObject'],
+            Resource: [`arn:aws:s3:::${bucketName}/*`],
+          },
+        ],
+      }
+      await minioClient.setBucketPolicy(bucketName, JSON.stringify(policy))
       console.log(`✅ Bucket "${bucketName}" created successfully`)
     } else {
       console.log('\n✅ Bucket is ready to use')
@@ -60,11 +73,19 @@ async function testMinioConnection() {
     )
     console.log('✅ Test file uploaded successfully')
 
-    // Test 5: Generate presigned URL
-    console.log('\n🔗 Test 5: Generating presigned URL...')
-    const url = await minioClient.presignedGetObject(bucketName, 'test-file.txt', 60)
-    console.log('✅ Presigned URL generated:')
-    console.log(url)
+    // Test 5: Generate URLs
+    console.log('\n🔗 Test 5: Generating file URLs...')
+
+    // Presigned URL (temporary, with IP)
+    const presignedUrl = await minioClient.presignedGetObject(bucketName, 'test-file.txt', 60)
+    console.log('✅ Presigned URL (temporary):')
+    console.log('   ', presignedUrl)
+
+    // Public URL (permanent, with domain)
+    const publicUrl = `http://minio.if.unismuh.ac.id:9000/${bucketName}/test-file.txt`
+    console.log('\n✅ Public URL (domain-based):')
+    console.log('   ', publicUrl)
+    console.log('\n💡 File URL yang digunakan di aplikasi akan menggunakan domain!')
 
     // Test 6: Delete test file
     console.log('\n🗑️  Test 6: Cleaning up test file...')

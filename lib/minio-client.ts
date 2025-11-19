@@ -73,14 +73,12 @@ export async function uploadFile(
       }
     )
 
-    // Generate presigned URL (valid for 7 days)
-    const url = await minioClient.presignedGetObject(
-      bucketName,
-      uniqueFileName,
-      7 * 24 * 60 * 60
-    )
+    // Generate URL through Next.js proxy (solves HTTPS/HTTP mixed content issue)
+    // Use proxy URL: /api/minio-proxy/filename
+    const url = `/api/minio-proxy/${uniqueFileName}`
 
     console.log(`✅ File uploaded: ${uniqueFileName}`)
+    console.log(`📎 URL: ${url}`)
     return url
   } catch (error) {
     console.error('❌ Error uploading file:', error)
@@ -133,24 +131,20 @@ export async function deleteFile(fileName: string): Promise<void> {
 }
 
 /**
- * Get presigned URL for a file
+ * Get public URL for a file
  * @param fileName - Name of the file
- * @param expirySeconds - URL expiry time in seconds (default: 7 days)
- * @returns Presigned URL
+ * @param expirySeconds - URL expiry time in seconds (only used if no public URL configured)
+ * @returns Public or presigned URL
  */
 export async function getFileUrl(
   fileName: string,
   expirySeconds: number = 7 * 24 * 60 * 60
 ): Promise<string> {
   try {
-    const url = await minioClient.presignedGetObject(
-      bucketName,
-      fileName,
-      expirySeconds
-    )
-    return url
+    // Use Next.js proxy URL (solves HTTPS/HTTP mixed content issue)
+    return `/api/minio-proxy/${fileName}`
   } catch (error) {
-    console.error('❌ Error generating presigned URL:', error)
+    console.error('❌ Error generating file URL:', error)
     throw error
   }
 }

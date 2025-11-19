@@ -64,7 +64,7 @@ const customLetterSchema = z.object({
 
 // Define props type (void element - no children)
 type CorrespondenceFormTabsProps = {
-  onSubmit: (data: any) => void
+  onSubmit: (data: any, files?: File[]) => void
   isSubmitting?: boolean
   defaultTab?: string
 }
@@ -82,9 +82,10 @@ export function CorrespondenceFormTabs({
   const [selectedDynamicType, setSelectedDynamicType] = useState<LetterTypeImport | null>(null)
   const [dynamicFormData, setDynamicFormData] = useState<Record<string, any>>({})
   const [userProdiId, setUserProdiId] = useState<string | undefined>(undefined)
-  const [uploadedFileActive, setUploadedFileActive] = useState<any>(null)
-  const [uploadedFileLeave, setUploadedFileLeave] = useState<any>(null)
-  const [uploadedFilePayment, setUploadedFilePayment] = useState<any>(null)
+  const [uploadedFileActive, setUploadedFileActive] = useState<File | null>(null)
+  const [uploadedFileLeave, setUploadedFileLeave] = useState<File | null>(null)
+  const [uploadedFilePayment, setUploadedFilePayment] = useState<File | null>(null)
+  const [uploadedFileDynamic, setUploadedFileDynamic] = useState<File[]>([])
 
   // Fetch user's prodi_id
   useEffect(() => {
@@ -185,10 +186,14 @@ export function CorrespondenceFormTabs({
       title: "Surat Keterangan Aktif Kuliah",
       ...data,
     }
+
+    // Collect files for submission
+    const files: File[] = []
     if (uploadedFileActive) {
-      submitData.skDocument = uploadedFileActive
+      files.push(uploadedFileActive)
     }
-    onSubmit(submitData)
+
+    onSubmit(submitData, files)
   }
 
   const handleLeaveSubmit = (data: z.infer<typeof leaveLetterSchema>) => {
@@ -198,10 +203,14 @@ export function CorrespondenceFormTabs({
       title: "Surat Permohonan Cuti",
       ...data,
     }
+
+    // Collect files for submission
+    const files: File[] = []
     if (uploadedFileLeave) {
-      submitData.supportingDocument = uploadedFileLeave
+      files.push(uploadedFileLeave)
     }
-    onSubmit(submitData)
+
+    onSubmit(submitData, files)
   }
 
   const handlePaymentSubmit = (data: z.infer<typeof paymentLetterSchema>) => {
@@ -211,17 +220,21 @@ export function CorrespondenceFormTabs({
       title: "Surat Keterangan Pembayaran",
       ...data,
     }
+
+    // Collect files for submission
+    const files: File[] = []
     if (uploadedFilePayment) {
-      submitData.paymentProof = uploadedFilePayment
+      files.push(uploadedFilePayment)
     }
-    onSubmit(submitData)
+
+    onSubmit(submitData, files)
   }
 
   const handleCustomSubmit = (data: z.infer<typeof customLetterSchema>) => {
     onSubmit({
       type: "custom",
       ...data,
-    })
+    }, [])
   }
 
   // Handle dynamic letter type submission
@@ -242,7 +255,7 @@ export function CorrespondenceFormTabs({
       letter_type_id: selectedDynamicType.id,
       title: selectedDynamicType.title,
       form_data: dynamicFormData,
-    })
+    }, uploadedFileDynamic)
   }
 
   // Handle parent civil servant change
@@ -831,7 +844,7 @@ export function CorrespondenceFormTabs({
                             type="file"
                             className="sr-only"
                             accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={async (e) => {
+                            onChange={(e) => {
                               const file = e.target.files?.[0]
                               if (file) {
                                 const maxSize = 5 * 1024 * 1024
@@ -845,32 +858,9 @@ export function CorrespondenceFormTabs({
                                   return
                                 }
 
-                                try {
-                                  const reader = new FileReader()
-                                  reader.onloadend = () => {
-                                    const base64String = reader.result as string
-                                    setUploadedFileActive({
-                                      name: file.name,
-                                      type: file.type,
-                                      size: file.size,
-                                      data: base64String
-                                    })
-                                  }
-                                  reader.onerror = () => {
-                                    toast({
-                                      title: "Error",
-                                      description: "Gagal membaca file",
-                                      variant: "destructive"
-                                    })
-                                  }
-                                  reader.readAsDataURL(file)
-                                } catch (error) {
-                                  toast({
-                                    title: "Error",
-                                    description: "Gagal memproses file",
-                                    variant: "destructive"
-                                  })
-                                }
+                                // Store the File object directly for MinIO upload
+                                setUploadedFileActive(file)
+                                console.log('📎 File selected:', file.name, file.size, 'bytes')
                               }
                             }}
                           />
@@ -880,29 +870,26 @@ export function CorrespondenceFormTabs({
                       <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
                       {uploadedFileActive && (
                         <div className="mt-4 space-y-3">
-                          <p className="text-xs font-medium text-green-600">
-                            ✓ {uploadedFileActive.name} ({(uploadedFileActive.size / 1024).toFixed(2)} KB)
-                          </p>
-                          {uploadedFileActive.type?.includes('image') && (
-                            <div className="mt-2">
-                              <img
-                                src={uploadedFileActive.data}
-                                alt={uploadedFileActive.name}
-                                className="max-w-full mx-auto border rounded max-h-32"
-                              />
+                          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <FileText className="w-4 h-4 text-green-600 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-green-700 truncate">
+                                {uploadedFileActive.name}
+                              </p>
+                              <p className="text-xs text-green-600">
+                                {(uploadedFileActive.size / 1024).toFixed(2)} KB • {uploadedFileActive.type || 'Unknown type'}
+                              </p>
                             </div>
-                          )}
-                          {uploadedFileActive.type === 'application/pdf' && (
-                            <div className="mt-2">
-                              <p className="mb-2 text-xs font-medium">Preview PDF:</p>
-                              <embed
-                                src={uploadedFileActive.data}
-                                type="application/pdf"
-                                className="w-full border rounded"
-                                style={{ height: '400px' }}
-                              />
-                            </div>
-                          )}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setUploadedFileActive(null)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              Hapus
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1159,32 +1146,9 @@ export function CorrespondenceFormTabs({
                               return
                             }
 
-                            try {
-                              const reader = new FileReader()
-                              reader.onloadend = () => {
-                                const base64String = reader.result as string
-                                setUploadedFileLeave({
-                                  name: file.name,
-                                  type: file.type,
-                                  size: file.size,
-                                  data: base64String
-                                })
-                              }
-                              reader.onerror = () => {
-                                toast({
-                                title: "Error",
-                                  description: "Gagal membaca file",
-                                  variant: "destructive"
-                                })
-                              }
-                              reader.readAsDataURL(file)
-                            } catch (error) {
-                              toast({
-                                title: "Error",
-                                description: "Gagal memproses file",
-                                variant: "destructive"
-                              })
-                            }
+                            // Store the File object directly for MinIO upload
+                            setUploadedFileLeave(file)
+                            console.log('📎 Leave form file selected:', file.name, file.size, 'bytes')
                           }
                         }}
                       />
@@ -1194,29 +1158,26 @@ export function CorrespondenceFormTabs({
                   <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
                   {uploadedFileLeave && (
                     <div className="mt-4 space-y-3">
-                      <p className="text-xs font-medium text-green-600">
-                        ✓ {uploadedFileLeave.name} ({(uploadedFileLeave.size / 1024).toFixed(2)} KB)
-                      </p>
-                      {uploadedFileLeave.type?.includes('image') && (
-                        <div className="mt-2">
-                          <img
-                            src={uploadedFileLeave.data}
-                            alt={uploadedFileLeave.name}
-                            className="max-w-full mx-auto border rounded max-h-32"
-                          />
+                      <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <FileText className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-green-700 truncate">
+                            {uploadedFileLeave.name}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {(uploadedFileLeave.size / 1024).toFixed(2)} KB • {uploadedFileLeave.type || 'Unknown type'}
+                          </p>
                         </div>
-                      )}
-                      {uploadedFileLeave.type === 'application/pdf' && (
-                        <div className="mt-2">
-                          <p className="mb-2 text-xs font-medium">Preview PDF:</p>
-                          <embed
-                            src={uploadedFileLeave.data}
-                            type="application/pdf"
-                            className="w-full border rounded"
-                            style={{ height: '400px' }}
-                          />
-                        </div>
-                      )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUploadedFileLeave(null)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          Hapus
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1470,32 +1431,9 @@ export function CorrespondenceFormTabs({
                               return
                             }
 
-                            try {
-                              const reader = new FileReader()
-                              reader.onloadend = () => {
-                                const base64String = reader.result as string
-                                setUploadedFilePayment({
-                                  name: file.name,
-                                  type: file.type,
-                                  size: file.size,
-                                  data: base64String
-                                })
-                              }
-                              reader.onerror = () => {
-                                toast({
-                                  title: "Error",
-                                  description: "Gagal membaca file",
-                                  variant: "destructive"
-                                })
-                              }
-                              reader.readAsDataURL(file)
-                            } catch (error) {
-                              toast({
-                                title: "Error",
-                                description: "Gagal memproses file",
-                                variant: "destructive"
-                              })
-                            }
+                            // Store the File object directly for MinIO upload
+                            setUploadedFilePayment(file)
+                            console.log('📎 Payment form file selected:', file.name, file.size, 'bytes')
                           }
                         }}
                       />
@@ -1505,29 +1443,26 @@ export function CorrespondenceFormTabs({
                   <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 5MB</p>
                   {uploadedFilePayment && (
                     <div className="mt-4 space-y-3">
-                      <p className="text-xs font-medium text-green-600">
-                        ✓ {uploadedFilePayment.name} ({(uploadedFilePayment.size / 1024).toFixed(2)} KB)
-                      </p>
-                      {uploadedFilePayment.type?.includes('image') && (
-                        <div className="mt-2">
-                          <img
-                            src={uploadedFilePayment.data}
-                            alt={uploadedFilePayment.name}
-                            className="max-w-full mx-auto border rounded max-h-32"
-                          />
+                      <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <FileText className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-green-700 truncate">
+                            {uploadedFilePayment.name}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {(uploadedFilePayment.size / 1024).toFixed(2)} KB • {uploadedFilePayment.type || 'Unknown type'}
+                          </p>
                         </div>
-                      )}
-                      {uploadedFilePayment.type === 'application/pdf' && (
-                        <div className="mt-2">
-                          <p className="mb-2 text-xs font-medium">Preview PDF:</p>
-                          <embed
-                            src={uploadedFilePayment.data}
-                            type="application/pdf"
-                            className="w-full border rounded"
-                            style={{ height: '400px' }}
-                          />
-                        </div>
-                      )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUploadedFilePayment(null)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          Hapus
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, CheckCircle } from "lucide-react"
 import { CorrespondenceFormTabs } from "@/components/correspondence/correspondence-form-tabs"
-import { submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { submitLetterRequestWithFiles } from "@/app/actions/correspondence-actions"
 import { getStudentLetterRequests } from "@/app/actions/correspondence-actions"
 import { toast } from "@/hooks/use-toast"
 import Link from "next/link"
@@ -56,7 +56,7 @@ export default function NewCorrespondencePage() {
     }
   }, [authLoading, user?.id])
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: any, files?: File[]) => {
     // Validasi data sebelum submit
     if (!data || Object.keys(data).length === 0) {
       toast({
@@ -129,15 +129,31 @@ export default function NewCorrespondencePage() {
     setIsSubmitting(true)
 
     try {
-      console.log('Submitting letter request:', data)
+      console.log('📤 Submitting letter request with files:', data, 'Files count:', files?.length || 0)
 
-      const result = await submitLetterRequest(
-        data.type || 'active_student',
-        data.title || 'Surat Keterangan Aktif Kuliah',
-        data.purpose || 'Keperluan administrasi',
-        data.purpose || 'Permohonan surat keterangan aktif kuliah',
-        data  // Additional info contains all form data
-      )
+      // Create FormData untuk submit dengan files
+      const formData = new FormData()
+
+      // Add letter type and purpose
+      formData.append('letterType', data.type || 'active_student')
+      formData.append('purpose', data.purpose || 'Keperluan administrasi')
+
+      // Add all additional info as nested fields
+      Object.keys(data).forEach(key => {
+        if (key !== 'type' && key !== 'purpose' && data[key] !== undefined && data[key] !== null) {
+          formData.append(`additionalInfo[${key}]`, String(data[key]))
+        }
+      })
+
+      // Add files if any
+      if (files && files.length > 0) {
+        files.forEach(file => {
+          formData.append('files[]', file)
+        })
+        console.log(`📎 Added ${files.length} files to FormData`)
+      }
+
+      const result = await submitLetterRequestWithFiles(formData)
 
       if (result.success) {
         setIsSuccess(true)
@@ -158,7 +174,7 @@ export default function NewCorrespondencePage() {
         })
       }
     } catch (error) {
-      console.error('Error submitting letter request:', error)
+      console.error('❌ Error submitting letter request:', error)
       toast({
         title: "Error",
         description: "Terjadi kesalahan saat mengajukan permohonan",

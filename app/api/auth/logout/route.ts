@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authMiddleware } from '@/lib/auth-middleware'
 import { prisma } from '@/lib/prisma'
+import { generateId } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,19 +21,22 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      // Log audit
-      await prisma.audit_logs.create({
-        data: {
-          user_id: token.sub!,
-          action: 'logout',
-          resource: 'auth',
-          details: {
-            logoutTime: new Date(),
-            userAgent: request.headers.get('user-agent')
-          },
-          ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
-        }
-      })
+      // Log audit only if we have a valid user_id
+      if (token.sub) {
+        await prisma.audit_logs.create({
+          data: {
+            id: generateId(),
+            user_id: token.sub,
+            action: 'logout',
+            resource: 'auth',
+            details: {
+              logoutTime: new Date(),
+              userAgent: request.headers.get('user-agent')
+            },
+            ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+          }
+        })
+      }
     }
 
     const response = NextResponse.json({ message: 'Logged out successfully' })

@@ -18,7 +18,10 @@
       "Bash(npm pkg set:*)",
       "Bash(cat:*)",
       "Bash(npm pkg:*)",
-      "Bash(npm run minio:test:*)"
+      "Bash(npm run minio:test:*)",
+      "Bash(timeout /t 5)",
+      "Bash(rm:*)",
+      "Bash(npx prisma migrate dev)"
     ],
     "deny": [],
     "ask": []

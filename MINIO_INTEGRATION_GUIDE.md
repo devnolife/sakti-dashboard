@@ -7,12 +7,21 @@ Semua kode MinIO sudah siap. Ketika MinIO server aktif, semuanya akan langsung b
 ### 📦 Yang Sudah Dikonfigurasi:
 
 1. ✅ **Environment Variables** (.env)
-   ```
+   ```env
+   # API Connection (untuk upload/delete - pakai IP)
    MINIO_ENDPOINT=103.151.145.21
    MINIO_PORT=990
-   MINIO_USE_SSL=true
-   Bucket: correspondence-files
+   MINIO_USE_SSL=false
+   MINIO_BUCKET_NAME=simtekmu
+
+   # Public URL (untuk akses file - pakai domain)
+   MINIO_PUBLIC_URL=http://minio.if.unismuh.ac.id:9000
    ```
+
+   **Catatan Penting:**
+   - **API Connection** menggunakan IP `103.151.145.21:990` karena ini untuk operasi internal (upload, delete)
+   - **Public URL** menggunakan domain `minio.if.unismuh.ac.id:9000` untuk akses file dari browser
+   - File yang diupload akan punya URL seperti: `http://minio.if.unismuh.ac.id:9000/simtekmu/1234567890-filename.pdf`
 
 2. ✅ **MinIO Client** (`lib/minio-client.ts`)
    - Upload file

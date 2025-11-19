@@ -33,7 +33,7 @@ function transformLetterRequest(req: any): LetterRequest {
     attachments: req.letter_attachments?.map((att: any) => ({
       id: att.id,
       name: att.name,
-      uploadDate: att.created_at.toISOString(),
+      uploadDate: att.upload_date ? new Date(att.upload_date).toISOString() : new Date().toISOString(),
       url: att.url
     })) || []
   }

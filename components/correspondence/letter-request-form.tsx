@@ -15,13 +15,14 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Separator } from "@/components/ui/separator"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, FileText, Upload, AlertCircle, CheckCircle, PlusCircle } from "lucide-react"
+import { CalendarIcon, FileText, Upload, AlertCircle, CheckCircle, PlusCircle, X, File } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
-import { submitLetterRequest } from "@/app/actions/correspondence-actions"
+import { submitLetterRequestWithFiles } from "@/app/actions/correspondence-actions"
 import { DEFAULT_LETTER_TYPES } from "@/lib/correspondence-constants"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { useToast } from "@/hooks/use-toast"
 
 // Create a schema for the form
 const formSchema = z.object({
@@ -32,6 +33,7 @@ const formSchema = z.object({
 })
 
 export function LetterRequestForm() {
+  const { toast } = useToast()
   const [selectedLetterType, setSelectedLetterType] = useState<string>("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null)
@@ -63,6 +65,14 @@ export function LetterRequestForm() {
     setIsSubmitting(true)
     setSubmitResult(null)
 
+    // Show uploading toast
+    if (files.length > 0) {
+      toast({
+        title: "Mengunggah file...",
+        description: `Sedang mengunggah ${files.length} file ke server`,
+      })
+    }
+
     try {
       // In a real app, we would create a FormData object and append all the form data
       const formData = new FormData()
@@ -85,8 +95,8 @@ export function LetterRequestForm() {
         formData.append("files[]", file)
       })
 
-      // Submit the form
-      const result = await submitLetterRequest(formData)
+      // Submit the form with files
+      const result = await submitLetterRequestWithFiles(formData)
 
       setSubmitResult({
         success: result.success,
@@ -94,10 +104,24 @@ export function LetterRequestForm() {
       })
 
       if (result.success) {
+        // Show success toast
+        toast({
+          title: "Berhasil!",
+          description: result.message,
+          variant: "default",
+        })
+
         // Reset the form on success
         form.reset()
         setSelectedLetterType("")
         setFiles([])
+      } else {
+        // Show error toast
+        toast({
+          title: "Gagal",
+          description: result.message,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error submitting form:", error)
@@ -111,9 +135,9 @@ export function LetterRequestForm() {
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files as FileList)
-    setFiles(files)
-    form.setValue("files", files)
+    const newFiles = Array.from(e.target.files as FileList)
+    setFiles(prev => [...prev, ...newFiles])
+    form.setValue("files", [...files, ...newFiles])
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -122,9 +146,21 @@ export function LetterRequestForm() {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-    const files = Array.from(e.dataTransfer.files)
-    setFiles(files)
-    form.setValue("files", files)
+    const newFiles = Array.from(e.dataTransfer.files)
+    setFiles(prev => [...prev, ...newFiles])
+    form.setValue("files", [...files, ...newFiles])
+  }
+
+  const removeFile = (index: number) => {
+    const newFiles = files.filter((_, i) => i !== index)
+    setFiles(newFiles)
+    form.setValue("files", newFiles)
+  }
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
   }
 
   return (
@@ -306,6 +342,7 @@ export function LetterRequestForm() {
                                   type="file"
                                   className="sr-only"
                                   multiple
+                                  accept=".pdf,.jpg,.jpeg,.png"
                                   onChange={handleFileChange}
                                 />
                               </label>
@@ -314,6 +351,38 @@ export function LetterRequestForm() {
                             <p className="text-xs leading-5 text-gray-600">PDF, JPG, PNG hingga 10MB</p>
                           </div>
                         </div>
+
+                        {/* Display selected files */}
+                        {files.length > 0 && (
+                          <div className="mt-4 space-y-2">
+                            <p className="text-sm font-medium">File yang dipilih ({files.length}):</p>
+                            {files.map((file, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between rounded-lg border border-border bg-card p-3 transition-colors hover:bg-accent"
+                              >
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                  <div className="flex-shrink-0">
+                                    <File className="h-5 w-5 text-muted-foreground" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate">{file.name}</p>
+                                    <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+                                  </div>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeFile(index)}
+                                  className="flex-shrink-0"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>

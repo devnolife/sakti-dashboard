@@ -16,6 +16,11 @@ export {
   deleteLetterRequest
 } from './correspondence/letter-operations';
 
+// Letter submission with file uploads (MinIO)
+export {
+  submitLetterRequestWithFiles
+} from './correspondence/submit-with-files';
+
 // Export functions needed by client components
 export { getLetterTypes, getLetterTypesAsObject } from './correspondence/constants';
 
