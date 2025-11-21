@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { uploadFileToMinio } from '@/lib/minio-client';
+import { uploadFile } from '@/lib/minio-client';
 import { getAuthStatus } from '@/lib/auth-middleware';
 import mammoth from 'mammoth';
 import { TemplateAnalyzer } from '@/lib/template-analyzer';
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     const fileName = `${Date.now()}-${file.name}`;
     const minioPath = `${folderPrefix}/${fileName}`;
 
-    const fileUrl = await uploadFileToMinio(buffer, minioPath);
+    const fileUrl = await uploadFile(buffer, minioPath, file.type);
 
     // Save to database
     const template = await prisma.template_uploads.create({

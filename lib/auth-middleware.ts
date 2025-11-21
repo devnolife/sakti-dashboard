@@ -145,3 +145,18 @@ export async function verifyAuth(request: NextRequest): Promise<{
     return { authenticated: false }
   }
 }
+
+/**
+ * Get authentication status with user info
+ * Alias for verifyAuth with clearer naming
+ */
+export async function getAuthStatus(request: NextRequest): Promise<{
+  isAuthenticated: boolean
+  user?: DecodedToken
+}> {
+  const result = await verifyAuth(request)
+  return {
+    isAuthenticated: result.authenticated,
+    user: result.user
+  }
+}

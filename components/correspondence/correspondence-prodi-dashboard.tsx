@@ -138,7 +138,7 @@ export function CorrespondenceProdiDashboard() {
         selectedRequest.id,
         "approved",
         undefined,
-        user?.name || "Prodi Admin", 
+        user?.name || "Prodi Admin",
       )
 
       if (result.success) {
@@ -349,11 +349,11 @@ export function CorrespondenceProdiDashboard() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Permohonan Baru</CardTitle>
-            <CardDescription>Permohonan yang baru diajukan</CardDescription>
+            <CardDescription>Baru diajukan</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -363,7 +363,7 @@ export function CorrespondenceProdiDashboard() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{requests.filter((r) => r.status === "submitted").length}</p>
-                  <p className="text-sm text-muted-foreground">Menunggu review</p>
+                  <p className="text-sm text-muted-foreground">Menunggu</p>
                 </div>
               </div>
               <Button
@@ -381,7 +381,7 @@ export function CorrespondenceProdiDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Dalam Proses</CardTitle>
-            <CardDescription>Permohonan yang sedang diproses</CardDescription>
+            <CardDescription>Sedang direview</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -391,7 +391,7 @@ export function CorrespondenceProdiDashboard() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{requests.filter((r) => r.status === "in-review").length}</p>
-                  <p className="text-sm text-muted-foreground">Sedang direview</p>
+                  <p className="text-sm text-muted-foreground">Direview</p>
                 </div>
               </div>
               <Button
@@ -408,31 +408,81 @@ export function CorrespondenceProdiDashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Selesai Diproses</CardTitle>
-            <CardDescription>Permohonan yang telah disetujui atau ditolak</CardDescription>
+            <CardTitle className="text-lg font-medium">Disetujui</CardTitle>
+            <CardDescription>Menunggu surat</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-green-100 rounded-full">
-                  <CheckCircle2 className="w-6 h-6 text-green-600" />
+                  <ThumbsUp className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">
-                    {
-                      requests.filter(
-                        (r) => r.status === "approved" || r.status === "completed" || r.status === "rejected",
-                      ).length
-                    }
-                  </p>
-                  <p className="text-sm text-muted-foreground">Total selesai</p>
+                  <p className="text-2xl font-bold">{requests.filter((r) => r.status === "approved").length}</p>
+                  <p className="text-sm text-muted-foreground">Disetujui</p>
                 </div>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                onClick={() => setActiveTab("all")}
+                onClick={() => setActiveTab("approved")}
+              >
+                Lihat
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium">Selesai</CardTitle>
+            <CardDescription>Surat telah dibuat</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-emerald-100 rounded-full">
+                  <FileCheck className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{requests.filter((r) => r.status === "completed").length}</p>
+                  <p className="text-sm text-muted-foreground">Selesai</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                onClick={() => setActiveTab("completed")}
+              >
+                Lihat
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-medium">Ditolak</CardTitle>
+            <CardDescription>Tidak disetujui</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-red-100 rounded-full">
+                  <XCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{requests.filter((r) => r.status === "rejected").length}</p>
+                  <p className="text-sm text-muted-foreground">Ditolak</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={() => setActiveTab("rejected")}
               >
                 Lihat
               </Button>

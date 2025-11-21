@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Card,
@@ -18,7 +17,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Select,
@@ -28,25 +26,22 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { DataTable } from "@/components/data-table"
-import { FileUploadMinio } from "@/components/ui/file-upload-minio"
 import { toast } from "@/hooks/use-toast"
 import {
   FileText,
-  Upload,
   Download,
   Edit,
   Trash2,
   Plus,
-  FileCheck,
   Eye,
   Edit2
 } from "lucide-react"
 import { TemplateVariableEditor } from "@/components/templates/template-variable-editor"
 import { TemplatePreviewDialog } from "@/components/templates/template-preview-dialog"
-import { ColumnDef } from "@tanstack/react-table"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
 
 interface Template {
   id: string
@@ -75,7 +70,6 @@ interface Template {
 export default function ProdiTemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([])
   const [loading, setLoading] = useState(true)
-  const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null)
   const [variableEditorOpen, setVariableEditorOpen] = useState(false)
@@ -84,15 +78,6 @@ export default function ProdiTemplatesPage() {
 
   // Filter states
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
-
-  // Upload form states
-  const [uploadForm, setUploadForm] = useState({
-    name: "",
-    description: "",
-    category: "surat",
-  })
-  const [uploadedFile, setUploadedFile] = useState<{ url: string; name: string } | null>(null)
-  const [uploading, setUploading] = useState(false)
 
   // Edit form states
   const [editForm, setEditForm] = useState({
@@ -135,73 +120,6 @@ export default function ProdiTemplatesPage() {
     }
   }
 
-  const handleUploadSubmit = async () => {
-    if (!uploadedFile) {
-      toast({
-        title: "Error",
-        description: "Please upload a file first",
-        variant: "destructive",
-      })
-      return
-    }
-
-    if (!uploadForm.name) {
-      toast({
-        title: "Error",
-        description: "Template name is required",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      setUploading(true)
-
-      // Download file from MinIO URL and create FormData
-      const fileResponse = await fetch(uploadedFile.url)
-      const fileBlob = await fileResponse.blob()
-      const file = new File([fileBlob], uploadedFile.name, { type: fileBlob.type })
-
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("name", uploadForm.name)
-      formData.append("description", uploadForm.description)
-      formData.append("category", uploadForm.category)
-      formData.append("is_global", "false") // Prodi templates are never global
-
-      const response = await fetch("/api/templates/upload", {
-        method: "POST",
-        body: formData,
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        toast({
-          title: "Success",
-          description: "Template uploaded successfully",
-        })
-        setUploadDialogOpen(false)
-        resetUploadForm()
-        fetchTemplates()
-      } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to upload template",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to upload template",
-        variant: "destructive",
-      })
-    } finally {
-      setUploading(false)
-    }
-  }
-
   const handleEditSubmit = async () => {
     if (!selectedTemplate) return
 
@@ -239,7 +157,7 @@ export default function ProdiTemplatesPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this template?")) return
+    if (!confirm("Apakah Anda yakin ingin menghapus template ini?")) return
 
     try {
       const response = await fetch(`/api/templates/${id}`, {
@@ -250,33 +168,24 @@ export default function ProdiTemplatesPage() {
 
       if (data.success) {
         toast({
-          title: "Success",
-          description: "Template deleted successfully",
+          title: "Berhasil",
+          description: "Template berhasil dihapus",
         })
         fetchTemplates()
       } else {
         toast({
           title: "Error",
-          description: data.error || "Failed to delete template",
+          description: data.error || "Gagal menghapus template",
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete template",
+        description: "Gagal menghapus template",
         variant: "destructive",
       })
     }
-  }
-
-  const resetUploadForm = () => {
-    setUploadForm({
-      name: "",
-      description: "",
-      category: "surat",
-    })
-    setUploadedFile(null)
   }
 
   const openEditDialog = (template: Template) => {
@@ -298,247 +207,204 @@ export default function ProdiTemplatesPage() {
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i]
   }
 
-  const columns: ColumnDef<Template>[] = [
-    {
-      accessorKey: "name",
-      header: "Template Name",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <FileText className="h-4 w-4 text-muted-foreground" />
-          <div>
-            <div className="font-medium">{row.original.name}</div>
-            <div className="text-xs text-muted-foreground">{row.original.file_name}</div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "category",
-      header: "Category",
-      cell: ({ row }) => (
-        <Badge variant="outline">{row.original.category}</Badge>
-      ),
-    },
-    {
-      accessorKey: "scope",
-      header: "Scope",
-      cell: ({ row }) => (
-        <Badge variant={row.original.is_global ? "default" : "secondary"}>
-          {row.original.is_global ? "Global" : row.original.prodi?.nama || "Prodi"}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: "file_size",
-      header: "Size",
-      cell: ({ row }) => formatFileSize(row.original.file_size),
-    },
-    {
-      accessorKey: "version",
-      header: "Version",
-      cell: ({ row }) => `v${row.original.version}`,
-    },
-    {
-      accessorKey: "is_active",
-      header: "Status",
-      cell: ({ row }) => (
-        <Badge variant={row.original.is_active ? "default" : "secondary"}>
-          {row.original.is_active ? "Active" : "Inactive"}
-        </Badge>
-      ),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        // Only show edit/delete for prodi templates (not global)
-        const canEdit = !row.original.is_global
-
-        return (
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setSelectedTemplateForEdit(row.original)
-                setPreviewDialogOpen(true)
-              }}
-              title="Preview"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-            {canEdit && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  setSelectedTemplateForEdit(row.original)
-                  setVariableEditorOpen(true)
-                }}
-                title="Edit Variables"
-              >
-                <Edit2 className="h-4 w-4" />
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => window.open(row.original.file_url, "_blank")}
-              title="Download"
-            >
-              <Download className="h-4 w-4" />
-            </Button>
-            {canEdit && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openEditDialog(row.original)}
-                  title="Edit"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(row.original.id)}
-                  title="Delete"
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </>
-            )}
-          </div>
-        )
-      },
-    },
-  ]
-
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="container py-8 mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Template Dokumen Prodi</h1>
           <p className="text-muted-foreground">
             Kelola template dokumen untuk prodi Anda
           </p>
         </div>
-        <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Upload Template
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Upload Template Baru</DialogTitle>
-              <DialogDescription>
-                Upload file .docx untuk dijadikan template dokumen prodi
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nama Template *</Label>
-                <Input
-                  id="name"
-                  value={uploadForm.name}
-                  onChange={(e) => setUploadForm({ ...uploadForm, name: e.target.value })}
-                  placeholder="Contoh: Template Surat Keterangan Aktif"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Deskripsi</Label>
-                <Textarea
-                  id="description"
-                  value={uploadForm.description}
-                  onChange={(e) => setUploadForm({ ...uploadForm, description: e.target.value })}
-                  placeholder="Deskripsi template..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category">Kategori</Label>
-                <Select
-                  value={uploadForm.category}
-                  onValueChange={(value) => setUploadForm({ ...uploadForm, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="surat">Surat</SelectItem>
-                    <SelectItem value="sertifikat">Sertifikat</SelectItem>
-                    <SelectItem value="laporan">Laporan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Upload File Template (.docx)</Label>
-                <FileUploadMinio
-                  label="Upload Template DOCX"
-                  accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  maxSize={10}
-                  onUploadComplete={(url, fileName) => {
-                    setUploadedFile({ url, name: fileName })
-                  }}
-                  currentFile={uploadedFile}
-                  onRemove={() => setUploadedFile(null)}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>
-                Batal
-              </Button>
-              <Button onClick={handleUploadSubmit} disabled={uploading}>
-                {uploading ? "Uploading..." : "Upload Template"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => window.location.href = '/dashboard/prodi/templates/upload'}>
+          <Plus className="w-4 h-4 mr-2" />
+          Upload Template Baru
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Filter Templates</CardTitle>
-          <CardDescription>Filter templates berdasarkan kategori</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Kategori</Label>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Kategori</SelectItem>
-                  <SelectItem value="surat">Surat</SelectItem>
-                  <SelectItem value="sertifikat">Sertifikat</SelectItem>
-                  <SelectItem value="laporan">Laporan</SelectItem>
-                </SelectContent>
-              </Select>
+      {/* Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Total Templates</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{templates.length}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Template tersedia</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Template Aktif</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {templates.filter(t => t.is_active).length}
             </div>
+            <p className="mt-1 text-xs text-muted-foreground">Siap digunakan</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Template Prodi</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {templates.filter(t => !t.is_global).length}
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">Template khusus prodi</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Simple Filter */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-4">
+            <Label className="text-sm font-medium min-w-[100px]">Filter Kategori:</Label>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Kategori</SelectItem>
+                <SelectItem value="surat">Surat</SelectItem>
+                <SelectItem value="sertifikat">Sertifikat</SelectItem>
+                <SelectItem value="laporan">Laporan</SelectItem>
+              </SelectContent>
+            </Select>
+            {categoryFilter !== "all" && (
+              <Button variant="ghost" size="sm" onClick={() => setCategoryFilter("all")}>
+                Reset Filter
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Daftar Templates</CardTitle>
-          <CardDescription>
-            Total {templates.length} templates (termasuk template global dan prodi)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={templates} />
-        </CardContent>
-      </Card>
+      {/* Templates Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="w-3/4 h-4 bg-gray-200 rounded" />
+                <div className="w-1/2 h-3 mt-2 bg-gray-200 rounded" />
+              </CardHeader>
+              <CardContent>
+                <div className="w-full h-3 bg-gray-200 rounded" />
+              </CardContent>
+            </Card>
+          ))
+        ) : templates.length === 0 ? (
+          <Card className="col-span-full">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <FileText className="w-12 h-12 mb-4 text-muted-foreground" />
+              <p className="text-lg font-medium">Belum ada template</p>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Upload template pertama Anda untuk memulai
+              </p>
+              <Button onClick={() => window.location.href = '/dashboard/prodi/templates/upload'}>
+                <Plus className="w-4 h-4 mr-2" />
+                Upload Template
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          templates.map((template) => (
+            <Card key={template.id} className="transition-shadow hover:shadow-lg">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <FileText className="w-5 h-5" />
+                      {template.name}
+                    </CardTitle>
+                    <CardDescription className="mt-2 line-clamp-2">
+                      {template.description || "Tidak ada deskripsi"}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant={template.is_global ? "default" : "secondary"}>
+                    {template.is_global ? "Global" : template.prodi?.nama || "Prodi"}
+                  </Badge>
+                  <Badge variant="outline">{template.category}</Badge>
+                  <Badge variant={template.is_active ? "default" : "secondary"}>
+                    {template.is_active ? "Aktif" : "Nonaktif"}
+                  </Badge>
+                </div>
 
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  <div>Version: v{template.version}</div>
+                  <div>Size: {formatFileSize(template.file_size)}</div>
+                </div>
+
+                <Separator />
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTemplateForEdit(template)
+                      setPreviewDialogOpen(true)
+                    }}
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Preview
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(template.file_url, "_blank")}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                  {!template.is_global && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedTemplateForEdit(template)
+                          setVariableEditorOpen(true)
+                        }}
+                      >
+                        <Edit2 className="w-4 h-4 mr-2" />
+                        Variables
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openEditDialog(template)}
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="col-span-2"
+                        onClick={() => handleDelete(template.id)}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Hapus Template
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -547,7 +413,7 @@ export default function ProdiTemplatesPage() {
               Update informasi template
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="py-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="edit-name">Nama Template</Label>
               <Input
