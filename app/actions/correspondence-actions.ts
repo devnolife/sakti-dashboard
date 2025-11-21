@@ -13,7 +13,9 @@ export {
 export {
   submitLetterRequest,
   updateLetterRequestStatus,
-  deleteLetterRequest
+  deleteLetterRequest,
+  searchStudents,
+  createLetterRequestForStudent
 } from './correspondence/letter-operations';
 
 // Letter submission with file uploads (MinIO)

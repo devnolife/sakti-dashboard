@@ -18,9 +18,11 @@ import {
   FileCheck,
   ThumbsUp,
   ThumbsDown,
+  FilePlus,
 } from "lucide-react"
 import { CorrespondenceTable } from "@/components/correspondence/correspondence-table"
 import { LetterRequestDetails } from "@/components/correspondence/letter-request-details"
+import { CreateLetterForm } from "@/components/correspondence/create-letter-form"
 import { getLetterRequestsForApproval, updateLetterRequestStatus } from "@/app/actions/correspondence-actions"
 import type { LetterRequest, LetterStatus } from "@/types/correspondence"
 import {
@@ -48,6 +50,7 @@ export function CorrespondenceProdiDashboard() {
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
   const [rejectionReason, setRejectionReason] = useState("")
   const [letterTypes, setLetterTypes] = useState<string[]>([])
+  const [showCreateLetterForm, setShowCreateLetterForm] = useState(false)
 
   // Fetch letter requests on component mount
   useEffect(() => {
@@ -133,11 +136,11 @@ export function CorrespondenceProdiDashboard() {
         const updatedRequests = requests.map((req) =>
           req.id === selectedRequest.id
             ? {
-                ...req,
-                status: "approved",
-                approvedBy: "Dr. Bambang Suprapto, M.T.",
-                approvedDate: new Date().toISOString(),
-              }
+              ...req,
+              status: "approved",
+              approvedBy: "Dr. Bambang Suprapto, M.T.",
+              approvedDate: new Date().toISOString(),
+            }
             : req,
         )
 
@@ -189,10 +192,10 @@ export function CorrespondenceProdiDashboard() {
         const updatedRequests = requests.map((req) =>
           req.id === selectedRequest.id
             ? {
-                ...req,
-                status: "rejected",
-                rejectedReason: rejectionReason,
-              }
+              ...req,
+              status: "rejected",
+              rejectedReason: rejectionReason,
+            }
             : req,
         )
 
@@ -291,17 +294,42 @@ export function CorrespondenceProdiDashboard() {
     }
   }
 
+  // Handle successful letter creation
+  const handleLetterCreated = async () => {
+    // Refresh the requests list
+    const data = await getLetterRequestsForApproval("prodi")
+    setRequests(data)
+    setFilteredRequests(data)
+    setShowCreateLetterForm(false)
+  }
+
+  // Show create letter form
+  if (showCreateLetterForm) {
+    return (
+      <CreateLetterForm
+        onSuccess={handleLetterCreated}
+        onCancel={() => setShowCreateLetterForm(false)}
+      />
+    )
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            Manajemen Surat
-          </span>
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          Kelola dan proses permohonan surat dari mahasiswa yang memerlukan persetujuan Ketua Program Studi
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              Manajemen Surat
+            </span>
+          </h2>
+          <p className="mt-2 text-muted-foreground">
+            Kelola dan proses permohonan surat dari mahasiswa yang memerlukan persetujuan Ketua Program Studi
+          </p>
+        </div>
+        <Button onClick={() => setShowCreateLetterForm(true)} className="gap-2" size="lg">
+          <FilePlus className="w-4 h-4" />
+          Buat Surat untuk Mahasiswa
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

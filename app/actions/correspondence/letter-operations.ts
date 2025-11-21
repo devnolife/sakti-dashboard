@@ -172,3 +172,104 @@ export async function deleteLetterRequest(
     }
   }
 }
+
+// Search students by NIM or name
+export async function searchStudents(
+  query: string
+): Promise<Array<{
+  id: string
+  nim: string
+  users: {
+    name: string
+  }
+  prodi?: {
+    nama: string
+  }
+}>> {
+  try {
+    const students = await prisma.students.findMany({
+      where: {
+        OR: [
+          { nim: { contains: query, mode: 'insensitive' } },
+          { users: { name: { contains: query, mode: 'insensitive' } } }
+        ]
+      },
+      include: {
+        users: {
+          select: {
+            name: true
+          }
+        },
+        prodi: {
+          select: {
+            nama: true
+          }
+        }
+      },
+      take: 10
+    })
+
+    return students
+  } catch (error) {
+    console.error('Error searching students:', error)
+    return []
+  }
+}
+
+// Create letter request for a specific student (used by prodi/admin)
+export async function createLetterRequestForStudent(data: {
+  studentId: string
+  type: string
+  title: string
+  description?: string
+  purpose?: string
+  additionalInfo?: any
+}): Promise<{ success: boolean; message: string; requestId?: string }> {
+  try {
+    // Verify student exists
+    const student = await prisma.students.findUnique({
+      where: { id: data.studentId },
+      include: { prodi: true }
+    })
+
+    if (!student) {
+      return {
+        success: false,
+        message: "Mahasiswa tidak ditemukan"
+      }
+    }
+
+    // Get letter type info
+    const letterType = await prisma.letter_types.findFirst({
+      where: {
+        title: data.title,
+        OR: [
+          { is_global: true },
+          { prodi_id: student.prodi_id }
+        ]
+      }
+    })
+
+    // Create letter request using workflow
+    const letterRequest = await createLetterRequest({
+      studentId: data.studentId,
+      type: data.type,
+      title: data.title,
+      purpose: data.purpose || "",
+      description: data.description || "",
+      additionalInfo: data.additionalInfo || {},
+    })
+
+    return {
+      success: true,
+      message: "Surat berhasil dibuat untuk mahasiswa",
+      requestId: letterRequest.id,
+    }
+  } catch (error) {
+    console.error('Error creating letter request for student:', error)
+    return {
+      success: false,
+      message: "Gagal membuat surat"
+    }
+  }
+}
