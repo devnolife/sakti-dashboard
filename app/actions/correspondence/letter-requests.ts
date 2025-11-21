@@ -6,13 +6,17 @@ import { assignLetterRequest, forwardToWD1, approveByWD1, rejectLetterRequest, r
 
 // Helper function to transform database record to LetterRequest type
 function transformLetterRequest(req: any): LetterRequest {
+  // Normalize status to use hyphen instead of underscore for consistency with frontend
+  let status = req.status;
+  if (status === 'in_review') status = 'in-review';
+
   return {
     id: req.id,
     type: req.type,
     title: req.title,
     purpose: req.purpose,
     description: req.description,
-    status: req.status as any,
+    status: status as any,
     requestDate: req.request_date.toISOString(),
     approvedDate: req.approved_date?.toISOString(),
     completedDate: req.completed_date?.toISOString(),

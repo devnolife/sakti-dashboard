@@ -23,8 +23,9 @@ import {
 import { CorrespondenceTable } from "@/components/correspondence/correspondence-table"
 import { LetterRequestDetails } from "@/components/correspondence/letter-request-details"
 import { CreateLetterForm } from "@/components/correspondence/create-letter-form"
-import { getLetterRequestsForApproval, updateLetterRequestStatus } from "@/app/actions/correspondence-actions"
+import { getLetterRequestsForApproval, updateLetterRequestStatus, getLetterRequestsByProdi } from "@/app/actions/correspondence-actions"
 import type { LetterRequest, LetterStatus } from "@/types/correspondence"
+import { useAuth } from "@/context/auth-context"
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export function CorrespondenceProdiDashboard() {
+  const { user, isLoading: isAuthLoading } = useAuth()
   const { toast } = useToast()
   const [activeTab, setActiveTab] = useState<LetterStatus | "all">("all")
   const [requests, setRequests] = useState<LetterRequest[]>([])
@@ -54,9 +56,22 @@ export function CorrespondenceProdiDashboard() {
 
   // Fetch letter requests on component mount
   useEffect(() => {
+    if (isAuthLoading) return
+
     const fetchRequests = async () => {
       try {
-        const data = await getLetterRequestsForApproval("prodi")
+        let data: LetterRequest[] = []
+
+        if (user?.profile?.prodi_id) {
+          data = await getLetterRequestsByProdi(user.profile.prodi_id)
+        } else {
+          // Fallback for testing or if user has no prodi_id (e.g. admin viewing)
+          // Ideally we should show an error or empty state
+          console.log("No prodi_id found for user, fetching generic prodi requests")
+          // data = await getLetterRequestsForApproval("prodi") // Optional: keep old behavior as fallback?
+          // Better to show empty to avoid data leak
+        }
+
         setRequests(data)
         setFilteredRequests(data)
 
@@ -77,7 +92,7 @@ export function CorrespondenceProdiDashboard() {
     }
 
     fetchRequests()
-  }, [toast])
+  }, [toast, user, isAuthLoading])
 
   // Filter requests based on active tab, search query, and type filter
   useEffect(() => {
@@ -123,7 +138,7 @@ export function CorrespondenceProdiDashboard() {
         selectedRequest.id,
         "approved",
         undefined,
-        "Dr. Bambang Suprapto, M.T.", // In a real app, this would be the actual user name
+        user?.name || "Prodi Admin", 
       )
 
       if (result.success) {
@@ -137,8 +152,8 @@ export function CorrespondenceProdiDashboard() {
           req.id === selectedRequest.id
             ? {
               ...req,
-              status: "approved",
-              approvedBy: "Dr. Bambang Suprapto, M.T.",
+              status: "approved" as LetterStatus,
+              approvedBy: user?.name || "Prodi Admin",
               approvedDate: new Date().toISOString(),
             }
             : req,
@@ -297,9 +312,11 @@ export function CorrespondenceProdiDashboard() {
   // Handle successful letter creation
   const handleLetterCreated = async () => {
     // Refresh the requests list
-    const data = await getLetterRequestsForApproval("prodi")
-    setRequests(data)
-    setFilteredRequests(data)
+    if (user?.profile?.prodi_id) {
+      const data = await getLetterRequestsByProdi(user.profile.prodi_id)
+      setRequests(data)
+      setFilteredRequests(data)
+    }
     setShowCreateLetterForm(false)
   }
 

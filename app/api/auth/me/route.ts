@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             nim: true,
+            prodi_id: true,
             major: true,
             department: true,
             semester: true,
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
             id: true,
             nip: true,
             department: true,
+            prodi_id: true,
             position: true,
             specialization: true,
             phone: true,
@@ -50,6 +52,7 @@ export async function GET(request: NextRequest) {
             id: true,
             nip: true,
             department: true,
+            prodi_id: true,
             position: true,
             phone: true,
             office: true

@@ -92,8 +92,12 @@ export async function updateLetterRequestStatus(
   updatedBy?: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
+    // Normalize status for DB (convert in-review to in_review)
+    let dbStatus = newStatus as string;
+    if (dbStatus === 'in-review') dbStatus = 'in_review';
+
     const updateData: any = {
-      status: newStatus,
+      status: dbStatus as any,
       updated_at: new Date()
     }
 

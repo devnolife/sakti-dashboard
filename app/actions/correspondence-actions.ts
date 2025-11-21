@@ -6,7 +6,8 @@ export {
   getLetterRequestsForApproval,
   getStudentLetterRequests,
   getLetterRequestById,
-  getAllLetterRequests
+  getAllLetterRequests,
+  getLetterRequestsByProdi
 } from './correspondence/letter-requests';
 
 // Letter operation functions

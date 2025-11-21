@@ -111,7 +111,12 @@ export function ThesisSubmissionsTable({ submissions }: ThesisSubmissionsTablePr
                       {submission.title}
                     </div>
                   </TableCell>
-                  <TableCell>{format(new Date(submission.submissionDate), "dd MMM yyyy")}</TableCell>
+                  <TableCell>
+                    {submission.submissionDate
+                      ? format(new Date(submission.submissionDate), "dd MMM yyyy")
+                      : "-"
+                    }
+                  </TableCell>
                   <TableCell>{getStatusBadge(submission.status)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
