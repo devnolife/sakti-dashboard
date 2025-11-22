@@ -11,7 +11,6 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-production": "tsx prisma/seed-production.ts",
-    "db:seed-all": "tsx prisma/seed-all.ts",
     "seed:master-data": "tsx prisma/seeds/master-data-seed.ts",
     "seed:letter-types": "tsx scripts/seed-letter-master-data.ts",
     "seed:student": "tsx scripts/seed-single-student.ts",

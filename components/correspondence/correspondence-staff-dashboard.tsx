@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CorrespondenceTable } from "@/components/staff_tu/correspondence-table"
 import { CorrespondenceFilters } from "@/components/correspondence/correspondence-filters"
-import { LetterCreationDialog } from "@/components/correspondence/letter-creation-dialog"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -22,12 +22,12 @@ import { useToast } from "@/hooks/use-toast"
 import type { LetterRequest } from "@/types/correspondence"
 
 export function CorrespondenceStaffDashboard() {
+  const router = useRouter()
   const { user, isLoading: authLoading } = useAuth()
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [requests, setRequests] = useState<LetterRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<LetterRequest[]>([])
-  const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [activeTab, setActiveTab] = useState("all")
   const [filters, setFilters] = useState({
     status: "all",
@@ -286,7 +286,7 @@ export function CorrespondenceStaffDashboard() {
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="text-2xl font-bold tracking-tight">Manajemen Korespondensi</h1>
         <div className="flex gap-2">
-          <Button onClick={() => setShowCreateDialog(true)}>
+          <Button onClick={() => router.push('/dashboard/staff_tu/correspondence/new')}>
             <Plus className="w-4 h-4 mr-2" />
             Buat Surat
           </Button>
@@ -429,11 +429,6 @@ export function CorrespondenceStaffDashboard() {
           />
         </TabsContent>
       </Tabs>
-
-      <LetterCreationDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-      />
 
       <NumberingConfigDialog
         open={showNumberingConfig}

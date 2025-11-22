@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Plus, BookOpen, Trash2 } from "lucide-react"
+import { Plus, BookOpen, Trash2, CheckCircle } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -28,6 +28,7 @@ interface MasalahSurat {
   id: number
   nama: string
   kode: string
+  masalah?: string
 }
 
 interface Tujuan {
@@ -198,7 +199,7 @@ export default function KetentuanSuratPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 p-6 space-y-6">
+      <div className="pt-4 space-y-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/4"></div>
           <div className="h-64 bg-gray-200 rounded"></div>
@@ -208,31 +209,37 @@ export default function KetentuanSuratPage() {
   }
 
   return (
-    <div className="flex-1 p-6 space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Buat Ketentuan Surat</h2>
-        <p className="text-muted-foreground">
-          Gabungkan jenis, tujuan, dan masalah surat menjadi ketentuan baru
-        </p>
+    <div className="pt-4 space-y-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
+            Ketentuan Surat
+          </h2>
+          <p className="text-muted-foreground mt-1">
+            Gabungkan jenis, tujuan, dan masalah surat menjadi ketentuan baru
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Form Create Ketentuan */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
+        <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Plus className="w-5 h-5 text-primary" />
+              </div>
               Tambah Ketentuan Baru
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-base">
               Pilih kombinasi jenis, tujuan, dan masalah surat
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label>Jenis Surat *</Label>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Jenis Surat *</Label>
               <Select value={selectedJenis} onValueChange={setSelectedJenis}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 border-2">
                   <SelectValue placeholder="Pilih jenis surat" />
                 </SelectTrigger>
                 <SelectContent>
@@ -248,10 +255,10 @@ export default function KetentuanSuratPage() {
               </Select>
             </div>
 
-            <div>
-              <Label>Tujuan Surat *</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Tujuan Surat *</Label>
               <Select value={selectedTujuan} onValueChange={setSelectedTujuan} disabled={!selectedJenis}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 border-2">
                   <SelectValue placeholder="Pilih tujuan surat" />
                 </SelectTrigger>
                 <SelectContent>
@@ -266,16 +273,16 @@ export default function KetentuanSuratPage() {
                 </SelectContent>
               </Select>
               {!selectedJenis && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Pilih jenis surat terlebih dahulu
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1.5 flex items-center gap-1">
+                  <span>⚠️</span> Pilih jenis surat terlebih dahulu
                 </p>
               )}
             </div>
 
-            <div>
-              <Label>Masalah Surat *</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Masalah Surat *</Label>
               <Select value={selectedMasalah} onValueChange={setSelectedMasalah}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 border-2">
                   <SelectValue placeholder="Pilih masalah surat" />
                 </SelectTrigger>
                 <SelectContent className="max-w-sm">
@@ -303,43 +310,51 @@ export default function KetentuanSuratPage() {
                 </SelectContent>
               </Select>
               {selectedMasalah && masalahSurat.find(m => m.id.toString() === selectedMasalah)?.masalah && (
-                <div className="mt-1.5 p-2 bg-blue-50/50 dark:bg-blue-950/20 rounded text-xs text-muted-foreground border border-blue-100 dark:border-blue-900">
-                  💡 {masalahSurat.find(m => m.id.toString() === selectedMasalah)?.masalah}
+                <div className="mt-2 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg text-xs border-2 border-blue-100 dark:border-blue-900">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base">💡</span>
+                    <span className="text-blue-700 dark:text-blue-300 font-medium">
+                      {masalahSurat.find(m => m.id.toString() === selectedMasalah)?.masalah}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
 
-            <div>
-              <Label>Kode Ketentuan *</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Kode Ketentuan *</Label>
               <Input
                 value={kode}
                 onChange={(e) => setKode(e.target.value)}
                 placeholder="Contoh: kkp, ujian, dll"
+                className="h-11 border-2"
               />
             </div>
 
-            <div>
-              <Label>Nama Ketentuan *</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Nama Ketentuan *</Label>
               <Input
                 value={nama}
                 onChange={(e) => setNama(e.target.value)}
                 placeholder="Contoh: Kuliah Kerja Profesi"
+                className="h-11 border-2"
               />
             </div>
 
             <Button
               onClick={handleCreateKetentuan}
               disabled={creating || !selectedJenis || !selectedMasalah || !selectedTujuan || !kode || !nama}
-              className="w-full"
+              className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              size="lg"
             >
               {creating ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Membuat Ketentuan...
                 </>
               ) : (
                 <>
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-5 h-5 mr-2" />
                   Buat Ketentuan Surat
                 </>
               )}
@@ -348,59 +363,88 @@ export default function KetentuanSuratPage() {
         </Card>
 
         {/* Preview Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5" />
+        <Card className="border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <div className="p-2 rounded-lg bg-blue-500/10">
+                <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
               Informasi
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-base">
               Penjelasan tentang ketentuan surat
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-              <h4 className="font-semibold mb-2">Apa itu Ketentuan Surat?</h4>
-              <p className="text-sm text-muted-foreground">
-                Ketentuan surat adalah aturan khusus yang menggabungkan jenis surat, tujuan, dan masalah
-                menjadi satu kategori spesifik. Contoh: "KKP" adalah ketentuan untuk surat jenis PT & INSTANSI
-                dengan tujuan tertentu dan masalah Perlengkapan dan Pengajaran.
-              </p>
+          <CardContent className="space-y-5">
+            <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border-2 border-blue-200 dark:border-blue-800 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg mt-0.5">
+                  <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-blue-900 dark:text-blue-100 mb-2 text-base">Apa itu Ketentuan Surat?</h4>
+                  <p className="text-sm text-blue-800/80 dark:text-blue-200/80 leading-relaxed">
+                    Ketentuan surat adalah aturan khusus yang menggabungkan jenis surat, tujuan, dan masalah
+                    menjadi satu kategori spesifik. Contoh: "KKP" adalah ketentuan untuk surat jenis PT & INSTANSI
+                    dengan tujuan tertentu dan masalah Perlengkapan dan Pengajaran.
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2 text-sm">
-              <h4 className="font-semibold">Komponen Ketentuan:</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Badge variant="secondary">1</Badge>
-                  <div>
-                    <strong>Jenis Surat:</strong> Kategori utama surat (A, B, C, D)
+            <div className="space-y-3">
+              <h4 className="font-bold text-base flex items-center gap-2">
+                <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full"></div>
+                Komponen Ketentuan
+              </h4>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-purple-50/50 to-transparent dark:from-purple-950/20 dark:to-transparent border border-purple-100 dark:border-purple-900/50">
+                  <Badge variant="secondary" className="mt-0.5 font-bold">1</Badge>
+                  <div className="flex-1">
+                    <strong className="text-sm block mb-1">Jenis Surat</strong>
+                    <p className="text-sm text-muted-foreground">Kategori utama surat (A, B, C, D)</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Badge variant="secondary">2</Badge>
-                  <div>
-                    <strong>Tujuan Surat:</strong> Penerima atau tujuan pengiriman surat
+                <li className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-blue-50/50 to-transparent dark:from-blue-950/20 dark:to-transparent border border-blue-100 dark:border-blue-900/50">
+                  <Badge variant="secondary" className="mt-0.5 font-bold">2</Badge>
+                  <div className="flex-1">
+                    <strong className="text-sm block mb-1">Tujuan Surat</strong>
+                    <p className="text-sm text-muted-foreground">Penerima atau tujuan pengiriman surat</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Badge variant="secondary">3</Badge>
-                  <div>
-                    <strong>Masalah Surat:</strong> Topik atau perihal yang dibahas
+                <li className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-green-50/50 to-transparent dark:from-green-950/20 dark:to-transparent border border-green-100 dark:border-green-900/50">
+                  <Badge variant="secondary" className="mt-0.5 font-bold">3</Badge>
+                  <div className="flex-1">
+                    <strong className="text-sm block mb-1">Masalah Surat</strong>
+                    <p className="text-sm text-muted-foreground">Topik atau perihal yang dibahas</p>
                   </div>
                 </li>
               </ul>
             </div>
 
             {selectedJenis && selectedTujuan && selectedMasalah && (
-              <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border-2 border-green-200 dark:border-green-800">
-                <h4 className="font-semibold mb-2 text-green-800 dark:text-green-200">
-                  Preview Kombinasi:
-                </h4>
-                <div className="space-y-1 text-sm">
-                  <p><strong>Jenis:</strong> {jenisSurat.find(j => j.id.toString() === selectedJenis)?.nama}</p>
-                  <p><strong>Tujuan:</strong> {tujuanList.find(t => t.id.toString() === selectedTujuan)?.nama}</p>
-                  <p><strong>Masalah:</strong> {masalahSurat.find(m => m.id.toString() === selectedMasalah)?.nama}</p>
+              <div className="p-5 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/30 dark:via-emerald-950/30 dark:to-teal-950/30 rounded-xl border-2 border-green-200 dark:border-green-800 shadow-md animate-in fade-in slide-in-from-top-3 duration-300">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="p-2 bg-green-500/10 rounded-lg">
+                    <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h4 className="font-bold text-green-900 dark:text-green-100 text-base">
+                    Preview Kombinasi
+                  </h4>
+                </div>
+                <div className="space-y-2.5 ml-11">
+                  <div className="flex items-start gap-2">
+                    <Badge className="bg-green-600">Jenis</Badge>
+                    <span className="text-sm font-medium">{jenisSurat.find(j => j.id.toString() === selectedJenis)?.nama}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Badge className="bg-blue-600">Tujuan</Badge>
+                    <span className="text-sm font-medium">{tujuanList.find(t => t.id.toString() === selectedTujuan)?.nama}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Badge className="bg-purple-600">Masalah</Badge>
+                    <span className="text-sm font-medium">{masalahSurat.find(m => m.id.toString() === selectedMasalah)?.nama}</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -409,21 +453,29 @@ export default function KetentuanSuratPage() {
       </div>
 
       {/* Table of Existing Ketentuan */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Daftar Ketentuan Surat</CardTitle>
-          <CardDescription>
+      <Card className="border-2 shadow-lg">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl">Daftar Ketentuan Surat</CardTitle>
+          <CardDescription className="text-base">
             Ketentuan surat yang sudah dibuat ({ketentuanList.length} ketentuan)
           </CardDescription>
         </CardHeader>
         <CardContent>
           {ketentuanList.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Belum ada ketentuan surat</p>
+            <div className="text-center py-16">
+              <div className="mb-4 flex justify-center">
+                <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl">
+                  <BookOpen className="w-16 h-16 text-gray-400 dark:text-gray-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Belum Ada Ketentuan Surat</h3>
+              <p className="text-muted-foreground text-sm max-w-md mx-auto">
+                Mulai membuat ketentuan surat dengan mengisi form di sebelah kiri
+              </p>
             </div>
           ) : (
-            <Table>
+            <div className="rounded-lg border-2">
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Kode</TableHead>
@@ -469,6 +521,7 @@ export default function KetentuanSuratPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

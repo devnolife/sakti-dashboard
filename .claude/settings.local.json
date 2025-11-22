@@ -1,27 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cp:*)",
-      "Bash(npx tsx:*)",
-      "Bash(npx prisma db push:*)",
-      "Bash(pkill:*)",
-      "Bash(netstat:*)",
-      "Bash(findstr:*)",
-      "Bash(taskkill:*)",
-      "Bash(npm run dev:*)",
-      "Bash(curl:*)",
-      "Bash(nul)",
-      "Bash(dir:*)",
-      "Bash(\"d:\\devnolife\\apps-ft\\dashboard\\components\\admin-umum\\correspondence-drafts-management.tsx.tmp\")",
-      "Bash(npm install:*)",
-      "Bash(.env)",
-      "Bash(npm pkg set:*)",
-      "Bash(cat:*)",
-      "Bash(npm pkg:*)",
-      "Bash(npm run minio:test:*)",
-      "Bash(timeout /t 5)",
-      "Bash(rm:*)",
-      "Bash(npx prisma migrate dev)"
+      "Bash(set \"PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=tidak apa hilang yg penting seed kembali data dosen sebelumnya\")",
+      "Bash($env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION='tidak apa \"\" hilang yg penting seed kembali data dosen sebelumnya')",
+      "Bash(./reset-db.bat)"
     ],
     "deny": [],
     "ask": []
