@@ -4,7 +4,16 @@
       "Bash(set \"PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=tidak apa hilang yg penting seed kembali data dosen sebelumnya\")",
       "Bash($env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION='tidak apa \"\" hilang yg penting seed kembali data dosen sebelumnya')",
       "Bash(./reset-db.bat)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm run seed:super-admin:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

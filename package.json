@@ -20,7 +20,8 @@
     "seed:prodi": "tsx scripts/seed-prodi.ts",
     "fetch:prodi": "tsx scripts/fetch-prodi.ts",
     "import:prodi": "tsx scripts/import-prodi.ts",
-    "minio:test": "npx tsx --env-file=.env scripts/test-minio.ts"
+    "minio:test": "npx tsx --env-file=.env scripts/test-minio.ts",
+    "seed:super-admin": "tsx prisma/seeds/super-admin-seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { signIn as nextAuthSignIn, signOut as nextAuthSignOut } from "next-auth/react"
 import type { Role } from "@/types/role"
 
 interface User {
@@ -199,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
 
     try {
+      // Step 1: Login via custom API (for GraphQL sync and validation)
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -218,6 +220,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const mappedUser = {
         ...data.user,
         subRole: data.user.sub_role || data.user.subRole
+      }
+
+      // Step 2: Also create NextAuth session (for admin APIs)
+      try {
+        const result = await nextAuthSignIn("credentials", {
+          username,
+          password,
+          redirect: false,
+        })
+
+        if (result?.error) {
+          console.error("NextAuth sign-in error:", result.error)
+        } else {
+          console.log("✅ NextAuth session created successfully")
+        }
+      } catch (nextAuthError) {
+        console.error("NextAuth session creation failed:", nextAuthError)
+        // Continue even if NextAuth fails - custom auth is primary
       }
 
       // Store user and token in localStorage
@@ -244,7 +264,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      // Call logout API if needed for cleanup
+      // Step 1: Call custom logout API for cleanup
       const token = typeof window !== "undefined" ? localStorage.getItem("session-token") : null
       if (token) {
         await fetch("/api/auth/logout", {
@@ -255,10 +275,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
       }
     } catch (error) {
-      console.error("Logout API call failed:", error)
+      console.error("Custom logout API call failed:", error)
     }
 
-    // Clear local storage
+    // Step 2: Clear local storage
     if (typeof window !== "undefined") {
       localStorage.removeItem("user")
       localStorage.removeItem("session-token")
@@ -266,7 +286,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUser(null)
-    router.push("/login")
+
+    // Step 3: Sign out from NextAuth (this will clear NextAuth cookies and redirect)
+    await nextAuthSignOut({
+      redirect: true,
+      callbackUrl: "/login"
+    })
   }
 
   const value = {
