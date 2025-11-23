@@ -2,6 +2,9 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import * as XLSX from "xlsx";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import JSZip from "jszip";
 import {
   Printer,
   FileSpreadsheet,
@@ -12,6 +15,7 @@ import {
   ZoomIn,
   ZoomOut,
   AlertTriangle,
+  Package,
 } from "lucide-react";
 import LabCertificateTemplate from "@/components/certificates/lab-certificate-template";
 
@@ -216,6 +220,8 @@ function GenerateCertificatesPage() {
   const [zoom, setZoom] = useState(0.5);
   const [autoFit, setAutoFit] = useState(true);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [isGeneratingBatch, setIsGeneratingBatch] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
   const activeStudent = records[selectedIndex] || defaultStudentData;
@@ -852,6 +858,141 @@ function GenerateCertificatesPage() {
     };
   };
 
+  // Generate PDF for a single certificate
+  const generateCertificatePDF = async (
+    studentData: StudentDataType,
+    showBackPage: boolean = false
+  ): Promise<Blob> => {
+    // Create a temporary container for rendering
+    const tempContainer = document.createElement("div");
+    tempContainer.style.position = "fixed";
+    tempContainer.style.left = "-9999px";
+    tempContainer.style.top = "0";
+    tempContainer.style.width = "1123px"; // A4 landscape width in pixels at 96dpi
+    tempContainer.style.height = "794px"; // A4 landscape height in pixels at 96dpi
+    document.body.appendChild(tempContainer);
+
+    try {
+      // Dynamically import React and ReactDOM for rendering
+      const React = (await import("react")).default;
+      const ReactDOM = (await import("react-dom/client")).default;
+
+      // Create root and render certificate
+      const root = ReactDOM.createRoot(tempContainer);
+
+      // Wait for component to render
+      await new Promise<void>((resolve) => {
+        root.render(
+          React.createElement(LabCertificateTemplate, {
+            data: mapStudentDataToLabCertificate(studentData),
+            template: "modern",
+            showBack: showBackPage,
+          })
+        );
+        // Give time for QR codes to generate
+        setTimeout(resolve, 2000);
+      });
+
+      // Capture the rendered content
+      const canvas = await html2canvas(tempContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: 1123,
+        height: 794,
+        backgroundColor: "#ffffff",
+      });
+
+      // Create PDF
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      pdf.addImage(imgData, "PNG", 0, 0, 297, 210);
+
+      // Cleanup
+      root.unmount();
+      document.body.removeChild(tempContainer);
+
+      // Return PDF as blob
+      return pdf.output("blob");
+    } catch (error) {
+      // Cleanup on error
+      document.body.removeChild(tempContainer);
+      throw error;
+    }
+  };
+
+  // Download all certificates as ZIP
+  const handleDownloadAllAsZip = async () => {
+    if (records.length === 0) {
+      alert("Tidak ada data sertifikat untuk diunduh.");
+      return;
+    }
+
+    setIsGeneratingBatch(true);
+    setBatchProgress({ current: 0, total: records.length });
+
+    try {
+      const zip = new JSZip();
+
+      // Generate PDF for each student (front page only)
+      for (let i = 0; i < records.length; i++) {
+        const student = records[i];
+        setBatchProgress({ current: i + 1, total: records.length });
+
+        // Generate front page PDF
+        const pdfBlob = await generateCertificatePDF(student, false);
+
+        // Create safe filename: Name_Certificate-Number.pdf
+        const safeName = student.name
+          .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
+          .replace(/\s+/g, "_") // Replace spaces with underscore
+          .substring(0, 50); // Limit length
+
+        const safeCertId = student.verificationId
+          .replace(/\//g, "-") // Replace / with -
+          .replace(/[^a-zA-Z0-9\-]/g, ""); // Remove other special chars
+
+        const filename = `${safeName}_${safeCertId}.pdf`;
+
+        // Add to ZIP
+        zip.file(filename, pdfBlob);
+      }
+
+      // Generate ZIP file
+      const zipBlob = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      // Download ZIP
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `Sertifikat_Laboratorium_${new Date().getTime()}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+
+      alert(
+        `✅ Berhasil mengunduh ${records.length} sertifikat dalam format ZIP!`
+      );
+    } catch (error) {
+      console.error("Error generating batch PDFs:", error);
+      alert(
+        "Terjadi kesalahan saat generate sertifikat. Silakan coba lagi atau hubungi administrator."
+      );
+    } finally {
+      setIsGeneratingBatch(false);
+      setBatchProgress({ current: 0, total: 0 });
+    }
+  };
+
   const nextRecord = () =>
     setSelectedIndex((i) => (i + 1) % (records.length || 1));
   const prevRecord = () =>
@@ -872,7 +1013,7 @@ function GenerateCertificatesPage() {
     []
   );
   const disableAutoFit = () => {
-    if (autoFit) setAutoFit(false);
+    setAutoFit(false);
   };
 
   return (
@@ -1078,6 +1219,7 @@ function GenerateCertificatesPage() {
                   onClick={handlePrint}
                   className="ml-auto"
                   title="Print sertifikat dengan ukuran A4 Landscape"
+                  disabled={!records.length || isGeneratingBatch}
                 >
                   <Printer className="w-3 h-3" />
                   Print A4
@@ -1085,8 +1227,29 @@ function GenerateCertificatesPage() {
                 <Button
                   type="button"
                   size="sm"
+                  variant="secondary"
+                  onClick={handleDownloadAllAsZip}
+                  disabled={!records.length || isGeneratingBatch}
+                  title="Download semua sertifikat sebagai file ZIP"
+                >
+                  {isGeneratingBatch ? (
+                    <>
+                      <span className="animate-spin mr-1">⏳</span>
+                      {batchProgress.current}/{batchProgress.total}
+                    </>
+                  ) : (
+                    <>
+                      <Package className="w-3 h-3" />
+                      Download ZIP
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
                   variant="destructive"
                   onClick={reset}
+                  disabled={isGeneratingBatch}
                 >
                   Reset
                 </Button>
@@ -1105,83 +1268,46 @@ function GenerateCertificatesPage() {
                 </ul>
               </div>
 
-              {records.length > 0 && (
-                <p className="text-[11px] text-muted-foreground">
-                  Record aktif: {selectedIndex + 1} / {records.length}
-                </p>
+              {/* Batch Download Info */}
+              {records.length > 1 && (
+                <div className="rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 p-3">
+                  <p className="text-xs font-medium text-green-900 dark:text-green-100 mb-1">
+                    📦 Download Massal
+                  </p>
+                  <ul className="text-[10px] text-green-700 dark:text-green-300 space-y-0.5 ml-4 list-disc">
+                    <li>Klik "Download ZIP" untuk unduh semua sertifikat</li>
+                    <li>
+                      File: nama_nomor-sertifikat.pdf ({records.length} file)
+                    </li>
+                    <li>Proses membutuhkan waktu ~2-3 detik per sertifikat</li>
+                    <li>Hasil dalam 1 file ZIP siap cetak</li>
+                  </ul>
+                </div>
               )}
-              {error && (
-                <Alert variant="destructive" className="text-xs">
-                  <AlertTriangle className="w-4 h-4" />
-                  <div>
-                    <AlertTitle>Upload Error</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
+
+              {/* Batch Progress Indicator */}
+              {isGeneratingBatch && (
+                <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-3">
+                  <p className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-2">
+                    ⏳ Sedang generate PDF...
+                  </p>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                    <div
+                      className="bg-amber-600 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${
+                          (batchProgress.current / batchProgress.total) * 100
+                        }%`,
+                      }}
+                    />
                   </div>
-                </Alert>
-              )}
-              {!!warnings.length && (
-                <Alert className="text-xs max-h-40 overflow-auto">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" />
-                  <div>
-                    <AlertTitle>Warning</AlertTitle>
-                    <AlertDescription>
-                      <ul className="list-disc ml-4 space-y-1">
-                        {warnings.map((w, i) => (
-                          <li key={i}>{w}</li>
-                        ))}
-                      </ul>
-                    </AlertDescription>
-                  </div>
-                </Alert>
-              )}
-              {records.length > 0 && (
-                <div className="border rounded-md">
-                  <Table className="text-xs">
-                    <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead className="w-8">#</TableHead>
-                        <TableHead>Nama</TableHead>
-                        <TableHead>Program</TableHead>
-                        <TableHead>Aksi</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {records.map((r, i) => (
-                        <TableRow
-                          key={i}
-                          data-state={
-                            i === selectedIndex ? "selected" : undefined
-                          }
-                          className="cursor-pointer"
-                          onClick={() => {
-                            setSelectedIndex(i);
-                            setShowBack(false);
-                          }}
-                        >
-                          <TableCell>{i + 1}</TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {r.name}
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {r.program}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedIndex(i);
-                                setShowBack(false);
-                              }}
-                            >
-                              Pilih
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <p className="text-[10px] text-amber-700 dark:text-amber-300">
+                    Progress: {batchProgress.current} / {batchProgress.total}{" "}
+                    sertifikat
+                  </p>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1">
+                    Mohon tunggu, jangan tutup halaman ini...
+                  </p>
                 </div>
               )}
             </CardContent>
