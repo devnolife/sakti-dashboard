@@ -12,14 +12,13 @@ Dokumentasi lengkap sistem dashboard Fakultas Teknik Universitas Muhammadiyah Ma
 
 ### 🔧 Setup & Konfigurasi
 
-Lihat dokumentasi di folder root:
-- `ADMIN_SYSTEM_GUIDE.md` - Panduan sistem admin
-- `AKUN-TESTING.md` - Akun untuk testing
-- `DIGITAL_SIGNATURE_GUIDE.md` - Panduan tanda tangan digital
-- `MINIO_SETUP.md` - Setup MinIO storage
-- `MINIO_PROXY_SOLUTION.md` - Solusi proxy MinIO
-- `TEMPLATE_VARIABLE_EDITOR_GUIDE.md` - Editor template variabel
-- `PRODI_MASTER_BACKUP.md` - Backup data master prodi
+- **[ADMIN_SYSTEM_GUIDE.md](./ADMIN_SYSTEM_GUIDE.md)** - Panduan sistem admin
+- **[AKUN-TESTING.md](./AKUN-TESTING.md)** - Akun untuk testing
+- **[DIGITAL_SIGNATURE_GUIDE.md](./DIGITAL_SIGNATURE_GUIDE.md)** - Panduan tanda tangan digital
+- **[MINIO_SETUP.md](./MINIO_SETUP.md)** - Setup MinIO storage
+- **[MINIO_PROXY_SOLUTION.md](./MINIO_PROXY_SOLUTION.md)** - Solusi proxy MinIO
+- **[TEMPLATE_VARIABLE_EDITOR_GUIDE.md](./TEMPLATE_VARIABLE_EDITOR_GUIDE.md)** - Editor template variabel
+- **[PRODI_MASTER_BACKUP.md](./PRODI_MASTER_BACKUP.md)** - Backup data master prodi
 
 ## 🗂️ Struktur Project
 
