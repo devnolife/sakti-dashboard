@@ -14,7 +14,6 @@ import {
   RotateCcw,
   ZoomIn,
   ZoomOut,
-  AlertTriangle,
   Package,
 } from "lucide-react";
 import LabCertificateTemplate from "@/components/certificates/lab-certificate-template";
@@ -28,15 +27,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 
 // Helpers for auto-generated fields
