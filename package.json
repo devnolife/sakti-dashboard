@@ -12,6 +12,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-production": "tsx prisma/seed-production.ts",
     "seed:master-data": "tsx prisma/seeds/master-data-seed.ts",
+    "seed:prodi-master": "tsx prisma/seeds/prodi-master-default.ts",
     "seed:letter-types": "tsx scripts/seed-letter-master-data.ts",
     "seed:student": "tsx scripts/seed-single-student.ts",
     "fetch:students": "tsx scripts/fetch-students-sinta.ts",

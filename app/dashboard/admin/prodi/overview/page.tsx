@@ -67,7 +67,9 @@ export default function ProdiOverviewPage() {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
         console.error('Error response:', errorData)
-        throw new Error(errorData.error || 'Failed to fetch prodi overview')
+        // Don't throw error, just set empty list
+        setProdiList([])
+        return
       }
 
       const result = await response.json()
@@ -75,7 +77,8 @@ export default function ProdiOverviewPage() {
       setProdiList(result.data || [])
     } catch (error) {
       console.error('Error fetching prodi overview:', error)
-      alert('Gagal memuat data prodi. Silakan coba lagi atau cek console untuk detail error.')
+      // Set empty list on error
+      setProdiList([])
     } finally {
       setLoading(false)
     }
@@ -121,6 +124,30 @@ export default function ProdiOverviewPage() {
       default:
         return status
     }
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="flex gap-2 items-center text-3xl font-bold">
+            <GraduationCap className="w-8 h-8" />
+            Data Sistem per Program Studi
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Kelola akun, dosen, dan dokumen berdasarkan program studi
+          </p>
+        </div>
+
+        <Card>
+          <CardContent className="py-12 text-center">
+            <div className="animate-spin mx-auto mb-4 w-16 h-16 border-4 border-primary border-t-transparent rounded-full" />
+            <p className="text-muted-foreground">Memuat data prodi...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   // Show empty state if no data

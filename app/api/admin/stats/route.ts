@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
             students: true,
             lecturers: true,
             laboratory_admins: true,
-            staff_tu: true
+            staff: true
           }
         }
       }
@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
       totalLaboratories
     ] = await Promise.all([
       prisma.letter_requests.count(),
-      prisma.letter_requests.count({ where: { status: "pending" } }),
+      prisma.letter_requests.count({ where: { status: "submitted" } }),
       prisma.laboratory_certificates.count(),
       prisma.laboratories.count()
     ])

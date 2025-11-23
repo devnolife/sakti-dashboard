@@ -37,7 +37,7 @@ interface Stats {
       students: number
       lecturers: number
       laboratory_admins: number
-      staff_tu: number
+      staff: number
     }
   }>
   system: {
@@ -304,7 +304,7 @@ export default function SuperAdminDashboard() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Staff TU</p>
-                      <p className="text-2xl font-bold">{prodi._count.staff_tu}</p>
+                      <p className="text-2xl font-bold">{prodi._count.staff}</p>
                     </div>
                   </div>
                 </CardContent>
