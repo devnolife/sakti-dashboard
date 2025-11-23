@@ -3,7 +3,8 @@
     "allow": [
       "Bash(set \"PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=tidak apa hilang yg penting seed kembali data dosen sebelumnya\")",
       "Bash($env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION='tidak apa \"\" hilang yg penting seed kembali data dosen sebelumnya')",
-      "Bash(./reset-db.bat)"
+      "Bash(./reset-db.bat)",
+      "Bash(npx prisma migrate:*)"
     ],
     "deny": [],
     "ask": []

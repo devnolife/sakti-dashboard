@@ -748,26 +748,27 @@ model payments {
 }
 
 model prodi {
-  kode                  String                  @id
-  nama                  String
-  jenjang               String
-  fakultas              String
-  akreditasi            String?
-  created_at            DateTime                @default(now())
-  updated_at            DateTime                @default(now())
-  academic_events       academic_events[]
-  budget_allocations    budget_allocations[]
-  budgets               budgets[]
-  courses               courses[]
-  curriculum            curriculum[]
-  exam_requirements     exam_requirements[]
-  laboratories          laboratories[]
-  laboratory_admins     laboratory_admins[]
-  lecturers             lecturers[]
-  letter_types          letter_types[]
-  reading_room_admins   reading_room_admins[]
-  staff                 staff[]
-  students              students[]
+  kode                    String                    @id
+  nama                    String
+  jenjang                 String
+  fakultas                String
+  akreditasi              String?
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @default(now())
+  academic_events         academic_events[]
+  budget_allocations      budget_allocations[]
+  budgets                 budgets[]
+  courses                 courses[]
+  curriculum              curriculum[]
+  exam_requirements       exam_requirements[]
+  laboratories            laboratories[]
+  laboratory_admins       laboratory_admins[]
+  laboratory_certificates laboratory_certificates[]
+  lecturers               lecturers[]
+  letter_types            letter_types[]
+  reading_room_admins     reading_room_admins[]
+  staff                   staff[]
+  students                students[]
   surat                 surat[]
   thesis_titles         thesis_titles[]
   announcements         announcements[]
@@ -1673,4 +1674,75 @@ model ketentuan_surat {
   tujuan     tujuan        @relation(fields: [id_tujuan], references: [id])
 
   @@unique([id_tujuan, id_masalah, id_jenis])
+}
+
+// ============================================
+// LABORATORY CERTIFICATE SYSTEM MODELS
+// ============================================
+
+model laboratory_certificates {
+  id                String   @id @default(cuid())
+  verification_id   String   @unique
+  certificate_title String
+  participant_name  String
+  program_name      String
+  subtitle          String   @db.Text
+  issue_date        DateTime @default(now())
+
+  // Stats
+  meetings                Int
+  total_score             Int
+  materials               Int
+  attendance_rate         Int
+  assignment_completion   Int
+  participation_score     Int
+
+  // Grades
+  overall_grade           String
+
+  // Learning Time
+  learning_hours          Int
+  weekly_data             Int[]
+
+  // Analytics
+  learning_velocity       Int
+  collaboration_score     Int
+  problem_solving_efficiency Int
+
+  // Competencies (JSON)
+  competencies            Json
+
+  // Technologies
+  technologies            String[]
+
+  // QR Code
+  qr_code_url             String?
+
+  // PDF Storage (MinIO)
+  pdf_url                 String?   // MinIO URL for the generated PDF
+  pdf_password            String?   // Password for PDF protection
+
+  // Digital Signature (HMAC-SHA256)
+  signature               String?   // HMAC-SHA256 signature
+  signature_data          Json?     // Data yang di-sign (untuk audit)
+  qr_signature_url        String?   // MinIO URL untuk QR code signature
+  signed_at               DateTime? // Timestamp signature dibuat
+  signed_by               String?   // User yang sign (nama + role)
+  verification_count      Int       @default(0) // Jumlah kali diverifikasi
+
+  // Prodi Association
+  prodi_id                String
+  created_by              String?   // laboratory_admin user_id
+
+  // Timestamps
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+
+  // Relations
+  prodi                   prodi     @relation(fields: [prodi_id], references: [kode], onDelete: Cascade)
+
+  @@index([prodi_id])
+  @@index([verification_id])
+  @@index([created_by])
+  @@index([created_at])
 }
