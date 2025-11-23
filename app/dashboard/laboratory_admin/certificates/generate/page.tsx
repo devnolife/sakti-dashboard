@@ -923,6 +923,41 @@ function GenerateCertificatesPage() {
       return;
     }
 
+    // ⚠️ SAFEGUARD: Check batch size
+    const MAX_RECOMMENDED = 50;
+    const MAX_ABSOLUTE = 100;
+
+    if (records.length > MAX_ABSOLUTE) {
+      const proceed = window.confirm(
+        `⚠️ PERINGATAN KRITIS!\n\n` +
+          `Anda mencoba generate ${records.length} sertifikat sekaligus.\n\n` +
+          `Ini dapat menyebabkan:\n` +
+          `• Browser crash/hang\n` +
+          `• Out of memory error\n` +
+          `• Proses gagal di tengah jalan\n\n` +
+          `REKOMENDASI: Split menjadi batch maksimal ${MAX_ABSOLUTE} sertifikat.\n\n` +
+          `Apakah Anda yakin ingin melanjutkan?\n` +
+          `(Estimasi waktu: ${Math.ceil((records.length * 2.5) / 60)} menit)`
+      );
+
+      if (!proceed) return;
+    } else if (records.length > MAX_RECOMMENDED) {
+      const proceed = window.confirm(
+        `⚠️ Perhatian!\n\n` +
+          `Anda akan generate ${records.length} sertifikat.\n` +
+          `Estimasi waktu: ${Math.ceil(
+            (records.length * 2.5) / 60
+          )} menit.\n\n` +
+          `Tips:\n` +
+          `• Jangan tutup tab ini\n` +
+          `• Jangan buka aplikasi berat lain\n` +
+          `• Pastikan laptop/PC dalam kondisi charging\n\n` +
+          `Lanjutkan?`
+      );
+
+      if (!proceed) return;
+    }
+
     setIsGeneratingBatch(true);
     setBatchProgress({ current: 0, total: records.length });
 
@@ -934,23 +969,46 @@ function GenerateCertificatesPage() {
         const student = records[i];
         setBatchProgress({ current: i + 1, total: records.length });
 
-        // Generate front page PDF
-        const pdfBlob = await generateCertificatePDF(student, false);
+        try {
+          // Generate front page PDF
+          const pdfBlob = await generateCertificatePDF(student, false);
 
-        // Create safe filename: Name_Certificate-Number.pdf
-        const safeName = student.name
-          .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
-          .replace(/\s+/g, "_") // Replace spaces with underscore
-          .substring(0, 50); // Limit length
+          // Create safe filename: Name_Certificate-Number.pdf
+          const safeName = student.name
+            .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
+            .replace(/\s+/g, "_") // Replace spaces with underscore
+            .substring(0, 50); // Limit length
 
-        const safeCertId = student.verificationId
-          .replace(/\//g, "-") // Replace / with -
-          .replace(/[^a-zA-Z0-9\-]/g, ""); // Remove other special chars
+          const safeCertId = student.verificationId
+            .replace(/\//g, "-") // Replace / with -
+            .replace(/[^a-zA-Z0-9\-]/g, ""); // Remove other special chars
 
-        const filename = `${safeName}_${safeCertId}.pdf`;
+          const filename = `${safeName}_${safeCertId}.pdf`;
 
-        // Add to ZIP
-        zip.file(filename, pdfBlob);
+          // Add to ZIP
+          zip.file(filename, pdfBlob);
+
+          // 🔧 OPTIMIZATION: Force garbage collection hint every 10 items
+          if ((i + 1) % 10 === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        } catch (error) {
+          console.error(
+            `Error generating certificate for ${student.name}:`,
+            error
+          );
+
+          // Ask user if they want to continue
+          const continueOnError = window.confirm(
+            `❌ Error saat generate sertifikat untuk:\n${student.name}\n\n` +
+              `Sudah berhasil: ${i} dari ${records.length}\n\n` +
+              `Lanjutkan dengan sertifikat berikutnya?`
+          );
+
+          if (!continueOnError) {
+            throw new Error("User cancelled batch generation");
+          }
+        }
       }
 
       // Generate ZIP file
@@ -970,12 +1028,23 @@ function GenerateCertificatesPage() {
       URL.revokeObjectURL(link.href);
 
       alert(
-        `✅ Berhasil mengunduh ${records.length} sertifikat dalam format ZIP!`
+        `✅ Berhasil mengunduh ${records.length} sertifikat dalam format ZIP!\n\n` +
+          `File telah tersimpan di folder Downloads Anda.`
       );
     } catch (error) {
       console.error("Error generating batch PDFs:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
       alert(
-        "Terjadi kesalahan saat generate sertifikat. Silakan coba lagi atau hubungi administrator."
+        `❌ Terjadi kesalahan saat generate sertifikat.\n\n` +
+          `Error: ${errorMessage}\n\n` +
+          `Saran:\n` +
+          `• Coba dengan batch lebih kecil (${MAX_RECOMMENDED} sertifikat)\n` +
+          `• Tutup tab/aplikasi lain untuk free up memory\n` +
+          `• Refresh halaman dan coba lagi\n` +
+          `• Hubungi administrator jika masalah berlanjut`
       );
     } finally {
       setIsGeneratingBatch(false);
@@ -1260,17 +1329,88 @@ function GenerateCertificatesPage() {
 
               {/* Batch Download Info */}
               {records.length > 1 && (
-                <div className="rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 p-3">
-                  <p className="text-xs font-medium text-green-900 dark:text-green-100 mb-1">
-                    📦 Download Massal
+                <div
+                  className={`rounded-md border p-3 ${
+                    records.length > 100
+                      ? "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800"
+                      : records.length > 50
+                      ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800"
+                      : "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800"
+                  }`}
+                >
+                  <p
+                    className={`text-xs font-medium mb-1 ${
+                      records.length > 100
+                        ? "text-red-900 dark:text-red-100"
+                        : records.length > 50
+                        ? "text-amber-900 dark:text-amber-100"
+                        : "text-green-900 dark:text-green-100"
+                    }`}
+                  >
+                    {records.length > 100
+                      ? "⚠️ PERINGATAN: Batch Terlalu Besar!"
+                      : records.length > 50
+                      ? "⚠️ Perhatian: Batch Besar"
+                      : "📦 Download Massal"}
                   </p>
-                  <ul className="text-[10px] text-green-700 dark:text-green-300 space-y-0.5 ml-4 list-disc">
-                    <li>Klik "Download ZIP" untuk unduh semua sertifikat</li>
-                    <li>
-                      File: nama_nomor-sertifikat.pdf ({records.length} file)
-                    </li>
-                    <li>Proses membutuhkan waktu ~2-3 detik per sertifikat</li>
-                    <li>Hasil dalam 1 file ZIP siap cetak</li>
+                  <ul
+                    className={`text-[10px] space-y-0.5 ml-4 list-disc ${
+                      records.length > 100
+                        ? "text-red-700 dark:text-red-300"
+                        : records.length > 50
+                        ? "text-amber-700 dark:text-amber-300"
+                        : "text-green-700 dark:text-green-300"
+                    }`}
+                  >
+                    {records.length > 100 ? (
+                      <>
+                        <li>
+                          <strong>
+                            ❌ TIDAK DIREKOMENDASIKAN ({records.length}{" "}
+                            sertifikat)
+                          </strong>
+                        </li>
+                        <li>Risiko TINGGI: Browser crash/hang</li>
+                        <li>
+                          Estimasi waktu: ~
+                          {Math.ceil((records.length * 2.5) / 60)} menit
+                        </li>
+                        <li>
+                          <strong>
+                            SARAN: Split menjadi maksimal 50-100 sertifikat per
+                            batch
+                          </strong>
+                        </li>
+                      </>
+                    ) : records.length > 50 ? (
+                      <>
+                        <li>Batch besar: {records.length} sertifikat</li>
+                        <li>
+                          Estimasi waktu: ~
+                          {Math.ceil((records.length * 2.5) / 60)} menit
+                        </li>
+                        <li>Pastikan tidak tutup tab selama proses</li>
+                        <li>
+                          Rekomendasi: Split menjadi batch lebih kecil jika
+                          memungkinkan
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li>
+                          Klik "Download ZIP" untuk unduh semua sertifikat
+                        </li>
+                        <li>
+                          File: nama_nomor-sertifikat.pdf ({records.length}{" "}
+                          file)
+                        </li>
+                        <li>
+                          Estimasi waktu: ~{Math.ceil(records.length * 2.5)}{" "}
+                          detik
+                        </li>
+                        <li>Hasil dalam 1 file ZIP siap cetak</li>
+                      </>
+                    )}
                   </ul>
                 </div>
               )}
