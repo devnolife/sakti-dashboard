@@ -62,19 +62,32 @@ interface User {
   username: string
   name: string
   role: string
+  sub_role?: string
   subRole?: string
+  is_active: boolean
   isActive: boolean
+  created_at: string
   createdAt: string
-  students: {
+  students?: {
     nim: string
     major: string
     department: string
   }
+  lecturers?: Array<{
+    nip: string
+    department: string
+    position: string
+  }>
   lecturerProfile?: {
     nip: string
     department: string
     position: string
   }
+  staff?: Array<{
+    nip: string
+    department: string
+    position: string
+  }>
   staffProfile?: {
     nip: string
     department: string
@@ -492,16 +505,42 @@ export default function ManajemenPenggunaPage() {
     return SUB_ROLES.find(r => r.value === subRole)?.label || subRole
   }
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
+  // Get role badge color
+  const getRoleBadgeColor = (role: string) => {
+    const colors: Record<string, string> = {
+      admin: 'bg-gradient-to-r from-red-500 to-pink-500 text-white border-0',
+      mahasiswa: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0',
+      dosen: 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0',
+      staff_tu: 'bg-gradient-to-r from-purple-500 to-violet-500 text-white border-0',
+      prodi: 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-0',
+      dekan: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-0',
+      admin_keuangan: 'bg-gradient-to-r from-yellow-500 to-orange-400 text-white border-0',
+      admin_umum: 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white border-0',
+      laboratory_admin: 'bg-gradient-to-r from-indigo-500 to-blue-600 text-white border-0',
+      reading_room_admin: 'bg-gradient-to-r from-teal-500 to-green-500 text-white border-0',
+      kepala_tata_usaha: 'bg-gradient-to-r from-lime-500 to-green-600 text-white border-0',
+      gkm: 'bg-gradient-to-r from-fuchsia-500 to-purple-500 text-white border-0'
+    }
+    return colors[role] || 'bg-gradient-to-r from-gray-500 to-slate-500 text-white border-0'
   }
 
-  // Check if user is loaded and has permission to manage users
+  // Format date
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return '-'
+
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return '-'
+
+      return date.toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    } catch (error) {
+      return '-'
+    }
+  }  // Check if user is loaded and has permission to manage users
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -600,7 +639,6 @@ export default function ManajemenPenggunaPage() {
                   <TableHead>Pengguna</TableHead>
                   <TableHead>Username/NIM/NIP</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead>Sub Role</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Tanggal Dibuat</TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
@@ -610,7 +648,7 @@ export default function ManajemenPenggunaPage() {
                 {loading ? (
                   Array.from({ length: 5 }, (_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={7}>
+                      <TableCell colSpan={6}>
                         <div className="flex items-center space-x-4">
                           <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
                           <div className="space-y-2">
@@ -623,7 +661,7 @@ export default function ManajemenPenggunaPage() {
                   ))
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-8 text-center">
+                    <TableCell colSpan={6} className="py-8 text-center">
                       <div className="flex flex-col items-center space-y-4">
                         <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full">
                           <UserX className="w-6 h-6 text-red-600" />
@@ -648,7 +686,7 @@ export default function ManajemenPenggunaPage() {
                   </TableRow>
                 ) : users.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-8 text-center">
+                    <TableCell colSpan={6} className="py-8 text-center">
                       <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                       <h3 className="text-lg font-medium">Tidak ada pengguna</h3>
                       <p className="text-muted-foreground">
@@ -679,29 +717,34 @@ export default function ManajemenPenggunaPage() {
                       <TableCell>
                         <div className="font-mono text-sm">
                           {user.students ? user.students.nim :
-                            user.lecturerProfile ? user.lecturerProfile.nip :
-                              user.staffProfile ? user.staffProfile.nip : user.username}
+                            user.lecturers?.[0] ? user.lecturers[0].nip :
+                              user.staff?.[0] ? user.staff[0].nip :
+                                user.lecturerProfile ? user.lecturerProfile.nip :
+                                  user.staffProfile ? user.staffProfile.nip : user.username}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">
-                          {getRoleLabel(user.role)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {user.subRole ? (
-                          <Badge variant="secondary">
-                            {getSubRoleLabel(user.subRole)}
+                        <div className="flex flex-col gap-1">
+                          <Badge className={getRoleBadgeColor(user.role)}>
+                            {getRoleLabel(user.role)}
                           </Badge>
-                        ) : '-'}
+                          {(user.sub_role || user.subRole) && (
+                            <span className="text-xs text-muted-foreground">
+                              {getSubRoleLabel(user.sub_role || user.subRole || '')}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={user.isActive ? "default" : "secondary"}>
-                          {user.isActive ? "Aktif" : "Nonaktif"}
+                        <Badge
+                          variant={user.is_active || user.isActive ? "default" : "secondary"}
+                          className={user.is_active || user.isActive ? "bg-green-500 hover:bg-green-600" : ""}
+                        >
+                          {user.is_active || user.isActive ? "Aktif" : "Nonaktif"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {formatDate(user.createdAt)}
+                        {formatDate(user.created_at || user.createdAt)}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>

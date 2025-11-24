@@ -178,6 +178,71 @@ export default function SuperAdminDashboard() {
         </div>
       </div>
 
+      {/* Program Studi Overview */}
+      <Card className="border-2 border-primary/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                Program Studi Fakultas Teknik
+              </CardTitle>
+              <CardDescription className="mt-1">
+                {stats.prodi.length} Program Studi Aktif
+              </CardDescription>
+            </div>
+            <Link href="/dashboard/admin/prodi/overview">
+              <Button variant="outline" size="sm">
+                Lihat Detail
+              </Button>
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {stats.prodi.map((prodi) => (
+              <Card key={prodi.kode} className="bg-muted/50">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-sm font-semibold">{prodi.nama}</CardTitle>
+                      <CardDescription className="text-xs mt-1">Kode: {prodi.kode}</CardDescription>
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {prodi._count.students + prodi._count.lecturers + prodi._count.staff}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-center gap-1">
+                      <GraduationCap className="h-3 w-3 text-blue-600" />
+                      <span className="text-muted-foreground">Mhs:</span>
+                      <span className="font-semibold">{prodi._count.students}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BookOpen className="h-3 w-3 text-green-600" />
+                      <span className="text-muted-foreground">Dosen:</span>
+                      <span className="font-semibold">{prodi._count.lecturers}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="h-3 w-3 text-purple-600" />
+                      <span className="text-muted-foreground">Staff:</span>
+                      <span className="font-semibold">{prodi._count.staff}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Activity className="h-3 w-3 text-orange-600" />
+                      <span className="text-muted-foreground">Lab:</span>
+                      <span className="font-semibold">{prodi._count.laboratory_admins}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Main Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-2">

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { verifyAuth } from '@/lib/auth-middleware'
 
 // GET - Fetch prodi overview statistics
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
           // Just count related applications for now
           const kkpAppCount = await prisma.kkp_applications.count({
             where: {
-              student: {
+              students: {
                 prodi_id: prodi.kode
               }
             }
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
 
           const examAppCount = await prisma.exam_applications.count({
             where: {
-              student: {
+              students: {
                 prodi_id: prodi.kode
               }
             }
