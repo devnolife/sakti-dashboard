@@ -22,7 +22,9 @@
     "fetch:prodi": "tsx scripts/fetch-prodi.ts",
     "import:prodi": "tsx scripts/import-prodi.ts",
     "minio:test": "npx tsx --env-file=.env scripts/test-minio.ts",
-    "seed:super-admin": "tsx prisma/seeds/super-admin-seed.ts"
+    "seed:super-admin": "tsx prisma/seeds/super-admin-seed.ts",
+    "seed:counters": "tsx scripts/seed-letter-counters.ts",
+    "letter-counters": "tsx scripts/show-letter-counters.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
