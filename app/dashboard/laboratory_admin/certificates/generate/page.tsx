@@ -213,6 +213,8 @@ function GenerateCertificatesPage() {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [error, setError] = useState<string | undefined>();
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [zoom, setZoom] = useState(0.5);
   const [autoFit, setAutoFit] = useState(true);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -245,6 +247,41 @@ function GenerateCertificatesPage() {
     setWarnings([]);
     setError(undefined);
     setUploadedFileName(null);
+    setSaved(false);
+  };
+
+  const handleSaveToDatabase = async () => {
+    if (!records.length) {
+      alert("No certificates to save");
+      return;
+    }
+
+    setSaving(true);
+    setError(undefined);
+
+    try {
+      const response = await fetch("/api/certificates/bulk", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ certificates: records }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save certificates");
+      }
+
+      setSaved(true);
+      alert(`Successfully saved ${data.count} certificates to database!`);
+    } catch (err: any) {
+      setError("Failed to save: " + (err?.message || "unknown error"));
+      alert("Error: " + (err?.message || "Failed to save certificates"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const processExcelFile = (file: File) => {
@@ -977,9 +1014,16 @@ function GenerateCertificatesPage() {
                     digit)
                   </p>
                   {records.length > 0 && (
-                    <p className="mt-1 text-[11px] text-muted-foreground">
-                      Total record: {records.length}
-                    </p>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-[11px] text-muted-foreground">
+                        Total record: {records.length}
+                      </p>
+                      {saved && (
+                        <p className="text-[11px] text-green-600 font-medium">
+                          ✓ Data tersimpan di database
+                        </p>
+                      )}
+                    </div>
                   )}
                   {uploading && (
                     <p className="mt-2 text-[11px] text-blue-600 animate-pulse">
@@ -1072,15 +1116,34 @@ function GenerateCertificatesPage() {
                   <RotateCcw className="w-3 h-3" />
                 </Button>
                 <Separator orientation="vertical" className="h-8" />
+                <Button type="button" size="sm" onClick={handlePrint}>
+                  <Printer className="w-3 h-3 mr-1" />
+                  Print
+                </Button>
+                <Separator orientation="vertical" className="h-8" />
                 <Button
                   type="button"
                   size="sm"
-                  onClick={handlePrint}
-                  className="ml-auto"
-                  title="Print sertifikat dengan ukuran A4 Landscape"
+                  variant={saved ? "secondary" : "default"}
+                  onClick={handleSaveToDatabase}
+                  disabled={saving || !records.length || saved}
                 >
-                  <Printer className="w-3 h-3" />
-                  Print A4
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                      Saving...
+                    </>
+                  ) : saved ? (
+                    <>
+                      <Download className="w-3 h-3 mr-1" />
+                      Saved
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3 h-3 mr-1" />
+                      Save to DB
+                    </>
+                  )}
                 </Button>
                 <Button
                   type="button"
@@ -1091,20 +1154,6 @@ function GenerateCertificatesPage() {
                   Reset
                 </Button>
               </div>
-
-              {/* Print Instructions - Always visible */}
-              <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 p-3">
-                <p className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
-                  📄 Pengaturan Print
-                </p>
-                <ul className="text-[10px] text-blue-700 dark:text-blue-300 space-y-0.5 ml-4 list-disc">
-                  <li>Ukuran kertas: A4 Landscape</li>
-                  <li>Margin: None (0mm)</li>
-                  <li>Background graphics: ON</li>
-                  <li>Scale: 100%</li>
-                </ul>
-              </div>
-
               {records.length > 0 && (
                 <p className="text-[11px] text-muted-foreground">
                   Record aktif: {selectedIndex + 1} / {records.length}

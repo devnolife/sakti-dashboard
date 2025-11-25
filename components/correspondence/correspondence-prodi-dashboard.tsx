@@ -23,7 +23,9 @@ import {
 import { CorrespondenceTable } from "@/components/correspondence/correspondence-table"
 import { LetterRequestDetails } from "@/components/correspondence/letter-request-details"
 import { CreateLetterForm } from "@/components/correspondence/create-letter-form"
-import { getLetterRequestsForApproval, updateLetterRequestStatus, getLetterRequestsByProdi } from "@/app/actions/correspondence-actions"
+import { NumberingSystemCard } from "@/components/correspondence/numbering-system-card"
+import { NextNumbersCard } from "@/components/correspondence/next-numbers-card"
+import { updateLetterRequestStatus, getLetterRequestsByProdi } from "@/app/actions/correspondence-actions"
 import type { LetterRequest, LetterStatus } from "@/types/correspondence"
 import { useAuth } from "@/context/auth-context"
 import {
@@ -53,6 +55,7 @@ export function CorrespondenceProdiDashboard() {
   const [rejectionReason, setRejectionReason] = useState("")
   const [letterTypes, setLetterTypes] = useState<string[]>([])
   const [showCreateLetterForm, setShowCreateLetterForm] = useState(false)
+  const [prodiId, setProdiId] = useState<string | null>(null)
 
   // Fetch letter requests on component mount
   useEffect(() => {
@@ -63,6 +66,7 @@ export function CorrespondenceProdiDashboard() {
         let data: LetterRequest[] = []
 
         if (user?.profile?.prodi_id) {
+          setProdiId(user.profile.prodi_id)
           data = await getLetterRequestsByProdi(user.profile.prodi_id)
         } else {
           // Fallback for testing or if user has no prodi_id (e.g. admin viewing)
@@ -347,6 +351,12 @@ export function CorrespondenceProdiDashboard() {
           <FilePlus className="w-4 h-4" />
           Buat Surat untuk Mahasiswa
         </Button>
+      </div>
+
+      {/* Numbering System Cards */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <NumberingSystemCard />
+        {prodiId && <NextNumbersCard prodiId={prodiId} />}
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

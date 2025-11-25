@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -24,145 +24,177 @@ import {
   Clock,
   CheckCircle,
   User,
-  GraduationCap
+  GraduationCap,
+  Trash2,
+  Loader2,
+  Lock,
+  Copy,
+  QrCode,
+  Shield
 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
-const certificateHistory = [
-  {
-    id: "cert-001",
-    title: "Juara 1 Programming Contest 2024",
-    recipient: {
-      name: "Ahmad Fauzi",
-      nim: "12345678",
-      program: "Informatika"
-    },
-    template: "Modern",
-    category: "Achievement",
-    createdDate: "2024-01-15",
-    createdBy: "Admin Lab",
-    downloadCount: 3,
-    status: "active",
-    event: "Programming Contest 2024",
-    description: "Penghargaan untuk juara pertama dalam kompetisi programming tingkat nasional"
-  },
-  {
-    id: "cert-002", 
-    title: "Best Presenter Workshop AI",
-    recipient: {
-      name: "Siti Nurhaliza",
-      nim: "23456789",
-      program: "Sistem Informasi"
-    },
-    template: "Academic",
-    category: "Workshop",
-    createdDate: "2024-01-14",
-    createdBy: "Dr. Maya Sari",
-    downloadCount: 2,
-    status: "active",
-    event: "AI Workshop Series",
-    description: "Penghargaan untuk presenter terbaik dalam workshop artificial intelligence"
-  },
-  {
-    id: "cert-003",
-    title: "Outstanding Student Achievement",
-    recipient: {
-      name: "Budi Santoso",
-      nim: "34567890", 
-      program: "Informatika"
-    },
-    template: "Classic",
-    category: "Academic",
-    createdDate: "2024-01-13",
-    createdBy: "Admin Lab",
-    downloadCount: 5,
-    status: "active",
-    event: "Academic Excellence 2024",
-    description: "Penghargaan untuk mahasiswa berprestasi dengan IPK tertinggi"
-  },
-  {
-    id: "cert-004",
-    title: "Completion Certificate - Web Dev Bootcamp",
-    recipient: {
-      name: "Dewi Anggraini",
-      nim: "45678901",
-      program: "Sistem Informasi"
-    },
-    template: "Corporate",
-    category: "Training",
-    createdDate: "2024-01-12",
-    createdBy: "Training Team",
-    downloadCount: 1,
-    status: "active",
-    event: "Web Development Bootcamp",
-    description: "Sertifikat penyelesaian bootcamp web development selama 3 bulan"
-  },
-  {
-    id: "cert-005",
-    title: "Innovation Award - Smart Campus",
-    recipient: {
-      name: "Rudi Hartono",
-      nim: "56789012",
-      program: "Informatika"
-    },
-    template: "Creative", 
-    category: "Innovation",
-    createdDate: "2024-01-11",
-    createdBy: "Innovation Team",
-    downloadCount: 4,
-    status: "active",
-    event: "Smart Campus Innovation",
-    description: "Penghargaan inovasi terbaik dalam pengembangan sistem smart campus"
-  },
-  {
-    id: "cert-006",
-    title: "Research Excellence Certificate",
-    recipient: {
-      name: "Maya Sari",
-      nim: "67890123",
-      program: "Data Science"
-    },
-    template: "Academic",
-    category: "Research",
-    createdDate: "2024-01-10",
-    createdBy: "Research Center",
-    downloadCount: 2,
-    status: "active",
-    event: "Research Symposium 2024",
-    description: "Sertifikat untuk penelitian terbaik dalam bidang machine learning"
+interface Certificate {
+  id: string
+  verification_id: string
+  certificate_title: string
+  participant_name: string
+  program_name: string
+  subtitle: string
+  issue_date: string
+  meetings: number
+  total_score: number
+  materials: number
+  attendance_rate: number
+  assignment_completion: number
+  participation_score: number
+  overall_grade: string
+  learning_hours: number
+  weekly_data: number[]
+  learning_velocity: number
+  collaboration_score: number
+  problem_solving_efficiency: number
+  competencies: any
+  technologies: string[]
+  qr_code_url: string | null
+  pdf_url: string | null
+  pdf_password: string | null
+  signature: string | null
+  qr_signature_url: string | null
+  signed_at: string | null
+  signed_by: string | null
+  verification_count: number
+  prodi_id: string
+  created_by: string | null
+  created_at: string
+  updated_at: string
+  prodi: {
+    kode: string
+    nama: string
   }
-]
-
-const categoryColors = {
-  Achievement: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-  Academic: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300", 
-  Workshop: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  Training: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-  Innovation: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
-  Research: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
 }
 
 export default function CertificateHistoryPage() {
+  const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedTemplate, setSelectedTemplate] = useState("all")
   const [selectedPeriod, setSelectedPeriod] = useState("all")
+  const [certificates, setCertificates] = useState<Certificate[]>([])
+  const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
 
-  const filteredHistory = certificateHistory.filter(cert => {
-    const matchesSearch = cert.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         cert.recipient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         cert.recipient.nim.includes(searchQuery) ||
-                         cert.event.toLowerCase().includes(searchQuery.toLowerCase())
-    
-    const matchesCategory = selectedCategory === "all" || cert.category === selectedCategory
-    const matchesTemplate = selectedTemplate === "all" || cert.template === selectedTemplate
-    
-    // Simple period filtering (last 7 days, 30 days, etc.)
+  const fetchCertificates = async () => {
+    try {
+      setLoading(true)
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: "10",
+        search: searchQuery
+      })
+
+      const response = await fetch(`/api/certificates?${params}`)
+      const result = await response.json()
+
+      if (result.success) {
+        setCertificates(result.data)
+        setTotalPages(result.pagination.totalPages)
+        setTotal(result.pagination.total)
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to fetch certificates",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch certificates",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCertificates()
+  }, [page, searchQuery])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus sertifikat ini?")) return
+
+    try {
+      setDeleting(id)
+      const response = await fetch(`/api/certificates/${id}`, {
+        method: "DELETE"
+      })
+      const result = await response.json()
+
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "Certificate deleted successfully"
+        })
+        fetchCertificates()
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to delete certificate",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete certificate",
+        variant: "destructive"
+      })
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  const copyPassword = (password: string) => {
+    navigator.clipboard.writeText(password)
+    toast({
+      title: "Copied!",
+      description: "Password berhasil disalin ke clipboard"
+    })
+  }
+
+  const handleDownloadPDF = (cert: Certificate) => {
+    if (!cert.pdf_url) {
+      toast({
+        title: "Error",
+        description: "PDF tidak tersedia untuk sertifikat ini",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Show password info before downloading
+    if (cert.pdf_password) {
+      const message = `Password PDF: ${cert.pdf_password}\n\nPassword telah disalin ke clipboard. Klik OK untuk download PDF.`
+      copyPassword(cert.pdf_password)
+      if (confirm(message)) {
+        window.open(cert.pdf_url, '_blank')
+      }
+    } else {
+      window.open(cert.pdf_url, '_blank')
+    }
+  }
+
+  const filteredHistory = certificates.filter(cert => {
+    // Period filtering
     let matchesPeriod = true
     if (selectedPeriod !== "all") {
-      const certDate = new Date(cert.createdDate)
+      const certDate = new Date(cert.created_at)
       const now = new Date()
       const daysDiff = Math.floor((now.getTime() - certDate.getTime()) / (1000 * 60 * 60 * 24))
-      
+
       switch (selectedPeriod) {
         case "7days":
           matchesPeriod = daysDiff <= 7
@@ -175,19 +207,19 @@ export default function CertificateHistoryPage() {
           break
       }
     }
-    
-    return matchesSearch && matchesCategory && matchesTemplate && matchesPeriod
+
+    return matchesPeriod
   })
 
   const stats = {
-    total: certificateHistory.length,
-    thisMonth: certificateHistory.filter(cert => {
-      const certDate = new Date(cert.createdDate)
+    total: total,
+    thisMonth: certificates.filter(cert => {
+      const certDate = new Date(cert.created_at)
       const now = new Date()
       return certDate.getMonth() === now.getMonth() && certDate.getFullYear() === now.getFullYear()
     }).length,
-    totalDownloads: certificateHistory.reduce((sum, cert) => sum + cert.downloadCount, 0),
-    uniqueRecipients: new Set(certificateHistory.map(cert => cert.recipient.nim)).size
+    totalCerts: certificates.length,
+    uniqueParticipants: new Set(certificates.map(cert => cert.participant_name)).size
   }
 
   return (
@@ -218,7 +250,7 @@ export default function CertificateHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-2xl font-bold">{loading ? "-" : stats.total}</div>
             <p className="text-xs text-muted-foreground">Semua sertifikat</p>
           </CardContent>
         </Card>
@@ -231,7 +263,7 @@ export default function CertificateHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.thisMonth}</div>
+            <div className="text-2xl font-bold">{loading ? "-" : stats.thisMonth}</div>
             <p className="text-xs text-muted-foreground">Sertifikat baru</p>
           </CardContent>
         </Card>
@@ -239,13 +271,13 @@ export default function CertificateHistoryPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Download className="h-4 w-4 text-purple-500" />
-              Total Download
+              <FileText className="h-4 w-4 text-purple-500" />
+              Halaman Ini
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalDownloads}</div>
-            <p className="text-xs text-muted-foreground">Kali diunduh</p>
+            <div className="text-2xl font-bold">{loading ? "-" : stats.totalCerts}</div>
+            <p className="text-xs text-muted-foreground">Sertifikat ditampilkan</p>
           </CardContent>
         </Card>
 
@@ -253,12 +285,12 @@ export default function CertificateHistoryPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Users className="h-4 w-4 text-orange-500" />
-              Penerima Unik
+              Partisipan Unik
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.uniqueRecipients}</div>
-            <p className="text-xs text-muted-foreground">Mahasiswa berbeda</p>
+            <div className="text-2xl font-bold">{loading ? "-" : stats.uniqueParticipants}</div>
+            <p className="text-xs text-muted-foreground">Partisipan berbeda</p>
           </CardContent>
         </Card>
       </div>
@@ -295,44 +327,15 @@ export default function CertificateHistoryPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Cari sertifikat, nama, NIM, atau event..."
+                    placeholder="Cari berdasarkan nama, program, atau ID verifikasi..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
-                
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full lg:w-[150px]">
-                    <SelectValue placeholder="Kategori" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Semua Kategori</SelectItem>
-                    <SelectItem value="Achievement">Achievement</SelectItem>
-                    <SelectItem value="Academic">Academic</SelectItem>
-                    <SelectItem value="Workshop">Workshop</SelectItem>
-                    <SelectItem value="Training">Training</SelectItem>
-                    <SelectItem value="Innovation">Innovation</SelectItem>
-                    <SelectItem value="Research">Research</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                  <SelectTrigger className="w-full lg:w-[150px]">
-                    <SelectValue placeholder="Template" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Semua Template</SelectItem>
-                    <SelectItem value="Modern">Modern</SelectItem>
-                    <SelectItem value="Academic">Academic</SelectItem>
-                    <SelectItem value="Classic">Classic</SelectItem>
-                    <SelectItem value="Corporate">Corporate</SelectItem>
-                    <SelectItem value="Creative">Creative</SelectItem>
-                  </SelectContent>
-                </Select>
 
                 <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                  <SelectTrigger className="w-full lg:w-[150px]">
+                  <SelectTrigger className="w-full lg:w-[180px]">
                     <SelectValue placeholder="Periode" />
                   </SelectTrigger>
                   <SelectContent>
@@ -343,144 +346,245 @@ export default function CertificateHistoryPage() {
                   </SelectContent>
                 </Select>
 
-                {(searchQuery || selectedCategory !== "all" || selectedTemplate !== "all" || selectedPeriod !== "all") && (
+                {(searchQuery || selectedPeriod !== "all") && (
                   <Badge variant="secondary">
-                    {filteredHistory.length} dari {certificateHistory.length} sertifikat
+                    {filteredHistory.length} sertifikat
                   </Badge>
                 )}
               </div>
             </CardHeader>
 
             <CardContent>
-              <div className="space-y-4">
-                {filteredHistory.map((cert) => (
-                  <Card key={cert.id} className="hover:shadow-md transition-all duration-200">
-                    <CardContent className="p-4">
-                      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                        <div className="flex items-start gap-4 flex-1">
-                          <Avatar className="h-12 w-12 bg-gradient-to-br from-green-400 to-emerald-400">
-                            <AvatarFallback className="text-white font-semibold">
-                              {cert.recipient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                          
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between mb-2">
-                              <div>
-                                <h3 className="font-semibold text-lg">{cert.title}</h3>
-                                <p className="text-sm text-muted-foreground">{cert.description}</p>
-                              </div>
-                              <Badge className={categoryColors[cert.category as keyof typeof categoryColors]}>
-                                {cert.category}
-                              </Badge>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                              <div className="flex items-center gap-2">
-                                <User className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <div className="font-medium">{cert.recipient.name}</div>
-                                  <div className="text-muted-foreground">{cert.recipient.nim}</div>
-                                </div>
-                              </div>
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    {filteredHistory.map((cert) => (
+                      <Card key={cert.id} className="hover:shadow-md transition-all duration-200">
+                        <CardContent className="p-4">
+                          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                            <div className="flex items-start gap-4 flex-1">
+                              <Avatar className="h-12 w-12 bg-gradient-to-br from-green-400 to-emerald-400">
+                                <AvatarFallback className="text-white font-semibold">
+                                  {cert.participant_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                </AvatarFallback>
+                              </Avatar>
 
-                              <div className="flex items-center gap-2">
-                                <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <div className="font-medium">{cert.recipient.program}</div>
-                                  <div className="text-muted-foreground">Program Studi</div>
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between mb-2">
+                                  <div>
+                                    <h3 className="font-semibold text-lg">{cert.certificate_title}</h3>
+                                    <p className="text-sm text-muted-foreground">{cert.subtitle}</p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                      {cert.overall_grade}
+                                    </Badge>
+                                    {cert.signature && (
+                                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 flex items-center gap-1">
+                                        <Shield className="h-3 w-3" />
+                                        Signed
+                                      </Badge>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
 
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <div className="font-medium">{cert.template}</div>
-                                  <div className="text-muted-foreground">Template</div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mt-3">
+                                  <div className="flex items-center gap-2">
+                                    <User className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <div className="font-medium">{cert.participant_name}</div>
+                                      <div className="text-muted-foreground">Peserta</div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <div className="font-medium">{cert.program_name}</div>
+                                      <div className="text-muted-foreground">Program</div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <Award className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <div className="font-medium">{cert.total_score} poin</div>
+                                      <div className="text-muted-foreground">Total Skor</div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <div className="font-medium">
+                                        {new Date(cert.issue_date).toLocaleDateString('id-ID', {
+                                          day: '2-digit',
+                                          month: 'short',
+                                          year: 'numeric'
+                                        })}
+                                      </div>
+                                      <div className="text-muted-foreground">Tanggal terbit</div>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
 
-                              <div className="flex items-center gap-2">
-                                <Calendar className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <div className="font-medium">{cert.createdDate}</div>
-                                  <div className="text-muted-foreground">Tanggal dibuat</div>
+                                <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                    <span className="flex items-center gap-1">
+                                      <FileText className="h-3 w-3" />
+                                      ID: {cert.verification_id}
+                                    </span>
+                                    <span>
+                                      Prodi: {cert.prodi.nama}
+                                    </span>
+                                    {cert.pdf_password && (
+                                      <button
+                                        onClick={() => copyPassword(cert.pdf_password!)}
+                                        className="flex items-center gap-1 hover:text-primary transition-colors"
+                                        title="Copy PDF Password"
+                                      >
+                                        <Lock className="h-3 w-3" />
+                                        Password: {cert.pdf_password.substring(0, 4)}***
+                                        <Copy className="h-3 w-3 ml-1" />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    {cert.qr_signature_url && (
+                                      <Button
+                                        variant="default"
+                                        size="sm"
+                                        className="bg-blue-600 hover:bg-blue-700"
+                                        onClick={() => window.open(cert.qr_signature_url!, '_blank')}
+                                        title="Download QR Code Signature"
+                                      >
+                                        <QrCode className="h-4 w-4 mr-1" />
+                                        QR
+                                      </Button>
+                                    )}
+                                    {cert.pdf_url && (
+                                      <Button
+                                        variant="default"
+                                        size="sm"
+                                        className="bg-green-600 hover:bg-green-700"
+                                        onClick={() => handleDownloadPDF(cert)}
+                                      >
+                                        <Download className="h-4 w-4 mr-1" />
+                                        PDF
+                                      </Button>
+                                    )}
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => window.open(`/dashboard/laboratory_admin/certificates/preview?id=${cert.id}`, '_blank')}
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      onClick={() => handleDelete(cert.id)}
+                                      disabled={deleting === cert.id}
+                                    >
+                                      {deleting === cert.id ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                <span>Dibuat oleh: {cert.createdBy}</span>
-                                <span className="flex items-center gap-1">
-                                  <Download className="h-3 w-3" />
-                                  {cert.downloadCount}x downloaded
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Button variant="outline" size="sm">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button variant="outline" size="sm">
-                                  <Download className="h-4 w-4" />
-                                </Button>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        </CardContent>
+                      </Card>
+                    ))}
 
-                {filteredHistory.length === 0 && (
-                  <div className="text-center py-12">
-                    <ClipboardList className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Tidak ada sertifikat ditemukan</h3>
-                    <p className="text-muted-foreground">Coba ubah filter pencarian atau buat sertifikat baru</p>
+                    {filteredHistory.length === 0 && !loading && (
+                      <div className="text-center py-12">
+                        <ClipboardList className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">Tidak ada sertifikat ditemukan</h3>
+                        <p className="text-muted-foreground">
+                          {searchQuery ? "Coba ubah kata kunci pencarian" : "Belum ada sertifikat yang dibuat"}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t">
+                      <div className="text-sm text-muted-foreground">
+                        Halaman {page} dari {totalPages}
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPage(p => Math.max(1, p - 1))}
+                          disabled={page === 1}
+                        >
+                          Sebelumnya
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                          disabled={page === totalPages}
+                        >
+                          Selanjutnya
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="analytics">
           <div className="grid gap-6">
-            {/* Category Distribution */}
+            {/* Grade Distribution */}
             <Card>
               <CardHeader>
-                <CardTitle>Distribusi Kategori Sertifikat</CardTitle>
+                <CardTitle>Distribusi Nilai Sertifikat</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {Object.keys(categoryColors).map(category => {
-                    const count = certificateHistory.filter(cert => cert.category === category).length
-                    const percentage = Math.round((count / certificateHistory.length) * 100)
-                    
+                  {['A', 'B', 'C', 'D', 'E'].map(grade => {
+                    const count = certificates.filter(cert => cert.overall_grade === grade).length
+                    const percentage = certificates.length > 0
+                      ? Math.round((count / certificates.length) * 100)
+                      : 0
+
                     return (
-                      <div key={category} className="flex items-center justify-between">
+                      <div key={grade} className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${
-                            category === 'Achievement' ? 'from-yellow-400 to-yellow-600' :
-                            category === 'Academic' ? 'from-blue-400 to-blue-600' :
-                            category === 'Workshop' ? 'from-green-400 to-green-600' :
-                            category === 'Training' ? 'from-purple-400 to-purple-600' :
-                            category === 'Innovation' ? 'from-pink-400 to-pink-600' :
-                            'from-indigo-400 to-indigo-600'
+                            grade === 'A' ? 'from-green-400 to-green-600' :
+                            grade === 'B' ? 'from-blue-400 to-blue-600' :
+                            grade === 'C' ? 'from-yellow-400 to-yellow-600' :
+                            grade === 'D' ? 'from-orange-400 to-orange-600' :
+                            'from-red-400 to-red-600'
                           }`}></div>
-                          <span className="font-medium">{category}</span>
+                          <span className="font-medium">Grade {grade}</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="w-24 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                            <div 
+                            <div
                               className={`h-2 rounded-full bg-gradient-to-r ${
-                                category === 'Achievement' ? 'from-yellow-400 to-yellow-600' :
-                                category === 'Academic' ? 'from-blue-400 to-blue-600' :
-                                category === 'Workshop' ? 'from-green-400 to-green-600' :
-                                category === 'Training' ? 'from-purple-400 to-purple-600' :
-                                category === 'Innovation' ? 'from-pink-400 to-pink-600' :
-                                'from-indigo-400 to-indigo-600'
+                                grade === 'A' ? 'from-green-400 to-green-600' :
+                                grade === 'B' ? 'from-blue-400 to-blue-600' :
+                                grade === 'C' ? 'from-yellow-400 to-yellow-600' :
+                                grade === 'D' ? 'from-orange-400 to-orange-600' :
+                                'from-red-400 to-red-600'
                               }`}
                               style={{ width: `${percentage}%` }}
                             ></div>
@@ -492,6 +596,49 @@ export default function CertificateHistoryPage() {
                       </div>
                     )
                   })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Average Metrics */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Rata-rata Metrik</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">
+                      {certificates.length > 0
+                        ? Math.round(certificates.reduce((sum, c) => sum + c.attendance_rate, 0) / certificates.length)
+                        : 0}%
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">Kehadiran</div>
+                  </div>
+                  <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {certificates.length > 0
+                        ? Math.round(certificates.reduce((sum, c) => sum + c.assignment_completion, 0) / certificates.length)
+                        : 0}%
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">Tugas</div>
+                  </div>
+                  <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {certificates.length > 0
+                        ? Math.round(certificates.reduce((sum, c) => sum + c.collaboration_score, 0) / certificates.length)
+                        : 0}%
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">Kolaborasi</div>
+                  </div>
+                  <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {certificates.length > 0
+                        ? Math.round(certificates.reduce((sum, c) => sum + c.learning_velocity, 0) / certificates.length)
+                        : 0}%
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">Kecepatan Belajar</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
