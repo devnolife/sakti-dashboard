@@ -13,6 +13,7 @@ export async function generateDocumentNumber(params: {
   jenisSurat?: string; // A, B, C, D for surat
   tahun?: string;
 }) {
+  console.table("🚀 ~ generateDocumentNumber ~ params:", params)
   const { scope, prodiId, prodiCode, documentType, jenisSurat, tahun } = params;
   const currentYear = tahun || new Date().getFullYear().toString();
 
