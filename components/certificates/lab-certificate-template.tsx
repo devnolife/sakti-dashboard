@@ -237,40 +237,36 @@ export default function LabCertificateTemplate({
           data.certificateId || "UNKNOWN"
         );
 
-        // QR Code for digital signature verification
-        const signatureVerificationURL = `https://sintekmu.ac.id/verify/signature/${encryptedData}`;
+        console.log("Encrypted QR Code Data:", encryptedData);
 
-        // QR Code for certificate verification (existing one in footer)
-        const certificateVerificationURL = `https://sintekmu.ac.id/verify/${encryptedData}`;
+        // Simplified QR Code - single URL format for better scannability
+        // Menggunakan satu format URL saja untuk semua QR Code
+        const verificationURL = `https://sintekmu.ac.id/verify/${encryptedData}`;
+
+        // Konfigurasi QR Code yang dioptimalkan untuk scannability
+        const qrConfig = {
+          errorCorrectionLevel: "M" as const, // Medium error correction (15%) - balance antara size dan reliability
+          margin: 2, // Margin yang cukup untuk memudahkan scanning
+          color: {
+            dark: "#1f2937",
+            light: "#ffffff",
+          },
+          // Type number akan otomatis dipilih berdasarkan panjang data
+          // Dengan URL yang lebih pendek, QR Code akan lebih simple dan mudah dipindai
+        };
 
         if (signatureQRRef.current) {
-          await QRCode.toCanvas(
-            signatureQRRef.current,
-            signatureVerificationURL,
-            {
-              width: 80,
-              margin: 1,
-              color: {
-                dark: "#1f2937",
-                light: "#ffffff",
-              },
-            }
-          );
+          await QRCode.toCanvas(signatureQRRef.current, verificationURL, {
+            ...qrConfig,
+            width: 80,
+          });
         }
 
         if (verificationQRRef.current) {
-          await QRCode.toCanvas(
-            verificationQRRef.current,
-            certificateVerificationURL,
-            {
-              width: 48,
-              margin: 0,
-              color: {
-                dark: "#1f2937",
-                light: "#ffffff",
-              },
-            }
-          );
+          await QRCode.toCanvas(verificationQRRef.current, verificationURL, {
+            ...qrConfig,
+            width: 48,
+          });
         }
 
         setQrLoaded(true);
