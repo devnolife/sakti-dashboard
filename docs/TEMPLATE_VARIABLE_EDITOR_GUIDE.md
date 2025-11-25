@@ -31,7 +31,7 @@ Successfully implemented a complete **Interactive Template Variable Editor** sys
 - ✅ `components/templates/template-preview-dialog.tsx` - Read-only preview
 
 ### 4. Updated Pages
-- ✅ `app/admin_umum/templates/page.tsx` - Added Preview & Edit Variables buttons
+- ✅ `app/dashboard/admin_umum/templates/page.tsx` - Added Preview & Edit Variables buttons
 - ✅ `app/dashboard/prodi/templates/page.tsx` - Added Preview & Edit Variables buttons
 
 ### 5. Database Schema

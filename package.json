@@ -24,6 +24,7 @@
     "minio:test": "npx tsx --env-file=.env scripts/test-minio.ts",
     "seed:super-admin": "tsx prisma/seeds/super-admin-seed.ts",
     "seed:counters": "tsx scripts/seed-letter-counters.ts",
+    "seed:admin-prodi": "tsx scripts/seed-admin-prodi.ts",
     "letter-counters": "tsx scripts/show-letter-counters.ts"
   },
   "dependencies": {

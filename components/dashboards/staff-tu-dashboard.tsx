@@ -129,7 +129,7 @@ export default function StaffTUDashboard({ activeSection }: StaffTUDashboardProp
 
         <Card className="overflow-hidden gradient-border card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Layanan Surat</CardTitle>
+            <CardTitle className="text-sm font-medium">Surat dan Dokumen</CardTitle>
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-mint/10">
               <Mail className="w-4 h-4 text-mint" />
             </div>

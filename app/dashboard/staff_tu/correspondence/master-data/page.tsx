@@ -98,10 +98,10 @@ export default function MasterDataPage() {
               <span className="text-xs font-medium uppercase tracking-wider">Master Data System</span>
             </div>
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              Informasi Persuratan
+              Master Data Surat dan Dokumen
             </h2>
             <p className="max-w-xl text-sm text-blue-100/90">
-              Pusat kendali referensi kategori, klasifikasi, dan aturan persuratan.
+              Pusat kendali referensi kategori, klasifikasi, dan aturan surat serta dokumen.
             </p>
           </div>
           <div className="hidden p-3 rounded-xl bg-white/10 backdrop-blur-md md:block">
@@ -244,14 +244,14 @@ export default function MasterDataPage() {
         </div>
       </div>
 
-      {/* Ketentuan Surat Section - Compact */}
+      {/* Ketentuan Dokumen Section - Compact */}
       <div className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <div className="flex items-center justify-center w-8 h-8 text-purple-600 bg-purple-100 rounded-lg dark:bg-purple-900/30 dark:text-purple-400">
             <BookOpen className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-lg font-bold tracking-tight">Ketentuan Khusus</h3>
+            <h3 className="text-lg font-bold tracking-tight">Ketentuan Dokumen</h3>
           </div>
         </div>
 

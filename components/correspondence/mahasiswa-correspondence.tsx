@@ -284,8 +284,8 @@ export function MahasiswaCorrespondence(_props: MahasiswaCorrespondenceProps) {
     <>
       <div className="flex flex-col items-start justify-between gap-3 mb-5 md:flex-row md:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Layanan Surat</h1>
-          <p className="text-sm text-muted-foreground">Ajukan dan pantau status permohonan surat Anda</p>
+          <h1 className="text-2xl font-bold tracking-tight">Surat dan Dokumen</h1>
+          <p className="text-sm text-muted-foreground">Ajukan dan pantau status permohonan surat dan dokumen Anda</p>
         </div>
 
         <Button

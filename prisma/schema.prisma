@@ -775,6 +775,7 @@ model prodi {
   classrooms            classrooms[]
   rekomendasi_judul     rekomendasi_judul[]
   template_uploads      template_uploads[]
+  ketentuan_surat       ketentuan_surat[]
 }
 
 model sessions {
@@ -1675,11 +1676,14 @@ model ketentuan_surat {
   id_count   Int?
   format_template String?  @db.Text
   description String?      @db.Text
+  is_global  Boolean       @default(true) // true = fakultas (semua prodi bisa lihat), false = prodi spesifik
+  prodi_id   String?       // null jika is_global=true, diisi jika is_global=false
 
   counter    document_counter? @relation(fields: [id_count], references: [id])
   jenis      jenis_surat       @relation(fields: [id_jenis], references: [id])
   masalah    masalah_surat     @relation(fields: [id_masalah], references: [id])
   tujuan     tujuan            @relation(fields: [id_tujuan], references: [id])
+  prodi      prodi?            @relation(fields: [prodi_id], references: [kode])
 
   @@unique([id_tujuan, id_masalah, id_jenis])
 }

@@ -97,7 +97,7 @@ export default function StaffTuDashboardPage() {
         <Card className="overflow-hidden transition-all duration-200 hover:shadow-md border-primary/10 hover:border-primary/30">
           <CardHeader className="pb-2 bg-gradient-to-r from-secondary/5 to-accent/5">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Layanan Surat</CardTitle>
+              <CardTitle className="text-lg">Surat dan Dokumen</CardTitle>
               <Link href="/dashboard/staff_tu/correspondence">
                 <Button variant="ghost" size="icon" className="text-secondary">
                   <ArrowRight className="w-4 h-4" />

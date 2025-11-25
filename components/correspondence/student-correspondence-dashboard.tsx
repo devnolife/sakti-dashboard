@@ -177,7 +177,7 @@ export function StudentCorrespondenceDashboard() {
     <>
       <div className="flex flex-col items-start justify-between gap-4 mb-6 md:flex-row md:items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Layanan Surat</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Surat dan Dokumen</h1>
           <p className="text-muted-foreground">Ajukan dan pantau status permohonan surat Anda</p>
         </div>
 
@@ -368,7 +368,7 @@ export function StudentCorrespondenceDashboard() {
               <FileText className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <CardTitle>Panduan Layanan Surat</CardTitle>
+              <CardTitle>Panduan Surat dan Dokumen</CardTitle>
               <CardDescription>Informasi tentang jenis surat dan prosedur pengajuan</CardDescription>
             </div>
           </div>

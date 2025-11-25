@@ -6,11 +6,19 @@ const prisma = new PrismaClient()
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id_jenis, id_masalah, id_tujuan, kode, nama } = body
+    const { id_jenis, id_masalah, id_tujuan, kode, nama, is_global = true, prodi_id = null } = body
 
     if (!id_jenis || !id_masalah || !id_tujuan || !kode || !nama) {
       return NextResponse.json(
         { error: 'All fields are required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate: if not global, prodi_id is required
+    if (!is_global && !prodi_id) {
+      return NextResponse.json(
+        { error: 'Prodi ID required for prodi-specific ketentuan' },
         { status: 400 }
       )
     }
@@ -49,12 +57,15 @@ export async function POST(request: NextRequest) {
         id_masalah,
         id_tujuan,
         kode,
-        nama
+        nama,
+        is_global,
+        prodi_id: is_global ? null : prodi_id
       },
       include: {
         tujuan: true,
         masalah: true,
-        jenis: true
+        jenis: true,
+        prodi: true
       }
     })
 

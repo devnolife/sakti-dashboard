@@ -9,7 +9,8 @@ export async function GET() {
       include: {
         tujuan: true,
         masalah: true,
-        jenis: true
+        jenis: true,
+        prodi: true
       },
       orderBy: { id: 'asc' }
     })
