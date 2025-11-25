@@ -2,6 +2,9 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import * as XLSX from "xlsx";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import JSZip from "jszip";
 import {
   Printer,
   FileSpreadsheet,
@@ -11,7 +14,7 @@ import {
   RotateCcw,
   ZoomIn,
   ZoomOut,
-  AlertTriangle,
+  Package,
 } from "lucide-react";
 import LabCertificateTemplate from "@/components/certificates/lab-certificate-template";
 
@@ -24,15 +27,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 
 // Helpers for auto-generated fields
@@ -218,6 +212,8 @@ function GenerateCertificatesPage() {
   const [zoom, setZoom] = useState(0.5);
   const [autoFit, setAutoFit] = useState(true);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [isGeneratingBatch, setIsGeneratingBatch] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
   const activeStudent = records[selectedIndex] || defaultStudentData;
@@ -889,6 +885,210 @@ function GenerateCertificatesPage() {
     };
   };
 
+  // Generate PDF for a single certificate
+  const generateCertificatePDF = async (
+    studentData: StudentDataType,
+    showBackPage: boolean = false
+  ): Promise<Blob> => {
+    // Create a temporary container for rendering
+    const tempContainer = document.createElement("div");
+    tempContainer.style.position = "fixed";
+    tempContainer.style.left = "-9999px";
+    tempContainer.style.top = "0";
+    tempContainer.style.width = "1123px"; // A4 landscape width in pixels at 96dpi
+    tempContainer.style.height = "794px"; // A4 landscape height in pixels at 96dpi
+    document.body.appendChild(tempContainer);
+
+    try {
+      // Dynamically import React and ReactDOM for rendering
+      const React = (await import("react")).default;
+      const ReactDOM = (await import("react-dom/client")).default;
+
+      // Create root and render certificate
+      const root = ReactDOM.createRoot(tempContainer);
+
+      // Wait for component to render
+      await new Promise<void>((resolve) => {
+        root.render(
+          React.createElement(LabCertificateTemplate, {
+            data: mapStudentDataToLabCertificate(studentData),
+            template: "modern",
+            showBack: showBackPage,
+          })
+        );
+        // Give time for QR codes to generate
+        setTimeout(resolve, 2000);
+      });
+
+      // Capture the rendered content
+      const canvas = await html2canvas(tempContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: 1123,
+        height: 794,
+        backgroundColor: "#ffffff",
+      });
+
+      // Create PDF
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      pdf.addImage(imgData, "PNG", 0, 0, 297, 210);
+
+      // Cleanup
+      root.unmount();
+      document.body.removeChild(tempContainer);
+
+      // Return PDF as blob
+      return pdf.output("blob");
+    } catch (error) {
+      // Cleanup on error
+      document.body.removeChild(tempContainer);
+      throw error;
+    }
+  };
+
+  // Download all certificates as ZIP
+  const handleDownloadAllAsZip = async () => {
+    if (records.length === 0) {
+      alert("Tidak ada data sertifikat untuk diunduh.");
+      return;
+    }
+
+    // ⚠️ SAFEGUARD: Check batch size
+    const MAX_RECOMMENDED = 50;
+    const MAX_ABSOLUTE = 100;
+
+    if (records.length > MAX_ABSOLUTE) {
+      const proceed = window.confirm(
+        `⚠️ PERINGATAN KRITIS!\n\n` +
+          `Anda mencoba generate ${records.length} sertifikat sekaligus.\n\n` +
+          `Ini dapat menyebabkan:\n` +
+          `• Browser crash/hang\n` +
+          `• Out of memory error\n` +
+          `• Proses gagal di tengah jalan\n\n` +
+          `REKOMENDASI: Split menjadi batch maksimal ${MAX_ABSOLUTE} sertifikat.\n\n` +
+          `Apakah Anda yakin ingin melanjutkan?\n` +
+          `(Estimasi waktu: ${Math.ceil((records.length * 2.5) / 60)} menit)`
+      );
+
+      if (!proceed) return;
+    } else if (records.length > MAX_RECOMMENDED) {
+      const proceed = window.confirm(
+        `⚠️ Perhatian!\n\n` +
+          `Anda akan generate ${records.length} sertifikat.\n` +
+          `Estimasi waktu: ${Math.ceil(
+            (records.length * 2.5) / 60
+          )} menit.\n\n` +
+          `Tips:\n` +
+          `• Jangan tutup tab ini\n` +
+          `• Jangan buka aplikasi berat lain\n` +
+          `• Pastikan laptop/PC dalam kondisi charging\n\n` +
+          `Lanjutkan?`
+      );
+
+      if (!proceed) return;
+    }
+
+    setIsGeneratingBatch(true);
+    setBatchProgress({ current: 0, total: records.length });
+
+    try {
+      const zip = new JSZip();
+
+      // Generate PDF for each student (front page only)
+      for (let i = 0; i < records.length; i++) {
+        const student = records[i];
+        setBatchProgress({ current: i + 1, total: records.length });
+
+        try {
+          // Generate front page PDF
+          const pdfBlob = await generateCertificatePDF(student, false);
+
+          // Create safe filename: Name_Certificate-Number.pdf
+          const safeName = student.name
+            .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
+            .replace(/\s+/g, "_") // Replace spaces with underscore
+            .substring(0, 50); // Limit length
+
+          const safeCertId = student.verificationId
+            .replace(/\//g, "-") // Replace / with -
+            .replace(/[^a-zA-Z0-9\-]/g, ""); // Remove other special chars
+
+          const filename = `${safeName}_${safeCertId}.pdf`;
+
+          // Add to ZIP
+          zip.file(filename, pdfBlob);
+
+          // 🔧 OPTIMIZATION: Force garbage collection hint every 10 items
+          if ((i + 1) % 10 === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        } catch (error) {
+          console.error(
+            `Error generating certificate for ${student.name}:`,
+            error
+          );
+
+          // Ask user if they want to continue
+          const continueOnError = window.confirm(
+            `❌ Error saat generate sertifikat untuk:\n${student.name}\n\n` +
+              `Sudah berhasil: ${i} dari ${records.length}\n\n` +
+              `Lanjutkan dengan sertifikat berikutnya?`
+          );
+
+          if (!continueOnError) {
+            throw new Error("User cancelled batch generation");
+          }
+        }
+      }
+
+      // Generate ZIP file
+      const zipBlob = await zip.generateAsync({
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 },
+      });
+
+      // Download ZIP
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `Sertifikat_Laboratorium_${new Date().getTime()}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+
+      alert(
+        `✅ Berhasil mengunduh ${records.length} sertifikat dalam format ZIP!\n\n` +
+          `File telah tersimpan di folder Downloads Anda.`
+      );
+    } catch (error) {
+      console.error("Error generating batch PDFs:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
+      alert(
+        `❌ Terjadi kesalahan saat generate sertifikat.\n\n` +
+          `Error: ${errorMessage}\n\n` +
+          `Saran:\n` +
+          `• Coba dengan batch lebih kecil (${MAX_RECOMMENDED} sertifikat)\n` +
+          `• Tutup tab/aplikasi lain untuk free up memory\n` +
+          `• Refresh halaman dan coba lagi\n` +
+          `• Hubungi administrator jika masalah berlanjut`
+      );
+    } finally {
+      setIsGeneratingBatch(false);
+      setBatchProgress({ current: 0, total: 0 });
+    }
+  };
+
   const nextRecord = () =>
     setSelectedIndex((i) => (i + 1) % (records.length || 1));
   const prevRecord = () =>
@@ -909,7 +1109,7 @@ function GenerateCertificatesPage() {
     []
   );
   const disableAutoFit = () => {
-    if (autoFit) setAutoFit(false);
+    setAutoFit(false);
   };
 
   return (
@@ -1116,32 +1316,34 @@ function GenerateCertificatesPage() {
                   <RotateCcw className="w-3 h-3" />
                 </Button>
                 <Separator orientation="vertical" className="h-8" />
-                <Button type="button" size="sm" onClick={handlePrint}>
-                  <Printer className="w-3 h-3 mr-1" />
-                  Print
-                </Button>
-                <Separator orientation="vertical" className="h-8" />
                 <Button
                   type="button"
                   size="sm"
-                  variant={saved ? "secondary" : "default"}
-                  onClick={handleSaveToDatabase}
-                  disabled={saving || !records.length || saved}
+                  onClick={handlePrint}
+                  className="ml-auto"
+                  title="Print sertifikat dengan ukuran A4 Landscape"
+                  disabled={!records.length || isGeneratingBatch}
                 >
-                  {saving ? (
+                  <Printer className="w-3 h-3" />
+                  Print A4
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleDownloadAllAsZip}
+                  disabled={!records.length || isGeneratingBatch}
+                  title="Download semua sertifikat sebagai file ZIP"
+                >
+                  {isGeneratingBatch ? (
                     <>
-                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
-                      Saving...
-                    </>
-                  ) : saved ? (
-                    <>
-                      <Download className="w-3 h-3 mr-1" />
-                      Saved
+                      <span className="animate-spin mr-1">⏳</span>
+                      {batchProgress.current}/{batchProgress.total}
                     </>
                   ) : (
                     <>
-                      <Download className="w-3 h-3 mr-1" />
-                      Save to DB
+                      <Package className="w-3 h-3" />
+                      Download ZIP
                     </>
                   )}
                 </Button>
@@ -1150,87 +1352,136 @@ function GenerateCertificatesPage() {
                   size="sm"
                   variant="destructive"
                   onClick={reset}
+                  disabled={isGeneratingBatch}
                 >
                   Reset
                 </Button>
               </div>
-              {records.length > 0 && (
-                <p className="text-[11px] text-muted-foreground">
-                  Record aktif: {selectedIndex + 1} / {records.length}
+
+              {/* Print Instructions - Always visible */}
+              <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 p-3">
+                <p className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
+                  📄 Pengaturan Print
                 </p>
+                <ul className="text-[10px] text-blue-700 dark:text-blue-300 space-y-0.5 ml-4 list-disc">
+                  <li>Ukuran kertas: A4 Landscape</li>
+                  <li>Margin: None (0mm)</li>
+                  <li>Background graphics: ON</li>
+                  <li>Scale: 100%</li>
+                </ul>
+              </div>
+
+              {/* Batch Download Info */}
+              {records.length > 1 && (
+                <div
+                  className={`rounded-md border p-3 ${
+                    records.length > 100
+                      ? "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800"
+                      : records.length > 50
+                      ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800"
+                      : "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800"
+                  }`}
+                >
+                  <p
+                    className={`text-xs font-medium mb-1 ${
+                      records.length > 100
+                        ? "text-red-900 dark:text-red-100"
+                        : records.length > 50
+                        ? "text-amber-900 dark:text-amber-100"
+                        : "text-green-900 dark:text-green-100"
+                    }`}
+                  >
+                    {records.length > 100
+                      ? "⚠️ PERINGATAN: Batch Terlalu Besar!"
+                      : records.length > 50
+                      ? "⚠️ Perhatian: Batch Besar"
+                      : "📦 Download Massal"}
+                  </p>
+                  <ul
+                    className={`text-[10px] space-y-0.5 ml-4 list-disc ${
+                      records.length > 100
+                        ? "text-red-700 dark:text-red-300"
+                        : records.length > 50
+                        ? "text-amber-700 dark:text-amber-300"
+                        : "text-green-700 dark:text-green-300"
+                    }`}
+                  >
+                    {records.length > 100 ? (
+                      <>
+                        <li>
+                          <strong>
+                            ❌ TIDAK DIREKOMENDASIKAN ({records.length}{" "}
+                            sertifikat)
+                          </strong>
+                        </li>
+                        <li>Risiko TINGGI: Browser crash/hang</li>
+                        <li>
+                          Estimasi waktu: ~
+                          {Math.ceil((records.length * 2.5) / 60)} menit
+                        </li>
+                        <li>
+                          <strong>
+                            SARAN: Split menjadi maksimal 50-100 sertifikat per
+                            batch
+                          </strong>
+                        </li>
+                      </>
+                    ) : records.length > 50 ? (
+                      <>
+                        <li>Batch besar: {records.length} sertifikat</li>
+                        <li>
+                          Estimasi waktu: ~
+                          {Math.ceil((records.length * 2.5) / 60)} menit
+                        </li>
+                        <li>Pastikan tidak tutup tab selama proses</li>
+                        <li>
+                          Rekomendasi: Split menjadi batch lebih kecil jika
+                          memungkinkan
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li>
+                          Klik "Download ZIP" untuk unduh semua sertifikat
+                        </li>
+                        <li>
+                          File: nama_nomor-sertifikat.pdf ({records.length}{" "}
+                          file)
+                        </li>
+                        <li>
+                          Estimasi waktu: ~{Math.ceil(records.length * 2.5)}{" "}
+                          detik
+                        </li>
+                        <li>Hasil dalam 1 file ZIP siap cetak</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
               )}
-              {error && (
-                <Alert variant="destructive" className="text-xs">
-                  <AlertTriangle className="w-4 h-4" />
-                  <div>
-                    <AlertTitle>Upload Error</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
+
+              {/* Batch Progress Indicator */}
+              {isGeneratingBatch && (
+                <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-3">
+                  <p className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-2">
+                    ⏳ Sedang generate PDF...
+                  </p>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                    <div
+                      className="bg-amber-600 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${
+                          (batchProgress.current / batchProgress.total) * 100
+                        }%`,
+                      }}
+                    />
                   </div>
-                </Alert>
-              )}
-              {!!warnings.length && (
-                <Alert className="text-xs max-h-40 overflow-auto">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" />
-                  <div>
-                    <AlertTitle>Warning</AlertTitle>
-                    <AlertDescription>
-                      <ul className="list-disc ml-4 space-y-1">
-                        {warnings.map((w, i) => (
-                          <li key={i}>{w}</li>
-                        ))}
-                      </ul>
-                    </AlertDescription>
-                  </div>
-                </Alert>
-              )}
-              {records.length > 0 && (
-                <div className="border rounded-md">
-                  <Table className="text-xs">
-                    <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead className="w-8">#</TableHead>
-                        <TableHead>Nama</TableHead>
-                        <TableHead>Program</TableHead>
-                        <TableHead>Aksi</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {records.map((r, i) => (
-                        <TableRow
-                          key={i}
-                          data-state={
-                            i === selectedIndex ? "selected" : undefined
-                          }
-                          className="cursor-pointer"
-                          onClick={() => {
-                            setSelectedIndex(i);
-                            setShowBack(false);
-                          }}
-                        >
-                          <TableCell>{i + 1}</TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {r.name}
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {r.program}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedIndex(i);
-                                setShowBack(false);
-                              }}
-                            >
-                              Pilih
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <p className="text-[10px] text-amber-700 dark:text-amber-300">
+                    Progress: {batchProgress.current} / {batchProgress.total}{" "}
+                    sertifikat
+                  </p>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1">
+                    Mohon tunggu, jangan tutup halaman ini...
+                  </p>
                 </div>
               )}
             </CardContent>
