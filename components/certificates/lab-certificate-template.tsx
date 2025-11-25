@@ -71,6 +71,7 @@ interface LabCertificateTemplateProps {
   template: string;
   showBack?: boolean;
   onPrint?: () => void;
+  renderMode?: "preview" | "batch"; // 'preview' for print/view, 'batch' for ZIP generation
 }
 
 // Random color generator for badges
@@ -219,6 +220,7 @@ export default function LabCertificateTemplate({
   data,
   template,
   showBack = false,
+  renderMode = "preview", // Default to 'preview' for backward compatibility
 }: LabCertificateTemplateProps) {
   const signatureQRRef = useRef<HTMLCanvasElement>(null);
   const verificationQRRef = useRef<HTMLCanvasElement>(null);
@@ -674,7 +676,11 @@ export default function LabCertificateTemplate({
               {/* Main Content */}
               <div className="flex flex-col justify-center flex-grow">
                 {/* Title Section */}
-                <div className="mb-2 text-center">
+                <div
+                  className={`text-center ${
+                    renderMode === "batch" ? "mb-4" : "mb-1"
+                  }`}
+                >
                   <p
                     className={`text-gray-600 text-sm font-light tracking-widest mb-1 ${inter.className}`}
                   >
@@ -696,8 +702,18 @@ export default function LabCertificateTemplate({
                 </div>
 
                 {/* Recipient Section */}
-                <div className="mb-2 text-center">
-                  <p className="mb-1 text-base text-gray-600">ISSUED TO</p>
+                <div
+                  className={`mb-2 text-center ${
+                    renderMode === "batch" ? "mt-3" : "mt-1"
+                  }`}
+                >
+                  <p
+                    className={`text-base text-gray-600 ${
+                      renderMode === "batch" ? "mb-2" : "mb-1"
+                    }`}
+                  >
+                    ISSUED TO
+                  </p>
                   <h2
                     className={`text-5xl font-bold text-gray-900 mb-2 ${playfair.className}`}
                   >

@@ -914,6 +914,7 @@ function GenerateCertificatesPage() {
             data: mapStudentDataToLabCertificate(studentData),
             template: "modern",
             showBack: showBackPage,
+            renderMode: "batch", // Use 'batch' mode for ZIP generation
           })
         );
         // Give time for QR codes to generate
@@ -1316,7 +1317,7 @@ function GenerateCertificatesPage() {
                   <RotateCcw className="w-3 h-3" />
                 </Button>
                 <Separator orientation="vertical" className="h-8" />
-                <Button
+                {/* <Button
                   type="button"
                   size="sm"
                   onClick={handlePrint}
@@ -1326,7 +1327,7 @@ function GenerateCertificatesPage() {
                 >
                   <Printer className="w-3 h-3" />
                   Print A4
-                </Button>
+                </Button> */}
                 <Button
                   type="button"
                   size="sm"
