@@ -1,2 +1,0 @@
-"id"	"kode"	"nama"
-"1"	"55202"	"informatika"

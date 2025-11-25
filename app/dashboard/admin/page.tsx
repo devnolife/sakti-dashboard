@@ -1,6 +1,6 @@
-import ComprehensiveAdminDashboard from "@/components/admin/comprehensive-admin-dashboard"
+import SuperAdminDashboard from "@/components/admin/super-admin-dashboard"
 
 export default function AdminDashboardPage() {
-  return <ComprehensiveAdminDashboard />
+  return <SuperAdminDashboard />
 }
 

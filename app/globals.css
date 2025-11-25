@@ -109,10 +109,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 214 46% 56%; /* Blue #3674B5 */
+    --primary: 0 72% 51%; /* Red #DC2626 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 72% 51%; /* Red #DC2626 */
+    --secondary: 214 46% 56%; /* Blue #3674B5 */
     --secondary-foreground: 0 0% 100%;
 
     --accent: 210 40% 96%;
@@ -167,10 +167,10 @@
     --popover: 210 40% 12%;
     --popover-foreground: 210 20% 98%;
 
-    --primary: 214 46% 56%; /* #3674B5 */
+    --primary: 0 72% 51%; /* Red #DC2626 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 45% 56%;
+    --secondary: 214 46% 56%; /* Blue #3674B5 */
     --secondary-foreground: 0 0% 100%;
 
     --accent: 195 91% 80%;

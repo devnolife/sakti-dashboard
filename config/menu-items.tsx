@@ -337,7 +337,7 @@ export const staffTuMenuItems = [
       },
       {
         id: "correspondence-master-data",
-        title: "Data Master",
+        title: "Informasi Persuratan",
         href: "/dashboard/staff_tu/correspondence/master-data",
       },
     ],

@@ -748,26 +748,27 @@ model payments {
 }
 
 model prodi {
-  kode                  String                  @id
-  nama                  String
-  jenjang               String
-  fakultas              String
-  akreditasi            String?
-  created_at            DateTime                @default(now())
-  updated_at            DateTime                @default(now())
-  academic_events       academic_events[]
-  budget_allocations    budget_allocations[]
-  budgets               budgets[]
-  courses               courses[]
-  curriculum            curriculum[]
-  exam_requirements     exam_requirements[]
-  laboratories          laboratories[]
-  laboratory_admins     laboratory_admins[]
-  lecturers             lecturers[]
-  letter_types          letter_types[]
-  reading_room_admins   reading_room_admins[]
-  staff                 staff[]
-  students              students[]
+  kode                    String                    @id
+  nama                    String
+  jenjang                 String
+  fakultas                String
+  akreditasi              String?
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @default(now())
+  academic_events         academic_events[]
+  budget_allocations      budget_allocations[]
+  budgets                 budgets[]
+  courses                 courses[]
+  curriculum              curriculum[]
+  exam_requirements       exam_requirements[]
+  laboratories            laboratories[]
+  laboratory_admins       laboratory_admins[]
+  laboratory_certificates laboratory_certificates[]
+  lecturers               lecturers[]
+  letter_types            letter_types[]
+  reading_room_admins     reading_room_admins[]
+  staff                   staff[]
+  students                students[]
   surat                 surat[]
   thesis_titles         thesis_titles[]
   announcements         announcements[]
@@ -1487,7 +1488,11 @@ model signed_documents {
   last_updated_at  DateTime @updatedAt @db.Timestamp(6)
 
   document_id      Int?
+  counter_id       Int?     // Link ke counter yang digunakan
+  scope            String?  @db.VarChar(20) // "fakultas" atau "prodi"
+  
   documents        documents? @relation(fields: [document_id], references: [id])
+  counter          document_counter? @relation(fields: [counter_id], references: [id])
   document_signatures document_signatures[]
   verification_logs verification_logs[]
   document_history document_history[]
@@ -1580,45 +1585,49 @@ model system_notifications {
 
 // Table untuk surat yang tergenerate dengan nomor
 model surat {
-  id               Int            @id @default(autoincrement())
-  nomor_surat      String         @unique
-  id_jenis_surat   Int?
-  id_instansi      Int?
-  id_kode_kategori Int?
-  id_masalah_surat Int?
-  bulan            String
-  tahun_hijriah    String
-  tahun_masehi     String
-  perihal          String
-  keterangan       String?
-  id_prodi         String?
-  kode_prodi       String?         // Kode prodi untuk format nomor (IF, SI, TI, dll)
-  letter_request_id String?
+  id                 Int            @id @default(autoincrement())
+  nomor_surat        String         @unique
+  id_jenis_surat     Int?
+  id_instansi        Int?
+  id_kode_kategori   Int?
+  id_masalah_surat   Int?
+  bulan              String
+  tahun_hijriah      String
+  tahun_masehi       String
+  perihal            String
+  keterangan         String?
+  id_prodi           String?
+  kode_prodi         String?         // Kode prodi untuk format nomor (IF, SI, TI, dll)
+  letter_request_id  String?
   signed_document_id String?
-  scope            String          @default("fakultas") // "fakultas" atau "prodi"
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
+  counter_id         Int?            // Link ke counter yang digunakan
+  scope              String          @default("fakultas") // "fakultas" atau "prodi"
+  created_at         DateTime        @default(now())
+  updated_at         DateTime        @updatedAt
 
-  tujuan           tujuan?        @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  count_surat      count_surat?   @relation(fields: [id_jenis_surat], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  jenis_surat      jenis_surat?   @relation(fields: [id_kode_kategori], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  masalah_surat    masalah_surat? @relation(fields: [id_masalah_surat], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prodi            prodi?         @relation(fields: [id_prodi], references: [kode], onDelete: NoAction, onUpdate: NoAction)
+  tujuan             tujuan?         @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  counter            document_counter? @relation(fields: [counter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  jenis_surat        jenis_surat?    @relation(fields: [id_kode_kategori], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  masalah_surat      masalah_surat?  @relation(fields: [id_masalah_surat], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  prodi              prodi?          @relation(fields: [id_prodi], references: [kode], onDelete: NoAction, onUpdate: NoAction)
 }
 
-// Table untuk counter per jenis surat
-model count_surat {
+// Table untuk counter - universal untuk semua dokumen (surat, sertifikat, dll)
+model document_counter {
   id        Int               @id @default(autoincrement())
-  jenis     String
   counter   Int               @default(0)
-  tahun     String?
-  prodi_id  String?
+  tahun     String            @default("2025")
+  prodi_id  String            @default("") // Empty string untuk fakultas
   scope     String            @default("fakultas") // "fakultas" atau "prodi"
-
+  
+  // Relations
   ketentuan ketentuan_surat[]
   surat     surat[]
+  signed_documents signed_documents[]
 
-  @@unique([jenis, tahun, prodi_id, scope])
+  @@unique([tahun, prodi_id, scope])
+  @@index([scope, prodi_id, tahun])
+  @@map("count_surat") // Keep the same table name in database
 }
 
 // Table untuk masalah/kategori surat
@@ -1667,10 +1676,81 @@ model ketentuan_surat {
   format_template String?  @db.Text
   description String?      @db.Text
 
-  count      count_surat?  @relation(fields: [id_count], references: [id])
-  jenis      jenis_surat   @relation(fields: [id_jenis], references: [id])
-  masalah    masalah_surat @relation(fields: [id_masalah], references: [id])
-  tujuan     tujuan        @relation(fields: [id_tujuan], references: [id])
+  counter    document_counter? @relation(fields: [id_count], references: [id])
+  jenis      jenis_surat       @relation(fields: [id_jenis], references: [id])
+  masalah    masalah_surat     @relation(fields: [id_masalah], references: [id])
+  tujuan     tujuan            @relation(fields: [id_tujuan], references: [id])
 
   @@unique([id_tujuan, id_masalah, id_jenis])
+}
+
+// ============================================
+// LABORATORY CERTIFICATE SYSTEM MODELS
+// ============================================
+
+model laboratory_certificates {
+  id                String   @id @default(cuid())
+  verification_id   String   @unique
+  certificate_title String
+  participant_name  String
+  program_name      String
+  subtitle          String   @db.Text
+  issue_date        DateTime @default(now())
+
+  // Stats
+  meetings                Int
+  total_score             Int
+  materials               Int
+  attendance_rate         Int
+  assignment_completion   Int
+  participation_score     Int
+
+  // Grades
+  overall_grade           String
+
+  // Learning Time
+  learning_hours          Int
+  weekly_data             Int[]
+
+  // Analytics
+  learning_velocity       Int
+  collaboration_score     Int
+  problem_solving_efficiency Int
+
+  // Competencies (JSON)
+  competencies            Json
+
+  // Technologies
+  technologies            String[]
+
+  // QR Code
+  qr_code_url             String?
+
+  // PDF Storage (MinIO)
+  pdf_url                 String?   // MinIO URL for the generated PDF
+  pdf_password            String?   // Password for PDF protection
+
+  // Digital Signature (HMAC-SHA256)
+  signature               String?   // HMAC-SHA256 signature
+  signature_data          Json?     // Data yang di-sign (untuk audit)
+  qr_signature_url        String?   // MinIO URL untuk QR code signature
+  signed_at               DateTime? // Timestamp signature dibuat
+  signed_by               String?   // User yang sign (nama + role)
+  verification_count      Int       @default(0) // Jumlah kali diverifikasi
+
+  // Prodi Association
+  prodi_id                String
+  created_by              String?   // laboratory_admin user_id
+
+  // Timestamps
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+
+  // Relations
+  prodi                   prodi     @relation(fields: [prodi_id], references: [kode], onDelete: Cascade)
+
+  @@index([prodi_id])
+  @@index([verification_id])
+  @@index([created_by])
+  @@index([created_at])
 }
