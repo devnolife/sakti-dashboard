@@ -17,7 +17,7 @@ export async function GET(
 
     const template = await prisma.template_uploads.findUnique({
       where: { id: params.id },
-      select: { 
+      select: {
         variable_mapping: true,
         prodi_id: true,
         is_global: true
@@ -74,10 +74,10 @@ export async function POST(
     }
 
     // Check role permissions
-    const allowedRoles = ['admin_umum', 'prodi', 'admin'];
+    const allowedRoles = ['admin_umum', 'prodi', 'admin', 'staff_tu'];
     if (!allowedRoles.includes(authStatus.user.role)) {
       return NextResponse.json(
-        { error: 'Forbidden: Only admin_umum and prodi can edit templates' },
+        { error: 'Forbidden: Only admin_umum, prodi, and staff_tu can edit templates' },
         { status: 403 }
       );
     }
