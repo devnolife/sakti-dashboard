@@ -48,7 +48,11 @@ function generateVerificationId(
   // no = 3-digit row number (001, 002, etc.)
   const no = String(rowNumber).padStart(3, "0");
   const month = monthRoman || "I";
-  const hijri = yearHijri || "1446";
+
+  // Use only last 2 digits of Hijriah year
+  const fullHijri = yearHijri || "1446";
+  const hijri = fullHijri.slice(-2); // Get last 2 digits (e.g., "1446" -> "46")
+
   const masehi = yearMasehi || new Date().getFullYear().toString();
 
   return `${no}/IF/20222/A.5-II/${month}/${hijri}/${masehi}`;
@@ -280,13 +284,13 @@ function GenerateCertificatesPage() {
     }
   };
 
-  const processExcelFile = (file: File) => {
+  const processExcelFile = async (file: File) => {
     setUploading(true);
     setError(undefined);
     setWarnings([]);
     const localWarnings: string[] = [];
     const reader = new FileReader();
-    reader.onload = (evt) => {
+    reader.onload = async (evt) => {
       try {
         const data = new Uint8Array(evt.target?.result as ArrayBuffer);
         const wb = XLSX.read(data, { type: "array" });
@@ -310,6 +314,9 @@ function GenerateCertificatesPage() {
         setSelectedIndex(0);
         setWarnings(localWarnings);
         setUploadedFileName(file.name);
+
+        // ✅ Data loaded successfully - ready for preview and download
+        console.log(`✅ Loaded ${mapped.length} certificates from Excel`);
       } catch (err: any) {
         setError("Gagal membaca file: " + (err?.message || "unknown"));
       } finally {
@@ -1000,6 +1007,65 @@ function GenerateCertificatesPage() {
     setBatchProgress({ current: 0, total: records.length });
 
     try {
+      // 🔥 STEP 1: SAVE TO DATABASE FIRST
+      console.log("💾 Saving certificates to database...");
+
+      try {
+        const saveResponse = await fetch("/api/certificates/laboratory/bulk", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ certificates: records }),
+        });
+
+        const saveResult = await saveResponse.json();
+
+        if (!saveResponse.ok) {
+          // Show warning but allow user to continue
+          const continueWithoutSave = window.confirm(
+            `⚠️ Gagal menyimpan ke database:\n${saveResult.error}\n\n` +
+              `Apakah Anda tetap ingin melanjutkan download ZIP?\n` +
+              `(Data tidak akan tersimpan di database)`
+          );
+
+          if (!continueWithoutSave) {
+            throw new Error("User cancelled: Database save failed");
+          }
+
+          console.warn("⚠️ Continuing without database save");
+        } else {
+          console.log(
+            `✅ Successfully saved ${saveResult.count} certificates to database`
+          );
+          setSaved(true);
+
+          // Optional: Show brief success message
+          // User doesn't need to click OK, just shows for 2 seconds
+          const successMsg = document.createElement("div");
+          successMsg.textContent = `✅ ${saveResult.count} sertifikat disimpan ke database`;
+          successMsg.style.cssText =
+            "position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:16px 24px;border-radius:8px;z-index:9999;font-weight:600;box-shadow:0 4px 6px rgba(0,0,0,0.1)";
+          document.body.appendChild(successMsg);
+          setTimeout(() => document.body.removeChild(successMsg), 3000);
+        }
+      } catch (saveError: any) {
+        console.error("❌ Database save error:", saveError);
+
+        // Ask if user wants to continue without saving
+        const continueWithoutSave = window.confirm(
+          `❌ Error menyimpan ke database:\n${saveError.message}\n\n` +
+            `Apakah Anda tetap ingin melanjutkan download ZIP?\n` +
+            `(Data tidak akan tersimpan di database)`
+        );
+
+        if (!continueWithoutSave) {
+          throw new Error("User cancelled: Database save failed");
+        }
+      }
+
+      // 🔥 STEP 2: GENERATE ZIP FILE
+      console.log("📦 Generating ZIP file...");
       const zip = new JSZip();
 
       // Generate PDF for each student (front page only)
