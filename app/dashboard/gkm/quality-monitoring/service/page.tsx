@@ -73,8 +73,8 @@ export default function ServiceQualityPage() {
             </div>
             <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
               <div>
-                <p className="font-medium text-yellow-800">Layanan Surat</p>
-                <p className="text-sm text-yellow-600">Keterlambatan pemrosesan surat</p>
+                <p className="font-medium text-yellow-800">Surat dan Dokumen</p>
+                <p className="text-sm text-yellow-600">Keterlambatan pemrosesan surat dan dokumen</p>
               </div>
               <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Medium</span>
             </div>

@@ -51,8 +51,8 @@ export async function GET(request: NextRequest) {
         { is_global: true },
         { prodi_id: userProdi.prodi_id }
       ];
-    } else if (authStatus.user.role === 'admin_umum' || authStatus.user.role === 'admin') {
-      // Admin umum can filter by prodi or global
+    } else if (authStatus.user.role === 'admin_umum' || authStatus.user.role === 'admin' || authStatus.user.role === 'staff_tu') {
+      // Admin umum and staff_tu can see all templates and filter by prodi or global
       if (is_global !== null && is_global !== undefined) {
         where.is_global = is_global === 'true';
       }

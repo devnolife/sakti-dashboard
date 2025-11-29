@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { uploadFile } from '@/lib/minio-client';
 import { getAuthStatus } from '@/lib/auth-middleware';
 import mammoth from 'mammoth';
-import { TemplateAnalyzer } from '@/lib/template-analyzer';
+
+// Note: TemplateAnalyzer auto-detection disabled - using manual variable editor instead
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,11 +17,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check role permissions (admin_umum or prodi)
-    const allowedRoles = ['admin_umum', 'prodi', 'admin'];
+    // Check role permissions (admin_umum, prodi, staff_tu, or admin)
+    const allowedRoles = ['admin_umum', 'prodi', 'admin', 'staff_tu'];
     if (!allowedRoles.includes(authStatus.user.role)) {
       return NextResponse.json(
-        { error: 'Forbidden: Only admin_umum and prodi can upload templates' },
+        { error: 'Forbidden: Only admin_umum, prodi, and staff_tu can upload templates' },
         { status: 403 }
       );
     }
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
 
       // Get user's prodi from their profile
       const userProdi = await prisma.lecturers.findUnique({
-        where: { user_id: authStatus.user.id },
+        where: { user_id: authStatus.user.userId },
         select: { prodi_id: true }
       });
 
@@ -101,47 +102,62 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Analyze template using mammoth and TemplateAnalyzer
-    let detectedFields = null;
+    // Note: Auto-detection disabled - variables are now defined manually via Variable Editor
+    // Just extract basic metadata (word count, etc.) if needed
     let metadata = null;
 
     try {
-      const textResult = await mammoth.extractRawText({ arrayBuffer });
+      // Extract raw text for basic info only
+      const textResult = await mammoth.extractRawText({ buffer });
       const textContent = textResult.value;
 
-      // Detect fields using TemplateAnalyzer
-      detectedFields = TemplateAnalyzer.analyzeContent(textContent);
-      metadata = TemplateAnalyzer.generateMetadata(textContent);
+      // Basic metadata only - no field auto-detection
+      metadata = {
+        wordCount: textContent.split(/\s+/).filter(Boolean).length,
+        hasVariablePlaceholders: /\{\{[^}]+\}\}|\$\{[^}]+\}/.test(textContent),
+        extractedAt: new Date().toISOString()
+      };
     } catch (analyzeError) {
-      console.error('Template analysis error:', analyzeError);
-      // Continue even if analysis fails
+      console.error('Template metadata extraction error:', analyzeError);
+      // Continue even if extraction fails - not critical
     }
 
     // Upload to MinIO
-    const folderPrefix = is_global ? 'templates/global' : `templates/prodi/${prodi_id}`;
+    const folderPrefix = is_global ? 'templates/global' : `templates/prodi/${prodi_id || 'general'}`;
     const fileName = `${Date.now()}-${file.name}`;
     const minioPath = `${folderPrefix}/${fileName}`;
 
     const fileUrl = await uploadFile(buffer, minioPath, file.type);
 
+    // Build data object for Prisma
+    const createData: any = {
+      name,
+      description: description || null,
+      file_url: fileUrl,
+      file_name: file.name,
+      file_size: file.size,
+      file_type: 'docx',
+      category,
+      is_global,
+      is_active: true,
+      detected_fields: null, // Variables defined manually via Variable Editor
+      metadata: metadata as any,
+      version: 1,
+      uploader: {
+        connect: { id: authStatus.user.userId }
+      },
+    };
+
+    // Add prodi relation only if prodi_id is provided and not global
+    if (!is_global && prodi_id) {
+      createData.prodi = {
+        connect: { kode: prodi_id }
+      };
+    }
+
     // Save to database
     const template = await prisma.template_uploads.create({
-      data: {
-        name,
-        description: description || null,
-        file_url: fileUrl,
-        file_name: file.name,
-        file_size: file.size,
-        file_type: 'docx',
-        category,
-        prodi_id: is_global ? null : prodi_id,
-        is_global,
-        is_active: true,
-        detected_fields: detectedFields as any,
-        metadata: metadata as any,
-        version: 1,
-        uploaded_by: authStatus.user.id,
-      },
+      data: createData,
       include: {
         prodi: {
           select: {

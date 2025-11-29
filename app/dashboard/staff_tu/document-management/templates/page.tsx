@@ -1,1085 +1,881 @@
 "use client"
 
-import React, { useState, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Upload, FileText, Eye, Download, Plus, Search, Filter, Send, CheckCircle, AlertCircle, Edit3, X, MousePointer } from "lucide-react"
+import { Upload, FileText, Eye, Download, Plus, Search, Filter, Edit3, FileJson, FileCode, Sparkles, Clock, CheckCircle2, Globe2, Building2, Trash2, File, LogOut } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { toast } from "@/hooks/use-toast"
+import { cn } from "@/lib/utils"
 import mammoth from "mammoth"
-import { TemplateAnalyzer, type DetectedField } from "@/lib/template-analyzer"
-import { DocxTemplaterIntegration, type CreateTemplateResponse, type TemplateVariable } from "@/lib/docxtemplater-integration"
+import { saveAs } from "file-saver"
+import { InlineTemplateVariableEditor } from "@/components/templates/inline-template-variable-editor"
+import { TemplateData, MockTemplate, TemplateVariable, TemplatePreview } from "@/types/template"
+import { replaceDocxVariables, generateFullHTMLDocument } from "@/lib/template-utils"
 
-interface DocumentTemplate {
-  id: string
-  name: string
-  description: string
-  type: string
-  size: string
-  uploadDate: string
-  category: string
-  file?: File
-  content?: string
-  htmlContent?: string
-  detectedFields?: DetectedField[]
-  templateMetadata?: {
-    totalFields: number
-    variableFields: number
-    commonFields: number
-    templateComplexity: number
-    reusabilityScore: number
-    suggestedFields: Array<{
-      label: string
-      type: string
-      defaultValue: string
-      suggestions?: string[]
-    }>
-  }
+const categoryConfig = {
+  surat: { icon: FileText, color: "text-blue-500", bgColor: "bg-blue-50 dark:bg-blue-950", label: "Surat" },
+  sertifikat: { icon: Sparkles, color: "text-amber-500", bgColor: "bg-amber-50 dark:bg-amber-950", label: "Sertifikat" },
+  laporan: { icon: File, color: "text-green-500", bgColor: "bg-green-50 dark:bg-green-950", label: "Laporan" },
 }
 
 export default function DocumentManagementTemplatesPage() {
-  const [templates, setTemplates] = useState<DocumentTemplate[]>([
-    {
-      id: "1",
-      name: "Surat Keputusan Template.docx",
-      description: "Template untuk surat keputusan resmi",
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      size: "45 KB",
-      uploadDate: "2024-01-15",
-      category: "Surat Resmi",
-      content: `UNIVERSITAS TEKNOLOGI DIGITAL INDONESIA
-FAKULTAS TEKNOLOGI INFORMASI
-
-SURAT KEPUTUSAN
-DEKAN FAKULTAS TEKNOLOGI INFORMASI
-Nomor: 001/SK/FTI/2024
-
-TENTANG
-PEMBENTUKAN PANITIA KEGIATAN SEMINAR NASIONAL
-
-DEKAN FAKULTAS TEKNOLOGI INFORMASI,
-
-Menimbang:
-a. bahwa dalam rangka meningkatkan kualitas pendidikan dan penelitian di bidang teknologi informasi perlu diadakan seminar nasional;
-b. bahwa untuk kelancaran pelaksanaan seminar nasional tersebut perlu dibentuk panitia penyelenggara;
-
-Mengingat:
-1. Undang-Undang Nomor 12 Tahun 2012 tentang Pendidikan Tinggi;
-2. Peraturan Pemerintah Nomor 4 Tahun 2014 tentang Penyelenggaraan Pendidikan Tinggi;
-3. Statuta Universitas Teknologi Digital Indonesia;
-
-MEMUTUSKAN:
-
-Menetapkan:
-PERTAMA : Membentuk Panitia Kegiatan Seminar Nasional dengan susunan sebagaimana tercantum dalam lampiran surat keputusan ini.
-
-KEDUA : Panitia bertugas merencanakan, mengorganisir, dan melaksanakan kegiatan seminar nasional yang akan dilaksanakan pada tanggal 15 Maret 2024.
-
-KETIGA : Surat keputusan ini berlaku sejak tanggal ditetapkan.
-
-Ditetapkan di : Jakarta
-Pada tanggal : 1 Februari 2024
-
-DEKAN,
-
-Dr. Ahmad Wijaya, S.Kom., M.T.
-NIP. 198501012010011001`
-    },
-    {
-      id: "2", 
-      name: "Laporan Kegiatan Template.docx",
-      description: "Template untuk laporan kegiatan sekolah",
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      size: "38 KB",
-      uploadDate: "2024-01-10",
-      category: "Laporan",
-      content: `LAPORAN KEGIATAN
-SEMINAR TEKNOLOGI INFORMASI TERKINI
-
-I. PENDAHULUAN
-Kegiatan Seminar Teknologi Informasi Terkini telah dilaksanakan pada tanggal 20 Januari 2024 di Aula Universitas Teknologi Digital Indonesia. Kegiatan ini bertujuan untuk memberikan wawasan terkini mengenai perkembangan teknologi informasi kepada mahasiswa dan dosen.
-
-II. PELAKSANAAN KEGIATAN
-A. Waktu dan Tempat
-   - Hari/Tanggal: Sabtu, 20 Januari 2024
-   - Waktu: 08.00 - 16.00 WIB
-   - Tempat: Aula Utama UTDI
-
-B. Peserta
-   - Mahasiswa: 250 orang
-   - Dosen: 25 orang
-   - Tamu undangan: 15 orang
-   - Total: 290 orang
-
-C. Narasumber
-   1. Dr. Budi Santoso (Pakar AI dari ITB)
-   2. Prof. Sari Dewi (Ahli Cybersecurity dari UI)
-   3. Ir. Tono Prakoso (Praktisi IoT)
-
-III. HASIL KEGIATAN
-Kegiatan berlangsung dengan lancar dan mendapat respon positif dari peserta. Materi yang disampaikan sangat bermanfaat dan sesuai dengan kebutuhan pengembangan ilmu pengetahuan di bidang teknologi informasi.
-
-IV. KENDALA DAN SOLUSI
-Beberapa kendala teknis pada sistem audio berhasil diatasi dengan baik oleh tim teknis.
-
-V. KESIMPULAN DAN SARAN
-Kegiatan seminar ini berhasil mencapai tujuan yang diharapkan. Disarankan untuk mengadakan kegiatan serupa secara berkala.
-
-Jakarta, 25 Januari 2024
-Ketua Panitia,
-
-Drs. Andi Wijaya, M.Kom.
-NIP. 198803152015041002`
-    },
-    {
-      id: "3",
-      name: "Surat Undangan Template.docx", 
-      description: "Template untuk surat undangan acara",
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      size: "32 KB",
-      uploadDate: "2024-01-08",
-      category: "Surat Resmi",
-      content: `UNIVERSITAS TEKNOLOGI DIGITAL INDONESIA
-FAKULTAS TEKNOLOGI INFORMASI
-
-SURAT UNDANGAN
-
-Nomor : 025/UND/FTI/II/2024
-Lampiran : -
-Perihal : Undangan Rapat Koordinasi
-
-Yth. Bapak/Ibu Dosen Fakultas Teknologi Informasi
-di tempat
-
-Dengan hormat,
-
-Sehubungan dengan akan dilaksanakannya evaluasi kurikulum semester genap tahun akademik 2023/2024, maka dengan ini kami mengundang Bapak/Ibu untuk menghadiri:
-
-Acara        : Rapat Koordinasi Evaluasi Kurikulum
-Hari/Tanggal : Senin, 10 Februari 2024
-Waktu        : 09.00 - 12.00 WIB
-Tempat       : Ruang Rapat Fakultas Teknologi Informasi
-
-Agenda rapat meliputi:
-1. Pembukaan
-2. Laporan evaluasi semester ganjil 2023/2024
-3. Penyusunan rencana perbaikan kurikulum
-4. Diskusi dan tanya jawab
-5. Penutup
-
-Mengingat pentingnya acara tersebut, diharapkan Bapak/Ibu dapat hadir tepat waktu. Atas perhatian dan kehadiran Bapak/Ibu, kami sampaikan terima kasih.
-
-Jakarta, 5 Februari 2024
-
-Dekan,
-
-Dr. Ahmad Wijaya, S.Kom., M.T.
-NIP. 198501012010011001`
-    },
-    {
-      id: "4",
-      name: "Lembar Penilaian KKP Plus.docx",
-      description: "Template untuk lembar penilaian KKP Plus dengan format tabel",
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      size: "42 KB",
-      uploadDate: "2024-01-20",
-      category: "Formulir",
-      content: `MAJELIS PENDIDIKAN TINGGI PIMPINAN PUSAT MUHAMMADIYAH
-UNIVERSITAS MUHAMMADIYAH MAKASSAR
-FAKULTAS TEKNIK
-
-بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
-
-LEMBAR PENILAIAN KKP PLUS
-
-Laporan KKP PLUS ini merupakan salah satu persyaratan dalam rangka penyelesaian studi pada Fakultas Teknik Universitas Muhammadiyah Makassar dalam Program Studi Informatika
-
-Nama Instansi/Perusahaan     : SMA 4 Muhammadiyah Makassar
-Lokasi Instansi              : Jalan Gagak Lorong 4 No 4
-DPL                          : Dr. Abd. Rahman Bahtiar, S.Ag., M.Ag.
-Nama Mahasiswa Peserta KKP   :
-
-┌────┬──────────────────┬───────────┬────────────────────────────┬──────────────────────┬───────────────┐
-│ No │ Nama Mahasiswa   │ Stambuk   │ Nilai Dosen Pembimbing     │ Nilai Pembimbing     │ Nilai Rata-   │
-│    │                  │           │ Lapangan                   │ Lokasi               │ Rata          │
-├────┼──────────────────┼───────────┼────────────────────────────┼──────────────────────┼───────────────┤
-│ 1  │ AHMAD FAUZI      │105841102  │ A  B+  C+E                │ A  B+  C+E          │ A  B+  C+E   │
-│    │ SAIFUDDIN        │ 21        │                            │                      │               │
-└────┴──────────────────┴───────────┴────────────────────────────┴──────────────────────┴───────────────┘
-
-Demikian Penilaian dibuat untuk dipergunakan sebagaimana mestinya.
-
-                                                           Makassar, 10 Mei 2025
-Menyetujui,
-
-Dosen Pembimbing KKP Plus                                  Pembimbing Lokasi KKP Plus
-
-
-Dr. Abd. Rahman Bahtiar, S.Ag., M.Ag.                     Adriyana Syam,S.Pd., M.Pd
-NBM: 772 571                                               NBM:2303041315111208
-
-                              Mengetahui,
-
-Wakil Dekan I Fakultas Teknik                             Ketua Program Studi Informatika
-Universitas Muhammadiyah Makassar                         Universitas Muhammadiyah Makassar
-
-
-Ir. Muhammad Syafa'at S.Kuba, S.T., M.L.                  Muhyiddin A.M. Hayat, S.kom., M.T.
-NBM: 975 288                                               NIDN: 09310879`,
-      htmlContent: `<div style="text-align: center; font-family: Arial, sans-serif;">
-        <h2>MAJELIS PENDIDIKAN TINGGI PIMPINAN PUSAT MUHAMMADIYAH<br/>
-        UNIVERSITAS MUHAMMADIYAH MAKASSAR<br/>
-        FAKULTAS TEKNIK</h2>
-        <hr style="border: 1px solid black; margin: 10px 0;"/>
-        <p style="text-align: center; font-style: italic;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
-        <h3><u>LEMBAR PENILAIAN KKP PLUS</u></h3>
-      </div>
-      
-      <p style="text-align: justify; margin: 20px 0;">
-        Laporan KKP PLUS ini merupakan salah satu persyaratan dalam rangka penyelesaian 
-        studi pada Fakultas Teknik Universitas Muhammadiyah Makassar dalam Program Studi Informatika
-      </p>
-      
-      <div style="margin: 20px 0;">
-        <table style="width: 100%; border: none;">
-          <tr><td style="width: 30%;">Nama Instansi/Perusahaan</td><td>: SMA 4 Muhammadiyah Makassar</td></tr>
-          <tr><td>Lokasi Instansi</td><td>: Jalan Gagak Lorong 4 No 4</td></tr>
-          <tr><td>DPL</td><td>: Dr. Abd. Rahman Bahtiar, S.Ag., M.Ag.</td></tr>
-          <tr><td>Nama Mahasiswa Peserta KKP</td><td>:</td></tr>
-        </table>
-      </div>
-      
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin: 20px 0;">
-        <tr style="border: 1px solid black;">
-          <th style="border: 1px solid black; padding: 8px; text-align: center;">No</th>
-          <th style="border: 1px solid black; padding: 8px; text-align: center;">Nama Mahasiswa</th>
-          <th style="border: 1px solid black; padding: 8px; text-align: center;">Stambuk</th>
-          <th style="border: 1px solid black; padding: 8px; text-align: center;">Nilai Dosen Pembimbing Lapangan</th>
-          <th style="border: 1px solid black; padding: 8px; text-align: center;">Nilai Pembimbing Lokasi</th>
-          <th style="border: 1px solid black; padding: 8px; text-align: center;">Nilai Rata-Rata</th>
-        </tr>
-        <tr style="border: 1px solid black;">
-          <td style="border: 1px solid black; padding: 8px; text-align: center;">1</td>
-          <td style="border: 1px solid black; padding: 8px;">AHMAD FAUZI<br/>SAIFUDDIN</td>
-          <td style="border: 1px solid black; padding: 8px; text-align: center;">10584110221</td>
-          <td style="border: 1px solid black; padding: 8px; text-align: center;">A B+ C+E</td>
-          <td style="border: 1px solid black; padding: 8px; text-align: center;">A B+ C+E</td>
-          <td style="border: 1px solid black; padding: 8px; text-align: center;">A B+ C+E</td>
-        </tr>
-      </table>
-      
-      <p>Demikian Penilaian dibuat untuk dipergunakan sebagaimana mestinya.</p>
-      
-      <div style="text-align: right; margin: 30px 0;">
-        <p>Makassar, 10 Mei 2025</p>
-      </div>
-      
-      <p><em>Menyetujui,</em></p>
-      
-      <table style="width: 100%; margin: 30px 0;">
-        <tr>
-          <td style="width: 50%; text-align: left;">Dosen Pembimbing KKP Plus</td>
-          <td style="width: 50%; text-align: left;">Pembimbing Lokasi KKP Plus</td>
-        </tr>
-        <tr style="height: 60px;"><td></td><td></td></tr>
-        <tr>
-          <td><u>Dr. Abd. Rahman Bahtiar, S.Ag., M.Ag.</u><br/>NBM: 772 571</td>
-          <td><u>Adriyana Syam,S.Pd., M.Pd</u><br/>NBM:2303041315111208</td>
-        </tr>
-      </table>
-      
-      <div style="text-align: center; margin: 30px 0;">
-        <p><em>Mengetahui,</em></p>
-      </div>
-      
-      <table style="width: 100%; margin: 30px 0;">
-        <tr>
-          <td style="width: 50%; text-align: center;">Wakil Dekan I Fakultas Teknik<br/>Universitas Muhammadiyah Makassar</td>
-          <td style="width: 50%; text-align: center;">Ketua Program Studi Informatika<br/>Universitas Muhammadiyah Makassar</td>
-        </tr>
-        <tr style="height: 60px;"><td></td><td></td></tr>
-        <tr>
-          <td style="text-align: center;"><u>Ir. Muhammad Syafa'at S.Kuba, S.T., M.L.</u><br/>NBM: 975 288</td>
-          <td style="text-align: center;"><u>Muhyiddin A.M. Hayat, S.kom., M.T.</u><br/>NIDN: 09310879</td>
-        </tr>
-      </table>`
-    }
-  ])
-
-  const [selectedTemplate, setSelectedTemplate] = useState<DocumentTemplate | null>(null)
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const router = useRouter()
+  const [templates, setTemplates] = useState<TemplateData[]>([])
+  const [loading, setLoading] = useState(true)
   const [isUploadOpen, setIsUploadOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
   const [isUploading, setIsUploading] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [isCreatingTemplate, setIsCreatingTemplate] = useState(false)
-  const [templateCreationResult, setTemplateCreationResult] = useState<CreateTemplateResponse | null>(null)
-  const [isManualMode, setIsManualMode] = useState(false)
-  const [selectedText, setSelectedText] = useState("")
-  const [newPlaceholderLabel, setNewPlaceholderLabel] = useState("")
-  const [newPlaceholderType, setNewPlaceholderType] = useState<'content' | 'date' | 'number' | 'identity'>('content')
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [previewData, setPreviewData] = useState<TemplatePreview | null>(null)
+  const [isVariableEditorOpen, setIsVariableEditorOpen] = useState(false)
+  const [mockTemplate, setMockTemplate] = useState<MockTemplate | null>(null)
+
+  // Filters
+  const [searchQuery, setSearchQuery] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+
+  // Upload form
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [uploadName, setUploadName] = useState("")
+  const [uploadDescription, setUploadDescription] = useState("")
+  const [uploadCategory, setUploadCategory] = useState("surat")
+  const [isGlobal, setIsGlobal] = useState(false)
+
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
 
-  const categories = ["all", "Surat Resmi", "Laporan", "Formulir", "Template Umum", "Template Siap", "Lainnya"]
+  // Helper function untuk handle logout otomatis saat token tidak valid
+  const handleAuthError = useCallback(() => {
+    // Hapus token dari localStorage
+    localStorage.removeItem('session-token')
+    localStorage.removeItem('user')
 
-  const filteredTemplates = templates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || template.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+    toast({
+      title: "Sesi Berakhir",
+      description: "Sesi Anda telah berakhir. Mengalihkan ke halaman login...",
+      variant: "destructive"
+    })
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    // Redirect ke login setelah 1.5 detik
+    setTimeout(() => {
+      router.push('/login')
+    }, 1500)
+  }, [router])
 
-    const isDocx = file.name.endsWith('.docx')
-    
-    if (!isDocx) {
-      alert('Hanya file DOCX yang diperbolehkan untuk saat ini')
+  // Helper function untuk get auth headers
+  const getAuthHeaders = useCallback(() => {
+    const token = localStorage.getItem('session-token')
+    if (!token) {
+      handleAuthError()
+      return null
+    }
+    return {
+      'Authorization': `Bearer ${token}`
+    }
+  }, [handleAuthError])
+
+  useEffect(() => {
+    fetchTemplates()
+  }, [categoryFilter])
+
+  const fetchTemplates = useCallback(async () => {
+    const headers = getAuthHeaders()
+    if (!headers) return
+
+    setLoading(true)
+    try {
+      const params = new URLSearchParams()
+      if (categoryFilter !== "all") params.append("category", categoryFilter)
+
+      const response = await fetch(`/api/templates?${params.toString()}`, {
+        headers
+      })
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setTemplates(result.data || [])
+      } else {
+        toast({
+          title: "Gagal Memuat",
+          description: result.error || result.message || "Tidak dapat memuat template",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching templates:", error)
+      toast({
+        title: "Koneksi Gagal",
+        description: "Tidak dapat terhubung ke server",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [categoryFilter, getAuthHeaders, handleAuthError])
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (!file.name.endsWith('.docx')) {
+        toast({
+          title: "File Tidak Valid",
+          description: "Silakan pilih file dengan format .docx",
+          variant: "destructive"
+        })
+        return
+      }
+      setUploadFile(file)
+      setUploadName(file.name.replace('.docx', ''))
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!uploadFile || !uploadName) {
+      toast({
+        title: "Validasi Gagal",
+        description: "Mohon lengkapi file dan nama template",
+        variant: "destructive"
+      })
       return
     }
 
-    setIsUploading(true)
+    const headers = getAuthHeaders()
+    if (!headers) return
 
+    setIsUploading(true)
     try {
-      const arrayBuffer = await file.arrayBuffer()
-      
-      // Ekstrak teks menggunakan mammoth
-      const textResult = await mammoth.extractRawText({ arrayBuffer })
-      const htmlResult = await mammoth.convertToHtml({ arrayBuffer })
-      
-      // Analisa template untuk deteksi field dinamis
-      const detectedFields = TemplateAnalyzer.analyzeContent(textResult.value)
-      const templateMetadata = TemplateAnalyzer.generateMetadata(textResult.value)
-      
-      const newTemplate: DocumentTemplate = {
-        id: Date.now().toString(),
-        name: file.name,
-        description: `Template yang diupload pada ${new Date().toLocaleDateString('id-ID')} - ${templateMetadata.variableFields} field dinamis terdeteksi`,
-        type: file.type,
-        size: `${Math.round(file.size / 1024)} KB`,
-        uploadDate: new Date().toISOString().split('T')[0],
-        category: templateMetadata.reusabilityScore > 0.6 ? "Template Umum" : "Lainnya",
-        file,
-        content: textResult.value,
-        htmlContent: htmlResult.value,
-        detectedFields,
-        templateMetadata
+      const formData = new FormData()
+      formData.append('file', uploadFile)
+      formData.append('name', uploadName)
+      formData.append('description', uploadDescription)
+      formData.append('category', uploadCategory)
+      formData.append('is_global', String(isGlobal))
+
+      const response = await fetch('/api/templates/upload', {
+        method: 'POST',
+        headers: {
+          ...headers
+        },
+        body: formData
+      })
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
       }
 
-      setTemplates(prev => [newTemplate, ...prev])
-      setIsUploadOpen(false)
-      
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
+      const result = await response.json()
+
+      if (response.ok) {
+        toast({
+          title: "Berhasil! 🎉",
+          description: "Template berhasil diunggah"
+        })
+        setIsUploadOpen(false)
+        fetchTemplates()
+        resetUploadForm()
+      } else {
+        toast({
+          title: "Unggah Gagal",
+          description: result.error || result.message || "Gagal mengunggah template",
+          variant: "destructive"
+        })
       }
     } catch (error) {
-      console.error('Error reading file:', error)
-      alert('Gagal membaca file. Pastikan file tidak corrupt.')
+      console.error("Error uploading:", error)
+      toast({
+        title: "Terjadi Kesalahan",
+        description: "Gagal mengunggah template",
+        variant: "destructive"
+      })
     } finally {
       setIsUploading(false)
     }
   }
 
-  const handlePreview = (template: DocumentTemplate) => {
-    setIsProcessing(true)
+  const resetUploadForm = () => {
+    setUploadFile(null)
+    setUploadName("")
+    setUploadDescription("")
+    setUploadCategory("surat")
+    setIsGlobal(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const handlePreview = async (template: TemplateData) => {
+    const headers = getAuthHeaders()
+    if (!headers) return
+
     setSelectedTemplate(template)
-    
-    // Analyze template if not already analyzed
-    if (template.content && !template.detectedFields) {
-      setTimeout(() => {
-        const detectedFields = TemplateAnalyzer.analyzeContent(template.content!)
-        const templateMetadata = TemplateAnalyzer.generateMetadata(template.content!)
-        
-        // Update template with analysis results
-        const updatedTemplate = {
-          ...template,
-          detectedFields,
-          templateMetadata
+    try {
+      const response = await fetch(`/api/templates/${template.id}/preview`, {
+        headers
+      })
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setPreviewData(result)
+        setIsPreviewOpen(true)
+      } else {
+        toast({
+          title: "Gagal Memuat",
+          description: result.error || result.message || "Tidak dapat memuat preview",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error loading preview:", error)
+      toast({
+        title: "Terjadi Kesalahan",
+        description: "Tidak dapat memuat preview",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const handleEditVariables = async (template: TemplateData) => {
+    const headers = getAuthHeaders()
+    if (!headers) return
+
+    setSelectedTemplate(template)
+    try {
+      const response = await fetch(`/api/templates/${template.id}/preview`, {
+        headers
+      })
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        const mockTemplate: MockTemplate = {
+          id: template.id,
+          name: template.name,
+          html: result.html,
+          rawText: result.rawText,
+          variableMapping: result.variableMapping || {}
         }
-        
-        setSelectedTemplate(updatedTemplate)
-        setTemplates(prev => prev.map(t => t.id === template.id ? updatedTemplate : t))
-        setIsProcessing(false)
-        setIsPreviewOpen(true)
-      }, 800)
-    } else {
-      setTimeout(() => {
-        setIsProcessing(false)
-        setIsPreviewOpen(true)
-      }, 500)
+        setMockTemplate(mockTemplate)
+        setIsVariableEditorOpen(true)
+      } else {
+        toast({
+          title: "Gagal Memuat",
+          description: result.error || result.message || "Tidak dapat memuat template",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error loading template:", error)
+      toast({
+        title: "Terjadi Kesalahan",
+        description: "Tidak dapat memuat template",
+        variant: "destructive"
+      })
     }
   }
 
-  const handleDownload = (template: DocumentTemplate) => {
-    if (template.file) {
-      const url = URL.createObjectURL(template.file)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = template.name
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    } else {
-      // Create downloadable content for built-in templates
-      const content = template.content || "Konten tidak tersedia"
-      const blob = new Blob([content], { type: 'text/plain' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = template.name.replace('.docx', '.txt')
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    }
-  }
+  const handleSaveVariables = async (variables: Record<string, TemplateVariable>) => {
+    if (!selectedTemplate) return
 
-
-  const handleCreateTemplate = async (template: DocumentTemplate) => {
-    if (!template.file || !template.detectedFields) {
-      alert('Template belum dianalisa atau file tidak tersedia')
-      return
-    }
-
-    setIsCreatingTemplate(true)
-    setTemplateCreationResult(null)
+    const headers = getAuthHeaders()
+    if (!headers) return
 
     try {
-      // Prepare data untuk backend
-      const templateData = DocxTemplaterIntegration.prepareTemplateData(template)
-      
-      if (!templateData) {
-        throw new Error('Gagal menyiapkan data template')
-      }
-
-      // Validate template variables
-      const validation = DocxTemplaterIntegration.validateTemplateVariables(templateData.detectedFields)
-      if (!validation.isValid) {
-        console.warn('Template validation warnings:', validation.errors)
-      }
-
-      // Send to backend
-      const result = await DocxTemplaterIntegration.createTemplate(templateData)
-      
-      setTemplateCreationResult(result)
-      
-      if (result.success) {
-        // Update template status
-        const updatedTemplate = {
-          ...template,
-          description: `${template.description} - Template berhasil dibuat di backend`,
-          category: "Template Siap"
-        }
-        
-        setTemplates(prev => prev.map(t => t.id === template.id ? updatedTemplate : t))
-      }
-      
-    } catch (error) {
-      console.error('Error creating template:', error)
-      setTemplateCreationResult({
-        success: false,
-        templateId: template.id,
-        message: `Gagal membuat template: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variables: template.detectedFields.filter(f => f.isVariable).map(f => ({
-          id: f.id,
-          key: `{{${f.label.toLowerCase().replace(/\s+/g, '_')}}}`,
-          label: f.label,
-          type: 'text' as const,
-          defaultValue: f.value,
-          originalValue: f.value,
-          isRequired: f.confidence > 0.8,
-          position: { startIndex: f.startIndex, endIndex: f.endIndex },
-          confidence: f.confidence
-        }))
+      const response = await fetch(`/api/templates/${selectedTemplate.id}/variables`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...headers
+        },
+        body: JSON.stringify({ variables })
       })
-    } finally {
-      setIsCreatingTemplate(false)
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        toast({
+          title: "Berhasil Disimpan! ✓",
+          description: "Variabel berhasil disimpan"
+        })
+        fetchTemplates()
+      } else {
+        toast({
+          title: "Gagal Menyimpan",
+          description: result.error || result.message || "Tidak dapat menyimpan variabel",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error saving variables:", error)
+      toast({
+        title: "Terjadi Kesalahan",
+        description: "Tidak dapat menyimpan variabel",
+        variant: "destructive"
+      })
     }
   }
 
-  const handleTextSelection = () => {
-    if (!isManualMode) return
-    
-    const selection = window.getSelection()
-    if (selection && selection.toString().trim()) {
-      setSelectedText(selection.toString().trim())
-      setNewPlaceholderLabel("")
+  const handleDownloadDOCX = async (template: TemplateData) => {
+    try {
+      const hasVariables = template.variable_mapping && Object.keys(template.variable_mapping).length > 0
+
+      if (hasVariables) {
+        const response = await fetch(template.file_url)
+        const blob = await response.blob()
+        // Convert blob to File object for processing
+        const arrayBuffer = await blob.arrayBuffer()
+        const file = new Blob([arrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }) as any as File
+        Object.defineProperty(file, 'name', { value: template.file_name })
+
+        const modifiedBlob = await replaceDocxVariables(file, template.variable_mapping!)
+        saveAs(modifiedBlob, template.file_name.replace('.docx', '_dengan_variabel.docx'))
+
+        toast({
+          title: "Berhasil Diunduh! 📥",
+          description: `Template dengan ${Object.keys(template.variable_mapping!).length} variabel telah diunduh`
+        })
+      } else {
+        const response = await fetch(template.file_url)
+        const blob = await response.blob()
+        saveAs(blob, template.file_name)
+
+        toast({
+          title: "Berhasil Diunduh! 📥",
+          description: "Template berhasil diunduh"
+        })
+      }
+    } catch (error) {
+      console.error("Error downloading:", error)
+      toast({
+        title: "Gagal Mengunduh",
+        description: "Tidak dapat mengunduh template",
+        variant: "destructive"
+      })
     }
   }
 
-  const addManualPlaceholder = () => {
-    if (!selectedTemplate || !selectedText || !newPlaceholderLabel) return
-    
-    const content = selectedTemplate.content || ""
-    const startIndex = content.indexOf(selectedText)
-    
-    if (startIndex === -1) return
-    
-    const newField: DetectedField = {
-      id: `manual_${Date.now()}`,
-      type: newPlaceholderType,
-      value: selectedText,
-      label: newPlaceholderLabel,
-      startIndex,
-      endIndex: startIndex + selectedText.length,
-      isVariable: true,
-      confidence: 1.0, // Manual = 100% confidence
-      suggestions: []
+  const handleDownloadHTML = async (template: TemplateData) => {
+    const headers = getAuthHeaders()
+    if (!headers) return
+
+    try {
+      const response = await fetch(`/api/templates/${template.id}/preview`, {
+        headers
+      })
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        const variableMapping = template.variable_mapping || {}
+        const htmlContent = generateFullHTMLDocument(
+          template.name,
+          result.html,
+          variableMapping
+        )
+
+        const blob = new Blob([htmlContent], { type: 'text/html' })
+        saveAs(blob, `${template.name.replace('.docx', '')}.html`)
+
+        toast({
+          title: "Berhasil Diunduh! 📥",
+          description: "Template HTML berhasil diunduh"
+        })
+      }
+    } catch (error) {
+      console.error("Error downloading HTML:", error)
+      toast({
+        title: "Gagal Mengunduh",
+        description: "Tidak dapat mengunduh HTML",
+        variant: "destructive"
+      })
     }
-    
-    const updatedTemplate = {
-      ...selectedTemplate,
-      detectedFields: [...(selectedTemplate.detectedFields || []), newField]
-    }
-    
-    setTemplates(prev => prev.map(t => t.id === selectedTemplate.id ? updatedTemplate : t))
-    setSelectedTemplate(updatedTemplate)
-    
-    // Clear selection
-    setSelectedText("")
-    setNewPlaceholderLabel("")
-    window.getSelection()?.removeAllRanges()
   }
 
-  const removePlaceholder = (fieldId: string) => {
-    if (!selectedTemplate) return
-    
-    const updatedTemplate = {
-      ...selectedTemplate,
-      detectedFields: selectedTemplate.detectedFields?.filter(f => f.id !== fieldId) || []
+  const handleDownloadJSON = async (template: TemplateData) => {
+    const headers = getAuthHeaders()
+    if (!headers) return
+
+    try {
+      const response = await fetch(`/api/templates/${template.id}/variables`, {
+        headers
+      })
+
+      if (response.status === 401) {
+        handleAuthError()
+        return
+      }
+
+      const result = await response.json()
+
+      if (response.ok) {
+        const jsonData = {
+          name: template.name,
+          variableMapping: result.variables || {},
+          metadata: {
+            variableCount: Object.keys(result.variables || {}).length,
+            createdAt: template.created_at,
+            templateId: template.id
+          }
+        }
+
+        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' })
+        saveAs(blob, `${template.name.replace('.docx', '')}_variabel.json`)
+
+        toast({
+          title: "Berhasil Diunduh! 📥",
+          description: "Konfigurasi variabel JSON berhasil diunduh"
+        })
+      }
+    } catch (error) {
+      console.error("Error downloading JSON:", error)
+      toast({
+        title: "Gagal Mengunduh",
+        description: "Tidak dapat mengunduh JSON",
+        variant: "destructive"
+      })
     }
-    
-    setTemplates(prev => prev.map(t => t.id === selectedTemplate.id ? updatedTemplate : t))
-    setSelectedTemplate(updatedTemplate)
   }
 
-  const highlightPlaceholders = (content: string, fields: DetectedField[]) => {
-    if (!fields || fields.length === 0) return content
+  const filteredTemplates = templates.filter(template => {
+    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesSearch
+  })
 
-    // Sort fields by start index in descending order to avoid offset issues
-    const sortedFields = [...fields]
-      .filter(f => f.isVariable)
-      .sort((a, b) => b.startIndex - a.startIndex)
-
-    let highlightedContent = content
-    
-    sortedFields.forEach((field, index) => {
-      const before = highlightedContent.substring(0, field.startIndex)
-      const after = highlightedContent.substring(field.endIndex)
-      const highlighted = `<span class="bg-yellow-200 border border-yellow-400 px-1 py-0.5 rounded text-yellow-800 font-medium cursor-pointer" 
-        title="${field.label} (${Math.round(field.confidence * 100)}% confidence)" 
-        data-field-id="${field.id}">
-        ${field.value}
-      </span>`
-      
-      highlightedContent = before + highlighted + after
-    })
-    
-    return highlightedContent
+  const getCategoryIcon = (category: string) => {
+    const config = categoryConfig[category as keyof typeof categoryConfig]
+    return config || categoryConfig.surat
   }
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Template Dokumen</h2>
-          <p className="text-muted-foreground mt-2">
-            Kelola template dokumen dengan preview menggunakan Mammoth
-          </p>
-        </div>
-        <Button onClick={() => setIsUploadOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Upload Template
-        </Button>
-      </div>
-
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Cari template..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 border rounded-md bg-background"
-          >
-            {categories.map(category => (
-              <option key={category} value={category}>
-                {category === "all" ? "Semua Kategori" : category}
-              </option>
-            ))}
-          </select>
+    <div className="container py-6 mx-auto space-y-6 max-w-7xl">
+      {/* Header Section */}
+      <div className="relative overflow-hidden border rounded-lg bg-gradient-to-br from-primary/5 via-primary/0 to-transparent">
+        <div className="p-8">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold tracking-tight">
+                Kelola Template Dokumen
+              </h1>
+              <p className="max-w-2xl text-lg text-muted-foreground">
+                Unggah, edit variabel, dan kelola template dokumen untuk pembuatan dokumen massal
+              </p>
+              <div className="flex gap-4 pt-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  <span className="text-muted-foreground">{templates.length} Template</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock className="w-4 h-4 text-blue-500" />
+                  <span className="text-muted-foreground">Terakhir diperbarui hari ini</span>
+                </div>
+              </div>
+            </div>
+            <Button size="lg" onClick={() => setIsUploadOpen(true)} className="shadow-lg">
+              <Plus className="w-5 h-5 mr-2" />
+              Unggah Template
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTemplates.map((template) => (
-          <Card key={template.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-2">
-                  <FileText className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <CardTitle className="text-lg">{template.name}</CardTitle>
-                    <div className="flex gap-2 mt-1">
-                      <Badge variant="secondary">
-                        {template.category}
+      {/* Filters Section */}
+      <Card className="shadow-sm">
+        <CardContent className="pt-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Cari template berdasarkan nama atau deskripsi..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Tabs value={categoryFilter} onValueChange={setCategoryFilter} className="w-full md:w-auto">
+              <TabsList className="grid w-full grid-cols-4 md:w-auto">
+                <TabsTrigger value="all" className="gap-2">
+                  <Filter className="w-4 h-4" />
+                  Semua
+                </TabsTrigger>
+                <TabsTrigger value="surat" className="gap-2">
+                  <FileText className="w-4 h-4" />
+                  Surat
+                </TabsTrigger>
+                <TabsTrigger value="sertifikat" className="gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  Sertifikat
+                </TabsTrigger>
+                <TabsTrigger value="laporan" className="gap-2">
+                  <File className="w-4 h-4" />
+                  Laporan
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Template List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="space-y-4 text-center">
+            <div className="w-12 h-12 mx-auto border-4 border-t-4 rounded-full animate-spin border-primary border-t-transparent"></div>
+            <p className="text-muted-foreground">Memuat template...</p>
+          </div>
+        </div>
+      ) : filteredTemplates.length === 0 ? (
+        <Card className="border-dashed">
+          <CardContent className="py-20 text-center">
+            <div className={cn(
+              "w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center",
+              "bg-gradient-to-br from-primary/10 to-primary/5"
+            )}>
+              <FileText className="w-10 h-10 text-primary" />
+            </div>
+            <h3 className="mb-2 text-xl font-semibold">
+              {searchQuery ? "Tidak Ada Hasil" : "Belum Ada Template"}
+            </h3>
+            <p className="max-w-md mx-auto mb-6 text-muted-foreground">
+              {searchQuery
+                ? "Coba sesuaikan kata kunci pencarian Anda"
+                : "Mulai dengan mengunggah template pertama Anda untuk membuat dokumen secara massal"}
+            </p>
+            {!searchQuery && (
+              <Button onClick={() => setIsUploadOpen(true)} size="lg">
+                <Plus className="w-5 h-5 mr-2" />
+                Unggah Template Pertama
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredTemplates.map((template) => {
+            const categoryInfo = getCategoryIcon(template.category)
+            const CategoryIcon = categoryInfo.icon
+            const variableCount = Object.keys(template.variable_mapping || {}).length
+
+            return (
+              <Card key={template.id} className="flex flex-col overflow-hidden transition-all hover:shadow-lg group">
+                <div className={cn("p-4 border-b", categoryInfo.bgColor)}>
+                  <div className="flex items-start justify-between">
+                    <div className={cn("p-3 rounded-lg", "bg-white dark:bg-gray-900 shadow-sm")}>
+                      <CategoryIcon className={cn("w-6 h-6", categoryInfo.color)} />
+                    </div>
+                    <div className="flex gap-2">
+                      <Badge variant={template.is_global ? "default" : "secondary"} className="gap-1">
+                        {template.is_global ? (
+                          <>
+                            <Globe2 className="w-3 h-3" />
+                            Global
+                          </>
+                        ) : (
+                          <>
+                            <Building2 className="w-3 h-3" />
+                            Prodi
+                          </>
+                        )}
                       </Badge>
-                      <Badge variant="outline" className="text-blue-600 border-blue-200">
-                        DOCX
-                      </Badge>
-                      {template.templateMetadata && (
-                        <Badge 
-                          variant={template.templateMetadata.variableFields > 5 ? "destructive" : template.templateMetadata.variableFields > 2 ? "default" : "outline"}
-                          className="text-xs"
-                        >
-                          {template.templateMetadata.variableFields > 5 ? 'Sangat Dinamis' : 
-                           template.templateMetadata.variableFields > 2 ? 'Dinamis' : 'Statis'}
+                      {variableCount > 0 && (
+                        <Badge variant="outline" className="gap-1">
+                          <Edit3 className="w-3 h-3" />
+                          {variableCount}
                         </Badge>
                       )}
                     </div>
                   </div>
                 </div>
-              </div>
-              <CardDescription className="mt-2">
-                {template.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Ukuran:</span>
-                  <span>{template.size}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tanggal Upload:</span>
-                  <span>{new Date(template.uploadDate).toLocaleDateString('id-ID')}</span>
-                </div>
-              </div>
-              
-              <div className="flex space-x-2 mt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePreview(template)}
-                  className="flex-1 gap-2"
-                  disabled={isProcessing}
-                >
-                  <Eye className="h-4 w-4" />
-                  Preview
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDownload(template)}
-                  className="flex-1 gap-2"
-                >
-                  <Download className="h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
-      {filteredTemplates.length === 0 && (
-        <div className="text-center py-12">
-          <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Tidak ada template ditemukan</h3>
-          <p className="text-muted-foreground">
-            {searchQuery || selectedCategory !== "all" 
-              ? "Coba ubah filter atau kata kunci pencarian"
-              : "Mulai dengan mengupload template dokumen pertama Anda"
-            }
-          </p>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                    {template.name}
+                  </CardTitle>
+                  <CardDescription className="line-clamp-2">
+                    {template.description || "Tidak ada deskripsi"}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="flex-1 pb-3">
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2 p-2 rounded bg-muted/50">
+                      <Badge variant="outline" className="text-xs">
+                        {categoryInfo.label}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded bg-muted/50">
+                      <span className="text-xs text-muted-foreground">Ukuran:</span>
+                      <span className="text-xs font-medium">{Math.round(template.file_size / 1024)} KB</span>
+                    </div>
+                  </div>
+                </CardContent>
+
+                <CardContent className="pt-0 pb-4 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handlePreview(template)}
+                      className="gap-2"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Lihat
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditVariables(template)}
+                      className="gap-2"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Variabel
+                    </Button>
+                  </div>
+
+                  <div className="relative">
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => handleDownloadDOCX(template)}
+                      className="w-full gap-2"
+                    >
+                      <Download className="w-4 h-4" />
+                      Unduh DOCX
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDownloadHTML(template)}
+                      className="gap-1 text-xs"
+                    >
+                      <FileCode className="w-3 h-3" />
+                      HTML
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDownloadJSON(template)}
+                      className="gap-1 text-xs"
+                    >
+                      <FileJson className="w-3 h-3" />
+                      JSON
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
 
       {/* Upload Dialog */}
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Upload Template Dokumen</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Upload className="w-6 h-6 text-primary" />
+              Unggah Template Baru
+            </DialogTitle>
             <DialogDescription>
-              Upload file DOCX untuk dijadikan template dokumen
+              Unggah file DOCX untuk membuat template dengan variabel dinamis
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-              <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <div className="space-y-2">
-                <p className="text-sm font-medium">
-                  Pilih file DOCX atau drag & drop di sini
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Maksimal 10MB, file .docx
+
+          <div className="space-y-5 py-4">
+            <div className="space-y-3">
+              <Label htmlFor="file" className="text-base font-medium">File Template *</Label>
+              <div className="relative">
+                <Input
+                  id="file"
+                  type="file"
+                  accept=".docx"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  className="cursor-pointer"
+                />
+              </div>
+              {uploadFile && (
+                <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{uploadFile.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {Math.round(uploadFile.size / 1024)} KB
+                    </p>
+                  </div>
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="name" className="text-base font-medium">Nama Template *</Label>
+              <Input
+                id="name"
+                placeholder="Contoh: Surat Keputusan Dekan 2024"
+                value={uploadName}
+                onChange={(e) => setUploadName(e.target.value)}
+                className="text-base"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="description" className="text-base font-medium">Deskripsi (Opsional)</Label>
+              <Input
+                id="description"
+                placeholder="Jelaskan kegunaan template ini..."
+                value={uploadDescription}
+                onChange={(e) => setUploadDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="category" className="text-base font-medium">Kategori</Label>
+              <Select value={uploadCategory} onValueChange={setUploadCategory}>
+                <SelectTrigger id="category">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="surat">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      Surat
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="sertifikat">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      Sertifikat
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="laporan">
+                    <div className="flex items-center gap-2">
+                      <File className="w-4 h-4" />
+                      Laporan
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-start p-4 space-x-3 border rounded-lg bg-muted/30">
+              <input
+                type="checkbox"
+                id="is_global"
+                checked={isGlobal}
+                onChange={(e) => setIsGlobal(e.target.checked)}
+                className="w-5 h-5 mt-0.5 cursor-pointer"
+                aria-label="Jadikan template global"
+              />
+              <div className="flex-1">
+                <Label htmlFor="is_global" className="text-base font-medium cursor-pointer">
+                  Template Global
+                </Label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Template dapat diakses oleh semua prodi dan pengguna
                 </p>
               </div>
-              
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".docx"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-              >
-                {isUploading ? "Mengupload..." : "Pilih File"}
-              </Button>
             </div>
           </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setIsUploadOpen(false)} disabled={isUploading}>
+              Batal
+            </Button>
+            <Button onClick={handleUpload} disabled={isUploading || !uploadFile || !uploadName}>
+              {isUploading ? (
+                <>
+                  <div className="w-4 h-4 mr-2 border-2 border-t-2 rounded-full animate-spin border-white border-t-transparent"></div>
+                  Mengunggah...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Unggah Template
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Preview Dialog */}
-      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh]">
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              <div>
-                <DialogTitle>{selectedTemplate?.name}</DialogTitle>
-                <DialogDescription>
-                  Preview dokumen dengan Mammoth.js
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-          
-          <ScrollArea className="h-[600px] w-full border rounded-md">
-            <div className="p-6 bg-white">
-              {isProcessing ? (
-                <div className="text-center py-8">
-                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4 animate-pulse" />
-                  <p className="text-muted-foreground">Memproses dokumen dengan Mammoth...</p>
-                </div>
-              ) : selectedTemplate ? (
-                <div className="space-y-4">
-                  <div className="border-b pb-4">
-                    <h3 className="font-semibold text-lg mb-2">Analisa Template Dinamis:</h3>
-                    
-                    {selectedTemplate.templateMetadata ? (
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="bg-green-50 p-3 rounded-md">
-                          <h4 className="font-medium text-green-800 mb-2">Template Statistics</h4>
-                          <div className="text-sm text-green-700 space-y-1">
-                            <p><strong>Total Fields:</strong> {selectedTemplate.templateMetadata.totalFields}</p>
-                            <p><strong>Variable Fields:</strong> {selectedTemplate.templateMetadata.variableFields}</p>
-                            <p><strong>Common Fields:</strong> {selectedTemplate.templateMetadata.commonFields}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-purple-50 p-3 rounded-md">
-                          <h4 className="font-medium text-purple-800 mb-2">Template Scores</h4>
-                          <div className="text-sm text-purple-700 space-y-1">
-                            <p><strong>Complexity:</strong> {Math.round(selectedTemplate.templateMetadata.templateComplexity * 100)}%</p>
-                            <p><strong>Reusability:</strong> {Math.round(selectedTemplate.templateMetadata.reusabilityScore * 100)}%</p>
-                            <p><strong>Dynamic:</strong> {selectedTemplate.templateMetadata.variableFields > 5 ? 'High' : selectedTemplate.templateMetadata.variableFields > 2 ? 'Medium' : 'Low'}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-blue-50 p-3 rounded-md mb-4">
-                        <p className="text-sm text-blue-800">
-                          <strong>File:</strong> {selectedTemplate.name}<br/>
-                          <strong>Ukuran:</strong> {selectedTemplate.size}<br/>
-                          <strong>Kategori:</strong> {selectedTemplate.category}<br/>
-                          <strong>Konten Length:</strong> {selectedTemplate.content?.length || 0} karakter
-                        </p>
-                      </div>
-                    )}
+      {previewData && (
+        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+          <DialogContent className="max-w-5xl max-h-[85vh]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <Eye className="w-5 h-5 text-primary" />
+                {selectedTemplate?.name}
+              </DialogTitle>
+              <DialogDescription className="flex items-center gap-4">
+                <span>Pratinjau template dengan {Object.keys(previewData.variableMapping || {}).length} variabel</span>
+                {Object.keys(previewData.variableMapping || {}).length > 0 && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Edit3 className="w-3 h-3" />
+                    {Object.keys(previewData.variableMapping || {}).length} Variabel
+                  </Badge>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-[65vh] p-6 border rounded-lg bg-white dark:bg-gray-950">
+              <div
+                className="prose prose-sm max-w-none dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: previewData.html }}
+              />
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
+      )}
 
-                    {selectedTemplate.detectedFields && selectedTemplate.detectedFields.length > 0 && (
-                      <div className="bg-yellow-50 p-3 rounded-md">
-                        <h4 className="font-medium text-yellow-800 mb-2">
-                          Field Dinamis Terdeteksi ({selectedTemplate.detectedFields.filter(f => f.isVariable).length})
-                        </h4>
-                        <div className="max-h-40 overflow-y-auto">
-                          {selectedTemplate.detectedFields
-                            .filter(f => f.isVariable)
-                            .slice(0, 10)
-                            .map((field, index) => (
-                            <div key={field.id} className="text-xs text-yellow-700 mb-1 p-1 bg-yellow-100 rounded">
-                              <strong>{field.label}:</strong> <span className="font-mono">"{field.value}"</span>
-                              <span className="ml-2 text-yellow-600">({Math.round(field.confidence * 100)}% confidence)</span>
-                            </div>
-                          ))}
-                          {selectedTemplate.detectedFields.filter(f => f.isVariable).length > 10 && (
-                            <p className="text-xs text-yellow-600 mt-1">
-                              +{selectedTemplate.detectedFields.filter(f => f.isVariable).length - 10} field lainnya...
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Template Creation Section */}
-                    {selectedTemplate.detectedFields && selectedTemplate.detectedFields.filter(f => f.isVariable).length > 0 && (
-                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
-                        <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <h4 className="font-medium text-blue-900 mb-1">Ready untuk Template Backend</h4>
-                            <p className="text-sm text-blue-700">
-                              {selectedTemplate.detectedFields.filter(f => f.isVariable).length} field dinamis siap dikirim ke docxtemplater
-                            </p>
-                          </div>
-                          <Button
-                            onClick={() => handleCreateTemplate(selectedTemplate)}
-                            disabled={isCreatingTemplate}
-                            className="bg-blue-600 hover:bg-blue-700 gap-2"
-                          >
-                            {isCreatingTemplate ? (
-                              <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                Membuat...
-                              </>
-                            ) : (
-                              <>
-                                <Send className="h-4 w-4" />
-                                Buat Template
-                              </>
-                            )}
-                          </Button>
-                        </div>
-
-                        {/* Template Creation Result */}
-                        {templateCreationResult && (
-                          <div className={`mt-3 p-3 rounded-md ${
-                            templateCreationResult.success 
-                              ? 'bg-green-100 border border-green-300' 
-                              : 'bg-red-100 border border-red-300'
-                          }`}>
-                            <div className="flex items-start gap-2">
-                              {templateCreationResult.success ? (
-                                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                              ) : (
-                                <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-                              )}
-                              <div>
-                                <p className={`font-medium text-sm ${
-                                  templateCreationResult.success ? 'text-green-800' : 'text-red-800'
-                                }`}>
-                                  {templateCreationResult.success ? 'Template Berhasil Dibuat!' : 'Gagal Membuat Template'}
-                                </p>
-                                <p className={`text-xs mt-1 ${
-                                  templateCreationResult.success ? 'text-green-700' : 'text-red-700'
-                                }`}>
-                                  {templateCreationResult.message}
-                                </p>
-                                
-                                {templateCreationResult.success && templateCreationResult.templateUrl && (
-                                  <div className="mt-2">
-                                    <a 
-                                      href={templateCreationResult.templateUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-xs text-blue-600 hover:text-blue-800 underline"
-                                    >
-                                      Lihat Template di Backend →
-                                    </a>
-                                  </div>
-                                )}
-
-                                {templateCreationResult.variables && templateCreationResult.variables.length > 0 && (
-                                  <div className="mt-2">
-                                    <p className="text-xs font-medium mb-1">Variables yang dikirim:</p>
-                                    <div className="flex flex-wrap gap-1">
-                                      {templateCreationResult.variables.slice(0, 5).map((variable) => (
-                                        <code key={variable.id} className="text-xs bg-white px-1 py-0.5 rounded border">
-                                          {variable.key}
-                                        </code>
-                                      ))}
-                                      {templateCreationResult.variables.length > 5 && (
-                                        <span className="text-xs text-gray-600">
-                                          +{templateCreationResult.variables.length - 5} lainnya...
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Placeholder Management Section */}
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-semibold">Placeholder Fields:</h4>
-                      <div className="flex gap-2">
-                        <Button
-                          variant={isManualMode ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => {
-                            setIsManualMode(!isManualMode)
-                            setSelectedText("")
-                            setNewPlaceholderLabel("")
-                          }}
-                          className="gap-2"
-                        >
-                          <Edit3 className="h-4 w-4" />
-                          {isManualMode ? 'Mode Manual' : 'Tambah Manual'}
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Detected Placeholder Fields */}
-                    {selectedTemplate.detectedFields && selectedTemplate.detectedFields.filter(f => f.isVariable).length > 0 ? (
-                      <div className="space-y-3">
-                        {selectedTemplate.detectedFields
-                          .filter(f => f.isVariable)
-                          .map((field) => (
-                          <div key={field.id} className="flex items-start justify-between p-3 bg-gray-50 rounded-lg border">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="outline" className="text-xs">
-                                  {field.type}
-                                </Badge>
-                                <span className="font-medium text-sm">{field.label}</span>
-                                <span className="text-xs text-green-600">
-                                  {Math.round(field.confidence * 100)}% confidence
-                                </span>
-                              </div>
-                              <div className="text-sm text-gray-600 mb-2">
-                                <strong>Nilai:</strong> <code className="bg-white px-1 py-0.5 rounded border text-xs">{field.value}</code>
-                              </div>
-                              <div className="text-xs text-blue-600">
-                                <strong>Backend Variable:</strong> <code>{`{{${field.label.toLowerCase().replace(/\s+/g, '_')}}}`}</code>
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removePlaceholder(field.id)}
-                              className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                        <MousePointer className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-600 mb-1">Tidak ada placeholder terdeteksi</p>
-                        <p className="text-xs text-gray-500">Gunakan mode manual untuk menambah placeholder</p>
-                      </div>
-                    )}
-
-                    {/* Manual Selection Mode */}
-                    {isManualMode && (
-                      <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <h5 className="font-medium text-blue-900 mb-3">Manual Placeholder Selection</h5>
-                        
-                        {selectedText ? (
-                          <div className="space-y-3">
-                            <div>
-                              <label className="text-sm font-medium text-blue-800">Teks Terpilih:</label>
-                              <p className="text-sm bg-white p-2 rounded border mt-1">"{selectedText}"</p>
-                            </div>
-                            
-                            <div>
-                              <label className="text-sm font-medium text-blue-800">Label Placeholder:</label>
-                              <Input
-                                placeholder="Contoh: Nama Mahasiswa"
-                                value={newPlaceholderLabel}
-                                onChange={(e) => setNewPlaceholderLabel(e.target.value)}
-                                className="mt-1"
-                              />
-                            </div>
-                            
-                            <div>
-                              <label className="text-sm font-medium text-blue-800">Tipe:</label>
-                              <select
-                                value={newPlaceholderType}
-                                onChange={(e) => setNewPlaceholderType(e.target.value as 'content' | 'date' | 'number' | 'identity')}
-                                className="w-full mt-1 px-3 py-2 border rounded-md bg-white text-sm"
-                              >
-                                <option value="content">Text/Content</option>
-                                <option value="date">Tanggal</option>
-                                <option value="number">Nomor</option>
-                                <option value="identity">Nama/Identitas</option>
-                              </select>
-                            </div>
-                            
-                            <Button
-                              onClick={addManualPlaceholder}
-                              disabled={!newPlaceholderLabel}
-                              className="w-full"
-                              size="sm"
-                            >
-                              Tambah Placeholder
-                            </Button>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-blue-700 bg-white p-3 rounded border">
-                            Pilih teks di dokumen di bawah untuk membuat placeholder baru
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Document Preview with Highlighted Placeholders */}
-                  <div>
-                    <h4 className="font-semibold mb-3">Preview Dokumen {isManualMode ? '(Pilih teks untuk placeholder)' : '(dengan highlights)'}:</h4>
-                    <div 
-                      ref={contentRef}
-                      className="prose max-w-none text-sm border rounded-md p-4 bg-white"
-                      style={{
-                        fontFamily: 'Times New Roman, serif',
-                        lineHeight: '1.6',
-                        fontSize: '14px',
-                        cursor: isManualMode ? 'text' : 'default'
-                      }}
-                      onMouseUp={handleTextSelection}
-                      dangerouslySetInnerHTML={{
-                        __html: selectedTemplate.content ? 
-                          highlightPlaceholders(
-                            selectedTemplate.content.replace(/\n/g, '<br>'), 
-                            selectedTemplate.detectedFields || []
-                          ) : 
-                          '<p class="text-gray-500 italic">Konten tidak tersedia</p>'
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Tidak ada dokumen yang dipilih</p>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+      {/* Variable Editor */}
+      {mockTemplate && (
+        <InlineTemplateVariableEditor
+          template={mockTemplate}
+          open={isVariableEditorOpen}
+          onOpenChange={setIsVariableEditorOpen}
+          onSave={handleSaveVariables}
+        />
+      )}
     </div>
   )
 }

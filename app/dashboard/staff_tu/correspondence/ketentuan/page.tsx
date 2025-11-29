@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Plus, BookOpen, Trash2, CheckCircle } from "lucide-react"
+import { Plus, BookOpen, Trash2, CheckCircle, AlertTriangle } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -17,6 +17,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface JenisSurat {
   id: number
@@ -45,6 +55,8 @@ interface KetentuanSurat {
   kode: string
   nama: string
   id_jenis: number
+  is_global: boolean
+  prodi_id: string | null
   tujuan?: Tujuan
   masalah?: MasalahSurat
   jenis?: {
@@ -52,12 +64,19 @@ interface KetentuanSurat {
     nama: string
     kode: string
   }
+  prodi?: {
+    kode: string
+    nama: string
+  }
 }
 
-export default function KetentuanSuratPage() {
+export default function KetentuanDokumenPage() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
+
+  // User's prodi ID
+  const [userProdiId, setUserProdiId] = useState<string | null>(null)
 
   // Master data
   const [jenisSurat, setJenisSurat] = useState<JenisSurat[]>([])
@@ -71,12 +90,30 @@ export default function KetentuanSuratPage() {
   const [selectedTujuan, setSelectedTujuan] = useState<string>('')
   const [kode, setKode] = useState('')
   const [nama, setNama] = useState('')
+  const [isGlobal, setIsGlobal] = useState(true) // true = Fakultas, false = Prodi
+
+  // User's prodi info
+  const [userProdi, setUserProdi] = useState<{ kode: string; nama: string } | null>(null)
+
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   // Fetch master data
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true)
+
+        // Fetch user info first to get prodi_id
+        const userRes = await fetch('/api/auth/session')
+        let currentUserProdiId: string | null = null
+        if (userRes.ok) {
+          const userData = await userRes.json()
+          currentUserProdiId = userData?.user?.prodi_id || null
+          setUserProdiId(currentUserProdiId)
+        }
 
         const [jenisRes, masalahRes, tujuanRes, ketentuanRes] = await Promise.all([
           fetch('/api/master-data/jenis-surat'),
@@ -88,7 +125,23 @@ export default function KetentuanSuratPage() {
         if (jenisRes.ok) setJenisSurat(await jenisRes.json())
         if (masalahRes.ok) setMasalahSurat(await masalahRes.json())
         if (tujuanRes.ok) setTujuanList(await tujuanRes.json())
-        if (ketentuanRes.ok) setKetentuanList(await ketentuanRes.json())
+        if (ketentuanRes.ok) {
+          const allKetentuan = await ketentuanRes.json()
+          // Filter: show global OR user's prodi
+          const filtered = allKetentuan.filter((k: KetentuanSurat) =>
+            k.is_global || k.prodi_id === currentUserProdiId
+          )
+          setKetentuanList(filtered)
+        }
+
+        // Fetch user's prodi info if exists
+        if (currentUserProdiId) {
+          const prodiRes = await fetch(`/api/prodi/${currentUserProdiId}`)
+          if (prodiRes.ok) {
+            const prodiData = await prodiRes.json()
+            setUserProdi(prodiData.success ? prodiData.data : prodiData)
+          }
+        }
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -115,6 +168,15 @@ export default function KetentuanSuratPage() {
       return
     }
 
+    if (!isGlobal && !userProdiId) {
+      toast({
+        title: "Error",
+        description: "Akun Anda tidak terhubung dengan prodi",
+        variant: "destructive"
+      })
+      return
+    }
+
     setCreating(true)
     try {
       const response = await fetch('/api/master-data/ketentuan/create', {
@@ -125,7 +187,9 @@ export default function KetentuanSuratPage() {
           id_masalah: parseInt(selectedMasalah),
           id_tujuan: parseInt(selectedTujuan),
           kode,
-          nama
+          nama,
+          is_global: isGlobal,
+          prodi_id: isGlobal ? null : userProdiId
         })
       })
 
@@ -133,7 +197,7 @@ export default function KetentuanSuratPage() {
         const errorData = await response.json()
         toast({
           title: "Error",
-          description: errorData.error || "Gagal membuat ketentuan surat",
+          description: errorData.error || "Gagal membuat ketentuan dokumen",
           variant: "destructive"
         })
         return
@@ -144,9 +208,15 @@ export default function KetentuanSuratPage() {
         description: "Ketentuan surat berhasil dibuat",
       })
 
-      // Refresh list
+      // Refresh list with filter
       const ketentuanRes = await fetch('/api/master-data/ketentuan')
-      if (ketentuanRes.ok) setKetentuanList(await ketentuanRes.json())
+      if (ketentuanRes.ok) {
+        const allKetentuan = await ketentuanRes.json()
+        const filtered = allKetentuan.filter((k: KetentuanSurat) =>
+          k.is_global || k.prodi_id === userProdiId
+        )
+        setKetentuanList(filtered)
+      }
 
       // Reset form
       setSelectedJenis('')
@@ -154,11 +224,12 @@ export default function KetentuanSuratPage() {
       setSelectedTujuan('')
       setKode('')
       setNama('')
+      setIsGlobal(true)
     } catch (error: any) {
       console.error('Error creating ketentuan:', error)
       toast({
         title: "Error",
-        description: "Terjadi kesalahan saat membuat ketentuan surat",
+        description: "Terjadi kesalahan saat membuat ketentuan dokumen",
         variant: "destructive"
       })
     } finally {
@@ -167,11 +238,12 @@ export default function KetentuanSuratPage() {
   }
 
   // Handle delete ketentuan
-  const handleDeleteKetentuan = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus ketentuan ini?')) return
+  const handleDeleteKetentuan = async () => {
+    if (!deletingId) return
 
+    setDeleting(true)
     try {
-      const response = await fetch(`/api/master-data/ketentuan/${id}`, {
+      const response = await fetch(`/api/master-data/ketentuan/${deletingId}`, {
         method: 'DELETE'
       })
 
@@ -181,9 +253,19 @@ export default function KetentuanSuratPage() {
           description: "Ketentuan surat berhasil dihapus",
         })
 
-        // Refresh list
+        // Refresh list with filter
         const ketentuanRes = await fetch('/api/master-data/ketentuan')
-        if (ketentuanRes.ok) setKetentuanList(await ketentuanRes.json())
+        if (ketentuanRes.ok) {
+          const allKetentuan = await ketentuanRes.json()
+          const filtered = allKetentuan.filter((k: KetentuanSurat) =>
+            k.is_global || k.prodi_id === userProdiId
+          )
+          setKetentuanList(filtered)
+        }
+
+        // Close dialog
+        setDeleteDialogOpen(false)
+        setDeletingId(null)
       } else {
         throw new Error('Failed to delete ketentuan')
       }
@@ -191,10 +273,17 @@ export default function KetentuanSuratPage() {
       console.error('Error deleting ketentuan:', error)
       toast({
         title: "Error",
-        description: "Gagal menghapus ketentuan surat",
+        description: "Gagal menghapus ketentuan dokumen",
         variant: "destructive"
       })
+    } finally {
+      setDeleting(false)
     }
+  }
+
+  const openDeleteDialog = (id: number) => {
+    setDeletingId(id)
+    setDeleteDialogOpen(true)
   }
 
   if (loading) {
@@ -213,7 +302,7 @@ export default function KetentuanSuratPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-transparent bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
-            Ketentuan Surat
+            Ketentuan Dokumen
           </h2>
           <p className="text-muted-foreground mt-1">
             Gabungkan jenis, tujuan, dan masalah surat menjadi ketentuan baru
@@ -341,9 +430,45 @@ export default function KetentuanSuratPage() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Scope Ketentuan *</Label>
+              <Select value={isGlobal ? "fakultas" : "prodi"} onValueChange={(v) => setIsGlobal(v === "fakultas")}>
+                <SelectTrigger className="h-11 border-2">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fakultas">
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-blue-600">Fakultas</Badge>
+                      <span className="text-xs text-muted-foreground">Semua prodi bisa lihat</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="prodi" disabled={!userProdiId}>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-purple-600">Prodi</Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {userProdi ? `Hanya ${userProdi.nama}` : 'Akun tidak terhubung prodi'}
+                      </span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {!isGlobal && userProdi && (
+                <div className="mt-2 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Badge className="bg-purple-600">{userProdi.kode}</Badge>
+                    <span className="font-medium text-purple-900 dark:text-purple-100">{userProdi.nama}</span>
+                  </div>
+                  <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
+                    Ketentuan ini hanya akan terlihat oleh prodi Anda
+                  </p>
+                </div>
+              )}
+            </div>
+
             <Button
               onClick={handleCreateKetentuan}
-              disabled={creating || !selectedJenis || !selectedMasalah || !selectedTujuan || !kode || !nama}
+              disabled={creating || !selectedJenis || !selectedMasalah || !selectedTujuan || !kode || !nama || (!isGlobal && !userProdiId)}
               className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               size="lg"
             >
@@ -355,7 +480,7 @@ export default function KetentuanSuratPage() {
               ) : (
                 <>
                   <Plus className="w-5 h-5 mr-2" />
-                  Buat Ketentuan Surat
+                  Buat Ketentuan Dokumen
                 </>
               )}
             </Button>
@@ -372,7 +497,7 @@ export default function KetentuanSuratPage() {
               Informasi
             </CardTitle>
             <CardDescription className="text-base">
-              Penjelasan tentang ketentuan surat
+              Penjelasan tentang ketentuan dokumen
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -382,10 +507,10 @@ export default function KetentuanSuratPage() {
                   <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-blue-900 dark:text-blue-100 mb-2 text-base">Apa itu Ketentuan Surat?</h4>
+                  <h4 className="font-bold text-blue-900 dark:text-blue-100 mb-2 text-base">Apa itu Ketentuan Dokumen?</h4>
                   <p className="text-sm text-blue-800/80 dark:text-blue-200/80 leading-relaxed">
-                    Ketentuan surat adalah aturan khusus yang menggabungkan jenis surat, tujuan, dan masalah
-                    menjadi satu kategori spesifik. Contoh: "KKP" adalah ketentuan untuk surat jenis PT & INSTANSI
+                    Ketentuan dokumen adalah aturan khusus yang menggabungkan jenis dokumen, tujuan, dan masalah
+                    menjadi satu kategori spesifik untuk penomoran. Contoh: "KKP" adalah ketentuan untuk dokumen jenis PT & INSTANSI
                     dengan tujuan tertentu dan masalah Perlengkapan dan Pengajaran.
                   </p>
                 </div>
@@ -455,7 +580,7 @@ export default function KetentuanSuratPage() {
       {/* Table of Existing Ketentuan */}
       <Card className="border-2 shadow-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Daftar Ketentuan Surat</CardTitle>
+          <CardTitle className="text-2xl">Daftar Ketentuan Dokumen</CardTitle>
           <CardDescription className="text-base">
             Ketentuan surat yang sudah dibuat ({ketentuanList.length} ketentuan)
           </CardDescription>
@@ -468,9 +593,9 @@ export default function KetentuanSuratPage() {
                   <BookOpen className="w-16 h-16 text-gray-400 dark:text-gray-600" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Belum Ada Ketentuan Surat</h3>
+              <h3 className="text-lg font-semibold mb-2">Belum Ada Ketentuan Dokumen</h3>
               <p className="text-muted-foreground text-sm max-w-md mx-auto">
-                Mulai membuat ketentuan surat dengan mengisi form di sebelah kiri
+                Mulai membuat ketentuan dokumen dengan mengisi form di sebelah kiri
               </p>
             </div>
           ) : (
@@ -480,6 +605,7 @@ export default function KetentuanSuratPage() {
                 <TableRow>
                   <TableHead>Kode</TableHead>
                   <TableHead>Nama</TableHead>
+                  <TableHead>Scope</TableHead>
                   <TableHead>Jenis</TableHead>
                   <TableHead>Tujuan</TableHead>
                   <TableHead>Masalah</TableHead>
@@ -493,6 +619,13 @@ export default function KetentuanSuratPage() {
                       <Badge className="font-mono">{ketentuan.kode}</Badge>
                     </TableCell>
                     <TableCell className="font-medium">{ketentuan.nama}</TableCell>
+                    <TableCell>
+                      {ketentuan.is_global ? (
+                        <Badge className="bg-blue-600">Fakultas</Badge>
+                      ) : (
+                        <Badge className="bg-purple-600">{ketentuan.prodi?.nama || ketentuan.prodi_id}</Badge>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="secondary">
                         {ketentuan.jenis?.kode}
@@ -512,7 +645,7 @@ export default function KetentuanSuratPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteKetentuan(ketentuan.id)}
+                        onClick={() => openDeleteDialog(ketentuan.id)}
                       >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
@@ -525,6 +658,41 @@ export default function KetentuanSuratPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-destructive" />
+              Hapus Ketentuan Dokumen
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus ketentuan dokumen ini? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteKetentuan}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Menghapus...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Hapus
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

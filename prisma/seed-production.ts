@@ -318,26 +318,26 @@ async function main() {
   }
 
   // ============================================
-  // 5. ADMIN PRODI (1 per prodi)
+  // 5. STAFF TU (Staff Tata Usaha - 1 per prodi)
   // ============================================
-  console.log('\n📚 Creating Admin Prodi...')
+  console.log('\n📚 Creating Staff TU (Admin Prodi)...')
 
   for (const prodi of prodiList) {
     await prisma.users.upsert({
       where: { username: `admin.prodi.${prodi.kode}` },
-      update: { password: hashedPassword, updated_at: new Date() },
+      update: { password: hashedPassword, updated_at: new Date(), role: 'staff_tu' },
       create: {
         id: nanoid(),
         username: `admin.prodi.${prodi.kode}`,
-        name: `Admin Prodi ${prodi.nama}`,
+        name: `Staff TU ${prodi.nama}`,
         password: hashedPassword,
-        role: 'prodi',
+        role: 'staff_tu',
         is_active: true,
         created_at: new Date(),
         updated_at: new Date()
       }
     })
-    console.log(`   ✅ Admin Prodi ${prodi.nama}`)
+    console.log(`   ✅ Staff TU ${prodi.nama}`)
   }
 
   // ============================================
@@ -347,15 +347,15 @@ async function main() {
   console.log('   ⏳ This may take a while...\n')
 
   let totalStudents = 0
-  const studentsPerProdi = 3 // 3 students per prodi untuk testing
+  const studentsPerProdi = 5 // 5 students per prodi
 
   // Sample NIM patterns untuk testing
   const nimPatterns = {
-    '20201': ['2220201001', '2320201002', '2420201003'], // Teknik Elektro
-    '22201': ['2222201001', '2322201002', '2422201003'], // Teknik Pengairan
-    '23201': ['2223201001', '2323201002', '2423201003'], // Arsitektur
-    '55202': ['2255202001', '2355202002', '2455202003'], // Informatika
-    '35201': ['2235201001', '2335201002', '2435201003'], // PWK
+    '20201': ['2220201001', '2320201002', '2420201003', '2220201004', '2320201005'], // Teknik Elektro
+    '22201': ['2222201001', '2322201002', '2422201003', '2222201004', '2322201005'], // Teknik Pengairan
+    '23201': ['2223201001', '2323201002', '2423201003', '2223201004', '2323201005'], // Arsitektur
+    '55202': ['2255202001', '2355202002', '2455202003', '2255202004', '2355202005'], // Informatika
+    '35201': ['2235201001', '2335201002', '2435201003', '2235201004', '2335201005'], // PWK
   }
 
   for (const prodi of prodiList) {
@@ -379,16 +379,20 @@ async function main() {
   console.log('✅ Production Seed Completed!\n')
   console.log('📊 Summary:')
   console.log(`   - ${prodiList.length} Program Studi (Real Codes)`)
-  console.log('   - 2 Admin (Umum & Keuangan)')
+  console.log('   - 3 Admin System (Umum, Keuangan, Staff TU)')
   console.log('   - 4 Pimpinan Fakultas (Real from SINTA)')
-  console.log(`   - ${kaprodiReal.length} Kepala Prodi (Real from SINTA)`)
-  console.log(`   - ${prodiList.length} Admin Prodi`)
+  console.log(`   - ${kaprodiReal.length} Kepala Prodi (Real from SINTA) → Dashboard: /dashboard/prodi`)
+  console.log(`   - ${prodiList.length} Staff TU per Prodi → Dashboard: /dashboard/staff_tu`)
   console.log(`   - ${totalStudents} Mahasiswa (Real from SINTA API)`)
   console.log('\n🔑 Default Password: password123')
   console.log('\n📧 Login Examples:')
-  console.log('   Dekan:       0919017702 / password123')
-  console.log('   Kaprodi IF:  0905078907 / password123')
-  console.log('   Admin Umum:  admin.umum / password123')
+  console.log('   Dekan:           0919017702 / password123')
+  console.log('   Kaprodi IF:      0905078907 / password123 → /dashboard/prodi')
+  console.log('   Admin Umum:      admin.umum / password123')
+  console.log('   Staff TU IF:     admin.prodi.55202 / password123 → /dashboard/staff_tu')
+  console.log('\n💡 Role Structure:')
+  console.log('   - Kepala/Sekretaris Prodi: role=dosen, sub_role=prodi → /dashboard/prodi')
+  console.log('   - Staff TU: role=staff_tu → /dashboard/staff_tu')
   console.log('\n💡 To add more students, use:')
   console.log('   npm run fetch:students')
 }

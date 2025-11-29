@@ -143,7 +143,7 @@ export const mahasiswaMenuItems = [
   },
   {
     id: "correspondence",
-    title: "Layanan Surat",
+    title: "Surat dan Dokumen",
     href: "/dashboard/mahasiswa/correspondence",
     icon: Mail,
   },
@@ -321,7 +321,7 @@ export const staffTuMenuItems = [
   },
   {
     id: "correspondence",
-    title: "Pelayanan Surat",
+    title: "Surat dan Dokumen",
     href: "/dashboard/staff_tu/correspondence",
     icon: Mail,
     children: [
@@ -503,7 +503,7 @@ export const prodiMenuItems = [
   },
   {
     id: "correspondence",
-    title: "Pelayanan Surat",
+    title: "Surat dan Dokumen",
     href: "/dashboard/prodi/correspondence",
     icon: Mail,
     children: [

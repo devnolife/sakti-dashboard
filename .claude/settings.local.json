@@ -13,7 +13,11 @@
       "Bash(npm run dev:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(rd /s /q \"app\\admin_umum\")",
+      "Bash(npm run db:seed-production:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(npx prisma generate)"
     ],
     "deny": [],
     "ask": []
