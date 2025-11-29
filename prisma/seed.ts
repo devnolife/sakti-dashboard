@@ -1,7 +1,7 @@
-import { PrismaClient } from '../../lib/generated/prisma'
-import { seedUsers } from './users'
-import { seedMasterData } from './master-data-seed'
-import { seedLetterMasterData } from './letter-master-data'
+import { PrismaClient } from '../lib/generated/prisma'
+import { seedMasterData } from './seeds/master-data-seed'
+import { seedUsers } from './seeds/users'
+import { seedLetterMasterData } from './seeds/letter-master-data'
 
 const prisma = new PrismaClient()
 
@@ -12,7 +12,7 @@ async function main() {
   try {
     // 1. Seed Master Data (Prodi) - HARUS PERTAMA
     console.log('\n📚 Step 1: Seeding Master Data (Prodi)...')
-    await seedMasterData()
+    await seedMasterData(prisma)
 
     // 2. Seed Users dan Profiles (depends on prodi)
     console.log('\n👥 Step 2: Seeding Users and Profiles...')
@@ -26,15 +26,16 @@ async function main() {
     console.log('✅ Database seeding completed successfully!')
     console.log('='.repeat(50))
   } catch (error) {
-    console.error('\n❌ Error during seeding:', error)
-    process.exit(1)
-  } finally {
-    await prisma.$disconnect()
+    console.error('❌ Error during seeding:', error)
+    throw error
   }
 }
 
 main()
   .catch((e) => {
-    console.error(e)
+    console.error('Seed error:', e)
     process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
   })

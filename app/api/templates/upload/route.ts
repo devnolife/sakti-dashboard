@@ -33,6 +33,20 @@ export async function POST(request: NextRequest) {
     const category = formData.get('category') as string || 'surat';
     const prodi_id = formData.get('prodi_id') as string | null;
     const is_global = formData.get('is_global') === 'true';
+    const letter_type_id = formData.get('letter_type_id') as string | null;
+    const ketentuan_id = formData.get('ketentuan_id') as string | null;
+
+    // Parse variable_mapping from wizard step 2
+    const variableMappingStr = formData.get('variable_mapping') as string | null;
+    let variableMapping = null;
+    if (variableMappingStr) {
+      try {
+        variableMapping = JSON.parse(variableMappingStr);
+      } catch (parseError) {
+        console.error('Error parsing variable_mapping:', parseError);
+        // Continue without variable mapping - not critical
+      }
+    }
 
     // Validation
     if (!file) {
@@ -111,15 +125,19 @@ export async function POST(request: NextRequest) {
       const textResult = await mammoth.extractRawText({ buffer });
       const textContent = textResult.value;
 
-      // Basic metadata only - no field auto-detection
+      // Basic metadata with letter type id
       metadata = {
         wordCount: textContent.split(/\s+/).filter(Boolean).length,
         hasVariablePlaceholders: /\{\{[^}]+\}\}|\$\{[^}]+\}/.test(textContent),
-        extractedAt: new Date().toISOString()
+        extractedAt: new Date().toISOString(),
+        letter_type_id: letter_type_id || null
       };
     } catch (analyzeError) {
       console.error('Template metadata extraction error:', analyzeError);
       // Continue even if extraction fails - not critical
+      metadata = {
+        letter_type_id: letter_type_id || null
+      };
     }
 
     // Upload to MinIO
@@ -141,6 +159,7 @@ export async function POST(request: NextRequest) {
       is_global,
       is_active: true,
       detected_fields: null, // Variables defined manually via Variable Editor
+      variable_mapping: variableMapping as any, // From wizard step 2
       metadata: metadata as any,
       version: 1,
       uploader: {
@@ -152,6 +171,13 @@ export async function POST(request: NextRequest) {
     if (!is_global && prodi_id) {
       createData.prodi = {
         connect: { kode: prodi_id }
+      };
+    }
+
+    // Add ketentuan relation if ketentuan_id is provided
+    if (ketentuan_id) {
+      createData.ketentuan = {
+        connect: { id: parseInt(ketentuan_id) }
       };
     }
 

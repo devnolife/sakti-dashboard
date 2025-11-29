@@ -2,6 +2,36 @@ import { PrismaClient, Role } from '../../lib/generated/prisma'
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 
+/**
+ * Helper function to upsert user
+ */
+async function upsertUser(prisma: PrismaClient, data: {
+  username: string
+  password: string
+  name: string
+  role: Role
+  sub_role?: string
+  is_active?: boolean
+}) {
+  return await prisma.users.upsert({
+    where: { username: data.username },
+    update: {
+      name: data.name,
+      role: data.role,
+      sub_role: data.sub_role,
+      is_active: data.is_active ?? true,
+      updated_at: new Date()
+    },
+    create: {
+      id: nanoid(),
+      ...data,
+      is_active: data.is_active ?? true,
+      created_at: new Date(),
+      updated_at: new Date()
+    }
+  })
+}
+
 export async function seedUsers(prisma: PrismaClient) {
   console.log('🌱 Seeding users...')
 
@@ -26,32 +56,17 @@ export async function seedUsers(prisma: PrismaClient) {
   const defaultPassword = await bcrypt.hash('password123', 10)
 
   // ========================================
-  // 1. CREATE ADMIN USER
+  // 1. CREATE ADMIN USER (using upsert)
   // ========================================
-  console.log('👤 Creating Admin user...')
-  
-  // Check if admin already exists
-  let adminUser = await prisma.users.findUnique({
-    where: { username: 'admin' }
-  })
+  console.log('👤 Creating/Updating Admin user...')
 
-  if (adminUser) {
-    console.log(`⏭️  Admin user already exists, skipping...`)
-  } else {
-    adminUser = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username: 'admin',
-        password: defaultPassword,
-        name: 'Administrator Sistem',
-        role: Role.admin,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    })
-    console.log(`✅ Created admin: ${adminUser.username}`)
-  }
+  const adminUser = await upsertUser(prisma, {
+    username: 'admin',
+    password: defaultPassword,
+    name: 'Administrator Sistem',
+    role: Role.admin,
+  })
+  console.log(`  ✅ Admin: ${adminUser.username}`)
 
   // ========================================
   // 2. CREATE DOSEN WITH SUB-ROLES
@@ -145,42 +160,35 @@ export async function seedUsers(prisma: PrismaClient) {
   }
 
   for (const dosenData of dosenLeadership) {
-    // Check if user already exists
-    const existingUser = await prisma.users.findUnique({
-      where: { username: dosenData.username }
+    // Upsert user
+    const user = await upsertUser(prisma, {
+      username: dosenData.username,
+      password: defaultPassword,
+      name: dosenData.name,
+      role: Role.dosen,
+      sub_role: dosenData.sub_role,
     })
 
-    if (existingUser) {
-      console.log(`  ⏭️  Skipping ${dosenData.position} (${dosenData.username}) - already exists`)
-      continue
-    }
-
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username: dosenData.username,
-        password: defaultPassword,
-        name: dosenData.name,
-        role: Role.dosen,
-        sub_role: dosenData.sub_role,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    })
-
-    await prisma.lecturers.create({
-      data: {
+    // Upsert lecturer profile
+    await prisma.lecturers.upsert({
+      where: { user_id: user.id },
+      update: {
+        nip: dosenData.nidn || `NIP${Date.now()}${Math.floor(Math.random() * 1000)}`,
+        department: dosenData.prodi_id ? allProdi.find(p => p.kode === dosenData.prodi_id)?.nama : 'Fakultas Teknik',
+        prodi_id: dosenData.prodi_id || undefined,
+        position: dosenData.position,
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
-        nip: dosenData.nidn || `NIP${Date.now()}${Math.floor(Math.random() * 1000)}`, // Gunakan NIDN jika ada
+        nip: dosenData.nidn || `NIP${Date.now()}${Math.floor(Math.random() * 1000)}`,
         department: dosenData.prodi_id ? allProdi.find(p => p.kode === dosenData.prodi_id)?.nama : 'Fakultas Teknik',
         prodi_id: dosenData.prodi_id || undefined,
         position: dosenData.position,
         specialization: dosenData.prodi_id ? getSpecialization(allProdi.find(p => p.kode === dosenData.prodi_id)?.nama || '') : 'Management',
         phone: `+62813${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`,
         office: `Gedung Dekanat Lantai 2`,
-        email: `${dosenData.username}@ft.unsri.ac.id`
+        email: `${dosenData.username}@ft.unismuh.ac.id`
       }
     })
 
@@ -192,7 +200,7 @@ export async function seedUsers(prisma: PrismaClient) {
   // 3. CREATE REGULAR DOSEN (Data Real dari SINTA CSV)
   // ========================================
   console.log('\n👨‍🏫 Creating regular Dosen (Real Data from SINTA)...')
-  
+
   // Dosen Real dari CSV dosen_teknik.csv
   const realDosen = [
     { nidn: '0930048304', nama: 'MUHAMMAD FAISAL', prodi: 'S1 Informatika', jabatan: 'Lektor Kepala', gelar_depan: 'Ir', gelar_belakang: 'S.SI, M.T, Ph.D' },
@@ -218,62 +226,55 @@ export async function seedUsers(prisma: PrismaClient) {
   ]
 
   for (const dosen of realDosen) {
-    // Check if user already exists
-    const existingUser = await prisma.users.findUnique({
-      where: { username: dosen.nidn }
-    })
-
-    if (existingUser) {
-      console.log(`  ⏭️  Skipping ${dosen.nama} (NIDN: ${dosen.nidn}) - already exists`)
-      continue
-    }
-
     // Cari prodi yang sesuai (mapping dari nama CSV ke kode prodi)
     let prodi_kode = '55202' // Default Informatika
     if (dosen.prodi.includes('Informatika')) prodi_kode = '55202'
-    else if (dosen.prodi.includes('Elektro')) prodi_kode = '55201'
-    else if (dosen.prodi.includes('Arsitektur')) prodi_kode = '55203'
-    else if (dosen.prodi.includes('Pengairan')) prodi_kode = '55204'
-    else if (dosen.prodi.includes('Perencanaan')) prodi_kode = '55205'
+    else if (dosen.prodi.includes('Elektro')) prodi_kode = '20201'
+    else if (dosen.prodi.includes('Arsitektur')) prodi_kode = '23201'
+    else if (dosen.prodi.includes('Pengairan')) prodi_kode = '22201'
+    else if (dosen.prodi.includes('Perencanaan')) prodi_kode = '35201'
 
     const prodi = allProdi.find(p => p.kode === prodi_kode)
     if (!prodi) continue
 
-    const fullName = dosen.gelar_depan 
+    const fullName = dosen.gelar_depan
       ? `${dosen.gelar_depan} ${dosen.nama}, ${dosen.gelar_belakang}`
       : `${dosen.nama}, ${dosen.gelar_belakang}`
 
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username: dosen.nidn,
-        password: defaultPassword,
-        name: fullName,
-        role: Role.dosen,
-        sub_role: 'dosen',
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
+    // Upsert user
+    const user = await upsertUser(prisma, {
+      username: dosen.nidn,
+      password: defaultPassword,
+      name: fullName,
+      role: Role.dosen,
+      sub_role: 'dosen',
     })
 
-    await prisma.lecturers.create({
-      data: {
+    // Upsert lecturer
+    await prisma.lecturers.upsert({
+      where: { user_id: user.id },
+      update: {
+        nip: dosen.nidn,
+        department: prodi.nama,
+        prodi_id: prodi.kode,
+        position: dosen.jabatan,
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
-        nip: dosen.nidn, // Gunakan NIDN sebagai NIP
+        nip: dosen.nidn,
         department: prodi.nama,
         prodi_id: prodi.kode,
         position: dosen.jabatan,
         specialization: getSpecialization(prodi.nama),
         phone: `+62813${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`,
         office: `Gedung ${prodi.nama.split(' ').pop()} Ruang Dosen`,
-        email: `${dosen.nidn}@ft.unsri.ac.id`
+        email: `${dosen.nidn}@ft.unismuh.ac.id`
       }
     })
     console.log(`  ✅ ${dosen.jabatan}: ${fullName} (NIDN: ${dosen.nidn})`)
   }
-  console.log(`✅ Created ${realDosen.length} real dosen from SINTA database`)
+  console.log(`  ✅ Processed ${realDosen.length} real dosen from SINTA database`)
 
   // ========================================
   // 4. CREATE STAFF ROLES
@@ -283,21 +284,22 @@ export async function seedUsers(prisma: PrismaClient) {
   // Staff TU (one per prodi)
   for (const prodi of allProdi) {
     const username = `stafftu_${prodi.kode.toLowerCase()}`
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username,
-        password: defaultPassword,
-        name: `${indonesianNames[Math.floor(Math.random() * indonesianNames.length)]}`,
-        role: Role.staff_tu,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
+
+    const user = await upsertUser(prisma, {
+      username,
+      password: defaultPassword,
+      name: `${indonesianNames[Math.floor(Math.random() * indonesianNames.length)]}`,
+      role: Role.staff_tu,
     })
 
-    await prisma.staff.create({
-      data: {
+    await prisma.staff.upsert({
+      where: { user_id: user.id },
+      update: {
+        department: prodi.nama,
+        prodi_id: prodi.kode,
+        position: `Staff Tata Usaha ${prodi.nama}`,
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
         nip: `NIPTU${Date.now()}${Math.floor(Math.random() * 1000)}`,
@@ -309,24 +311,22 @@ export async function seedUsers(prisma: PrismaClient) {
       }
     })
     console.log(`  ✅ Staff TU: ${prodi.nama}`)
-  }
-
+  }  // Kepala Tata Usaha
   // Kepala Tata Usaha
-  const ktuUser = await prisma.users.create({
-    data: {
-      id: nanoid(),
-      username: 'kepala_tu',
-      password: defaultPassword,
-      name: 'Drs. Bambang Supriadi, M.M.',
-      role: Role.kepala_tata_usaha,
-      is_active: true,
-      created_at: new Date(),
-      updated_at: new Date()
-    }
+  const ktuUser = await upsertUser(prisma, {
+    username: 'kepala_tu',
+    password: defaultPassword,
+    name: 'Drs. Bambang Supriadi, M.M.',
+    role: Role.kepala_tata_usaha,
   })
 
-  await prisma.staff.create({
-    data: {
+  await prisma.staff.upsert({
+    where: { user_id: ktuUser.id },
+    update: {
+      department: 'Fakultas Teknik',
+      position: 'Kepala Tata Usaha',
+    },
+    create: {
       id: nanoid(),
       user_id: ktuUser.id,
       nip: `NIPKTU${Date.now()}`,
@@ -340,21 +340,20 @@ export async function seedUsers(prisma: PrismaClient) {
 
   // Admin Keuangan (2 users)
   for (let i = 0; i < 2; i++) {
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username: `admin_keuangan${i + 1}`,
-        password: defaultPassword,
-        name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
-        role: Role.admin_keuangan,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
+    const user = await upsertUser(prisma, {
+      username: `admin_keuangan${i + 1}`,
+      password: defaultPassword,
+      name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
+      role: Role.admin_keuangan,
     })
 
-    await prisma.staff.create({
-      data: {
+    await prisma.staff.upsert({
+      where: { user_id: user.id },
+      update: {
+        department: 'Fakultas Teknik',
+        position: 'Administrator Keuangan',
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
         nip: `NIPKEU${Date.now()}${i}`,
@@ -369,21 +368,20 @@ export async function seedUsers(prisma: PrismaClient) {
 
   // Admin Umum (2 users)
   for (let i = 0; i < 2; i++) {
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username: `admin_umum${i + 1}`,
-        password: defaultPassword,
-        name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
-        role: Role.admin_umum,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
+    const user = await upsertUser(prisma, {
+      username: `admin_umum${i + 1}`,
+      password: defaultPassword,
+      name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
+      role: Role.admin_umum,
     })
 
-    await prisma.staff.create({
-      data: {
+    await prisma.staff.upsert({
+      where: { user_id: user.id },
+      update: {
+        department: 'Fakultas Teknik',
+        position: 'Administrator Umum',
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
         nip: `NIPUMUM${Date.now()}${i}`,
@@ -399,21 +397,22 @@ export async function seedUsers(prisma: PrismaClient) {
   // Laboratory Admin (one per prodi)
   for (const prodi of allProdi) {
     const username = `labadmin_${prodi.kode.toLowerCase()}`
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username,
-        password: defaultPassword,
-        name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
-        role: Role.laboratory_admin,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
+
+    const user = await upsertUser(prisma, {
+      username,
+      password: defaultPassword,
+      name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
+      role: Role.laboratory_admin,
     })
 
-    await prisma.staff.create({
-      data: {
+    await prisma.staff.upsert({
+      where: { user_id: user.id },
+      update: {
+        department: prodi.nama,
+        prodi_id: prodi.kode,
+        position: `Administrator Laboratorium ${prodi.nama}`,
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
         nip: `NIPLAB${Date.now()}${Math.floor(Math.random() * 1000)}`,
@@ -430,21 +429,22 @@ export async function seedUsers(prisma: PrismaClient) {
   // Reading Room Admin (one per prodi)
   for (const prodi of allProdi) {
     const username = `rradmin_${prodi.kode.toLowerCase()}`
-    const user = await prisma.users.create({
-      data: {
-        id: nanoid(),
-        username,
-        password: defaultPassword,
-        name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
-        role: Role.reading_room_admin,
-        is_active: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
+
+    const user = await upsertUser(prisma, {
+      username,
+      password: defaultPassword,
+      name: indonesianNames[Math.floor(Math.random() * indonesianNames.length)],
+      role: Role.reading_room_admin,
     })
 
-    await prisma.staff.create({
-      data: {
+    await prisma.staff.upsert({
+      where: { user_id: user.id },
+      update: {
+        department: prodi.nama,
+        prodi_id: prodi.kode,
+        position: `Administrator Ruang Baca ${prodi.nama}`,
+      },
+      create: {
         id: nanoid(),
         user_id: user.id,
         nip: `NIPRR${Date.now()}${Math.floor(Math.random() * 1000)}`,
@@ -459,31 +459,35 @@ export async function seedUsers(prisma: PrismaClient) {
   }
 
   // ========================================
-  // 5. CREATE STUDENTS (50 per prodi)
+  // 5. CREATE STUDENTS (5 per prodi)
   // ========================================
   console.log('\n🎓 Creating Students...')
   let totalStudents = 0
 
   for (const prodi of allProdi) {
-    for (let i = 0; i < 50; i++) {
+    let prodiStudentCount = 0
+    for (let i = 0; i < 5; i++) {
       const year = 2020 + (i % 5) // Students from 2020-2024
       const nim = `${year}${prodi.kode}${(i + 1).toString().padStart(4, '0')}`
 
-      const user = await prisma.users.create({
-        data: {
-          id: nanoid(),
-          username: nim,
-          password: defaultPassword,
-          name: indonesianNames[i % indonesianNames.length],
-          role: Role.mahasiswa,
-          is_active: true,
-          created_at: new Date(),
-          updated_at: new Date()
-        }
+      const user = await upsertUser(prisma, {
+        username: nim,
+        password: defaultPassword,
+        name: indonesianNames[i % indonesianNames.length],
+        role: Role.mahasiswa,
       })
 
-      await prisma.students.create({
-        data: {
+      await prisma.students.upsert({
+        where: { user_id: user.id },
+        update: {
+          nim,
+          major: prodi.nama,
+          department: prodi.nama,
+          prodi_id: prodi.kode,
+          angkatan: year,
+          semester: Math.min(Math.floor((2025 - year) * 2) + 1, 8),
+        },
+        create: {
           id: nanoid(),
           user_id: user.id,
           nim,
@@ -495,8 +499,8 @@ export async function seedUsers(prisma: PrismaClient) {
           academic_year: `${year}/${year + 1}`,
           jenis_kelamin: i % 2 === 0 ? 'Laki-laki' : 'Perempuan',
           phone: `+62814${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`,
-          email: `${nim}@student.ft.unsri.ac.id`,
-          address: `Jl. Contoh No. ${i + 1}, Palembang`,
+          email: `${nim}@student.ft.unismuh.ac.id`,
+          address: `Jl. Contoh No. ${i + 1}, Makassar`,
           enroll_date: new Date(year, 7, 1), // August 1st
           semester_awal: `Ganjil ${year}/${year + 1}`,
           gpa: parseFloat((2.5 + Math.random() * 1.5).toFixed(2)),
@@ -507,9 +511,10 @@ export async function seedUsers(prisma: PrismaClient) {
           }
         }
       })
+      prodiStudentCount++
       totalStudents++
     }
-    console.log(`  ✅ Created 50 students for ${prodi.nama}`)
+    console.log(`  ✅ Created 5 students for ${prodi.nama}`)
   }
 
   console.log(`\n✅ Total users seeded: ${totalStudents + dosenLeadership.length + 20 + allProdi.length * 3 + 5}`)

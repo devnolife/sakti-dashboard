@@ -68,9 +68,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Get prodi_id from profile
+    const prodi_id = user.staff?.prodi_id ||
+                     user.students?.prodi_id ||
+                     user.lecturers?.prodi_id ||
+                     null
+
     return NextResponse.json({
       user: {
         ...user,
+        prodi_id: prodi_id,
         profile: user.students || user.lecturers || user.staff
       }
     })

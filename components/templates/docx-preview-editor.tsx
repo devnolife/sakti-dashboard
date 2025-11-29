@@ -1,36 +1,34 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
-import { MousePointer2, Hand, Undo2, Redo2, Edit2, Trash2 } from "lucide-react"
+import { MousePointer2, Hand, Undo2, Redo2, Edit2, Trash2, FileText, Variable } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { TemplateVariable } from "@/types/template"
+import { renderAsync } from "docx-preview"
 
-export interface TemplateVariableEditorCoreProps {
-  html: string
-  rawText: string
+export interface DocxPreviewEditorProps {
+  file: File
   initialVariables?: Record<string, TemplateVariable>
   onVariablesChange?: (variables: Record<string, TemplateVariable>) => void
   className?: string
 }
 
-export function TemplateVariableEditorCore({
-  html,
-  rawText,
+export function DocxPreviewEditor({
+  file,
   initialVariables = {},
   onVariablesChange,
   className = ""
-}: TemplateVariableEditorCoreProps) {
+}: DocxPreviewEditorProps) {
   const [variables, setVariables] = useState<Record<string, TemplateVariable>>(initialVariables)
   const [selectedText, setSelectedText] = useState("")
-  const [selectionRange, setSelectionRange] = useState<{ start: number; end: number } | null>(null)
   const [showVariableDialog, setShowVariableDialog] = useState(false)
   const [newVariable, setNewVariable] = useState({
     key: "",
@@ -38,16 +36,68 @@ export function TemplateVariableEditorCore({
     type: "text" as 'text' | 'number' | 'date'
   })
 
-  // States for enhanced editing
+  // States for editing
   const [editMode, setEditMode] = useState<'select' | 'edit'>('select')
   const [editingVariable, setEditingVariable] = useState<string | null>(null)
   const [history, setHistory] = useState<Array<Record<string, TemplateVariable>>>([initialVariables])
   const [historyIndex, setHistoryIndex] = useState(0)
 
+  const docxContainerRef = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
   // Sync with parent when variables change
   useEffect(() => {
     onVariablesChange?.(variables)
   }, [variables, onVariablesChange])
+
+  // Render DOCX preview
+  useEffect(() => {
+    renderDocx()
+  }, [file])
+
+  const renderDocx = async () => {
+    if (!docxContainerRef.current) return
+
+    try {
+      setIsLoading(true)
+      const arrayBuffer = await file.arrayBuffer()
+
+      // Clear previous content
+      docxContainerRef.current.innerHTML = ''
+
+      // Render DOCX with original formatting
+      await renderAsync(arrayBuffer, docxContainerRef.current, undefined, {
+        className: "docx-preview-content",
+        inWrapper: true,
+        ignoreWidth: false,
+        ignoreHeight: false,
+        ignoreFonts: false,
+        breakPages: true,
+        ignoreLastRenderedPageBreak: false,
+        experimental: true,
+        trimXmlDeclaration: true,
+        useBase64URL: true,
+        renderHeaders: true,
+        renderFooters: true,
+        renderFootnotes: true,
+        renderEndnotes: true,
+      })
+
+      setIsLoading(false)
+      toast({
+        title: "Preview Siap!",
+        description: "DOCX berhasil di-render dengan format asli"
+      })
+    } catch (error) {
+      console.error("Error rendering DOCX:", error)
+      toast({
+        title: "Error Preview",
+        description: "Gagal menampilkan preview DOCX",
+        variant: "destructive"
+      })
+      setIsLoading(false)
+    }
+  }
 
   // Undo/Redo handlers
   const addToHistory = useCallback((newVariables: Record<string, TemplateVariable>) => {
@@ -84,37 +134,12 @@ export function TemplateVariableEditorCore({
     const selectedTextContent = selection.toString().trim()
     if (!selectedTextContent) return
 
-    // Cari posisi teks di rawText
-    const selectionStart = rawText.indexOf(selectedTextContent)
+    // Get selection position info
+    const range = selection.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
 
-    if (selectionStart !== -1) {
-      setSelectedText(selectedTextContent)
-      setSelectionRange({
-        start: selectionStart,
-        end: selectionStart + selectedTextContent.length
-      })
-      setShowVariableDialog(true)
-    } else {
-      // Jika tidak ditemukan exact match, coba cari dengan menghilangkan extra whitespace
-      const normalizedSelected = selectedTextContent.replace(/\s+/g, ' ')
-      const normalizedRawText = rawText.replace(/\s+/g, ' ')
-      const normalizedStart = normalizedRawText.indexOf(normalizedSelected)
-
-      if (normalizedStart !== -1) {
-        setSelectedText(selectedTextContent)
-        setSelectionRange({
-          start: normalizedStart,
-          end: normalizedStart + normalizedSelected.length
-        })
-        setShowVariableDialog(true)
-      } else {
-        toast({
-          title: "Teks tidak ditemukan",
-          description: "Tidak dapat menemukan posisi teks yang dipilih. Coba seleksi teks lain.",
-          variant: "destructive"
-        })
-      }
-    }
+    setSelectedText(selectedTextContent)
+    setShowVariableDialog(true)
   }
 
   const validateVariableKey = (key: string): boolean => {
@@ -122,7 +147,7 @@ export function TemplateVariableEditorCore({
   }
 
   const handleAddVariable = () => {
-    if (!newVariable.key || !newVariable.label || !selectionRange) {
+    if (!newVariable.key || !newVariable.label) {
       toast({
         title: "Error Validasi",
         description: "Harap isi semua field yang diperlukan",
@@ -155,8 +180,8 @@ export function TemplateVariableEditorCore({
       label: newVariable.label,
       type: newVariable.type,
       textContent: selectedText,
-      startIndex: selectionRange.start,
-      endIndex: selectionRange.end
+      startIndex: 0, // Not used in DOCX mode
+      endIndex: 0    // Not used in DOCX mode
     }
 
     const newVariables = { ...variables, [variable.key]: variable }
@@ -166,11 +191,10 @@ export function TemplateVariableEditorCore({
     setShowVariableDialog(false)
     setNewVariable({ key: "", label: "", type: "text" })
     setSelectedText("")
-    setSelectionRange(null)
 
     toast({
       title: "Berhasil",
-      description: "Variabel berhasil ditambahkan"
+      description: `Variabel "${variable.label}" berhasil ditambahkan`
     })
   }
 
@@ -200,153 +224,6 @@ export function TemplateVariableEditorCore({
       description: "Variabel berhasil diperbarui"
     })
   }
-
-  const getHighlightedHtml = () => {
-    const baseStyles = `
-      <style>
-        .document-preview {
-          font-family: 'Times New Roman', Times, serif;
-          font-size: 14px;
-          line-height: 1.6;
-          color: #1a1a1a;
-          max-width: 100%;
-        }
-        .document-preview h1 {
-          font-size: 24px;
-          line-height: 1.3;
-          margin-top: 1rem;
-          margin-bottom: 1.5rem;
-        }
-        .document-preview h2 {
-          font-size: 20px;
-          line-height: 1.3;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-        }
-        .document-preview h3 {
-          font-size: 18px;
-          line-height: 1.3;
-          margin-top: 1.25rem;
-          margin-bottom: 0.5rem;
-        }
-        .document-preview h4 {
-          font-size: 16px;
-          line-height: 1.3;
-          margin-top: 1rem;
-          margin-bottom: 0.25rem;
-        }
-        .document-preview p {
-          margin-bottom: 0.75rem;
-        }
-        .document-preview table {
-          border-collapse: collapse;
-          width: 100%;
-          margin: 1rem 0;
-        }
-        .document-preview table td,
-        .document-preview table th {
-          border: 1px solid #ddd;
-          padding: 8px;
-        }
-        .document-preview blockquote {
-          margin: 1rem 0;
-          padding-left: 1rem;
-          border-left: 4px solid #e5e7eb;
-          color: #4b5563;
-        }
-        .document-preview img {
-          max-width: 100%;
-          height: auto;
-          margin: 1rem 0;
-        }
-        .document-preview ul, .document-preview ol {
-          margin-left: 2rem;
-          margin-bottom: 0.75rem;
-        }
-        .document-preview strong {
-          font-weight: 700;
-        }
-        .document-preview em {
-          font-style: italic;
-        }
-        /* Selection highlight saat memblok teks */
-        .document-preview.mode-select ::selection {
-          background-color: #3b82f6;
-          color: white;
-        }
-        .document-preview.mode-select ::-moz-selection {
-          background-color: #3b82f6;
-          color: white;
-        }
-        .variable-highlight {
-          padding: 2px 6px;
-          border-radius: 3px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          position: relative;
-          border: 2px solid transparent;
-        }
-        .variable-highlight:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        .variable-highlight.mode-select {
-          background-color: #fef08a;
-          border-color: #facc15;
-        }
-        .variable-highlight.mode-edit {
-          background-color: #bbf7d0;
-          border-color: #22c55e;
-        }
-        .variable-highlight.editing {
-          background-color: #ddd6fe;
-          border-color: #8b5cf6;
-          box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-        .document-preview.mode-select {
-          cursor: text;
-        }
-        .document-preview.mode-edit .variable-highlight {
-          cursor: pointer;
-        }
-      </style>
-    `;
-
-    if (!html || Object.keys(variables).length === 0) {
-      return `${baseStyles}<div class="document-preview mode-${editMode}">${html}</div>`;
-    }
-
-    let highlightedHtml = html;
-    const sortedVars = Object.values(variables).sort((a, b) => b.startIndex - a.startIndex);
-
-    sortedVars.forEach((variable) => {
-      const isEditing = editingVariable === variable.key;
-      const modeClass = editMode === 'select' ? 'mode-select' : 'mode-edit';
-      const editingClass = isEditing ? 'editing' : '';
-
-      const highlighted = `<mark class="variable-highlight ${modeClass} ${editingClass}" data-variable-id="${variable.id}" data-variable-key="${variable.key}" title="${variable.label} (${variable.key})">${variable.textContent}</mark>`;
-
-      highlightedHtml = highlightedHtml.replace(
-        new RegExp(variable.textContent.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-        highlighted
-      );
-    });
-
-    return `${baseStyles}<div class="document-preview mode-${editMode}">${highlightedHtml}</div>`;
-  }
-
-  // Handle click on variable in edit mode
-  const handleVariableClick = (e: React.MouseEvent) => {
-    if (editMode !== 'edit') return;
-
-    const target = e.target as HTMLElement;
-    if (target.classList.contains('variable-highlight')) {
-      const variableKey = target.getAttribute('data-variable-key');
-      if (variableKey) {
-        setEditingVariable(editingVariable === variableKey ? null : variableKey);
-      }
-    }
-  };
 
   return (
     <div className={`flex flex-col h-full ${className}`}>
@@ -402,26 +279,39 @@ export function TemplateVariableEditorCore({
       </div>
 
       <div className="flex flex-1 gap-4 overflow-hidden min-h-0">
-        {/* Preview Panel */}
-        <div className="flex flex-col flex-1 border rounded-lg min-w-0">
+        {/* DOCX Preview Panel */}
+        <div className="flex flex-col flex-1 border rounded-lg min-w-0 bg-white">
           <div className="flex items-center justify-between p-3 border-b bg-muted">
-            <h3 className="font-semibold">Preview Template</h3>
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              <h3 className="font-semibold">Preview DOCX (Format Asli)</h3>
+            </div>
             <Badge variant="outline" className="text-xs">
-              {editMode === 'select' ? '🖐️ Mode Pilih - Blok teks untuk jadikan variabel' : '🖱️ Mode Edit - Klik variabel untuk edit'}
+              {editMode === 'select' ? '🖐️ Blok teks untuk jadikan variabel' : '🖱️ Kelola variabel'}
             </Badge>
           </div>
           {editMode === 'select' && (
             <div className="px-4 py-2 text-sm bg-blue-50 dark:bg-blue-950 border-b text-blue-700 dark:text-blue-300">
-              💡 <strong>Cara menandai variabel:</strong> Seleksi/blok teks dengan mouse, lalu dialog akan muncul untuk mendefinisikan variabel
+              💡 <strong>Cara:</strong> Seleksi/blok teks dengan mouse di preview, dialog akan muncul
             </div>
           )}
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="flex-1 p-6">
+            {isLoading && (
+              <div className="flex items-center justify-center py-20">
+                <div className="space-y-4 text-center">
+                  <div className="w-12 h-12 mx-auto border-4 border-t-4 rounded-full animate-spin border-primary border-t-transparent"></div>
+                  <p className="text-muted-foreground">Memuat preview DOCX...</p>
+                </div>
+              </div>
+            )}
             <div
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: getHighlightedHtml() }}
+              ref={docxContainerRef}
+              className="docx-preview-wrapper"
               onMouseUp={handleTextSelection}
-              onClick={handleVariableClick}
-              style={{ userSelect: editMode === 'select' ? "text" : "none" }}
+              style={{
+                userSelect: editMode === 'select' ? "text" : "none",
+                minHeight: '400px'
+              }}
             />
           </ScrollArea>
         </div>
@@ -429,8 +319,11 @@ export function TemplateVariableEditorCore({
         {/* Variables Panel */}
         <div className="flex flex-col border rounded-lg w-80 flex-shrink-0">
           <div className="p-3 border-b bg-muted">
-            <h3 className="font-semibold">Variabel Terdefinisi</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 mb-1">
+              <Variable className="w-4 h-4" />
+              <h3 className="font-semibold">Variabel Terdefinisi</h3>
+            </div>
+            <p className="text-xs text-muted-foreground">
               {Object.keys(variables).length} variabel telah didefinisikan
             </p>
           </div>
@@ -438,8 +331,9 @@ export function TemplateVariableEditorCore({
             <div className="space-y-3">
               {Object.keys(variables).length === 0 ? (
                 <div className="py-8 text-sm text-center text-muted-foreground">
-                  <p className="mb-2">Belum ada variabel.</p>
-                  <p className="text-xs">Blok/seleksi teks di preview untuk menambahkan variabel.</p>
+                  <Variable className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                  <p className="mb-2 font-medium">Belum ada variabel</p>
+                  <p className="text-xs">Blok/seleksi teks di preview untuk menambahkan variabel</p>
                 </div>
               ) : (
                 Object.entries(variables).map(([key, variable]) => (
@@ -484,7 +378,7 @@ export function TemplateVariableEditorCore({
                         <p className="mt-1 text-xs text-muted-foreground">
                           Tipe: {variable.type === 'text' ? 'Teks' : variable.type === 'number' ? 'Angka' : 'Tanggal'}
                         </p>
-                        <p className="p-2 mt-1 text-xs rounded text-muted-foreground bg-muted">
+                        <p className="p-2 mt-1 text-xs rounded text-muted-foreground bg-muted line-clamp-2">
                           "{variable.textContent}"
                         </p>
                       </div>
@@ -503,7 +397,7 @@ export function TemplateVariableEditorCore({
           <DialogHeader>
             <DialogTitle>Definisikan Variabel</DialogTitle>
             <DialogDescription>
-              Buat variabel untuk teks yang dipilih: "{selectedText}"
+              Buat variabel untuk teks yang dipilih: <strong>"{selectedText.substring(0, 50)}{selectedText.length > 50 ? '...' : ''}"</strong>
             </DialogDescription>
           </DialogHeader>
 
@@ -559,6 +453,26 @@ export function TemplateVariableEditorCore({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <style jsx global>{`
+        .docx-preview-wrapper {
+          font-family: 'Times New Roman', Times, serif;
+        }
+        .docx-preview-wrapper ::selection {
+          background-color: #3b82f6;
+          color: white;
+        }
+        .docx-preview-wrapper ::-moz-selection {
+          background-color: #3b82f6;
+          color: white;
+        }
+        .docx-preview-content {
+          background: white;
+          padding: 40px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          margin: 0 auto;
+        }
+      `}</style>
     </div>
   )
 }

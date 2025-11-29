@@ -40,6 +40,7 @@ export interface TemplateData {
   uploaded_by: string;
   created_at: string;
   updated_at: string;
+  letter_type_id?: string; // ID jenis surat yang terhubung
   prodi?: {
     kode: string;
     nama: string;
@@ -47,6 +48,11 @@ export interface TemplateData {
   uploader?: {
     id: string;
     name: string;
+  };
+  letter_type?: {
+    id: string;
+    title: string;
+    description?: string;
   };
 }
 

@@ -17,7 +17,13 @@
       "Bash(rd /s /q \"app\\admin_umum\")",
       "Bash(npm run db:seed-production:*)",
       "Bash(npx prisma db push:*)",
-      "Bash(npx prisma generate)"
+      "Bash(npx prisma generate)",
+      "Bash(npx ts-node:*)",
+      "Bash(npm run seed:master-data:*)",
+      "Bash(timeout /t)",
+      "Bash(cat:*)",
+      "Bash(tasklist:*)",
+      "Bash(timeout /t 10)"
     ],
     "deny": [],
     "ask": []

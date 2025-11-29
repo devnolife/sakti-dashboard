@@ -1,20 +1,25 @@
 "use client"
 
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Upload, FileText, Eye, Download, Plus, Search, Filter, Edit3, FileJson, FileCode, Sparkles, Clock, CheckCircle2, Globe2, Building2, Trash2, File, LogOut } from "lucide-react"
+import { FileText, Eye, Download, Plus, Search, Filter, Edit3, FileJson, FileCode, Sparkles, Clock, CheckCircle2, Globe2, Building2, File, Link2, Upload, FileUp, Wand2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
-import mammoth from "mammoth"
 import { saveAs } from "file-saver"
 import { InlineTemplateVariableEditor } from "@/components/templates/inline-template-variable-editor"
 import { TemplateData, MockTemplate, TemplateVariable, TemplatePreview } from "@/types/template"
@@ -30,8 +35,6 @@ export default function DocumentManagementTemplatesPage() {
   const router = useRouter()
   const [templates, setTemplates] = useState<TemplateData[]>([])
   const [loading, setLoading] = useState(true)
-  const [isUploadOpen, setIsUploadOpen] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [previewData, setPreviewData] = useState<TemplatePreview | null>(null)
@@ -41,15 +44,6 @@ export default function DocumentManagementTemplatesPage() {
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
-
-  // Upload form
-  const [uploadFile, setUploadFile] = useState<File | null>(null)
-  const [uploadName, setUploadName] = useState("")
-  const [uploadDescription, setUploadDescription] = useState("")
-  const [uploadCategory, setUploadCategory] = useState("surat")
-  const [isGlobal, setIsGlobal] = useState(false)
-
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Helper function untuk handle logout otomatis saat token tidak valid
   const handleAuthError = useCallback(() => {
@@ -125,97 +119,6 @@ export default function DocumentManagementTemplatesPage() {
       setLoading(false)
     }
   }, [categoryFilter, getAuthHeaders, handleAuthError])
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      if (!file.name.endsWith('.docx')) {
-        toast({
-          title: "File Tidak Valid",
-          description: "Silakan pilih file dengan format .docx",
-          variant: "destructive"
-        })
-        return
-      }
-      setUploadFile(file)
-      setUploadName(file.name.replace('.docx', ''))
-    }
-  }
-
-  const handleUpload = async () => {
-    if (!uploadFile || !uploadName) {
-      toast({
-        title: "Validasi Gagal",
-        description: "Mohon lengkapi file dan nama template",
-        variant: "destructive"
-      })
-      return
-    }
-
-    const headers = getAuthHeaders()
-    if (!headers) return
-
-    setIsUploading(true)
-    try {
-      const formData = new FormData()
-      formData.append('file', uploadFile)
-      formData.append('name', uploadName)
-      formData.append('description', uploadDescription)
-      formData.append('category', uploadCategory)
-      formData.append('is_global', String(isGlobal))
-
-      const response = await fetch('/api/templates/upload', {
-        method: 'POST',
-        headers: {
-          ...headers
-        },
-        body: formData
-      })
-
-      if (response.status === 401) {
-        handleAuthError()
-        return
-      }
-
-      const result = await response.json()
-
-      if (response.ok) {
-        toast({
-          title: "Berhasil! 🎉",
-          description: "Template berhasil diunggah"
-        })
-        setIsUploadOpen(false)
-        fetchTemplates()
-        resetUploadForm()
-      } else {
-        toast({
-          title: "Unggah Gagal",
-          description: result.error || result.message || "Gagal mengunggah template",
-          variant: "destructive"
-        })
-      }
-    } catch (error) {
-      console.error("Error uploading:", error)
-      toast({
-        title: "Terjadi Kesalahan",
-        description: "Gagal mengunggah template",
-        variant: "destructive"
-      })
-    } finally {
-      setIsUploading(false)
-    }
-  }
-
-  const resetUploadForm = () => {
-    setUploadFile(null)
-    setUploadName("")
-    setUploadDescription("")
-    setUploadCategory("surat")
-    setIsGlobal(false)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
-  }
 
   const handlePreview = async (template: TemplateData) => {
     const headers = getAuthHeaders()
@@ -505,10 +408,38 @@ export default function DocumentManagementTemplatesPage() {
                 </div>
               </div>
             </div>
-            <Button size="lg" onClick={() => setIsUploadOpen(true)} className="shadow-lg">
-              <Plus className="w-5 h-5 mr-2" />
-              Unggah Template
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="lg" className="shadow-lg">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Tambah Template
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel>Pilih Metode</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => router.push('/dashboard/staff_tu/document-management/templates/upload')}
+                  className="cursor-pointer py-3"
+                >
+                  <Upload className="w-4 h-4 mr-3 text-blue-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">Upload Template Jadi</span>
+                    <span className="text-xs text-muted-foreground">Unggah file .docx yang sudah siap</span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push('/dashboard/staff_tu/document-management/templates/new')}
+                  className="cursor-pointer py-3"
+                >
+                  <Wand2 className="w-4 h-4 mr-3 text-purple-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">Buat Template Baru</span>
+                    <span className="text-xs text-muted-foreground">Upload dokumen & tandai variabel</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -578,7 +509,10 @@ export default function DocumentManagementTemplatesPage() {
                 : "Mulai dengan mengunggah template pertama Anda untuk membuat dokumen secara massal"}
             </p>
             {!searchQuery && (
-              <Button onClick={() => setIsUploadOpen(true)} size="lg">
+              <Button
+                onClick={() => router.push('/dashboard/staff_tu/document-management/templates/new')}
+                size="lg"
+              >
                 <Plus className="w-5 h-5 mr-2" />
                 Unggah Template Pertama
               </Button>
@@ -630,6 +564,15 @@ export default function DocumentManagementTemplatesPage() {
                   <CardDescription className="line-clamp-2">
                     {template.description || "Tidak ada deskripsi"}
                   </CardDescription>
+                  {/* Badge jenis surat yang terhubung */}
+                  {template.letter_type && (
+                    <div className="pt-2">
+                      <Badge variant="outline" className="gap-1 text-xs bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800">
+                        <Link2 className="w-3 h-3" />
+                        {template.letter_type.title}
+                      </Badge>
+                    </div>
+                  )}
                 </CardHeader>
 
                 <CardContent className="flex-1 pb-3">
@@ -706,137 +649,6 @@ export default function DocumentManagementTemplatesPage() {
           })}
         </div>
       )}
-
-      {/* Upload Dialog */}
-      <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Upload className="w-6 h-6 text-primary" />
-              Unggah Template Baru
-            </DialogTitle>
-            <DialogDescription>
-              Unggah file DOCX untuk membuat template dengan variabel dinamis
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-5 py-4">
-            <div className="space-y-3">
-              <Label htmlFor="file" className="text-base font-medium">File Template *</Label>
-              <div className="relative">
-                <Input
-                  id="file"
-                  type="file"
-                  accept=".docx"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  className="cursor-pointer"
-                />
-              </div>
-              {uploadFile && (
-                <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{uploadFile.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {Math.round(uploadFile.size / 1024)} KB
-                    </p>
-                  </div>
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              <Label htmlFor="name" className="text-base font-medium">Nama Template *</Label>
-              <Input
-                id="name"
-                placeholder="Contoh: Surat Keputusan Dekan 2024"
-                value={uploadName}
-                onChange={(e) => setUploadName(e.target.value)}
-                className="text-base"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <Label htmlFor="description" className="text-base font-medium">Deskripsi (Opsional)</Label>
-              <Input
-                id="description"
-                placeholder="Jelaskan kegunaan template ini..."
-                value={uploadDescription}
-                onChange={(e) => setUploadDescription(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-3">
-              <Label htmlFor="category" className="text-base font-medium">Kategori</Label>
-              <Select value={uploadCategory} onValueChange={setUploadCategory}>
-                <SelectTrigger id="category">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="surat">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Surat
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="sertifikat">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      Sertifikat
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="laporan">
-                    <div className="flex items-center gap-2">
-                      <File className="w-4 h-4" />
-                      Laporan
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-start p-4 space-x-3 border rounded-lg bg-muted/30">
-              <input
-                type="checkbox"
-                id="is_global"
-                checked={isGlobal}
-                onChange={(e) => setIsGlobal(e.target.checked)}
-                className="w-5 h-5 mt-0.5 cursor-pointer"
-                aria-label="Jadikan template global"
-              />
-              <div className="flex-1">
-                <Label htmlFor="is_global" className="text-base font-medium cursor-pointer">
-                  Template Global
-                </Label>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Template dapat diakses oleh semua prodi dan pengguna
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setIsUploadOpen(false)} disabled={isUploading}>
-              Batal
-            </Button>
-            <Button onClick={handleUpload} disabled={isUploading || !uploadFile || !uploadName}>
-              {isUploading ? (
-                <>
-                  <div className="w-4 h-4 mr-2 border-2 border-t-2 rounded-full animate-spin border-white border-t-transparent"></div>
-                  Mengunggah...
-                </>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Unggah Template
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Preview Dialog */}
       {previewData && (

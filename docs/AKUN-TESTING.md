@@ -1,446 +1,252 @@
-# 🔐 Daftar Akun untuk Testing
+# 🔐 Daftar Akun Testing - SAKTI Dashboard
 
-Dokumen ini berisi daftar akun yang tersedia untuk testing aplikasi Dashboard Fakultas Teknik.
-
-> **📌 Catatan Penting:**
-> - Semua password default: `password123`
-> - File seeding: `prisma/seeds/users.ts`
-> - Total user: 50 mahasiswa per prodi + staff + dosen
+> **Default Password untuk semua akun:** `password123`  
+> **Super Admin Password:** `samaKemarin00`
 
 ---
 
-## 📋 Daftar Akun Berdasarkan Role
+## 🛡️ Super Admin
 
-### 1. 👑 Administrator
-Akses penuh ke seluruh sistem dan manajemen.
-
-| Username | Password | Nama | Role |
+| Username | Password | Role | Nama |
 |----------|----------|------|------|
-| `admin` | `password123` | Administrator Sistem | admin |
-
-**Akses:**
-- Full system access
-- User management
-- System configuration
-- All modules
+| `devnolife` | `samaKemarin00` | admin | DevNoLife - Super Admin |
+| `admin` | `password123` | admin | Administrator Sistem |
 
 ---
 
-### 2. 👨‍💼 Pimpinan Fakultas (Data Real)
+## 👔 Pimpinan Fakultas (Dekan & Wakil Dekan)
 
-#### Dekan
-| Username (NIDN) | Password | Nama Lengkap | Sub-Role | Jabatan | Prodi |
-|----------|----------|--------------|----------|---------|-------|
-| `0919017702` | `password123` | MUH SYAFAAT S. KUBA, S.T., M.T. | dekan,dosen | Dekan Fakultas Teknik | S1 Teknik Pengairan |
-
-#### Wakil Dekan
-| Username (NIDN) | Password | Nama Lengkap | Sub-Role | Jabatan | Prodi |
-|----------|----------|--------------|----------|---------|-------|
-| `0928088206` | `password123` | Dr. IRNAWATY IDRUS, S.T., M.T. | wakil_dekan_1,dosen | Wakil Dekan I (Bidang Akademik) | S1 Arsitektur |
-| `0926048103` | `password123` | Dr Ir ANDI MAKBUL SYAMSURI, S.T., M.T. | wakil_dekan_2,dosen | Wakil Dekan II (Administrasi Umum & Keuangan) | S1 Teknik Pengairan |
-| `0914099203` | `password123` | SOEMITRO EMIN PRAJA, S.T., M.Si | wakil_dekan_3,dosen | Wakil Dekan III (Kemahasiswaan & Alumni) | S1 Perencanaan Wilayah dan Kota |
-
-> **📌 Catatan Penting:**
-> - Username menggunakan **NIDN** (Nomor Induk Dosen Nasional)
-> - Setiap pimpinan memiliki **multiple sub-roles** (bisa switch antara dekan/wakil dekan dan dosen)
-> - Data diambil dari SINTA Kemenristekdikti 
-> - Password default untuk testing: `password123`
-
-**Akses:**
-- Faculty management
-- Approval workflows
-- Academic oversight
-- Faculty reports
-- Strategic planning
+| Username (NIDN) | Password | Sub-Role | Jabatan | Nama |
+|-----------------|----------|----------|---------|------|
+| `0919017702` | `password123` | dekan,dosen | Dekan Fakultas Teknik | MUH SYAFAAT S. KUBA, S.T., M.T. |
+| `0928088206` | `password123` | wakil_dekan_1,dosen | Wakil Dekan I (Bidang Akademik) | Dr IRNAWATY IDRUS, S.T., M.T. |
+| `0926048103` | `password123` | wakil_dekan_2,dosen | Wakil Dekan II (Administrasi & Keuangan) | Dr Ir ANDI MAKBUL SYAMSURI, S.T., M.T. |
+| `0914099203` | `password123` | wakil_dekan_3,dosen | Wakil Dekan III (Kemahasiswaan & Alumni) | SOEMITRO EMIN PRAJA, S.T., M.Si |
+| `gkm` | `password123` | gkm,dosen | Ketua Gugus Kendali Mutu | Dr. Indra Gunawan, S.T., M.T. |
 
 ---
 
-### 3. 🎓 Kepala Program Studi & Sekretaris
+## 👨‍🏫 Kepala & Sekretaris Program Studi
 
-Format username:
-- Kepala Prodi: `kaprodi_{kode_prodi}`
-- Sekretaris Prodi: `sekprodi_{kode_prodi}`
+### Teknik Elektro (20201)
+| Username | Password | Sub-Role | Jabatan |
+|----------|----------|----------|---------|
+| `kaprodi_20201` | `password123` | prodi | Kepala Program Studi Teknik Elektro |
+| `sekprodi_20201` | `password123` | sekretaris_prodi | Sekretaris Program Studi Teknik Elektro |
 
-**Contoh untuk Teknik Informatika (kode: 55201):**
+### Teknik Pengairan (22201)
+| Username | Password | Sub-Role | Jabatan |
+|----------|----------|----------|---------|
+| `kaprodi_22201` | `password123` | prodi | Kepala Program Studi Teknik Pengairan |
+| `sekprodi_22201` | `password123` | sekretaris_prodi | Sekretaris Program Studi Teknik Pengairan |
 
-| Username | Password | Role | Sub-Role | Jabatan |
-|----------|----------|------|----------|---------|
-| `kaprodi_55201` | `password123` | dosen | prodi | Kepala Program Studi Teknik Informatika |
-| `sekprodi_55201` | `password123` | dosen | sekretaris_prodi | Sekretaris Program Studi Teknik Informatika |
+### Arsitektur (23201)
+| Username | Password | Sub-Role | Jabatan |
+|----------|----------|----------|---------|
+| `kaprodi_23201` | `password123` | prodi | Kepala Program Studi Arsitektur |
+| `sekprodi_23201` | `password123` | sekretaris_prodi | Sekretaris Program Studi Arsitektur |
 
-**Akses:**
-- Academic management
-- Student academic records
-- Curriculum management
-- KKP/Thesis approvals
-- Program reports
+### Informatika (55202)
+| Username | Password | Sub-Role | Jabatan |
+|----------|----------|----------|---------|
+| `kaprodi_55202` | `password123` | prodi | Kepala Program Studi Informatika |
+| `sekprodi_55202` | `password123` | sekretaris_prodi | Sekretaris Program Studi Informatika |
 
----
-
-### 4. 👨‍🏫 Dosen (Regular Lecturer)
-
-#### Dosen dengan Data Real (Sampel)
-| Username (NIDN) | Password | Nama | Jabatan Fungsional | Prodi | Gelar |
-|----------|----------|------|-------------------|-------|-------|
-| `0930048304` | `password123` | MUHAMMAD FAISAL | Lektor Kepala | S1 Informatika | Ir, S.SI, M.T, Ph.D |
-| `0905078907` | `password123` | RIZKI YUSLIANA BAKTI | Lektor | S1 Informatika | S.T, M.T |
-| `0903058406` | `password123` | TITIN WAHYUNI | Lektor | S1 Informatika | S.Pd, S.Pd, M.T |
-| `0917109102` | `password123` | LUKMAN ANAS | Lektor | S1 Informatika | S.Kom, M.T |
-| `0019086209` | `password123` | ABDUL HAFID | Lektor Kepala | S1 Teknik Elektro | Ir, M.T |
-| `0903068203` | `password123` | RAHMANIA | Lektor | S1 Teknik Elektro | Ir, S.T, M.T |
-| `0907017301` | `password123` | ROHANA | Lektor | S1 Arsitektur | Dr, S.T, M.T |
-| `0929068304` | `password123` | ANDI ANNISA AMALIA | Lektor | S1 Arsitektur | S.T, M.Si |
-
-**Total Dosen di CSV:** 64 dosen dari berbagai prodi:
-- S1 Informatika
-- S1 Teknik Elektro
-- S1 Teknik Pengairan
-- S1 Arsitektur
-- S1 Perencanaan Wilayah dan Kota
-
-**Akses:**
-- Teaching portal
-- Student grades
-- Academic consultations
-- Research supervision
-- Thesis/KKP guidance
-- Dapat switch role jika punya sub-role kepemimpinan
+### Perencanaan Wilayah dan Kota (35201)
+| Username | Password | Sub-Role | Jabatan |
+|----------|----------|----------|---------|
+| `kaprodi_35201` | `password123` | prodi | Kepala Program Studi PWK |
+| `sekprodi_35201` | `password123` | sekretaris_prodi | Sekretaris Program Studi PWK |
 
 ---
 
-### 5. 📋 Staff Tata Usaha
-Staff TU per program studi.
+## 👨‍🏫 Dosen (Data Real dari SINTA)
 
-Format username: `stafftu_{kode_prodi}`
+### Informatika
+| Username (NIDN) | Password | Jabatan | Nama |
+|-----------------|----------|---------|------|
+| `0930048304` | `password123` | Lektor Kepala | Ir MUHAMMAD FAISAL, S.SI, M.T, Ph.D |
+| `0905078907` | `password123` | Lektor | RIZKI YUSLIANA BAKTI, S.T, M.T |
+| `0903058406` | `password123` | Lektor | TITIN WAHYUNI, S.Pd, S.Pd, M.T |
+| `0917109102` | `password123` | Lektor | LUKMAN ANAS, S.Kom, M.T |
+| `0916088803` | `password123` | Asisten Ahli | FAHRIM IRHAMNAH RACHMAN, S.Kom, M.T |
+| `0931087901` | `password123` | Asisten Ahli | MUHYIDDIN, S.Kom, M.T. |
 
-**Contoh:**
-| Username | Password | Role | Departemen |
-|----------|----------|------|------------|
-| `stafftu_55201` | `password123` | staff_tu | Teknik Informatika |
-| `stafftu_55202` | `password123` | staff_tu | Teknik Sipil |
-| `stafftu_55203` | `password123` | staff_tu | Teknik Elektro |
+### Teknik Elektro
+| Username (NIDN) | Password | Jabatan | Nama |
+|-----------------|----------|---------|------|
+| `0019086209` | `password123` | Lektor Kepala | Ir ABDUL HAFID, M.T |
+| `0903068203` | `password123` | Lektor | Ir RAHMANIA, S.T, M.T |
+| `0907118201` | `password123` | Lektor | Ir ADRIANI, S.T, M.T |
+| `0927097401` | `password123` | Lektor | ANDI ABD. HALIK LATEKO, S.T, M.T, Ph.D. |
 
-**Akses:**
-- Administrative tasks
-- Document verification
-- Student records
-- Letter processing
+### Arsitektur
+| Username (NIDN) | Password | Jabatan | Nama |
+|-----------------|----------|---------|------|
+| `0907017301` | `password123` | Lektor | Dr ROHANA, S.T, M.T |
+| `0929068304` | `password123` | Lektor | ANDI ANNISA AMALIA, S.T, M.Si |
+| `0922108804` | `password123` | Lektor | SITI FUADILLAH ALHUMAIRAH AMIN, S.T, M.T |
+| `0917117201` | `password123` | Lektor Kepala | Dr SAHABUDDIN, S.T, M.T |
+
+### Teknik Pengairan
+| Username (NIDN) | Password | Jabatan | Nama |
+|-----------------|----------|---------|------|
+| `0030116004` | `password123` | Lektor Kepala | Dr Ir SUKMASARI ANTARIA, M.Si |
+| `0930047504` | `password123` | Lektor | Ir. FAUZAN HAMDI, S.T, M.T |
+| `0916036801` | `password123` | Lektor Kepala | Dr NENNY, S.T, M.T |
+| `0904126802` | `password123` | Lektor | Dr HAMZAH AL-IMRAN, S.T, M.T |
+
+### Perencanaan Wilayah dan Kota
+| Username (NIDN) | Password | Jabatan | Nama |
+|-----------------|----------|---------|------|
+| `0916108605` | `password123` | Lektor | FATHURRAHMAN BURHANUDDIN, S.T, S.T, M.T |
+| `0901118502` | `password123` | Lektor | M. NURHIDAYAT, S.T, M.T |
 
 ---
 
-### 6. 👨‍💼 Kepala Tata Usaha
-| Username | Password | Nama | Role |
+## 👥 Staff
+
+### Staff Tata Usaha (per Prodi)
+| Username | Password | Role | Prodi |
+|----------|----------|------|-------|
+| `stafftu_20201` | `password123` | staff_tu | Teknik Elektro |
+| `stafftu_22201` | `password123` | staff_tu | Teknik Pengairan |
+| `stafftu_23201` | `password123` | staff_tu | Arsitektur |
+| `stafftu_55202` | `password123` | staff_tu | Informatika |
+| `stafftu_35201` | `password123` | staff_tu | PWK |
+
+### Kepala Tata Usaha
+| Username | Password | Role | Nama |
 |----------|----------|------|------|
-| `kepala_tu` | `password123` | Drs. Bambang Supriadi, M.M. | kepala_tata_usaha |
+| `kepala_tu` | `password123` | kepala_tata_usaha | Drs. Bambang Supriadi, M.M. |
 
-**Akses:**
-- Administration head portal
-- Staff oversight
-- Administrative approvals
-- Management reports
+### Admin Keuangan
+| Username | Password | Role |
+|----------|----------|------|
+| `admin_keuangan1` | `password123` | admin_keuangan |
+| `admin_keuangan2` | `password123` | admin_keuangan |
 
----
+### Admin Umum
+| Username | Password | Role |
+|----------|----------|------|
+| `admin_umum1` | `password123` | admin_umum |
+| `admin_umum2` | `password123` | admin_umum |
 
-### 7. 💰 Admin Keuangan
-| Username | Password | Role | Jabatan |
-|----------|----------|------|---------|
-| `admin_keuangan1` | `password123` | admin_keuangan | Administrator Keuangan |
-| `admin_keuangan2` | `password123` | admin_keuangan | Administrator Keuangan |
+### Lab Admin (per Prodi)
+| Username | Password | Role | Prodi |
+|----------|----------|------|-------|
+| `labadmin_20201` | `password123` | laboratory_admin | Teknik Elektro |
+| `labadmin_22201` | `password123` | laboratory_admin | Teknik Pengairan |
+| `labadmin_23201` | `password123` | laboratory_admin | Arsitektur |
+| `labadmin_55202` | `password123` | laboratory_admin | Informatika |
+| `labadmin_35201` | `password123` | laboratory_admin | PWK |
 
-**Akses:**
-- Financial administration
-- Payment processing
-- Budget management
-- Financial reports
-
----
-
-### 8. 🏢 Admin Umum
-| Username | Password | Role | Jabatan |
-|----------|----------|------|---------|
-| `admin_umum1` | `password123` | admin_umum | Administrator Umum |
-| `admin_umum2` | `password123` | admin_umum | Administrator Umum |
-
-**Akses:**
-- General administrative tasks
-- Facility management
-- General services
+### Reading Room Admin (per Prodi)
+| Username | Password | Role | Prodi |
+|----------|----------|------|-------|
+| `rradmin_20201` | `password123` | reading_room_admin | Teknik Elektro |
+| `rradmin_22201` | `password123` | reading_room_admin | Teknik Pengairan |
+| `rradmin_23201` | `password123` | reading_room_admin | Arsitektur |
+| `rradmin_55202` | `password123` | reading_room_admin | Informatika |
+| `rradmin_35201` | `password123` | reading_room_admin | PWK |
 
 ---
 
-### 9. 🔬 Laboratory Admin
-Admin laboratorium per program studi.
+## 🎓 Mahasiswa (5 per Prodi)
 
-Format username: `labadmin_{kode_prodi}`
+Format NIM: `{tahun}{kode_prodi}{urutan}`
 
-**Contoh:**
-| Username | Password | Role | Departemen |
-|----------|----------|------|------------|
-| `labadmin_55201` | `password123` | laboratory_admin | Lab Teknik Informatika |
-| `labadmin_55202` | `password123` | laboratory_admin | Lab Teknik Sipil |
-| `labadmin_55203` | `password123` | laboratory_admin | Lab Teknik Elektro |
+### Teknik Elektro (20201)
+| Username (NIM) | Password | Angkatan |
+|----------------|----------|----------|
+| `2020202010001` | `password123` | 2020 |
+| `2021202010002` | `password123` | 2021 |
+| `2022202010003` | `password123` | 2022 |
+| `2023202010004` | `password123` | 2023 |
+| `2024202010005` | `password123` | 2024 |
 
-**Akses:**
-- Laboratory management
-- Lab equipment tracking
-- Lab schedule management
-- Lab reports
+### Teknik Pengairan (22201)
+| Username (NIM) | Password | Angkatan |
+|----------------|----------|----------|
+| `2020222010001` | `password123` | 2020 |
+| `2021222010002` | `password123` | 2021 |
+| `2022222010003` | `password123` | 2022 |
+| `2023222010004` | `password123` | 2023 |
+| `2024222010005` | `password123` | 2024 |
 
----
+### Arsitektur (23201)
+| Username (NIM) | Password | Angkatan |
+|----------------|----------|----------|
+| `2020232010001` | `password123` | 2020 |
+| `2021232010002` | `password123` | 2021 |
+| `2022232010003` | `password123` | 2022 |
+| `2023232010004` | `password123` | 2023 |
+| `2024232010005` | `password123` | 2024 |
 
-### 10. 📚 Reading Room Admin
-Admin ruang baca per program studi.
+### Informatika (55202)
+| Username (NIM) | Password | Angkatan |
+|----------------|----------|----------|
+| `2020552020001` | `password123` | 2020 |
+| `2021552020002` | `password123` | 2021 |
+| `2022552020003` | `password123` | 2022 |
+| `2023552020004` | `password123` | 2023 |
+| `2024552020005` | `password123` | 2024 |
 
-Format username: `rradmin_{kode_prodi}`
-
-**Contoh:**
-| Username | Password | Role | Departemen |
-|----------|----------|------|------------|
-| `rradmin_55201` | `password123` | reading_room_admin | Ruang Baca Teknik Informatika |
-| `rradmin_55202` | `password123` | reading_room_admin | Ruang Baca Teknik Sipil |
-| `rradmin_55203` | `password123` | reading_room_admin | Ruang Baca Teknik Elektro |
-
-**Akses:**
-- Reading room management
-- Book borrowing
-- Library services
-
----
-
-### 11. 👨‍🎓 Mahasiswa (Student)
-**50 mahasiswa per program studi** dari angkatan 2020-2024.
-
-Format NIM/Username: `{tahun}{kode_prodi}{nomor_urut_4_digit}`
-
-**Contoh NIM untuk Teknik Informatika (kode: 55201):**
-| NIM | Password | Tahun | Semester | Role |
-|-----|----------|-------|----------|------|
-| `202055201001` | `password123` | 2020 | 8 | mahasiswa |
-| `202155201001` | `password123` | 2021 | 7 | mahasiswa |
-| `202255201001` | `password123` | 2022 | 5 | mahasiswa |
-| `202355201001` | `password123` | 2023 | 3 | mahasiswa |
-| `202455201001` | `password123` | 2024 | 1 | mahasiswa |
-
-**Data Mahasiswa:**
-- Nama: Nama Indonesia random
-- Email: `{nim}@student.ft.unsri.ac.id`
-- IPK: Random 2.5 - 4.0
-- Jenis Kelamin: Bergantian (genap/ganjil)
-- Alamat: Jl. Contoh No. {nomor}, Palembang
-
-**Akses:**
-- Student portal
-- Course registration (KRS)
-- Grade reports (KHS)
-- Transcript
-- KKP application
-- Thesis submission
-- Academic consultations
-- Payment status
-- Library services
+### Perencanaan Wilayah dan Kota (35201)
+| Username (NIM) | Password | Angkatan |
+|----------------|----------|----------|
+| `2020352010001` | `password123` | 2020 |
+| `2021352010002` | `password123` | 2021 |
+| `2022352010003` | `password123` | 2022 |
+| `2023352010004` | `password123` | 2023 |
+| `2024352010005` | `password123` | 2024 |
 
 ---
 
-## 🔍 Cara Generate Username
+## 📝 Kode Program Studi
 
-### Format Username per Role:
-
-| Role | Format | Contoh |
-|------|--------|--------|
-| Admin | `admin` | `admin` |
-| Dekan | `dekan` | `dekan` |
-| Wakil Dekan | `wd{nomor}` | `wd1`, `wd2`, `wd3`, `wd4` |
-| GKM | `gkm` | `gkm` |
-| Kepala Prodi | `kaprodi_{kode_prodi}` | `kaprodi_55201` |
-| Sekretaris Prodi | `sekprodi_{kode_prodi}` | `sekprodi_55201` |
-| Dosen | `dosen{nomor_3_digit}` | `dosen001`, `dosen020` |
-| Staff TU | `stafftu_{kode_prodi}` | `stafftu_55201` |
-| Kepala TU | `kepala_tu` | `kepala_tu` |
-| Admin Keuangan | `admin_keuangan{nomor}` | `admin_keuangan1` |
-| Admin Umum | `admin_umum{nomor}` | `admin_umum1` |
-| Lab Admin | `labadmin_{kode_prodi}` | `labadmin_55201` |
-| Reading Room Admin | `rradmin_{kode_prodi}` | `rradmin_55201` |
-| Mahasiswa | `{tahun}{kode_prodi}{urut_4_digit}` | `202055201001` |
-
-### Kode Prodi yang Tersedia:
-
-Tergantung dari data di `prisma/seeds/master-data-seed.ts`. Contoh:
-- **55201** - Teknik Informatika
-- **55202** - Teknik Sipil  
-- **55203** - Teknik Elektro
-- **55204** - Teknik Mesin
-- **55205** - Arsitektur
+| Kode | Nama Program Studi |
+|------|-------------------|
+| 20201 | Teknik Elektro |
+| 22201 | Teknik Pengairan |
+| 23201 | Arsitektur |
+| 55202 | Informatika |
+| 35201 | Perencanaan Wilayah dan Kota |
 
 ---
 
-## 🚀 Cara Menggunakan
+## 🔗 Login URL
 
-### 1. Jalankan Seeding Database
+```
+http://localhost:3000/login
+```
+
+---
+
+## ⚠️ Catatan Penting
+
+1. **Password default** untuk semua akun adalah `password123`, kecuali super admin (`devnolife`) yang menggunakan `samaKemarin00`
+2. Akun dosen dengan **NIDN** adalah data real dari SINTA
+3. Akun mahasiswa menggunakan format **NIM** sebagai username
+4. Setiap prodi memiliki staff TU, lab admin, dan reading room admin masing-masing
+5. Data ini hanya untuk **testing/development**, jangan gunakan di production!
+
+---
+
+## 🚀 Cara Menjalankan Seed
+
 ```bash
-# Reset database (jika perlu)
-pnpm prisma migrate reset
+# Seed semua data
+pnpm db:seed
 
-# Atau jalankan seeding saja
-pnpm prisma db seed
+# Seed super admin saja
+pnpm seed:super-admin
+
+# Seed master data prodi
+pnpm seed:master-data
 ```
-
-### 2. Login ke Aplikasi
-```
-URL: http://localhost:3000/login
-```
-
-### 3. Pilih Akun Sesuai Role yang Ingin Ditest
-Gunakan username dan password `password123` untuk semua akun.
-
-**Contoh Login:**
-- **Admin**: `admin` / `password123`
-- **Dekan**: `dekan` / `password123`
-- **Mahasiswa**: `202055201001` / `password123`
-
-### 4. Test Fitur Berdasarkan Role
-Setiap role memiliki akses yang berbeda-beda sesuai dengan kebutuhan.
 
 ---
 
-## 📊 Summary Akun
-
-| Role | Jumlah | Pattern | Contoh |
-|------|--------|---------|--------|
-| Admin | 1 | `admin` | `admin` |
-| Dekan | 1 | `dekan` | `dekan` |
-| Wakil Dekan | 4 | `wd{n}` | `wd1`, `wd2`, `wd3`, `wd4` |
-| GKM | 1 | `gkm` | `gkm` |
-| Kepala Prodi | Per prodi | `kaprodi_{kode}` | `kaprodi_55201` |
-| Sekretaris Prodi | Per prodi | `sekprodi_{kode}` | `sekprodi_55201` |
-| Dosen Regular | 20 | `dosen{nnn}` | `dosen001` - `dosen020` |
-| Staff TU | Per prodi | `stafftu_{kode}` | `stafftu_55201` |
-| Kepala TU | 1 | `kepala_tu` | `kepala_tu` |
-| Admin Keuangan | 2 | `admin_keuangan{n}` | `admin_keuangan1`, `admin_keuangan2` |
-| Admin Umum | 2 | `admin_umum{n}` | `admin_umum1`, `admin_umum2` |
-| Lab Admin | Per prodi | `labadmin_{kode}` | `labadmin_55201` |
-| Reading Room Admin | Per prodi | `rradmin_{kode}` | `rradmin_55201` |
-| Mahasiswa | 50 per prodi | `{tahun}{kode}{nnnn}` | `202055201001` |
-
-**Total Estimasi:**
-- **Leadership**: 7 (Admin, Dekan, 4 WD, GKM)
-- **Dosen**: 20 + (2 × jumlah prodi) untuk Kaprodi & Sekprodi
-- **Staff**: Per prodi × 3 + 5 (TU, Lab, RR per prodi + KTU + 2 Keuangan + 2 Umum)
-- **Mahasiswa**: 50 × jumlah prodi
-
-Untuk 5 prodi = **Lebih dari 300 user**
-
----
-
-## 🔐 Keamanan
-
-> **⚠️ PENTING:** 
-> - Akun-akun ini **HANYA untuk testing/development**
-> - **JANGAN** gunakan di production
-> - **GANTI** semua password sebelum deploy ke production
-> - Password default `password123` sangat lemah dan mudah ditebak
-> - Implementasikan password hashing yang kuat di production
-
----
-
-## 🛠️ Maintenance
-
-### Generate Akun Baru
-
-Edit file seeding:
-```bash
-prisma/seeds/users.ts
-prisma/seeds/master-data-seed.ts
-```
-
-Jalankan seeding:
-```bash
-pnpm prisma db seed
-```
-
-### Reset Database
-```bash
-# Reset complete (drop + migrate + seed)
-pnpm prisma migrate reset
-
-# Atau manual
-pnpm prisma migrate dev --name init
-pnpm prisma db seed
-```
-
-### Troubleshooting
-
-**Problem: Login gagal**
-- Pastikan database sudah di-seed
-- Check apakah username sudah benar
-- Pastikan password menggunakan `password123`
-
-**Problem: User tidak ada**
-- Jalankan `pnpm prisma db seed` ulang
-- Check file `prisma/seeds/master-data-seed.ts` untuk prodi yang tersedia
-
-**Problem: Database error**
-- Reset database: `pnpm prisma migrate reset`
-- Rebuild Prisma client: `pnpm prisma generate`
-
----
-
-## 📚 File Seeding
-
-| File | Deskripsi |
-|------|-----------|
-| `prisma/seed-all.ts` | Entry point untuk seeding |
-| `prisma/seeds/master-data-seed.ts` | Data master (prodi, dll) |
-| `prisma/seeds/users.ts` | Data user dan role (file ini yang digunakan) |
-
----
-
-## 📞 Referensi
-
-- **GraphQL API**: `https://superapps.if.unismuh.ac.id/graphql`
-- **Seeding File**: `prisma/seeds/users.ts`
-- **Password Default**: `password123`
-- **Email Pattern Mahasiswa**: `{nim}@student.ft.unsri.ac.id`
-- **Email Pattern Dosen**: `{username}@ft.unsri.ac.id`
-
----
-
-**Last Updated:** 1 November 2025  
-**Version:** 2.1.0 (Added real lecturer data from SINTA CSV)
-
----
-
-## 📂 Data Sources
-
-- **User Seeding**: `prisma/seeds/users.ts`
-- **Real Lecturer Data**: `dosen_teknik.csv` (64 dosen from SINTA)
-- **Password Hash**: bcrypt with 10 rounds
-- **Username Format**: NIDN (Nomor Induk Dosen Nasional)
-
----
-
-## 🎯 Quick Login Examples
-
-### Test Sub-Role Switching (Dekan)
-```
-Username: 0919017702
-Password: password123
-Sub-Roles: dekan, dosen
-```
-Login akan masuk ke **Dashboard Dekan**, klik **SubRoleSwitcher** di header untuk switch ke **Dashboard Dosen**.
-
-### Test Sub-Role Switching (Wakil Dekan)
-```
-Username: 0928088206  
-Password: password123
-Sub-Roles: wakil_dekan_1, dosen
-```
-Login akan masuk ke **Dashboard Wakil Dekan 1**, bisa switch ke **Dashboard Dosen**.
-
-### Test Regular Dosen
-```
-Username: 0930048304
-Password: password123
-Sub-Roles: dosen
-```
-Login langsung ke **Dashboard Dosen** (tidak ada sub-role lain).
+*Terakhir diperbarui: November 2025*
 
