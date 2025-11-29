@@ -1,21 +1,24 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { generateCertificatePDF, generatePDFPassword } from "@/lib/pdf-generator"
-import { uploadFile } from "@/lib/minio-client"
-import { generateSignatureData, type DocumentSignature } from "@/lib/signature-utils"
-import QRCode from 'qrcode'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import {
+  generateCertificatePDF,
+  generatePDFPassword,
+} from "@/lib/pdf-generator";
+import { uploadFile } from "@/lib/minio-client";
+import {
+  generateSignatureData,
+  type DocumentSignature,
+} from "@/lib/signature-utils";
+import QRCode from "qrcode";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check if user is laboratory_admin
@@ -23,51 +26,51 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Only laboratory admins can create certificates" },
         { status: 403 }
-      )
+      );
     }
 
     // Get prodi from laboratory_admin
     const labAdmin = await prisma.laboratory_admins.findFirst({
       where: {
-        user_id: session.user.id
+        user_id: session.user.id,
       },
       select: {
-        prodi_id: true
-      }
-    })
+        prodi_id: true,
+      },
+    });
 
     if (!labAdmin || !labAdmin.prodi_id) {
       return NextResponse.json(
         { error: "Laboratory admin prodi not found" },
         { status: 404 }
-      )
+      );
     }
 
-    const body = await req.json()
-    const { certificates } = body
+    const body = await req.json();
+    const { certificates } = body;
 
     if (!Array.isArray(certificates) || certificates.length === 0) {
       return NextResponse.json(
         { error: "Invalid certificates data" },
         { status: 400 }
-      )
+      );
     }
 
     // Process each certificate: generate PDF, upload to MinIO, then save to DB
-    const successfulCerts: string[] = []
-    const failedCerts: string[] = []
+    const successfulCerts: string[] = [];
+    const failedCerts: string[] = [];
 
     for (const cert of certificates) {
       try {
         // Generate unique password for this certificate
-        const pdfPassword = generatePDFPassword()
+        const pdfPassword = generatePDFPassword();
 
         // Generate PDF with digital signature protection
-        const pdfBuffer = await generateCertificatePDF(cert, pdfPassword)
+        const pdfBuffer = await generateCertificatePDF(cert, pdfPassword);
 
         // Upload PDF to MinIO
-        const fileName = `certificate-${cert.verificationId}.pdf`
-        const pdfUrl = await uploadFile(pdfBuffer, fileName, 'application/pdf')
+        const fileName = `certificate-${cert.verificationId}.pdf`;
+        const pdfUrl = await uploadFile(pdfBuffer, fileName, "application/pdf");
 
         // Generate Digital Signature (HMAC-SHA256)
         const signaturePayload: DocumentSignature = {
@@ -77,7 +80,7 @@ export async function POST(req: NextRequest) {
           signerName: session.user.name || "Laboratory Admin",
           signerRole: "laboratory_admin",
           timestamp: Date.now(),
-        }
+        };
 
         const signatureData = generateSignatureData(
           cert.verificationId,
@@ -85,18 +88,22 @@ export async function POST(req: NextRequest) {
           cert.issueDate,
           session.user.name || "Laboratory Admin",
           "laboratory_admin"
-        )
+        );
 
         // Generate QR Code for signature verification
         const qrCodeBuffer = await QRCode.toBuffer(signatureData.qrCodeData, {
           width: 300,
           margin: 2,
-          errorCorrectionLevel: 'M'
-        })
+          errorCorrectionLevel: "M",
+        });
 
         // Upload QR Code to MinIO
-        const qrFileName = `qr-signature-${cert.verificationId}.png`
-        const qrSignatureUrl = await uploadFile(qrCodeBuffer, qrFileName, 'image/png')
+        const qrFileName = `qr-signature-${cert.verificationId}.png`;
+        const qrSignatureUrl = await uploadFile(
+          qrCodeBuffer,
+          qrFileName,
+          "image/png"
+        );
 
         // Prepare certificate data for database
         const certData = {
@@ -151,24 +158,27 @@ export async function POST(req: NextRequest) {
           // Prodi Association
           prodi_id: labAdmin.prodi_id,
           created_by: session.user.id,
-        }
+        };
 
         // Insert into database (upsert to handle duplicates)
         await prisma.laboratory_certificates.upsert({
           where: {
-            verification_id: cert.verificationId
+            verification_id: cert.verificationId,
           },
           create: certData,
           update: {
             ...certData,
-            updated_at: new Date()
-          }
-        })
+            updated_at: new Date(),
+          },
+        });
 
-        successfulCerts.push(cert.verificationId)
+        successfulCerts.push(cert.verificationId);
       } catch (error: any) {
-        console.error(`Failed to process certificate ${cert.verificationId}:`, error)
-        failedCerts.push(cert.verificationId)
+        console.error(
+          `Failed to process certificate ${cert.verificationId}:`,
+          error
+        );
+        failedCerts.push(cert.verificationId);
       }
     }
 
@@ -178,14 +188,13 @@ export async function POST(req: NextRequest) {
       count: successfulCerts.length,
       successful: successfulCerts,
       failed: failedCerts,
-      totalProcessed: certificates.length
-    })
-
+      totalProcessed: certificates.length,
+    });
   } catch (error: any) {
-    console.error("Error saving certificates:", error)
+    console.error("Error saving certificates:", error);
     return NextResponse.json(
       { error: error.message || "Failed to save certificates" },
       { status: 500 }
-    )
+    );
   }
 }

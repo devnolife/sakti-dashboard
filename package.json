@@ -25,6 +25,10 @@
     "seed:super-admin": "tsx prisma/seeds/super-admin-seed.ts",
     "seed:counters": "tsx scripts/seed-letter-counters.ts",
     "seed:admin-prodi": "tsx scripts/seed-admin-prodi.ts",
+    "seed:lab-admins": "tsx scripts/seed-laboratory-admins.ts",
+    "fix:lab-admins": "tsx scripts/fix-laboratory-admins-prodi.ts",
+    "check:lab-certs": "tsx scripts/check-lab-certificates-prodi.ts",
+    "fix:lab-certs": "tsx scripts/fix-lab-certificates-prodi.ts",
     "letter-counters": "tsx scripts/show-letter-counters.ts"
   },
   "dependencies": {
@@ -94,7 +98,8 @@
     "html2pdf.js": "^0.12.1",
     "input-otp": "1.4.1",
     "jsonwebtoken": "^9.0.2",
-    "jspdf": "^3.0.2",
+    "jspdf": "^3.0.4",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.10.0",
     "minio": "^8.0.6",
