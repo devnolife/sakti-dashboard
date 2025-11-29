@@ -31,13 +31,28 @@ interface CertificateData {
   certificateTitle: string;
   participantName: string;
   programName: string;
-  subtitle: string;
+  subtitle?: string;
   issueDate: string;
-  instructorName: string;
-  organizationName: string;
-  monthRoman: string;
-  yearHijri: string;
-  yearMasehi: string;
+
+  // Performance & Analytics (Optional)
+  meetings?: number;
+  totalScore?: number;
+  materials?: number;
+  attendanceRate?: number;
+  assignmentCompletion?: number;
+  participationScore?: number;
+  overallGrade?: string;
+  learningHours?: number;
+  weeklyData?: number[];
+  learningVelocity?: number;
+  collaborationScore?: number;
+  problemSolvingEfficiency?: number;
+  competencies?: any;
+  technologies?: string[];
+
+  // Signature & Verification
+  signedAt?: string;
+  signedBy?: string;
   verificationCount: number;
   createdAt: string;
   prodi: string;
@@ -167,6 +182,11 @@ export default function VerifyCertificatePage() {
                     <p className="text-lg font-semibold text-white">
                       {certificate.certificateTitle}
                     </p>
+                    {certificate.subtitle && (
+                      <p className="text-sm text-gray-400 mt-1">
+                        {certificate.subtitle}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -204,14 +224,9 @@ export default function VerifyCertificatePage() {
                   <Building className="h-5 w-5 text-blue-400 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-300">
-                      Organisasi
+                      Program Studi
                     </p>
-                    <p className="text-base text-white">
-                      {certificate.organizationName}
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      Program Studi: {certificate.prodi}
-                    </p>
+                    <p className="text-base text-white">{certificate.prodi}</p>
                   </div>
                 </div>
 
@@ -229,6 +244,98 @@ export default function VerifyCertificatePage() {
                   </div>
                 </div>
 
+                {/* Performance Metrics - Only show if data exists */}
+                {(certificate.meetings ||
+                  certificate.totalScore ||
+                  certificate.overallGrade) && (
+                  <>
+                    <Separator className="bg-gray-700" />
+                    <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4 space-y-3">
+                      <p className="text-sm font-medium text-blue-200 flex items-center">
+                        <Award className="h-4 w-4 mr-2" />
+                        Performa & Pencapaian
+                      </p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {certificate.meetings && (
+                          <div className="bg-slate-800/50 rounded p-3">
+                            <p className="text-xs text-gray-400">Pertemuan</p>
+                            <p className="text-lg font-semibold text-white">
+                              {certificate.meetings}x
+                            </p>
+                          </div>
+                        )}
+                        {certificate.totalScore && (
+                          <div className="bg-slate-800/50 rounded p-3">
+                            <p className="text-xs text-gray-400">Total Skor</p>
+                            <p className="text-lg font-semibold text-white">
+                              {certificate.totalScore}
+                            </p>
+                          </div>
+                        )}
+                        {certificate.overallGrade && (
+                          <div className="bg-slate-800/50 rounded p-3">
+                            <p className="text-xs text-gray-400">Grade</p>
+                            <p className="text-lg font-semibold text-white">
+                              {certificate.overallGrade}
+                            </p>
+                          </div>
+                        )}
+                        {certificate.attendanceRate !== undefined && (
+                          <div className="bg-slate-800/50 rounded p-3">
+                            <p className="text-xs text-gray-400">Kehadiran</p>
+                            <p className="text-lg font-semibold text-white">
+                              {certificate.attendanceRate}%
+                            </p>
+                          </div>
+                        )}
+                        {certificate.assignmentCompletion !== undefined && (
+                          <div className="bg-slate-800/50 rounded p-3">
+                            <p className="text-xs text-gray-400">Tugas</p>
+                            <p className="text-lg font-semibold text-white">
+                              {certificate.assignmentCompletion}%
+                            </p>
+                          </div>
+                        )}
+                        {certificate.learningHours && (
+                          <div className="bg-slate-800/50 rounded p-3">
+                            <p className="text-xs text-gray-400">Jam Belajar</p>
+                            <p className="text-lg font-semibold text-white">
+                              {certificate.learningHours}h
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Technologies - Only show if data exists */}
+                {certificate.technologies &&
+                  certificate.technologies.length > 0 && (
+                    <>
+                      <Separator className="bg-gray-700" />
+                      <div className="flex items-start space-x-3">
+                        <FileText className="h-5 w-5 text-blue-400 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-300 mb-2">
+                            Teknologi yang Dipelajari
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {certificate.technologies.map((tech, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="bg-blue-900/50 text-blue-200 border-blue-700"
+                              >
+                                {tech}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                 <Separator className="bg-gray-700" />
 
                 <div className="flex items-start space-x-3">
@@ -243,19 +350,26 @@ export default function VerifyCertificatePage() {
                   </div>
                 </div>
 
-                <Separator className="bg-gray-700" />
-
-                <div className="flex items-start space-x-3">
-                  <User className="h-5 w-5 text-blue-400 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-300">
-                      Instruktur
-                    </p>
-                    <p className="text-base text-white">
-                      {certificate.instructorName}
-                    </p>
-                  </div>
-                </div>
+                {/* Signature Info - Only show if signed */}
+                {certificate.signedBy && certificate.signedAt && (
+                  <>
+                    <Separator className="bg-gray-700" />
+                    <div className="flex items-start space-x-3">
+                      <Shield className="h-5 w-5 text-blue-400 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-300">
+                          Tanda Tangan Digital
+                        </p>
+                        <p className="text-base text-white">
+                          {certificate.signedBy}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Ditandatangani: {formatDate(certificate.signedAt)}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 <Separator className="bg-gray-700" />
 

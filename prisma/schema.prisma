@@ -32,17 +32,17 @@ model academic_events {
   type        EventType
   exam_type   ExamType?
   status      EventStatus @default(confirmed)
-  prodi_id    String?
-  is_global   Boolean     @default(false)
   student_id  String?
   course_id   String?
   lecturer_id String?
   created_at  DateTime    @default(now())
   updated_at  DateTime
+  is_global   Boolean     @default(false)
+  prodi_id    String?
   courses     courses?    @relation(fields: [course_id], references: [id])
   lecturers   lecturers?  @relation(fields: [lecturer_id], references: [id])
-  students    students?   @relation(fields: [student_id], references: [id])
   prodi       prodi?      @relation(fields: [prodi_id], references: [kode])
+  students    students?   @relation(fields: [student_id], references: [id])
 }
 
 model accounts {
@@ -122,9 +122,9 @@ model budget_allocations {
   id          String  @id
   budget_id   String
   department  String?
-  prodi_id    String?
   amount      Decimal @db.Decimal(12, 2)
   description String?
+  prodi_id    String?
   budgets     budgets @relation(fields: [budget_id], references: [id], onDelete: Cascade)
   prodi       prodi?  @relation(fields: [prodi_id], references: [kode])
 }
@@ -137,14 +137,14 @@ model budgets {
   used_amount        Decimal              @default(0) @db.Decimal(15, 2)
   category           String
   department         String?
-  prodi_id           String?
   fiscal_year        String
   status             BudgetStatus         @default(active)
   created_at         DateTime             @default(now())
   updated_at         DateTime
+  prodi_id           String?
   budget_allocations budget_allocations[]
-  expenses           expenses[]
   prodi              prodi?               @relation(fields: [prodi_id], references: [kode])
+  expenses           expenses[]
 }
 
 model companies {
@@ -188,14 +188,14 @@ model courses {
   credits            Int
   semester           Int
   department         String?
-  prodi_id           String?
   is_active          Boolean              @default(true)
   lecturer_id        String?
+  prodi_id           String?
   academic_events    academic_events[]
   course_schedules   course_schedules[]
-  curriculum_courses curriculum_courses[]
   lecturers          lecturers?           @relation(fields: [lecturer_id], references: [id])
   prodi              prodi?               @relation(fields: [prodi_id], references: [kode])
+  curriculum_courses curriculum_courses[]
   grades             grades[]
 }
 
@@ -252,13 +252,13 @@ model exam_requirements {
   title                     String
   description               String?
   required                  Boolean                     @default(true)
-  prodi_id                  String?
-  is_global                 Boolean                     @default(false)
   order                     Int                         @default(0)
   created_at                DateTime                    @default(now())
   updated_at                DateTime
-  exam_student_requirements exam_student_requirements[]
+  is_global                 Boolean                     @default(false)
+  prodi_id                  String?
   prodi                     prodi?                      @relation(fields: [prodi_id], references: [kode])
+  exam_student_requirements exam_student_requirements[]
 }
 
 model exam_student_requirements {
@@ -523,30 +523,30 @@ model lab_sessions {
 }
 
 model laboratories {
-  id                  String                @id
-  code                String                @unique
-  name                String
-  description         String?
-  image               String?
-  capacity            Int
-  credits             Int
-  semester            String
-  department          String
-  prodi_id            String?
-  location            String
-  category            String
-  status              LabStatus             @default(active)
-  instructor_id       String?
-  created_at          DateTime              @default(now())
-  updated_at          DateTime
-  lab_announcements   lab_announcements[]
-  lab_assignments     lab_assignments[]
-  lab_materials       lab_materials[]
-  lab_registrations   lab_registrations[]
-  lab_sessions        lab_sessions[]
-  laboratory_admins   laboratory_admins[]
-  lecturers           lecturers?            @relation(fields: [instructor_id], references: [id])
-  prodi               prodi?                @relation(fields: [prodi_id], references: [kode])
+  id                String              @id
+  code              String              @unique
+  name              String
+  description       String?
+  image             String?
+  capacity          Int
+  credits           Int
+  semester          String
+  department        String
+  location          String
+  category          String
+  status            LabStatus           @default(active)
+  instructor_id     String?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime
+  prodi_id          String?
+  lab_announcements lab_announcements[]
+  lab_assignments   lab_assignments[]
+  lab_materials     lab_materials[]
+  lab_registrations lab_registrations[]
+  lab_sessions      lab_sessions[]
+  lecturers         lecturers?          @relation(fields: [instructor_id], references: [id])
+  prodi             prodi?              @relation(fields: [prodi_id], references: [kode])
+  laboratory_admins laboratory_admins[]
 }
 
 model lecturers {
@@ -554,14 +554,14 @@ model lecturers {
   user_id                                                       String                   @unique
   nip                                                           String                   @unique
   department                                                    String?
-  prodi_id                                                      String?
-  is_homebase                                                   Boolean                  @default(true)
   position                                                      String
   specialization                                                String?
   phone                                                         String?
   office                                                        String?
   email                                                         String?
   last_sync_at                                                  DateTime?
+  is_homebase                                                   Boolean                  @default(true)
+  prodi_id                                                      String?
   academic_consultations                                        academic_consultations[]
   academic_events                                               academic_events[]
   courses                                                       courses[]
@@ -570,11 +570,11 @@ model lecturers {
   exam_committees                                               exam_committees[]
   kkp_applications                                              kkp_applications[]
   laboratories                                                  laboratories[]
+  prodi                                                         prodi?                   @relation(fields: [prodi_id], references: [kode])
   users                                                         users                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  rekomendasi_judul                                             rekomendasi_judul[]
   students                                                      students[]
   thesis_titles                                                 thesis_titles[]
-  prodi                                                         prodi?                   @relation(fields: [prodi_id], references: [kode])
-  rekomendasi_judul                                             rekomendasi_judul[]
 }
 
 model letter_attachments {
@@ -589,43 +589,41 @@ model letter_attachments {
 }
 
 model letter_requests {
-  id                 String               @id
-  type               String
-  title              String
-  purpose            String
-  description        String
-  status             LetterStatus         @default(submitted)
-  request_date       DateTime             @default(now())
-  approved_date      DateTime?
-  completed_date     DateTime?
-  rejected_reason    String?
-  additional_info    Json?
-  student_id         String
-  approval_role      ApprovalRole
-  approved_by        String?
-  generated_letter   String?
-  letter_number      String?
-  // Workflow fields
-  workflow_stage     String               @default("initial_review") // initial_review, wd1_approval, completed
-  assigned_to        String?
-  forwarded_by       String?
-  forwarded_at       DateTime?
-  wd1_approved_by    String?
-  wd1_approved_at    DateTime?
-  wd1_notes          String?
-  // Digital signature fields
-  signature          String?
-  signature_data     Json?
-  qr_code_url        String?
-  signed_at          DateTime?
-  signed_by          String?
-  verification_count Int                  @default(0)
-  created_at         DateTime             @default(now())
-  updated_at         DateTime
-  letter_attachments letter_attachments[]
-  students           students             @relation(fields: [student_id], references: [id])
-  workflow_history   workflow_history[]
+  id                      String                    @id
+  type                    String
+  title                   String
+  purpose                 String
+  description             String
+  status                  LetterStatus              @default(submitted)
+  request_date            DateTime                  @default(now())
+  approved_date           DateTime?
+  completed_date          DateTime?
+  rejected_reason         String?
+  additional_info         Json?
+  student_id              String
+  approval_role           ApprovalRole
+  approved_by             String?
+  generated_letter        String?
+  letter_number           String?
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime
+  assigned_to             String?
+  forwarded_at            DateTime?
+  forwarded_by            String?
+  wd1_approved_at         DateTime?
+  wd1_approved_by         String?
+  wd1_notes               String?
+  workflow_stage          String                    @default("initial_review")
+  qr_code_url             String?
+  signature               String?
+  signature_data          Json?
+  signed_at               DateTime?
+  signed_by               String?
+  verification_count      Int                       @default(0)
+  letter_attachments      letter_attachments[]
+  students                students                  @relation(fields: [student_id], references: [id])
   signature_verifications signature_verifications[]
+  workflow_history        workflow_history[]
 }
 
 model letter_types {
@@ -636,45 +634,45 @@ model letter_types {
   estimated_days          Int
   required_documents      String[]
   additional_fields       Json?
-  prodi_id                String?
-  is_global               Boolean                   @default(false)
   is_active               Boolean                   @default(true)
   template                String?
-  jenis_surat_id          Int?                      // Link ke jenis_surat (A/B/C/D)
-  scope                   String                    @default("fakultas") // "fakultas" atau "prodi"
+  is_global               Boolean                   @default(false)
+  prodi_id                String?
   created_at              DateTime                  @default(now())
   updated_at              DateTime                  @updatedAt
-  prodi                   prodi?                    @relation(fields: [prodi_id], references: [kode])
-  jenis_surat_link        jenis_surat?              @relation("LetterTypeJenisSurat", fields: [jenis_surat_id], references: [id])
+  jenis_surat_id          Int?
+  scope                   String                    @default("fakultas")
   correspondence_requests correspondence_requests[]
+  jenis_surat_link        jenis_surat?              @relation("LetterTypeJenisSurat", fields: [jenis_surat_id], references: [id])
+  prodi                   prodi?                    @relation(fields: [prodi_id], references: [kode])
 }
 
 model correspondence_requests {
-  id              String            @id
-  letter_type_id  String
-  student_id      String
-  form_data       Json
-  attachments     Json?
-  status          ApprovalStatus    @default(pending)
-  rejection_note  String?
-  approved_by     String?
-  approved_at     DateTime?
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
-  letter_types    letter_types      @relation(fields: [letter_type_id], references: [id])
-  students        students          @relation(fields: [student_id], references: [id])
-  approver        users?            @relation("ApprovedBy", fields: [approved_by], references: [id])
+  id             String         @id
+  letter_type_id String
+  student_id     String
+  form_data      Json
+  attachments    Json?
+  status         ApprovalStatus @default(pending)
+  rejection_note String?
+  approved_by    String?
+  approved_at    DateTime?
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  approver       users?         @relation("ApprovedBy", fields: [approved_by], references: [id])
+  letter_types   letter_types   @relation(fields: [letter_type_id], references: [id])
+  students       students       @relation(fields: [student_id], references: [id])
 }
 
 model workflow_history {
-  id                 String          @id
-  letter_request_id  String
-  action             String          // submitted, reviewed, forwarded, approved, rejected
-  actor_id           String
-  actor_role         String
-  notes              String?
-  created_at         DateTime        @default(now())
-  letter_requests    letter_requests @relation(fields: [letter_request_id], references: [id], onDelete: Cascade)
+  id                String          @id
+  letter_request_id String
+  action            String
+  actor_id          String
+  actor_role        String
+  notes             String?
+  created_at        DateTime        @default(now())
+  letter_requests   letter_requests @relation(fields: [letter_request_id], references: [id], onDelete: Cascade)
 }
 
 model signature_verifications {
@@ -685,18 +683,18 @@ model signature_verifications {
   user_agent        String?
   is_valid          Boolean         @default(true)
   letter_requests   letter_requests @relation(fields: [letter_request_id], references: [id], onDelete: Cascade)
-  
+
   @@index([letter_request_id])
 }
 
 model role_assignments {
-  id              String       @id
-  letter_type_id  String
-  initial_role    String       // admin_umum, admin_akademik, staff_tu
-  approval_role   String       // wd1, wd2, wd3, dekan
-  is_active       Boolean      @default(true)
-  created_at      DateTime     @default(now())
-  updated_at      DateTime     @updatedAt
+  id             String   @id
+  letter_type_id String
+  initial_role   String
+  approval_role  String
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 }
 
 model notifications {
@@ -748,34 +746,34 @@ model payments {
 }
 
 model prodi {
-  kode                    String                    @id
   nama                    String
-  jenjang                 String
-  fakultas                String
   akreditasi              String?
+  fakultas                String
+  jenjang                 String
+  kode                    String                    @id
   created_at              DateTime                  @default(now())
   updated_at              DateTime                  @default(now())
   academic_events         academic_events[]
+  announcements           announcements[]
   budget_allocations      budget_allocations[]
   budgets                 budgets[]
+  classrooms              classrooms[]
   courses                 courses[]
   curriculum              curriculum[]
   exam_requirements       exam_requirements[]
+  ketentuan_surat         ketentuan_surat[]
   laboratories            laboratories[]
   laboratory_admins       laboratory_admins[]
   laboratory_certificates laboratory_certificates[]
   lecturers               lecturers[]
   letter_types            letter_types[]
   reading_room_admins     reading_room_admins[]
+  rekomendasi_judul       rekomendasi_judul[]
   staff                   staff[]
   students                students[]
-  surat                 surat[]
-  thesis_titles         thesis_titles[]
-  announcements         announcements[]
-  classrooms            classrooms[]
-  rekomendasi_judul     rekomendasi_judul[]
-  template_uploads      template_uploads[]
-  ketentuan_surat       ketentuan_surat[]
+  surat                   surat[]
+  template_uploads        template_uploads[]
+  thesis_titles           thesis_titles[]
 }
 
 model sessions {
@@ -792,12 +790,12 @@ model staff {
   user_id    String  @unique
   nip        String? @unique
   department String?
-  prodi_id   String?
   position   String
   phone      String?
   office     String?
-  users      users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  prodi_id   String?
   prodi      prodi?  @relation(fields: [prodi_id], references: [kode])
+  users      users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model students {
@@ -806,32 +804,33 @@ model students {
   nim                        String                       @unique
   major                      String?
   department                 String?
-  prodi_id                   String?
-  angkatan                   Int?
   semester                   Int
   academic_year              String
-  jenis_kelamin              String?
-  tempat_lahir               String?
-  tanggal_lahir              DateTime?
-  nik                        String?
   phone                      String?
-  email                      String?
   address                    String?
   guardian                   Json?
   enroll_date                DateTime
-  semester_awal              String?
   status                     StudentStatus                @default(active)
-  tahun_akademik_lulus       String?
-  tanggal_lulus              DateTime?
-  lulus                      Boolean?
-  no_seri_ijazah             String?
-  masa_studi                 String?
   gpa                        Float?
   academic_advisor_id        String?
   last_sync_at               DateTime?
+  angkatan                   Int?
+  email                      String?
+  jenis_kelamin              String?
+  lulus                      Boolean?
+  masa_studi                 String?
+  nik                        String?
+  no_seri_ijazah             String?
+  prodi_id                   String?
+  semester_awal              String?
+  tahun_akademik_lulus       String?
+  tanggal_lahir              DateTime?
+  tanggal_lulus              DateTime?
+  tempat_lahir               String?
   academic_consultations     academic_consultations[]
   academic_events            academic_events[]
   book_borrowings            book_borrowings[]
+  correspondence_requests    correspondence_requests[]
   exam_applications          exam_applications[]
   exam_student_requirements  exam_student_requirements[]
   grades                     grades[]
@@ -842,12 +841,11 @@ model students {
   lab_registrations          lab_registrations[]
   letter_requests            letter_requests[]
   payments                   payments[]
-  correspondence_requests    correspondence_requests[]
+  rekomendasi_judul          rekomendasi_judul[]
   lecturers                  lecturers?                   @relation(fields: [academic_advisor_id], references: [id])
+  prodi                      prodi?                       @relation(fields: [prodi_id], references: [kode])
   users                      users                        @relation(fields: [user_id], references: [id], onDelete: Cascade)
   thesis_titles              thesis_titles[]
-  prodi                      prodi?                       @relation(fields: [prodi_id], references: [kode])
-  rekomendasi_judul          rekomendasi_judul[]
 }
 
 model system_configs {
@@ -906,68 +904,70 @@ model thesis_titles {
   author_id                                                                 String
   supervisor_id                                                             String?
   department                                                                String?
-  prodi_id                                                                  String?
   created_at                                                                DateTime              @default(now())
   updated_at                                                                DateTime
+  prodi_id                                                                  String?
   thesis_archives                                                           thesis_archives?
   thesis_reviews                                                            thesis_reviews[]
   thesis_similarities_thesis_similarities_source_thesis_id_to_thesis_titles thesis_similarities[] @relation("thesis_similarities_source_thesis_id_to_thesis_titles")
   thesis_similarities_thesis_similarities_target_thesis_id_to_thesis_titles thesis_similarities[] @relation("thesis_similarities_target_thesis_id_to_thesis_titles")
   students                                                                  students              @relation(fields: [author_id], references: [id])
-  lecturers                                                                 lecturers?            @relation(fields: [supervisor_id], references: [id])
   prodi                                                                     prodi?                @relation(fields: [prodi_id], references: [kode])
+  lecturers                                                                 lecturers?            @relation(fields: [supervisor_id], references: [id])
 }
 
 model users {
-  id                  String                @id
-  username            String                @unique(map: "users_nidn_key")
-  password            String
-  name                String
-  avatar              String?
-  role                Role                  @default(mahasiswa)
-  sub_role            String?
-  is_active           Boolean               @default(true)
-  created_at          DateTime              @default(now())
-  updated_at          DateTime
-  accounts            accounts[]
-  audit_logs              audit_logs[]
-  lecturers               lecturers?
-  sessions                sessions[]
-  staff                   staff?
-  students                students?
-  laboratory_admins       laboratory_admins[]
-  reading_room_admins     reading_room_admins[]
+  id                       String                    @id
+  username                 String                    @unique(map: "users_nidn_key")
+  password                 String
+  name                     String
+  avatar                   String?
+  role                     Role                      @default(mahasiswa)
+  sub_role                 String?
+  is_active                Boolean                   @default(true)
+  created_at               DateTime                  @default(now())
+  updated_at               DateTime
+  accounts                 accounts[]
+  audit_logs               audit_logs[]
   approved_correspondences correspondence_requests[] @relation("ApprovedBy")
-  template_uploads        template_uploads[]
+  laboratory_admins        laboratory_admins[]
+  lecturers                lecturers?
+  reading_room_admins      reading_room_admins[]
+  sessions                 sessions[]
+  staff                    staff?
+  students                 students?
+  template_uploads         template_uploads[]
 }
 
 model template_uploads {
-  id              String    @id @default(cuid())
-  name            String
-  description     String?
-  file_url        String
-  file_name       String
-  file_size       Int
-  file_type       String    @default("docx")
-  category        String    @default("surat") // surat, sertifikat, laporan
-  prodi_id        String?
-  is_global       Boolean   @default(false)
-  is_active       Boolean   @default(true)
-  detected_fields Json?     // From TemplateAnalyzer
-  metadata        Json?
-  variable_mapping Json?    // Store variable definitions with positions
-  version         Int       @default(1)
-  uploaded_by     String
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  
-  prodi           prodi?    @relation(fields: [prodi_id], references: [kode])
-  uploader        users     @relation(fields: [uploaded_by], references: [id])
+  id               String           @id @default(cuid())
+  name             String
+  description      String?
+  file_url         String
+  file_name        String
+  file_size        Int
+  file_type        String           @default("docx")
+  category         String           @default("surat")
+  prodi_id         String?
+  is_global        Boolean          @default(false)
+  is_active        Boolean          @default(true)
+  detected_fields  Json?
+  metadata         Json?
+  variable_mapping Json?
+  version          Int              @default(1)
+  uploaded_by      String
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  ketentuan_id     Int?
+  ketentuan_surat  ketentuan_surat? @relation(fields: [ketentuan_id], references: [id])
+  prodi            prodi?           @relation(fields: [prodi_id], references: [kode])
+  uploader         users            @relation(fields: [uploaded_by], references: [id])
 
   @@index([prodi_id])
   @@index([uploaded_by])
   @@index([is_active])
   @@index([category])
+  @@index([ketentuan_id])
 }
 
 model role_configurations {
@@ -983,16 +983,16 @@ model role_configurations {
 }
 
 model laboratory_admins {
-  id             String        @id
-  user_id        String
-  laboratory_id  String
-  prodi_id       String?
-  assigned_at    DateTime      @default(now())
-  assigned_by    String?
-  is_primary     Boolean       @default(false)
-  laboratories   laboratories  @relation(fields: [laboratory_id], references: [id], onDelete: Cascade)
-  users          users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  prodi          prodi?        @relation(fields: [prodi_id], references: [kode])
+  id            String       @id
+  user_id       String
+  laboratory_id String
+  prodi_id      String?
+  assigned_at   DateTime     @default(now())
+  assigned_by   String?
+  is_primary    Boolean      @default(false)
+  laboratories  laboratories @relation(fields: [laboratory_id], references: [id], onDelete: Cascade)
+  prodi         prodi?       @relation(fields: [prodi_id], references: [kode])
+  users         users        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, laboratory_id])
   @@index([user_id])
@@ -1022,8 +1022,8 @@ model curriculum_courses {
   is_mandatory  Boolean    @default(true)
   semester      Int
   created_at    DateTime   @default(now())
-  curriculum    curriculum @relation(fields: [curriculum_id], references: [id], onDelete: Cascade)
   courses       courses    @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  curriculum    curriculum @relation(fields: [curriculum_id], references: [id], onDelete: Cascade)
 
   @@unique([curriculum_id, course_id])
   @@index([curriculum_id])
@@ -1031,19 +1031,19 @@ model curriculum_courses {
 }
 
 model announcements {
-  id          String              @id
-  title       String
-  content     String
-  prodi_id    String?
-  is_global   Boolean             @default(false)
-  priority    AnnouncementPriority @default(normal)
-  published   Boolean             @default(false)
+  id           String               @id
+  title        String
+  content      String
+  prodi_id     String?
+  is_global    Boolean              @default(false)
+  priority     AnnouncementPriority @default(normal)
+  published    Boolean              @default(false)
   published_at DateTime?
-  expires_at  DateTime?
-  created_by  String
-  created_at  DateTime            @default(now())
-  updated_at  DateTime            @default(now())
-  prodi       prodi?              @relation(fields: [prodi_id], references: [kode])
+  expires_at   DateTime?
+  created_by   String
+  created_at   DateTime             @default(now())
+  updated_at   DateTime             @default(now())
+  prodi        prodi?               @relation(fields: [prodi_id], references: [kode])
 
   @@index([prodi_id])
   @@index([published])
@@ -1068,14 +1068,14 @@ model classrooms {
 }
 
 model reading_room_admins {
-  id               String   @id
-  user_id          String
-  prodi_id         String?
-  assigned_at      DateTime @default(now())
-  assigned_by      String?
-  is_primary       Boolean  @default(false)
-  users            users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  prodi            prodi?   @relation(fields: [prodi_id], references: [kode])
+  id          String   @id
+  user_id     String
+  prodi_id    String?
+  assigned_at DateTime @default(now())
+  assigned_by String?
+  is_primary  Boolean  @default(false)
+  prodi       prodi?   @relation(fields: [prodi_id], references: [kode])
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, prodi_id])
   @@index([user_id])
@@ -1088,6 +1088,364 @@ model verification_tokens {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model rekomendasi_judul {
+  id                String    @id @default(cuid())
+  judul             String
+  deskripsi         String
+  bidang_keilmuan   String
+  metodologi        String
+  tingkat_kesulitan String
+  estimasi_waktu    String
+  prerequisites     String[]
+  status            String    @default("Tersedia")
+  dosen_id          String
+  prodi_kode        String
+  student_id        String?
+  diambil_oleh      String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  dosen             lecturers @relation(fields: [dosen_id], references: [id], onDelete: Cascade)
+  prodi             prodi     @relation(fields: [prodi_kode], references: [kode], onDelete: Cascade)
+  student           students? @relation(fields: [student_id], references: [id])
+
+  @@index([dosen_id])
+  @@index([prodi_kode])
+  @@index([status])
+  @@index([student_id])
+}
+
+model documents {
+  id                 Int                  @id @default(autoincrement())
+  type               String               @db.VarChar(50)
+  prodi              String?              @db.VarChar(100)
+  template_path      String?              @db.VarChar(255)
+  description        String?
+  version            String?              @default("1.0") @db.VarChar(10)
+  is_active          Boolean              @default(true)
+  max_filesize_mb    Int?                 @default(10)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @updatedAt @db.Timestamp(6)
+  document_fields    document_fields[]
+  document_templates document_templates[]
+  signed_documents   signed_documents[]
+
+  @@unique([type, prodi])
+}
+
+model document_fields {
+  id               Int        @id @default(autoincrement())
+  document_id      Int?
+  field_name       String     @db.VarChar(255)
+  field_type       String     @db.VarChar(50)
+  is_required      Boolean?   @default(true)
+  default_value    String?
+  validation_rules String?
+  help_text        String?    @db.VarChar(500)
+  display_order    Int?       @default(0)
+  is_active        Boolean?   @default(true)
+  created_at       DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt @db.Timestamp(6)
+  documents        documents? @relation(fields: [document_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model document_templates {
+  id            Int       @id @default(autoincrement())
+  document_id   Int
+  template_name String    @db.VarChar(255)
+  file_path     String    @db.VarChar(500)
+  file_type     String    @default("docx") @db.VarChar(10)
+  file_size     Int?
+  checksum      String?   @db.VarChar(64)
+  is_default    Boolean   @default(false)
+  created_at    DateTime  @default(now()) @db.Timestamp(6)
+  updated_at    DateTime  @updatedAt @db.Timestamp(6)
+  document      documents @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@unique([document_id, template_name])
+}
+
+model document_categories {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  description String?
+  color_hex   String?  @default("#3B82F6") @db.VarChar(7)
+  icon        String?  @db.VarChar(50)
+  sort_order  Int?     @default(0)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+}
+
+model signers {
+  id                   Int                   @id @default(autoincrement())
+  name                 String                @db.VarChar(255)
+  nbm                  String?               @unique @db.VarChar(50)
+  email                String?               @unique @db.VarChar(255)
+  phone                String?               @db.VarChar(20)
+  role                 String                @db.VarChar(100)
+  department           String?               @db.VarChar(100)
+  prodi                String?               @db.VarChar(100)
+  public_key           String
+  private_key          String
+  key_id               String                @unique @db.VarChar(32)
+  signature_image_path String?               @db.VarChar(500)
+  position_title       String?               @db.VarChar(255)
+  is_active            Boolean               @default(true)
+  last_signed_at       DateTime?             @db.Timestamp(6)
+  created_at           DateTime              @default(now()) @db.Timestamp(6)
+  updated_at           DateTime              @updatedAt @db.Timestamp(6)
+  document_signatures  document_signatures[]
+}
+
+model signed_documents {
+  id                        String                @id @default(uuid())
+  document_type             String                @db.VarChar(50)
+  prodi                     String                @db.VarChar(100)
+  document_content          String
+  document_hash             String                @db.VarChar(64)
+  no_surat                  String?               @db.VarChar(100)
+  file_path                 String?               @db.VarChar(500)
+  file_size                 Int?
+  qr_code_data              String
+  qr_code_image             String?               @db.VarChar(500)
+  total_signatures_required Int                   @default(3)
+  total_signatures_received Int                   @default(0)
+  is_complete               Boolean               @default(false)
+  created_by                String?               @db.VarChar(255)
+  approved_by               String?               @db.VarChar(255)
+  priority_level            String?               @default("normal") @db.VarChar(20)
+  expiry_date               DateTime?             @db.Timestamp(6)
+  status                    String                @default("pending") @db.VarChar(50)
+  status_notes              String?
+  created_at                DateTime              @default(now()) @db.Timestamp(6)
+  completed_at              DateTime?             @db.Timestamp(6)
+  last_updated_at           DateTime              @updatedAt @db.Timestamp(6)
+  document_id               Int?
+  counter_id                Int?
+  scope                     String?               @db.VarChar(20)
+  document_history          document_history[]
+  document_signatures       document_signatures[]
+  counter                   document_counter?     @relation(fields: [counter_id], references: [id])
+  documents                 documents?            @relation(fields: [document_id], references: [id])
+  verification_logs         verification_logs[]
+}
+
+model document_signatures {
+  id              Int              @id @default(autoincrement())
+  signed_doc_id   String
+  signer_id       Int
+  signature_data  String
+  signature_hash  String           @db.VarChar(64)
+  signer_info     String
+  algorithm       String           @default("EdDSA") @db.VarChar(50)
+  timestamp       DateTime         @default(now()) @db.Timestamp(6)
+  is_valid        Boolean          @default(true)
+  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
+  signer          signers          @relation(fields: [signer_id], references: [id])
+
+  @@unique([signed_doc_id, signer_id])
+}
+
+model verification_logs {
+  id                   Int              @id @default(autoincrement())
+  signed_doc_id        String
+  verifier_ip          String?          @db.VarChar(45)
+  verifier_agent       String?
+  verification_method  String           @db.VarChar(50)
+  verification_result  Boolean
+  verification_details String?
+  verified_at          DateTime         @default(now()) @db.Timestamp(6)
+  signed_document      signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
+}
+
+model document_signature_config {
+  id                       Int      @id @default(autoincrement())
+  document_type            String   @unique @db.VarChar(50)
+  required_signature_count Int      @default(1)
+  required_roles           String[]
+  description              String?
+  is_active                Boolean  @default(true)
+  created_at               DateTime @default(now()) @db.Timestamp(6)
+  updated_at               DateTime @updatedAt @db.Timestamp(6)
+}
+
+model system_config {
+  id           Int      @id @default(autoincrement())
+  config_key   String   @unique @db.VarChar(100)
+  config_value String
+  description  String?
+  updated_at   DateTime @updatedAt @db.Timestamp(6)
+}
+
+model document_history {
+  id              Int              @id @default(autoincrement())
+  signed_doc_id   String
+  action          String           @db.VarChar(50)
+  description     String
+  performed_by    String?          @db.VarChar(255)
+  ip_address      String?          @db.VarChar(45)
+  user_agent      String?
+  metadata        String?
+  created_at      DateTime         @default(now()) @db.Timestamp(6)
+  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
+}
+
+model system_notifications {
+  id             Int       @id @default(autoincrement())
+  recipient      String    @db.VarChar(255)
+  title          String    @db.VarChar(255)
+  message        String
+  type           String    @default("info") @db.VarChar(50)
+  is_read        Boolean   @default(false)
+  read_at        DateTime? @db.Timestamp(6)
+  related_doc_id String?
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+}
+
+model surat {
+  id                 Int               @id @default(autoincrement())
+  nomor_surat        String            @unique
+  id_jenis_surat     Int?
+  id_instansi        Int?
+  id_kode_kategori   Int?
+  id_masalah_surat   Int?
+  bulan              String
+  tahun_hijriah      String
+  tahun_masehi       String
+  perihal            String
+  keterangan         String?
+  id_prodi           String?
+  kode_prodi         String?
+  letter_request_id  String?
+  signed_document_id String?
+  scope              String            @default("fakultas")
+  created_at         DateTime          @default(now())
+  updated_at         DateTime          @updatedAt
+  counter_id         Int?
+  counter            document_counter? @relation(fields: [counter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tujuan             tujuan?           @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  jenis_surat        jenis_surat?      @relation(fields: [id_kode_kategori], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  masalah_surat      masalah_surat?    @relation(fields: [id_masalah_surat], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  prodi              prodi?            @relation(fields: [id_prodi], references: [kode], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model document_counter {
+  id               Int                @id @default(autoincrement())
+  counter          Int                @default(0)
+  tahun            String             @default("2025")
+  prodi_id         String             @default("")
+  scope            String             @default("fakultas")
+  ketentuan        ketentuan_surat[]
+  signed_documents signed_documents[]
+  surat            surat[]
+
+  @@unique([tahun, prodi_id, scope])
+  @@index([scope, prodi_id, tahun])
+  @@map("count_surat")
+}
+
+model masalah_surat {
+  id        Int               @id @default(autoincrement())
+  masalah   String
+  kode      String            @unique
+  ketentuan ketentuan_surat[]
+  surat     surat[]
+}
+
+model tujuan {
+  id        Int               @id @default(autoincrement())
+  nama      String
+  kode      String
+  id_jenis  Int               @db.SmallInt
+  ketentuan ketentuan_surat[]
+  surat     surat[]
+  jenis     jenis_surat       @relation(fields: [id_jenis], references: [id])
+}
+
+model jenis_surat {
+  id           Int               @id @default(autoincrement())
+  nama         String
+  kode         String            @unique
+  ketentuan    ketentuan_surat[]
+  letter_types letter_types[]    @relation("LetterTypeJenisSurat")
+  surat        surat[]
+  tujuan       tujuan[]
+}
+
+model ketentuan_surat {
+  id               Int                @id @default(autoincrement())
+  id_tujuan        Int
+  id_masalah       Int
+  kode             String
+  nama             String             @unique
+  id_jenis         Int
+  id_count         Int?
+  format_template  String?
+  description      String?
+  is_global        Boolean            @default(true)
+  prodi_id         String?
+  counter          document_counter?  @relation(fields: [id_count], references: [id])
+  jenis            jenis_surat        @relation(fields: [id_jenis], references: [id])
+  masalah          masalah_surat      @relation(fields: [id_masalah], references: [id])
+  tujuan           tujuan             @relation(fields: [id_tujuan], references: [id])
+  prodi            prodi?             @relation(fields: [prodi_id], references: [kode])
+  template_uploads template_uploads[]
+
+  @@unique([id_tujuan, id_masalah, id_jenis])
+}
+
+model laboratory_certificates {
+  id                         String    @id @default(cuid())
+  verification_id            String    @unique
+  certificate_title          String
+  participant_name           String
+  program_name               String
+  subtitle                   String?
+  issue_date                 DateTime  @default(now())
+  
+  // Performance & Analytics Fields (Optional - akan diisi kemudian)
+  meetings                   Int?
+  total_score                Int?
+  materials                  Int?
+  attendance_rate            Int?
+  assignment_completion      Int?
+  participation_score        Int?
+  overall_grade              String?
+  learning_hours             Int?
+  weekly_data                Int[]
+  learning_velocity          Int?
+  collaboration_score        Int?
+  problem_solving_efficiency Int?
+  competencies               Json?
+  technologies               String[]
+  
+  // QR Code & PDF Fields
+  qr_code_url                String?
+  pdf_password               String?
+  pdf_url                    String?
+  qr_signature_url           String?
+  
+  // Digital Signature Fields
+  signature                  String?
+  signature_data             Json?
+  signed_at                  DateTime?
+  signed_by                  String?
+  
+  // Metadata
+  prodi_id                   String
+  created_by                 String?
+  verification_count         Int       @default(0)
+  created_at                 DateTime  @default(now())
+  updated_at                 DateTime  @updatedAt
+  
+  prodi                      prodi     @relation(fields: [prodi_id], references: [kode], onDelete: Cascade)
+
+  @@index([prodi_id])
+  @@index([verification_id])
+  @@index([created_by])
+  @@index([created_at])
 }
 
 enum ApprovalRole {
@@ -1319,32 +1677,6 @@ enum Role {
   kepala_tata_usaha
 }
 
-model rekomendasi_judul {
-  id                   String    @id @default(cuid())
-  judul                String
-  deskripsi            String    @db.Text
-  bidang_keilmuan      String
-  metodologi           String
-  tingkat_kesulitan    String    // "Mudah", "Sedang", "Sulit"
-  estimasi_waktu       String
-  prerequisites        String[]  // Array of strings
-  status               String    @default("Tersedia") // "Tersedia", "Diambil", "Selesai"
-  dosen_id             String
-  dosen                lecturers @relation(fields: [dosen_id], references: [id], onDelete: Cascade)
-  prodi_kode           String
-  prodi                prodi     @relation(fields: [prodi_kode], references: [kode], onDelete: Cascade)
-  student_id           String?
-  student              students? @relation(fields: [student_id], references: [id], onDelete: SetNull)
-  diambil_oleh         String?   // "Nama Mahasiswa (NIM)" for display
-  created_at           DateTime  @default(now())
-  updated_at           DateTime  @updatedAt
-
-  @@index([dosen_id])
-  @@index([prodi_kode])
-  @@index([status])
-  @@index([student_id])
-}
-
 enum StudentStatus {
   active
   inactive
@@ -1358,413 +1690,4 @@ enum ThesisStatus {
   approved
   rejected
   archived
-}
-
-// ============================================
-// DOCUMENT SIGNING SYSTEM MODELS
-// ============================================
-
-// Table untuk konfigurasi dokumen
-model documents {
-  id              Int               @id @default(autoincrement())
-  type            String            @db.VarChar(50)
-  prodi           String?           @db.VarChar(100)
-  template_path   String?           @db.VarChar(255)
-  description     String?           @db.Text
-  version         String?           @db.VarChar(10) @default("1.0")
-  is_active       Boolean           @default(true)
-  max_filesize_mb Int?              @default(10)
-  created_at      DateTime?         @default(now()) @db.Timestamp(6)
-  updated_at      DateTime?         @updatedAt @db.Timestamp(6)
-
-  document_fields document_fields[]
-  signed_documents signed_documents[]
-  document_templates document_templates[]
-
-  @@unique([type, prodi])
-}
-
-model document_fields {
-  id            Int        @id @default(autoincrement())
-  document_id   Int?
-  field_name    String     @db.VarChar(255)
-  field_type    String     @db.VarChar(50)
-  is_required   Boolean?   @default(true)
-  default_value String?    @db.Text
-  validation_rules String? @db.Text
-  help_text     String?    @db.VarChar(500)
-  display_order Int?       @default(0)
-  is_active     Boolean?   @default(true)
-  created_at    DateTime?  @default(now()) @db.Timestamp(6)
-  updated_at    DateTime?  @updatedAt @db.Timestamp(6)
-
-  documents     documents? @relation(fields: [document_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-// Table untuk template dokumen fisik
-model document_templates {
-  id              Int       @id @default(autoincrement())
-  document_id     Int
-  template_name   String    @db.VarChar(255)
-  file_path       String    @db.VarChar(500)
-  file_type       String    @db.VarChar(10) @default("docx")
-  file_size       Int?
-  checksum        String?   @db.VarChar(64)
-  is_default      Boolean   @default(false)
-  created_at      DateTime  @default(now()) @db.Timestamp(6)
-  updated_at      DateTime  @updatedAt @db.Timestamp(6)
-
-  document        documents @relation(fields: [document_id], references: [id], onDelete: Cascade)
-
-  @@unique([document_id, template_name])
-}
-
-// Table untuk kategori dokumen
-model document_categories {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(100)
-  description String?  @db.Text
-  color_hex   String?  @db.VarChar(7) @default("#3B82F6")
-  icon        String?  @db.VarChar(50)
-  sort_order  Int?     @default(0)
-  is_active   Boolean  @default(true)
-  created_at  DateTime @default(now()) @db.Timestamp(6)
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-}
-
-// Table untuk penandatangan
-model signers {
-  id           Int      @id @default(autoincrement())
-  name         String   @db.VarChar(255)
-  nbm          String?  @db.VarChar(50)
-  email        String?  @db.VarChar(255)
-  phone        String?  @db.VarChar(20)
-  role         String   @db.VarChar(100)
-  department   String?  @db.VarChar(100)
-  prodi        String?  @db.VarChar(100)
-  public_key   String   @db.Text
-  private_key  String   @db.Text
-  key_id       String   @db.VarChar(32)
-  signature_image_path String? @db.VarChar(500)
-  position_title String? @db.VarChar(255)
-  is_active    Boolean  @default(true)
-  last_signed_at DateTime? @db.Timestamp(6)
-  created_at   DateTime @default(now()) @db.Timestamp(6)
-  updated_at   DateTime @updatedAt @db.Timestamp(6)
-
-  document_signatures document_signatures[]
-
-  @@unique([nbm])
-  @@unique([key_id])
-  @@unique([email])
-}
-
-// Table untuk dokumen yang telah ditandatangani
-model signed_documents {
-  id               String   @id @default(uuid())
-  document_type    String   @db.VarChar(50)
-  prodi            String   @db.VarChar(100)
-  document_content String   @db.Text
-  document_hash    String   @db.VarChar(64)
-  no_surat         String?  @db.VarChar(100)
-  file_path        String?  @db.VarChar(500)
-  file_size        Int?
-  qr_code_data     String   @db.Text
-  qr_code_image    String?  @db.VarChar(500)
-
-  total_signatures_required Int     @default(3)
-  total_signatures_received Int     @default(0)
-  is_complete              Boolean @default(false)
-
-  created_by       String?  @db.VarChar(255)
-  approved_by      String?  @db.VarChar(255)
-  priority_level   String?  @db.VarChar(20) @default("normal")
-  expiry_date      DateTime? @db.Timestamp(6)
-
-  status           String   @db.VarChar(50) @default("pending")
-  status_notes     String?  @db.Text
-
-  created_at       DateTime @default(now()) @db.Timestamp(6)
-  completed_at     DateTime? @db.Timestamp(6)
-  last_updated_at  DateTime @updatedAt @db.Timestamp(6)
-
-  document_id      Int?
-  counter_id       Int?     // Link ke counter yang digunakan
-  scope            String?  @db.VarChar(20) // "fakultas" atau "prodi"
-  
-  documents        documents? @relation(fields: [document_id], references: [id])
-  counter          document_counter? @relation(fields: [counter_id], references: [id])
-  document_signatures document_signatures[]
-  verification_logs verification_logs[]
-  document_history document_history[]
-}
-
-// Table untuk signature individual
-model document_signatures {
-  id              Int      @id @default(autoincrement())
-  signed_doc_id   String
-  signer_id       Int
-  signature_data  String   @db.Text
-  signature_hash  String   @db.VarChar(64)
-  signer_info     String   @db.Text
-  algorithm       String   @db.VarChar(50) @default("EdDSA")
-  timestamp       DateTime @default(now()) @db.Timestamp(6)
-  is_valid        Boolean  @default(true)
-
-  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
-  signer          signers @relation(fields: [signer_id], references: [id])
-
-  @@unique([signed_doc_id, signer_id])
-}
-
-// Table untuk log verifikasi
-model verification_logs {
-  id              Int      @id @default(autoincrement())
-  signed_doc_id   String
-  verifier_ip     String?  @db.VarChar(45)
-  verifier_agent  String?  @db.Text
-  verification_method String @db.VarChar(50)
-  verification_result Boolean
-  verification_details String? @db.Text
-  verified_at     DateTime @default(now()) @db.Timestamp(6)
-
-  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
-}
-
-// Table untuk konfigurasi signature requirements
-model document_signature_config {
-  id                        Int      @id @default(autoincrement())
-  document_type             String   @unique @db.VarChar(50)
-  required_signature_count  Int      @default(1)
-  required_roles            String[]
-  description               String?  @db.Text
-  is_active                Boolean  @default(true)
-  created_at               DateTime @default(now()) @db.Timestamp(6)
-  updated_at               DateTime @updatedAt @db.Timestamp(6)
-}
-
-// Table untuk konfigurasi sistem
-model system_config {
-  id          Int      @id @default(autoincrement())
-  config_key  String   @unique @db.VarChar(100)
-  config_value String  @db.Text
-  description String?  @db.Text
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-}
-
-// Table untuk history perubahan dokumen
-model document_history {
-  id              Int      @id @default(autoincrement())
-  signed_doc_id   String
-  action          String   @db.VarChar(50)
-  description     String   @db.Text
-  performed_by    String?  @db.VarChar(255)
-  ip_address      String?  @db.VarChar(45)
-  user_agent      String?  @db.Text
-  metadata        String?  @db.Text
-  created_at      DateTime @default(now()) @db.Timestamp(6)
-
-  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
-}
-
-// Table untuk notifikasi sistem
-model system_notifications {
-  id            Int      @id @default(autoincrement())
-  recipient     String   @db.VarChar(255)
-  title         String   @db.VarChar(255)
-  message       String   @db.Text
-  type          String   @db.VarChar(50) @default("info")
-  is_read       Boolean  @default(false)
-  read_at       DateTime? @db.Timestamp(6)
-  related_doc_id String?
-  created_at    DateTime @default(now()) @db.Timestamp(6)
-}
-
-// ============================================
-// LETTER NUMBERING SYSTEM MODELS
-// ============================================
-
-// Table untuk surat yang tergenerate dengan nomor
-model surat {
-  id                 Int            @id @default(autoincrement())
-  nomor_surat        String         @unique
-  id_jenis_surat     Int?
-  id_instansi        Int?
-  id_kode_kategori   Int?
-  id_masalah_surat   Int?
-  bulan              String
-  tahun_hijriah      String
-  tahun_masehi       String
-  perihal            String
-  keterangan         String?
-  id_prodi           String?
-  kode_prodi         String?         // Kode prodi untuk format nomor (IF, SI, TI, dll)
-  letter_request_id  String?
-  signed_document_id String?
-  counter_id         Int?            // Link ke counter yang digunakan
-  scope              String          @default("fakultas") // "fakultas" atau "prodi"
-  created_at         DateTime        @default(now())
-  updated_at         DateTime        @updatedAt
-
-  tujuan             tujuan?         @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  counter            document_counter? @relation(fields: [counter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  jenis_surat        jenis_surat?    @relation(fields: [id_kode_kategori], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  masalah_surat      masalah_surat?  @relation(fields: [id_masalah_surat], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prodi              prodi?          @relation(fields: [id_prodi], references: [kode], onDelete: NoAction, onUpdate: NoAction)
-}
-
-// Table untuk counter - universal untuk semua dokumen (surat, sertifikat, dll)
-model document_counter {
-  id        Int               @id @default(autoincrement())
-  counter   Int               @default(0)
-  tahun     String            @default("2025")
-  prodi_id  String            @default("") // Empty string untuk fakultas
-  scope     String            @default("fakultas") // "fakultas" atau "prodi"
-  
-  // Relations
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-  signed_documents signed_documents[]
-
-  @@unique([tahun, prodi_id, scope])
-  @@index([scope, prodi_id, tahun])
-  @@map("count_surat") // Keep the same table name in database
-}
-
-// Table untuk masalah/kategori surat
-model masalah_surat {
-  id        Int               @id @default(autoincrement())
-  masalah   String
-  kode      String            @unique
-
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-}
-
-// Table untuk tujuan instansi
-model tujuan {
-  id        Int               @id @default(autoincrement())
-  nama      String
-  kode      String
-  id_jenis  Int               @db.SmallInt
-
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-  jenis     jenis_surat       @relation(fields: [id_jenis], references: [id])
-}
-
-// Table untuk jenis surat (keluar/masuk)
-model jenis_surat {
-  id        Int               @id @default(autoincrement())
-  nama      String
-  kode      String            @unique
-
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-  tujuan    tujuan[]
-  letter_types letter_types[] @relation("LetterTypeJenisSurat")
-}
-
-// Table untuk ketentuan format nomor surat
-model ketentuan_surat {
-  id         Int           @id @default(autoincrement())
-  id_tujuan  Int
-  id_masalah Int
-  kode       String
-  nama       String        @unique
-  id_jenis   Int
-  id_count   Int?
-  format_template String?  @db.Text
-  description String?      @db.Text
-  is_global  Boolean       @default(true) // true = fakultas (semua prodi bisa lihat), false = prodi spesifik
-  prodi_id   String?       // null jika is_global=true, diisi jika is_global=false
-
-  counter    document_counter? @relation(fields: [id_count], references: [id])
-  jenis      jenis_surat       @relation(fields: [id_jenis], references: [id])
-  masalah    masalah_surat     @relation(fields: [id_masalah], references: [id])
-  tujuan     tujuan            @relation(fields: [id_tujuan], references: [id])
-  prodi      prodi?            @relation(fields: [prodi_id], references: [kode])
-
-  @@unique([id_tujuan, id_masalah, id_jenis])
-}
-
-// ============================================
-// LABORATORY CERTIFICATE SYSTEM MODELS
-// ============================================
-
-model laboratory_certificates {
-  id                String   @id @default(cuid())
-  verification_id   String   @unique
-  certificate_title String
-  participant_name  String
-  program_name      String
-  subtitle          String   @db.Text
-  issue_date        DateTime @default(now())
-
-  // Instructor & Organization Info
-  instructor_name   String?  // Nama instruktur/pembimbing
-  organization_name String?  // Nama organisasi/laboratorium
-
-  // Certificate Number Components (for Excel import)
-  month_roman       String?  // Bulan dalam angka Romawi (I-XII)
-  year_hijri        String?  // Tahun Hijriah
-  year_masehi       String?  // Tahun Masehi
-
-  // Stats (Optional - untuk nanti)
-  meetings                Int?
-  total_score             Int?
-  materials               Int?
-  attendance_rate         Int?
-  assignment_completion   Int?
-  participation_score     Int?
-
-  // Grades (Optional - untuk nanti)
-  overall_grade           String?
-
-  // Learning Time (Optional - untuk nanti)
-  learning_hours          Int?
-  weekly_data             Int[]
-
-  // Analytics (Optional - untuk nanti)
-  learning_velocity       Int?
-  collaboration_score     Int?
-  problem_solving_efficiency Int?
-
-  // Competencies (JSON) (Optional - untuk nanti)
-  competencies            Json?
-
-  // Technologies (Optional - untuk nanti)
-  technologies            String[]
-
-  // QR Code
-  qr_code_url             String?
-
-  // PDF Storage (MinIO)
-  pdf_url                 String?   // MinIO URL for the generated PDF
-  pdf_password            String?   // Password for PDF protection
-
-  // Digital Signature (HMAC-SHA256)
-  signature               String?   // HMAC-SHA256 signature
-  signature_data          Json?     // Data yang di-sign (untuk audit)
-  qr_signature_url        String?   // MinIO URL untuk QR code signature
-  signed_at               DateTime? // Timestamp signature dibuat
-  signed_by               String?   // User yang sign (nama + role)
-  verification_count      Int       @default(0) // Jumlah kali diverifikasi
-  last_verified_at        DateTime? // Timestamp terakhir diverifikasi
-
-  // Prodi Association
-  prodi_id                String
-  created_by              String?   // laboratory_admin user_id
-
-  // Timestamps
-  created_at              DateTime  @default(now())
-  updated_at              DateTime  @updatedAt
-
-  // Relations
-  prodi                   prodi     @relation(fields: [prodi_id], references: [kode], onDelete: Cascade)
-
-  @@index([prodi_id])
-  @@index([verification_id])
-  @@index([created_by])
-  @@index([created_at])
 }

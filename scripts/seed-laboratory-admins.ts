@@ -265,13 +265,14 @@ async function seedLaboratoryAdmins() {
     let errors = 0;
 
     // Map each admin to laboratories based on their username pattern
-    // labadmin_XXXXX where first 3 digits match prodi code pattern
+    // labadmin_XXXXX where last 5 digits should match prodi code
+    // Example: labadmin_55202 should be mapped to prodi 55202 (Informatika)
     const adminProdiMapping: Record<string, string[]> = {
-      "55202": ["labadmin_20201", "labadmin_22201", "labadmin_23201"], // Informatika
+      "55202": ["labadmin_55202"], // Informatika - Bambang Supriadi
       "55201": [], // Elektro (no specific admin, will use global admins)
-      "55203": [], // Sipil
-      "55204": [], // Arsitektur
-      "55205": ["labadmin_55202"], // PWK - using Rina Wati
+      "55203": [], // Sipil (no specific admin, will use global admins)
+      "55204": [], // Arsitektur (no specific admin, will use global admins)
+      "55205": [], // PWK (no specific admin, will use global admins)
     };
 
     // Get admin with specific prodi (laboratory_admin with username pattern)

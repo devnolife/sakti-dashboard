@@ -17,6 +17,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    console.log(session.user);
+
     // Check if user is laboratory_admin
     if (session.user.role !== "laboratory_admin") {
       return NextResponse.json(
@@ -73,21 +75,16 @@ export async function POST(req: NextRequest) {
           certificate_title: cert.certificateTitle,
           participant_name: cert.name,
           program_name: cert.program,
-          subtitle: cert.subtitle,
+          subtitle: cert.subtitle || null,
           issue_date: new Date(cert.issueDate),
-
-          // Metadata
-          instructor_name:
-            cert.instructorName || "Muhyiddin A.M Hayat, S.Kom., M.T",
-          organization_name:
-            cert.organizationName || "Laboratorium Informatika",
-          month_roman: cert.monthRoman || "I",
-          year_hijri: cert.yearHijri || "1446",
-          year_masehi: cert.yearMasehi || new Date().getFullYear().toString(),
 
           // Prodi Association
           prodi_id: labAdmin.prodi_id,
           created_by: session.user.id,
+
+          // Optional fields akan null/undefined (akan diisi kemudian)
+          // meetings, total_score, materials, attendance_rate, dll.
+          // tidak perlu diset karena sudah optional di schema
         };
 
         if (existingCert) {
@@ -106,13 +103,6 @@ export async function POST(req: NextRequest) {
               subtitle: certData.subtitle,
               issue_date: certData.issue_date,
 
-              // Update metadata
-              instructor_name: certData.instructor_name,
-              organization_name: certData.organization_name,
-              month_roman: certData.month_roman,
-              year_hijri: certData.year_hijri,
-              year_masehi: certData.year_masehi,
-
               // Keep existing QR code & verification data intact
               // verification_id: NOT CHANGED
               // verification_count: NOT RESET
@@ -130,6 +120,8 @@ export async function POST(req: NextRequest) {
             data: {
               ...certData,
               verification_count: 0,
+              weekly_data: [], // Initialize empty array for weekly_data
+              technologies: [], // Initialize empty array for technologies
               created_at: new Date(),
               updated_at: new Date(),
             },
