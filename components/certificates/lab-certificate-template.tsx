@@ -230,17 +230,12 @@ export default function LabCertificateTemplate({
   useEffect(() => {
     const generateQRCodes = async () => {
       try {
-        // Encrypt certificate data (name, organization, certificate ID)
-        const encryptedData = encryptCertificateData(
-          data.name,
-          data.organizationName || "Laboratorium Informatika",
-          data.certificateId || "UNKNOWN"
-        );
+        const certId = data.certificateId || "UNKNOWN";
 
-        console.log("Encrypted QR Code Data:", encryptedData);
+        // Encrypt hanya certificate ID (nomor sertifikat)
+        const encryptedData = encryptCertificateData(certId);
 
-        // Simplified QR Code - single URL format for better scannability
-        // Menggunakan satu format URL saja untuk semua QR Code
+        // Format URL untuk verifikasi: https://sintekmu.ac.id/verify/{encryptedData}
         const verificationURL = `https://sintekmu.ac.id/verify/${encryptedData}`;
 
         // Konfigurasi QR Code yang dioptimalkan untuk scannability
@@ -251,32 +246,52 @@ export default function LabCertificateTemplate({
             dark: "#1f2937",
             light: "#ffffff",
           },
-          // Type number akan otomatis dipilih berdasarkan panjang data
-          // Dengan URL yang lebih pendek, QR Code akan lebih simple dan mudah dipindai
         };
 
+        console.log("📊 Generating QR codes with config:", qrConfig);
+
         if (signatureQRRef.current) {
+          console.log("🎨 Generating signature QR code...");
           await QRCode.toCanvas(signatureQRRef.current, verificationURL, {
             ...qrConfig,
             width: 80,
           });
+          console.log("✅ Signature QR code generated");
+        } else {
+          console.warn("⚠️ signatureQRRef.current is null");
         }
 
         if (verificationQRRef.current) {
+          console.log("🎨 Generating verification QR code...");
           await QRCode.toCanvas(verificationQRRef.current, verificationURL, {
             ...qrConfig,
             width: 48,
           });
+          console.log("✅ Verification QR code generated");
+        } else {
+          console.warn("⚠️ verificationQRRef.current is null");
         }
 
         setQrLoaded(true);
+        console.log("✅ All QR codes generated successfully!");
       } catch (error) {
-        console.error("Error generating QR codes:", error);
+        console.error("❌ Error generating QR codes:", error);
+        if (error instanceof Error) {
+          console.error("Error details:", {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          });
+        } else {
+          console.error("Unknown error type:", error);
+        }
       }
     };
 
-    generateQRCodes();
-  }, [data.certificateId, data.name, data.organizationName]);
+    // Add small delay to ensure canvas is mounted
+    const timer = setTimeout(generateQRCodes, 100);
+    return () => clearTimeout(timer);
+  }, [data.certificateId]);
 
   // Generate some mock analytics data
   const mockStats = {
@@ -294,28 +309,28 @@ export default function LabCertificateTemplate({
       value: 35,
       startColor: "#3b82f6",
       endColor: "#1d4ed8",
-      level: "Expert",
+      level: "Ahli",
     },
     {
       name: "Kemampuan Analisis dan Evaluasi (KAE)",
       value: 30,
       startColor: "#06b6d4",
       endColor: "#0891b2",
-      level: "Advanced",
+      level: "Mahir",
     },
     {
       name: "Kreativitas dalam Pemecahan Masalah (KPM)",
       value: 25,
       startColor: "#10b981",
       endColor: "#059669",
-      level: "Advanced",
+      level: "Mahir",
     },
     {
       name: "Keterampilan Komunikasi (KK)",
       value: 20,
       startColor: "#6b7280",
       endColor: "#4b5563",
-      level: "Intermediate",
+      level: "Menengah",
     },
   ];
 
@@ -323,9 +338,9 @@ export default function LabCertificateTemplate({
     overall: "A",
     breakdown: [
       { subject: "Praktikum Backend", grade: "A+", score: 95 },
-      { subject: "Database Design", grade: "A", score: 90 },
-      { subject: "API Development", grade: "A-", score: 87 },
-      { subject: "Server Management", grade: "B+", score: 85 },
+      { subject: "Desain Database", grade: "A", score: 90 },
+      { subject: "Pengembangan API", grade: "A-", score: 87 },
+      { subject: "Manajemen Server", grade: "B+", score: 85 },
     ],
   };
 
@@ -680,20 +695,12 @@ export default function LabCertificateTemplate({
                   <p
                     className={`text-gray-600 text-sm font-light tracking-widest mb-1 ${inter.className}`}
                   >
-                    PROFESSIONAL CERTIFICATION
+                    SERTIFIKAT PROFESIONAL
                   </p>
                   <h1
                     className={`text-6xl font-black text-gray-900 mb-2 ${playfair.className}`}
                   >
-                    {template === "backend_dev_1"
-                      ? "Backend Developer I"
-                      : template === "frontend_dev_1"
-                      ? "Frontend Developer I"
-                      : template === "fullstack_dev_1"
-                      ? "Full Stack Developer I"
-                      : template === "data_science_1"
-                      ? "Data Science I"
-                      : "Backend Developer I"}
+                    {data.achievement}
                   </h1>
                 </div>
 
@@ -708,7 +715,7 @@ export default function LabCertificateTemplate({
                       renderMode === "batch" ? "mb-2" : "mb-1"
                     }`}
                   >
-                    ISSUED TO
+                    DIBERIKAN KEPADA
                   </p>
                   <h2
                     className={`text-5xl font-bold text-gray-900 mb-2 ${playfair.className}`}
@@ -722,10 +729,10 @@ export default function LabCertificateTemplate({
                   <p
                     className={`text-gray-700 text-lg leading-relaxed ${inter.className}`}
                   >
-                    The bearer of this professional certificate has demonstrated
-                    a fundamental level of {data.program} mastery and passed the
-                    core competencies for each programming specialty in
-                    laboratory practices.
+                    Pemegang sertifikat profesional ini telah menunjukkan
+                    penguasaan tingkat fundamental dalam {data.program} dan
+                    telah lulus kompetensi inti untuk setiap keahlian
+                    pemrograman dalam praktik laboratorium.
                   </p>
                 </div>
               </div>
@@ -744,7 +751,7 @@ export default function LabCertificateTemplate({
                   <span
                     className={`text-[9px] text-gray-500 mb-1 ${inter.className}`}
                   >
-                    Digital Signature
+                    Tanda Tangan Digital
                   </span>
                   <p
                     className={`text-xs text-gray-800 font-semibold ${inter.className}`}
@@ -1027,11 +1034,11 @@ export default function LabCertificateTemplate({
                           <div className="flex items-center gap-2">
                             <span
                               className={`text-xs px-2 py-0.5 rounded-full ${
-                                competency.level === "Expert"
+                                competency.level === "Ahli"
                                   ? "bg-green-100 text-green-700"
-                                  : competency.level === "Advanced"
+                                  : competency.level === "Mahir"
                                   ? "bg-blue-100 text-blue-700"
-                                  : competency.level === "Intermediate"
+                                  : competency.level === "Menengah"
                                   ? "bg-yellow-100 text-yellow-700"
                                   : "bg-gray-100 text-gray-700"
                               } ${inter.className}`}
@@ -1063,7 +1070,7 @@ export default function LabCertificateTemplate({
                     <h4
                       className={`text-xs font-bold text-gray-800 mb-2 ${playfair.className}`}
                     >
-                      Grade Breakdown
+                      Rincian Nilai
                     </h4>
                     <div className="grid grid-cols-2 gap-2">
                       {mockGrades.breakdown.map((grade, index) => (
@@ -1140,7 +1147,7 @@ export default function LabCertificateTemplate({
                         <span
                           className={`text-sm text-gray-600 ${inter.className}`}
                         >
-                          Problem Solving
+                          Pemecahan Masalah
                         </span>
                         <span
                           className={`text-sm font-bold text-blue-600 ${playfair.className}`}
@@ -1206,7 +1213,7 @@ export default function LabCertificateTemplate({
                         <span
                           className={`text-sm text-green-700 ${inter.className}`}
                         >
-                          Overall
+                          Keseluruhan
                         </span>
                         <div className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-green-500 rounded-full">
                           {mockGrades.overall}

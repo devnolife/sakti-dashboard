@@ -1701,30 +1701,39 @@ model laboratory_certificates {
   subtitle          String   @db.Text
   issue_date        DateTime @default(now())
 
-  // Stats
-  meetings                Int
-  total_score             Int
-  materials               Int
-  attendance_rate         Int
-  assignment_completion   Int
-  participation_score     Int
+  // Instructor & Organization Info
+  instructor_name   String?  // Nama instruktur/pembimbing
+  organization_name String?  // Nama organisasi/laboratorium
 
-  // Grades
-  overall_grade           String
+  // Certificate Number Components (for Excel import)
+  month_roman       String?  // Bulan dalam angka Romawi (I-XII)
+  year_hijri        String?  // Tahun Hijriah
+  year_masehi       String?  // Tahun Masehi
 
-  // Learning Time
-  learning_hours          Int
+  // Stats (Optional - untuk nanti)
+  meetings                Int?
+  total_score             Int?
+  materials               Int?
+  attendance_rate         Int?
+  assignment_completion   Int?
+  participation_score     Int?
+
+  // Grades (Optional - untuk nanti)
+  overall_grade           String?
+
+  // Learning Time (Optional - untuk nanti)
+  learning_hours          Int?
   weekly_data             Int[]
 
-  // Analytics
-  learning_velocity       Int
-  collaboration_score     Int
-  problem_solving_efficiency Int
+  // Analytics (Optional - untuk nanti)
+  learning_velocity       Int?
+  collaboration_score     Int?
+  problem_solving_efficiency Int?
 
-  // Competencies (JSON)
-  competencies            Json
+  // Competencies (JSON) (Optional - untuk nanti)
+  competencies            Json?
 
-  // Technologies
+  // Technologies (Optional - untuk nanti)
   technologies            String[]
 
   // QR Code
@@ -1741,6 +1750,7 @@ model laboratory_certificates {
   signed_at               DateTime? // Timestamp signature dibuat
   signed_by               String?   // User yang sign (nama + role)
   verification_count      Int       @default(0) // Jumlah kali diverifikasi
+  last_verified_at        DateTime? // Timestamp terakhir diverifikasi
 
   // Prodi Association
   prodi_id                String

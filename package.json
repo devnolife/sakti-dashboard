@@ -25,6 +25,7 @@
     "seed:super-admin": "tsx prisma/seeds/super-admin-seed.ts",
     "seed:counters": "tsx scripts/seed-letter-counters.ts",
     "seed:admin-prodi": "tsx scripts/seed-admin-prodi.ts",
+    "seed:lab-admins": "tsx scripts/seed-laboratory-admins.ts",
     "letter-counters": "tsx scripts/show-letter-counters.ts"
   },
   "dependencies": {
