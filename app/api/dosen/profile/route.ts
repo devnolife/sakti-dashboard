@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
 
     const userId = session.user_id
 
-    // Fetch staff profile with prodi information
-    const staff = await prisma.staff.findFirst({
+    // Fetch lecturer profile with prodi information
+    const lecturer = await prisma.lecturers.findFirst({
       where: {
         user_id: userId
       },
@@ -47,54 +47,16 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    if (!staff) {
+    if (!lecturer) {
       return NextResponse.json(
-        { error: 'Staff profile not found' },
+        { error: 'Lecturer profile not found' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json({ staff })
+    return NextResponse.json({ lecturer })
   } catch (error) {
-    console.error('Error fetching staff profile:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const { userId } = await request.json()
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      )
-    }
-
-    // Fetch staff profile with prodi information
-    const staff = await prisma.staff.findFirst({
-      where: {
-        user_id: userId
-      },
-      include: {
-        prodi: true
-      }
-    })
-
-    if (!staff) {
-      return NextResponse.json(
-        { error: 'Staff profile not found' },
-        { status: 404 }
-      )
-    }
-
-    return NextResponse.json(staff)
-  } catch (error) {
-    console.error('Error fetching staff profile:', error)
+    console.error('Error fetching lecturer profile:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

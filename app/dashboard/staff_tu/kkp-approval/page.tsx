@@ -29,61 +29,27 @@ import {
   Clock,
   Eye,
   Users,
-  Building,
-  MapPin,
   FileText,
   Send,
   Filter,
   Search,
-  ArrowRight,
+  Loader2,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useAuth } from "@/context/auth-context"
+import {
+  getAllKkpApplications,
+  updateKkpApplicationStatus,
+  getKkpStatistics,
+} from "@/app/actions/kkp-management"
+import type { KkpApplication, KkpStatus } from "@/types/kkp"
 import { sendWD1Notification, sendStudentNotification } from "@/lib/whatsapp-service"
-
-interface KkpApplication {
-  id: string
-  title: string
-  submissionDate: Date
-  student: {
-    id: string
-    name: string
-    nim: string
-    major: string
-    semester: number
-    email: string
-    phone: string
-  }
-  groupMembers: Array<{
-    id: string
-    name: string
-    nim: string
-    major: string
-    semester: number
-  }>
-  company: {
-    name: string
-    address: string
-    city: string
-    contactPerson: string
-    contactPhone: string
-    industry: string
-  }
-  status: "pending" | "approved" | "rejected"
-  description: string
-  startDate: Date
-  endDate: Date
-  documents: Array<{
-    name: string
-    type: string
-    url: string
-  }>
-}
 
 export default function KkpApprovalPage() {
   const { toast } = useToast()
+  const { user } = useAuth()
 
   // Safe toast function with fallback
-  const showToast = (options: { title: string; description: string; variant?: string }) => {
+  const showToast = (options: { title: string; description: string; variant?: "default" | "destructive" }) => {
     try {
       if (toast && typeof toast === 'function') {
         toast(options)
@@ -94,6 +60,7 @@ export default function KkpApprovalPage() {
       console.log('Toast error:', options.title, '-', options.description)
     }
   }
+
   const [applications, setApplications] = useState<KkpApplication[]>([])
   const [selectedApplication, setSelectedApplication] = useState<KkpApplication | null>(null)
   const [detailDialogOpen, setDetailDialogOpen] = useState(false)
@@ -101,145 +68,40 @@ export default function KkpApprovalPage() {
   const [approvalAction, setApprovalAction] = useState<"approve" | "reject" | null>(null)
   const [approvalNotes, setApprovalNotes] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all")
+  const [statusFilter, setStatusFilter] = useState<KkpStatus | "all">("all")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 })
 
-  // Sample data for KKP applications
+  // Fetch applications from database
   useEffect(() => {
-    const mockApplications: KkpApplication[] = [
-      {
-        id: "kkp-2024-001",
-        title: "Pengembangan Sistem Informasi Manajemen",
-        submissionDate: new Date("2024-01-15"),
-        student: {
-          id: "std-001",
-          name: "Ahmad Fauzi",
-          nim: "1234567890",
-          major: "Informatika",
-          semester: 7,
-          email: "ahmad.fauzi@example.com",
-          phone: "081234567890",
-        },
-        groupMembers: [
-          {
-            id: "std-002",
-            name: "Budi Santoso",
-            nim: "1234567891",
-            major: "Informatika",
-            semester: 7,
-          },
-          {
-            id: "std-003",
-            name: "Citra Dewi",
-            nim: "1234567892",
-            major: "Informatika",
-            semester: 7,
-          },
-        ],
-        company: {
-          name: "PT Teknologi Maju Indonesia",
-          address: "Jl. Sudirman No. 123, Jakarta Selatan",
-          city: "Jakarta",
-          contactPerson: "John Doe",
-          contactPhone: "021-1234567",
-          industry: "Technology",
-        },
-        status: "pending",
-        description: "Mengembangkan sistem informasi manajemen untuk meningkatkan efisiensi operasional perusahaan.",
-        startDate: new Date("2024-02-01"),
-        endDate: new Date("2024-05-31"),
-        documents: [
-          {
-            name: "KKP_Ahmad_Fauzi.pdf",
-            type: "proposal",
-            url: "/documents/proposal_kkp_ahmad_fauzi.pdf",
-          },
-          {
-            name: "Surat_KKP.pdf",
-            type: "application-letter",
-            url: "/documents/surat_lamaran_kkp.pdf",
-          },
-        ],
-      },
-      {
-        id: "kkp-2024-002",
-        title: "Implementasi AI untuk Customer Service",
-        submissionDate: new Date("2024-01-18"),
-        student: {
-          id: "std-004",
-          name: "Diana Putri",
-          nim: "1234567893",
-          major: "Informatika",
-          semester: 7,
-          email: "diana.putri@example.com",
-          phone: "081234567891",
-        },
-        groupMembers: [
-          {
-            id: "std-005",
-            name: "Eko Prasetyo",
-            nim: "1234567894",
-            major: "Informatika",
-            semester: 7,
-          },
-        ],
-        company: {
-          name: "Bank Nasional Indonesia",
-          address: "Jl. MH Thamrin No. 45, Jakarta Pusat",
-          city: "Jakarta",
-          contactPerson: "Jane Smith",
-          contactPhone: "021-7654321",
-          industry: "Banking & Finance",
-        },
-        status: "approved",
-        description: "Mengimplementasikan solusi AI untuk meningkatkan layanan customer service perbankan.",
-        startDate: new Date("2024-02-15"),
-        endDate: new Date("2024-06-15"),
-        documents: [
-          {
-            name: "Proposal_KKP_Diana_Putri.pdf",
-            type: "proposal",
-            url: "/documents/proposal_kkp_diana_putri.pdf",
-          },
-        ],
-      },
-      {
-        id: "kkp-2024-003",
-        title: "Sistem Monitoring IoT untuk Smart Building",
-        submissionDate: new Date("2024-01-20"),
-        student: {
-          id: "std-006",
-          name: "Farid Rahman",
-          nim: "1234567895",
-          major: "Informatika",
-          semester: 7,
-          email: "farid.rahman@example.com",
-          phone: "081234567892",
-        },
-        groupMembers: [],
-        company: {
-          name: "PT Smart Building Solutions",
-          address: "Jl. Diponegoro No. 78, Bandung",
-          city: "Bandung",
-          contactPerson: "Robert Johnson",
-          contactPhone: "022-1234567",
-          industry: "Technology",
-        },
-        status: "rejected",
-        description: "Mengembangkan sistem monitoring IoT untuk gedung pintar guna meningkatkan efisiensi energi.",
-        startDate: new Date("2024-03-01"),
-        endDate: new Date("2024-06-30"),
-        documents: [
-          {
-            name: "Proposal_KKP_Farid_Rahman.pdf",
-            type: "proposal",
-            url: "/documents/proposal_kkp_farid_rahman.pdf",
-          },
-        ],
-      },
-    ]
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const [applicationsData, statsData] = await Promise.all([
+          getAllKkpApplications(),
+          getKkpStatistics(),
+        ])
+        setApplications(applicationsData)
+        setStats({
+          total: statsData.total,
+          pending: statsData.pending,
+          approved: statsData.approved,
+          rejected: statsData.rejected,
+        })
+      } catch (error) {
+        console.error("Error fetching applications:", error)
+        showToast({
+          title: "Error",
+          description: "Gagal memuat data pengajuan KKP",
+          variant: "destructive",
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    setApplications(mockApplications)
+    fetchData()
   }, [])
 
   // Filter applications based on search and status
@@ -305,21 +167,41 @@ export default function KkpApprovalPage() {
     setIsSubmitting(true)
 
     try {
-      // In a real app, this would make an API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const userId = user?.id || "unknown"
+      const userName = user?.name || "Staff TU"
+      const newStatus: KkpStatus = approvalAction === "approve" ? "approved" : "rejected"
 
-      // Update the application status
+      // Update status in database
+      const result = await updateKkpApplicationStatus(
+        selectedApplication.id,
+        newStatus,
+        userId,
+        userName,
+        approvalNotes || undefined
+      )
+
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+
       setApplications(prev =>
         prev.map(app =>
           app.id === selectedApplication.id
-            ? { ...app, status: approvalAction }
+            ? { ...app, status: newStatus }
             : app
         )
       )
 
+      // Update stats
+      setStats(prev => ({
+        ...prev,
+        pending: prev.pending - 1,
+        approved: approvalAction === "approve" ? prev.approved + 1 : prev.approved,
+        rejected: approvalAction === "reject" ? prev.rejected + 1 : prev.rejected,
+      }))
+
       // If approved, send WhatsApp notification to WD1
       if (approvalAction === "approve") {
-        // Send WhatsApp notification to WD1
         try {
           const notificationSent = await sendWD1Notification({
             applicationId: selectedApplication.id,
@@ -413,7 +295,7 @@ export default function KkpApprovalPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
-            {filteredApplications.filter(app => app.status === "pending").length} Menunggu Review
+            {stats.pending} Menunggu Review
           </Badge>
         </div>
       </div>
@@ -441,12 +323,12 @@ export default function KkpApprovalPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              {["all", "pending", "approved", "rejected"].map((status) => (
+              {(["all", "pending", "approved", "rejected"] as const).map((status) => (
                 <Button
                   key={status}
                   variant={statusFilter === status ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setStatusFilter(status as any)}
+                  onClick={() => setStatusFilter(status)}
                 >
                   {status === "all" && "Semua"}
                   {status === "pending" && "Menunggu"}
@@ -468,103 +350,114 @@ export default function KkpApprovalPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Mahasiswa</TableHead>
-                  <TableHead>Judul KKP</TableHead>
-                  <TableHead>Perusahaan</TableHead>
-                  <TableHead>Tim</TableHead>
-                  <TableHead>Tanggal Pengajuan</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredApplications.map((application) => (
-                  <TableRow key={application.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{application.student.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {application.student.nim} • {application.student.major}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-xs">
-                        <p className="font-medium truncate">{application.title}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {application.startDate.toLocaleDateString()} - {application.endDate.toLocaleDateString()}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{application.company.name}</p>
-                        <p className="text-sm text-muted-foreground">{application.company.city}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">{application.groupMembers.length + 1} orang</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="text-sm">{application.submissionDate.toLocaleDateString()}</p>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(application.status)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewDetails(application)}
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          Detail
-                        </Button>
-                        {application.status === "pending" && (
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              className="bg-green-500 hover:bg-green-600"
-                              onClick={() => handleApprovalAction(application, "approve")}
-                            >
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Setujui
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleApprovalAction(application, "reject")}
-                            >
-                              <XCircle className="w-4 h-4 mr-1" />
-                              Tolak
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+              <span className="ml-2 text-muted-foreground">Memuat data...</span>
+            </div>
+          ) : (
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Mahasiswa</TableHead>
+                    <TableHead>Judul KKP</TableHead>
+                    <TableHead>Perusahaan</TableHead>
+                    <TableHead>Tim</TableHead>
+                    <TableHead>Tanggal Pengajuan</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Aksi</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {filteredApplications.length === 0 && (
-              <div className="flex flex-col items-center justify-center p-8 text-center">
-                <FileText className="w-12 h-12 mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium">Tidak ada pengajuan ditemukan</h3>
-                <p className="text-sm text-muted-foreground">
-                  Belum ada pengajuan KKP yang sesuai dengan kriteria pencarian.
-                </p>
-              </div>
-            )}
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredApplications.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7}>
+                        <div className="flex flex-col items-center justify-center p-8 text-center">
+                          <FileText className="w-12 h-12 mb-4 text-muted-foreground" />
+                          <h3 className="text-lg font-medium">Tidak ada pengajuan ditemukan</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Belum ada pengajuan KKP yang sesuai dengan kriteria pencarian.
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredApplications.map((application) => (
+                      <TableRow key={application.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{application.student.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {application.student.nim} • {application.student.major}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="max-w-xs">
+                            <p className="font-medium truncate">{application.title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(application.start_date).toLocaleDateString("id-ID")} - {new Date(application.end_date).toLocaleDateString("id-ID")}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{application.company.name}</p>
+                            <p className="text-sm text-muted-foreground">{application.company.city}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Users className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm">{(application.groupMembers?.length || 0) + 1} orang</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <p className="text-sm">{new Date(application.submission_date).toLocaleDateString("id-ID")}</p>
+                        </TableCell>
+                        <TableCell>
+                          {getStatusBadge(application.status)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewDetails(application)}
+                            >
+                              <Eye className="w-4 h-4 mr-1" />
+                              Detail
+                            </Button>
+                            {application.status === "pending" && (
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  className="bg-green-500 hover:bg-green-600"
+                                  onClick={() => handleApprovalAction(application, "approve")}
+                                >
+                                  <CheckCircle className="w-4 h-4 mr-1" />
+                                  Setujui
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => handleApprovalAction(application, "reject")}
+                                >
+                                  <XCircle className="w-4 h-4 mr-1" />
+                                  Tolak
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -595,12 +488,12 @@ export default function KkpApprovalPage() {
                     </div>
                   </div>
 
-                  {selectedApplication.groupMembers.length > 0 && (
+                  {(selectedApplication.groupMembers?.length ?? 0) > 0 && (
                     <div>
                       <h3 className="mb-3 text-lg font-semibold">Anggota Tim</h3>
                       <div className="space-y-2">
-                        {selectedApplication.groupMembers.map((member, index) => (
-                          <div key={member.id} className="p-3 rounded-lg bg-muted/50">
+                        {(selectedApplication.groupMembers ?? []).map((member: any, index: number) => (
+                          <div key={member.id || index} className="p-3 rounded-lg bg-muted/50">
                             <p className="font-medium">{member.name}</p>
                             <p className="text-sm text-muted-foreground">
                               {member.nim} • {member.major} • Semester {member.semester}
@@ -629,7 +522,7 @@ export default function KkpApprovalPage() {
                     <h3 className="mb-3 text-lg font-semibold">Detail KKP</h3>
                     <div className="space-y-2">
                       <p><span className="font-medium">Judul:</span> {selectedApplication.title}</p>
-                      <p><span className="font-medium">Periode:</span> {selectedApplication.startDate.toLocaleDateString()} - {selectedApplication.endDate.toLocaleDateString()}</p>
+                      <p><span className="font-medium">Periode:</span> {new Date(selectedApplication.start_date).toLocaleDateString("id-ID")} - {new Date(selectedApplication.end_date).toLocaleDateString("id-ID")}</p>
                       <p><span className="font-medium">Deskripsi:</span></p>
                       <p className="p-3 text-sm rounded-lg text-muted-foreground bg-muted/50">
                         {selectedApplication.description}
@@ -644,12 +537,12 @@ export default function KkpApprovalPage() {
                 <h3 className="mb-3 text-lg font-semibold">Dokumen</h3>
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {selectedApplication.documents.map((doc, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
+                    <div key={doc.id || index} className="flex items-center gap-3 p-3 border rounded-lg">
                       <FileText className="w-5 h-5 text-muted-foreground" />
                       <div className="flex-1">
                         <p className="font-medium">{doc.name}</p>
                         <p className="text-sm capitalize text-muted-foreground">
-                          {doc.type.replace(/-/g, " ")}
+                          {doc.type.replace(/_/g, " ")}
                         </p>
                       </div>
                       <Button variant="outline" size="sm" asChild>

@@ -279,7 +279,7 @@ export default function UploadTemplatePage() {
         ignoreHeight: false,
       }).catch((err) => {
         console.error('Preview error:', err)
-        previewContainer.innerHTML = '<p class="text-muted-foreground p-4">Gagal memuat preview</p>'
+        previewContainer.innerHTML = '<p class="text-muted-foreground p-4">Gagal memuat previews</p>'
       })
     }
   }, [file, previewContainer])

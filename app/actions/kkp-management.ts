@@ -1,583 +1,210 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import type { KkpApplication, KkpStatus, KkpDocument, KkpDocumentStatus, KkpDocumentType } from "@/types/kkp"
+import { prisma } from "@/lib/prisma"
+import type { KkpApplication, KkpStatus, KkpDocumentStatus, KkpDocumentType } from "@/types/kkp"
 
-// Mock data for KKP applications
-const MOCK_KKP_APPLICATIONS: KkpApplication[] = [
-  {
-    id: "kkp-001",
-    applicationNumber: "KKP/2023/001",
-    title: "Pengembangan Sistem Informasi Keuangan",
-    description: "Pengembangan sistem informasi keuangan berbasis web untuk memudahkan pengelolaan keuangan perusahaan",
-    submission_date: new Date("2023-09-01"),
-    start_date: new Date("2023-10-01"),
-    end_date: new Date("2023-12-31"),
-    status: "pending",
+// Helper function to transform database data to KkpApplication type
+function transformToKkpApplication(dbApplication: any): KkpApplication {
+  return {
+    id: dbApplication.id,
+    applicationNumber: dbApplication.application_number || "",
+    title: dbApplication.title,
+    description: dbApplication.description || "",
+    submission_date: dbApplication.submission_date,
+    start_date: dbApplication.start_date,
+    end_date: dbApplication.end_date,
+    status: dbApplication.status as KkpStatus,
+    notes: dbApplication.notes,
     student: {
-      id: "std-001",
-      name: "Ahmad Fauzi",
-      nim: "1234567890",
-      major: "Informatika",
-      semester: 5,
-      email: "ahmad.fauzi@example.com",
-      phone: "081234567890",
-      avatar: "/placeholder.svg?height=40&width=40",
+      id: dbApplication.students?.id || "",
+      name: dbApplication.students?.name || "",
+      nim: dbApplication.students?.nim || "",
+      major: dbApplication.students?.prodi?.nama || "",
+      semester: dbApplication.students?.semester || 0,
+      email: dbApplication.students?.email || "",
+      phone: dbApplication.students?.phone || "",
+      avatar: dbApplication.students?.avatar || undefined,
     },
-    groupMembers: [
-      {
-        id: "std-002",
-        name: "Siti Nurhaliza",
-        nim: "1234567891",
-        major: "Informatika",
-        semester: 5,
-        email: "siti.nurhaliza@example.com",
-        phone: "081234567891",
-      },
-      {
-        id: "std-003",
-        name: "Budi Santoso",
-        nim: "1234567892",
-        major: "Informatika",
-        semester: 5,
-        email: "budi.santoso@example.com",
-        phone: "081234567892",
-      },
-    ],
+    groupMembers: dbApplication.group_members || [],
+    supervisor: dbApplication.lecturers ? {
+      id: dbApplication.lecturers.id,
+      name: dbApplication.lecturers.name,
+      nip: dbApplication.lecturers.nip || "",
+      department: dbApplication.lecturers.prodi?.nama || "",
+      email: dbApplication.lecturers.email || "",
+      specialization: dbApplication.lecturers.specialization || "",
+    } : undefined,
     company: {
-      id: "comp-001",
-      name: "Bank Nasional Indonesia",
-      address: "Jl. Sudirman No. 10",
-      city: "Jakarta",
-      contactPerson: "Hendra Wijaya",
-      contactPhone: "021-1234567",
-      website: "www.bni.co.id",
-      logo: "/placeholder.svg?height=40&width=40",
-      industry: "Banking & Finance",
+      id: dbApplication.companies?.id || "",
+      name: dbApplication.companies?.name || "",
+      address: dbApplication.companies?.address || "",
+      city: dbApplication.companies?.city || "",
+      contactPerson: dbApplication.companies?.contact_person || "",
+      contactPhone: dbApplication.companies?.contact_phone || "",
+      website: dbApplication.companies?.website || "",
+      logo: dbApplication.companies?.logo || undefined,
+      industry: dbApplication.companies?.industry || "",
     },
-    documents: [
-      {
-        id: "doc-001",
-        name: "Surat Permohonan KKP",
-        type: "application-letter",
-        url: "/documents/surat-permohonan.pdf",
-        uploadDate: new Date("2023-08-25"),
-        status: "verified",
-      },
-      {
-        id: "doc-002",
-        name: "Proposal KKP",
-        type: "proposal",
-        url: "/documents/proposal.pdf",
-        uploadDate: new Date("2023-08-28"),
-        status: "pending",
-      },
-      {
-        id: "doc-003",
-        name: "Transkrip Nilai",
-        type: "transcript",
-        url: "/documents/transkrip.pdf",
-        uploadDate: new Date("2023-08-25"),
-        status: "verified",
-      },
-    ],
-  },
-  {
-    id: "kkp-002",
-    applicationNumber: "KKP/2023/002",
-    title: "Implementasi Sistem Manajemen Inventaris",
-    description: "Implementasi sistem manajemen inventaris untuk memudahkan pengelolaan barang di gudang",
-    submission_date: new Date("2023-09-02"),
-    start_date: new Date("2023-10-15"),
-    end_date: new Date("2024-01-15"),
-    status: "approved",
-    student: {
-      id: "std-004",
-      name: "Dewi Lestari",
-      nim: "1234567893",
-      major: "Sistem Informasi",
-      semester: 6,
-      email: "dewi.lestari@example.com",
-      phone: "081234567893",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    groupMembers: [
-      {
-        id: "std-005",
-        name: "Rudi Hartono",
-        nim: "1234567894",
-        major: "Sistem Informasi",
-        semester: 6,
-        email: "rudi.hartono@example.com",
-        phone: "081234567894",
-      },
-    ],
-    supervisor: {
-      id: "lec-001",
-      name: "Dr. Bambang Suprapto",
-      nip: "9876543210",
-      department: "Sistem Informasi",
-      email: "bambang.suprapto@example.com",
-      specialization: "Database Systems",
-    },
-    company: {
-      id: "comp-002",
-      name: "PT Maju Bersama",
-      address: "Jl. Gatot Subroto No. 15",
-      city: "Jakarta",
-      contactPerson: "Rina Susanti",
-      contactPhone: "021-7654321",
-      website: "www.majubersama.co.id",
-      logo: "/placeholder.svg?height=40&width=40",
-      industry: "Logistics & Transportation",
-    },
-    documents: [
-      {
-        id: "doc-004",
-        name: "Surat Permohonan KKP",
-        type: "application-letter",
-        url: "/documents/surat-permohonan-2.pdf",
-        uploadDate: new Date("2023-08-30"),
-        status: "verified",
-      },
-      {
-        id: "doc-005",
-        name: "Proposal KKP",
-        type: "proposal",
-        url: "/documents/proposal-2.pdf",
-        uploadDate: new Date("2023-08-31"),
-        status: "verified",
-      },
-      {
-        id: "doc-006",
-        name: "Surat Penerimaan",
-        type: "acceptance-letter",
-        url: "/documents/surat-penerimaan-2.pdf",
-        uploadDate: new Date("2023-09-10"),
-        status: "verified",
-      },
-    ],
-    approvedBy: "Dr. Hadi Santoso",
-    approvedDate: new Date("2023-09-10"),
-  },
-  {
-    id: "kkp-003",
-    applicationNumber: "KKP/2023/003",
-    title: "Pengembangan Aplikasi Mobile E-Commerce",
-    description: "Pengembangan aplikasi mobile e-commerce untuk memudahkan pengguna dalam berbelanja online",
-    submission_date: new Date("2023-09-03"),
-    start_date: new Date("2023-10-01"),
-    end_date: new Date("2023-12-31"),
-    status: "in-progress",
-    student: {
-      id: "std-006",
-      name: "Andi Wijaya",
-      nim: "1234567895",
-      major: "Informatika",
-      semester: 7,
-      email: "andi.wijaya@example.com",
-      phone: "081234567895",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    groupMembers: [
-      {
-        id: "std-007",
-        name: "Nina Sari",
-        nim: "1234567896",
-        major: "Informatika",
-        semester: 7,
-        email: "nina.sari@example.com",
-        phone: "081234567896",
-      },
-      {
-        id: "std-008",
-        name: "Dodi Pratama",
-        nim: "1234567897",
-        major: "Informatika",
-        semester: 7,
-        email: "dodi.pratama@example.com",
-        phone: "081234567897",
-      },
-    ],
-    supervisor: {
-      id: "lec-002",
-      name: "Dr. Siti Aminah",
-      nip: "9876543211",
-      department: "Informatika",
-      email: "siti.aminah@example.com",
-      specialization: "Mobile Application Development",
-    },
-    company: {
-      id: "comp-003",
-      name: "Tokopedia",
-      address: "Jl. Prof. DR. Satrio No. 11",
-      city: "Jakarta",
-      contactPerson: "Joko Widodo",
-      contactPhone: "021-9876543",
-      website: "www.tokopedia.com",
-      logo: "/placeholder.svg?height=40&width=40",
-      industry: "E-Commerce",
-    },
-    documents: [
-      {
-        id: "doc-007",
-        name: "Surat Permohonan KKP",
-        type: "application-letter",
-        url: "/documents/surat-permohonan-3.pdf",
-        uploadDate: new Date("2023-08-28"),
-        status: "verified",
-      },
-      {
-        id: "doc-008",
-        name: "Proposal KKP",
-        type: "proposal",
-        url: "/documents/proposal-3.pdf",
-        uploadDate: new Date("2023-08-29"),
-        status: "verified",
-      },
-      {
-        id: "doc-009",
-        name: "Transkrip Nilai",
-        type: "transcript",
-        url: "/documents/transkrip-3.pdf",
-        uploadDate: new Date("2023-08-28"),
-        status: "verified",
-      },
-      {
-        id: "doc-010",
-        name: "Surat Penerimaan",
-        type: "acceptance-letter",
-        url: "/documents/surat-penerimaan-3.pdf",
-        uploadDate: new Date("2023-09-05"),
-        status: "verified",
-      },
-      {
-        id: "doc-011",
-        name: "Surat Penunjukan Pembimbing",
-        type: "supervisor-letter",
-        url: "/documents/surat-pembimbing-3.pdf",
-        uploadDate: new Date("2023-09-10"),
-        status: "verified",
-      },
-    ],
-    approvedBy: "Dr. Hadi Santoso",
-    approvedDate: new Date("2023-09-05"),
-  },
-  {
-    id: "kkp-004",
-    applicationNumber: "KKP/2023/004",
-    title: "Analisis dan Pengembangan Sistem Informasi Akademik",
-    description:
-      "Analisis dan pengembangan sistem informasi akademik untuk meningkatkan efisiensi pengelolaan data akademik",
-    submission_date: new Date("2023-09-04"),
-    start_date: new Date("2023-10-15"),
-    end_date: new Date("2024-01-15"),
-    status: "rejected",
-    student: {
-      id: "std-009",
-      name: "Rina Wati",
-      nim: "1234567898",
-      major: "Sistem Informasi",
-      semester: 6,
-      email: "rina.wati@example.com",
-      phone: "081234567898",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    company: {
-      id: "comp-004",
-      name: "Universitas Indonesia",
-      address: "Jl. Margonda Raya No. 100",
-      city: "Depok",
-      contactPerson: "Dr. Hadi Santoso",
-      contactPhone: "021-8765432",
-      website: "www.ui.ac.id",
-      logo: "/placeholder.svg?height=40&width=40",
-      industry: "Education",
-    },
-    documents: [
-      {
-        id: "doc-012",
-        name: "Surat Permohonan KKP",
-        type: "application-letter",
-        url: "/documents/surat-permohonan-4.pdf",
-        uploadDate: new Date("2023-09-01"),
-        status: "rejected",
-        notes: "Format surat tidak sesuai dengan ketentuan",
-      },
-      {
-        id: "doc-013",
-        name: "Proposal KKP",
-        type: "proposal",
-        url: "/documents/proposal-4.pdf",
-        uploadDate: new Date("2023-09-02"),
-        status: "rejected",
-        notes: "Proposal tidak sesuai dengan kebutuhan institusi",
-      },
-    ],
-    rejectedBy: "Dr. Hadi Santoso",
-    rejectedDate: new Date("2023-09-10"),
-    rejectionReason: "Proposal tidak sesuai dengan kebutuhan institusi. Harap revisi dan ajukan kembali.",
-  },
-  {
-    id: "kkp-005",
-    applicationNumber: "KKP/2023/005",
-    title: "Pengembangan Sistem Informasi Perpustakaan",
-    description: "Pengembangan sistem informasi perpustakaan untuk memudahkan pengelolaan buku dan peminjaman",
-    submission_date: new Date("2023-09-05"),
-    start_date: new Date("2023-10-01"),
-    end_date: new Date("2023-12-31"),
-    status: "pending",
-    student: {
-      id: "std-010",
-      name: "Dian Sastro",
-      nim: "1234567899",
-      major: "Informatika",
-      semester: 5,
-      email: "dian.sastro@example.com",
-      phone: "081234567899",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    groupMembers: [
-      {
-        id: "std-011",
-        name: "Agus Salim",
-        nim: "1234567900",
-        major: "Informatika",
-        semester: 5,
-        email: "agus.salim@example.com",
-        phone: "081234567900",
-      },
-    ],
-    company: {
-      id: "comp-005",
-      name: "Perpustakaan Nasional",
-      address: "Jl. Salemba Raya No. 28",
-      city: "Jakarta",
-      contactPerson: "Siti Aminah",
-      contactPhone: "021-5432109",
-      website: "www.perpusnas.go.id",
-      logo: "/placeholder.svg?height=40&width=40",
-      industry: "Government",
-    },
-    documents: [
-      {
-        id: "doc-014",
-        name: "Surat Permohonan KKP",
-        type: "application-letter",
-        url: "/documents/surat-permohonan-5.pdf",
-        uploadDate: new Date("2023-09-03"),
-        status: "verified",
-      },
-      {
-        id: "doc-015",
-        name: "Proposal KKP",
-        type: "proposal",
-        url: "/documents/proposal-5.pdf",
-        uploadDate: new Date("2023-09-04"),
-        status: "pending",
-      },
-      {
-        id: "doc-016",
-        name: "Transkrip Nilai",
-        type: "transcript",
-        url: "/documents/transkrip-5.pdf",
-        uploadDate: new Date("2023-09-03"),
-        status: "verified",
-      },
-    ],
-  },
-  {
-    id: "kkp-006",
-    applicationNumber: "KKP/2023/006",
-    title: "Implementasi Sistem Manajemen Proyek",
-    description: "Implementasi sistem manajemen proyek untuk meningkatkan efisiensi pengelolaan proyek perusahaan",
-    submission_date: new Date("2023-09-06"),
-    start_date: new Date("2023-10-15"),
-    end_date: new Date("2024-01-15"),
-    status: "completed",
-    student: {
-      id: "std-012",
-      name: "Rini Susanti",
-      nim: "1234567901",
-      major: "Sistem Informasi",
-      semester: 8,
-      email: "rini.susanti@example.com",
-      phone: "081234567901",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    groupMembers: [
-      {
-        id: "std-013",
-        name: "Hadi Santoso",
-        nim: "1234567902",
-        major: "Sistem Informasi",
-        semester: 8,
-        email: "hadi.santoso@example.com",
-        phone: "081234567902",
-      },
-      {
-        id: "std-014",
-        name: "Lia Amalia",
-        nim: "1234567903",
-        major: "Sistem Informasi",
-        semester: 8,
-        email: "lia.amalia@example.com",
-        phone: "081234567903",
-      },
-    ],
-    supervisor: {
-      id: "lec-003",
-      name: "Dr. Budi Hartono",
-      nip: "9876543212",
-      department: "Sistem Informasi",
-      email: "budi.hartono@example.com",
-      specialization: "Project Management",
-    },
-    company: {
-      id: "comp-006",
-      name: "PT Telkom Indonesia",
-      address: "Jl. Jenderal Sudirman Kav. 52-53",
-      city: "Jakarta",
-      contactPerson: "Budi Hartono",
-      contactPhone: "021-5240807",
-      website: "www.telkom.co.id",
-      logo: "/placeholder.svg?height=40&width=40",
-      industry: "Telecommunications",
-    },
-    documents: [
-      {
-        id: "doc-017",
-        name: "Surat Permohonan KKP",
-        type: "application-letter",
-        url: "/documents/surat-permohonan-6.pdf",
-        uploadDate: new Date("2023-04-04"),
-        status: "verified",
-      },
-      {
-        id: "doc-018",
-        name: "Proposal KKP",
-        type: "proposal",
-        url: "/documents/proposal-6.pdf",
-        uploadDate: new Date("2023-04-05"),
-        status: "verified",
-      },
-      {
-        id: "doc-019",
-        name: "Transkrip Nilai",
-        type: "transcript",
-        url: "/documents/transkrip-6.pdf",
-        uploadDate: new Date("2023-04-04"),
-        status: "verified",
-      },
-      {
-        id: "doc-020",
-        name: "Surat Penerimaan",
-        type: "acceptance-letter",
-        url: "/documents/surat-penerimaan-6.pdf",
-        uploadDate: new Date("2023-04-15"),
-        status: "verified",
-      },
-      {
-        id: "doc-021",
-        name: "Surat Penunjukan Pembimbing",
-        type: "supervisor-letter",
-        url: "/documents/surat-pembimbing-6.pdf",
-        uploadDate: new Date("2023-04-20"),
-        status: "verified",
-      },
-      {
-        id: "doc-022",
-        name: "Laporan KKP",
-        type: "report",
-        url: "/documents/laporan-6.pdf",
-        uploadDate: new Date("2023-08-10"),
-        status: "verified",
-      },
-      {
-        id: "doc-023",
-        name: "Evaluasi KKP",
-        type: "evaluation",
-        url: "/documents/evaluasi-6.pdf",
-        uploadDate: new Date("2023-08-15"),
-        status: "verified",
-      },
-    ],
-    approvedBy: "Dr. Hadi Santoso",
-    approvedDate: new Date("2023-04-10"),
-  },
-]
+    documents: (dbApplication.kkp_documents || []).map((doc: any) => ({
+      id: doc.id,
+      name: doc.name,
+      type: doc.type as KkpDocumentType,
+      url: doc.url,
+      uploadDate: doc.upload_date,
+      status: doc.status as KkpDocumentStatus,
+      notes: doc.notes,
+    })),
+    approvedBy: dbApplication.kkp_approvals?.find((a: any) => a.status === "approved")?.approver_id,
+    approvedDate: dbApplication.kkp_approvals?.find((a: any) => a.status === "approved")?.approved_at,
+    rejectedBy: dbApplication.kkp_approvals?.find((a: any) => a.status === "rejected")?.approver_id,
+    rejectedDate: dbApplication.kkp_approvals?.find((a: any) => a.status === "rejected")?.approved_at,
+    rejectionReason: dbApplication.kkp_approvals?.find((a: any) => a.status === "rejected")?.comments,
+  }
+}
 
 // Function to get all KKP applications
-export async function getAllKkpApplications() {
-  // In a real app, this would fetch from a database
-  return MOCK_KKP_APPLICATIONS
+export async function getAllKkpApplications(): Promise<KkpApplication[]> {
+  try {
+    const applications = await prisma.kkp_applications.findMany({
+      include: {
+        students: {
+          include: {
+            prodi: true,
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true,
+          }
+        },
+        companies: true,
+        kkp_documents: true,
+        kkp_approvals: true,
+      },
+      orderBy: {
+        submission_date: 'desc'
+      }
+    })
+
+    return applications.map(transformToKkpApplication)
+  } catch (error) {
+    console.error("Error fetching KKP applications:", error)
+    return []
+  }
 }
 
 // Function to get KKP applications by status
-export async function getKkpApplicationsByStatus(status: KkpStatus) {
-  // In a real app, this would fetch from a database with filtering
-  return MOCK_KKP_APPLICATIONS.filter((app) => app.status === status)
+export async function getKkpApplicationsByStatus(status: KkpStatus): Promise<KkpApplication[]> {
+  try {
+    const applications = await prisma.kkp_applications.findMany({
+      where: {
+        status: status
+      },
+      include: {
+        students: {
+          include: {
+            prodi: true,
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true,
+          }
+        },
+        companies: true,
+        kkp_documents: true,
+        kkp_approvals: true,
+      },
+      orderBy: {
+        submission_date: 'desc'
+      }
+    })
+
+    return applications.map(transformToKkpApplication)
+  } catch (error) {
+    console.error("Error fetching KKP applications by status:", error)
+    return []
+  }
 }
 
 // Function to get a single KKP application by ID
-export async function getKkpApplicationById(id: string) {
-  // In a real app, this would fetch from a database
-  return MOCK_KKP_APPLICATIONS.find((app) => app.id === id) || null
+export async function getKkpApplicationById(id: string): Promise<KkpApplication | null> {
+  try {
+    const application = await prisma.kkp_applications.findUnique({
+      where: { id },
+      include: {
+        students: {
+          include: {
+            prodi: true,
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true,
+          }
+        },
+        companies: true,
+        kkp_documents: true,
+        kkp_approvals: true,
+      },
+    })
+
+    if (!application) return null
+
+    return transformToKkpApplication(application)
+  } catch (error) {
+    console.error("Error fetching KKP application:", error)
+    return null
+  }
 }
 
 // Function to update KKP application status
 export async function updateKkpApplicationStatus(
   id: string,
   newStatus: KkpStatus,
-  user_id: string,
+  userId: string,
   userName: string,
   notes?: string,
 ) {
   try {
-    // In a real app, this would update a database record
-    const applicationIndex = MOCK_KKP_APPLICATIONS.findIndex((app) => app.id === id)
-
-    if (applicationIndex === -1) {
-      return { success: false, message: "Application not found" }
-    }
-
     // Update the application status
-    MOCK_KKP_APPLICATIONS[applicationIndex].status = newStatus
+    const updatedApplication = await prisma.kkp_applications.update({
+      where: { id },
+      data: {
+        status: newStatus,
+        notes: notes || undefined,
+        updated_at: new Date(),
+      },
+      include: {
+        students: {
+          include: {
+            prodi: true,
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true,
+          }
+        },
+        companies: true,
+        kkp_documents: true,
+        kkp_approvals: true,
+      },
+    })
 
-    // Add notes if provided
-    if (notes) {
-      MOCK_KKP_APPLICATIONS[applicationIndex].notes = notes
-    }
-
-    // Update approval or rejection information
-    if (newStatus === "approved") {
-      MOCK_KKP_APPLICATIONS[applicationIndex].approvedBy = userName
-      MOCK_KKP_APPLICATIONS[applicationIndex].approvedDate = new Date()
-
-      // Add acceptance letter document if not exists
-      const hasAcceptanceLetter = MOCK_KKP_APPLICATIONS[applicationIndex].documents.some(
-        (doc) => doc.type === "acceptance-letter",
-      )
-
-      if (!hasAcceptanceLetter) {
-        const newDocId = `doc-${Math.floor(Math.random() * 10000)}`
-        MOCK_KKP_APPLICATIONS[applicationIndex].documents.push({
-          id: newDocId,
-          name: "Surat Penerimaan",
-          type: "acceptance-letter",
-          url: `/documents/surat-penerimaan-${id}.pdf`,
-          uploadDate: new Date(),
-          status: "verified",
-        })
+    // Create approval record
+    await prisma.kkp_approvals.create({
+      data: {
+        id: `approval-${Date.now()}`,
+        application_id: id,
+        approver_role: 'staff_tu',
+        approver_id: userId,
+        status: newStatus === 'approved' ? 'approved' : newStatus === 'rejected' ? 'rejected' : 'pending',
+        comments: notes,
+        approved_at: new Date(),
       }
-    } else if (newStatus === "rejected") {
-      MOCK_KKP_APPLICATIONS[applicationIndex].rejectedBy = userName
-      MOCK_KKP_APPLICATIONS[applicationIndex].rejectedDate = new Date()
-
-      if (notes) {
-        MOCK_KKP_APPLICATIONS[applicationIndex].rejectionReason = notes
-      }
-    }
+    })
 
     // Revalidate the paths to refresh the UI
     revalidatePath("/dashboard/staff_tu/kkp")
@@ -586,12 +213,12 @@ export async function updateKkpApplicationStatus(
 
     return {
       success: true,
-      message: `Application status updated to ${newStatus}`,
-      application: MOCK_KKP_APPLICATIONS[applicationIndex],
+      message: `Status permintaan berhasil diubah menjadi ${newStatus}`,
+      application: transformToKkpApplication(updatedApplication),
     }
   } catch (error) {
     console.error("Error updating KKP application status:", error)
-    return { success: false, message: "Failed to update application status" }
+    return { success: false, message: "Gagal memperbarui status permintaan" }
   }
 }
 
@@ -603,26 +230,13 @@ export async function verifyDocument(
   notes?: string,
 ) {
   try {
-    // In a real app, this would update a database record
-    const applicationIndex = MOCK_KKP_APPLICATIONS.findIndex((app) => app.id === applicationId)
-
-    if (applicationIndex === -1) {
-      return { success: false, message: "Application not found" }
-    }
-
-    const documentIndex = MOCK_KKP_APPLICATIONS[applicationIndex].documents.findIndex((doc) => doc.id === documentId)
-
-    if (documentIndex === -1) {
-      return { success: false, message: "Document not found" }
-    }
-
-    // Update the document status
-    MOCK_KKP_APPLICATIONS[applicationIndex].documents[documentIndex].status = status
-
-    // Add notes if provided
-    if (notes) {
-      MOCK_KKP_APPLICATIONS[applicationIndex].documents[documentIndex].notes = notes
-    }
+    await prisma.kkp_documents.update({
+      where: { id: documentId },
+      data: {
+        status: status,
+        notes: notes || undefined,
+      }
+    })
 
     // Revalidate the paths to refresh the UI
     revalidatePath("/dashboard/staff_tu/kkp")
@@ -631,54 +245,39 @@ export async function verifyDocument(
 
     return {
       success: true,
-      message: `Document status updated to ${status}`,
-      document: MOCK_KKP_APPLICATIONS[applicationIndex].documents[documentIndex],
+      message: `Status dokumen berhasil diubah menjadi ${status}`,
     }
   } catch (error) {
     console.error("Error verifying document:", error)
-    return { success: false, message: "Failed to verify document" }
+    return { success: false, message: "Gagal memverifikasi dokumen" }
   }
 }
 
 // Function to assign supervisor to KKP application
-export async function assignSupervisor(applicationId: string, supervisor_id: string, supervisorName: string) {
+export async function assignSupervisor(applicationId: string, supervisorId: string, supervisorName: string) {
   try {
-    // In a real app, this would update a database record and fetch supervisor details
-    const applicationIndex = MOCK_KKP_APPLICATIONS.findIndex((app) => app.id === applicationId)
-
-    if (applicationIndex === -1) {
-      return { success: false, message: "Application not found" }
-    }
-
-    // Create a mock supervisor object (in a real app, this would be fetched from the database)
-    const supervisor = {
-      id: supervisor_id,
-      name: supervisorName,
-      nip: `NIP${Math.floor(Math.random() * 10000000)}`,
-      department: MOCK_KKP_APPLICATIONS[applicationIndex].student.major,
-      email: `${supervisorName.toLowerCase().replace(/\s+/g, ".")}@example.com`,
-      specialization: "KKP Supervision",
-    }
-
-    // Assign the supervisor
-    MOCK_KKP_APPLICATIONS[applicationIndex].supervisor = supervisor
-
-    // Add supervisor letter document if not exists
-    const hasSupervisorLetter = MOCK_KKP_APPLICATIONS[applicationIndex].documents.some(
-      (doc) => doc.type === "supervisor-letter",
-    )
-
-    if (!hasSupervisorLetter) {
-      const newDocId = `doc-${Math.floor(Math.random() * 10000)}`
-      MOCK_KKP_APPLICATIONS[applicationIndex].documents.push({
-        id: newDocId,
-        name: "Surat Penunjukan Pembimbing",
-        type: "supervisor-letter",
-        url: `/documents/surat-pembimbing-${applicationId}.pdf`,
-        uploadDate: new Date(),
-        status: "verified",
-      })
-    }
+    const updatedApplication = await prisma.kkp_applications.update({
+      where: { id: applicationId },
+      data: {
+        supervisor_id: supervisorId,
+        updated_at: new Date(),
+      },
+      include: {
+        students: {
+          include: {
+            prodi: true,
+          }
+        },
+        lecturers: {
+          include: {
+            prodi: true,
+          }
+        },
+        companies: true,
+        kkp_documents: true,
+        kkp_approvals: true,
+      },
+    })
 
     // Revalidate the paths to refresh the UI
     revalidatePath("/dashboard/staff_tu/kkp")
@@ -687,42 +286,56 @@ export async function assignSupervisor(applicationId: string, supervisor_id: str
 
     return {
       success: true,
-      message: `Supervisor ${supervisorName} assigned successfully`,
-      application: MOCK_KKP_APPLICATIONS[applicationIndex],
+      message: `Pembimbing ${supervisorName} berhasil ditugaskan`,
+      application: transformToKkpApplication(updatedApplication),
     }
   } catch (error) {
     console.error("Error assigning supervisor:", error)
-    return { success: false, message: "Failed to assign supervisor" }
+    return { success: false, message: "Gagal menugaskan pembimbing" }
   }
 }
 
 // Function to submit a new KKP application
-export async function submitKkpApplication(applicationData: Partial<KkpApplication>) {
+export async function submitKkpApplication(applicationData: {
+  title: string
+  description: string
+  startDate: Date
+  endDate: Date
+  studentId: string
+  companyId: string
+  groupMembers?: any[]
+}) {
   try {
-    // In a real app, this would create a new record in the database
+    // Generate application number
+    const count = await prisma.kkp_applications.count()
+    const year = new Date().getFullYear()
+    const applicationNumber = `KKP/${year}/${String(count + 1).padStart(3, "0")}`
 
-    // Generate a new ID and application number
-    const newId = `kkp-${String(MOCK_KKP_APPLICATIONS.length + 1).padStart(3, "0")}`
-    const newApplicationNumber = `KKP/2023/${String(MOCK_KKP_APPLICATIONS.length + 1).padStart(3, "0")}`
-
-    // Create the new application object
-    const newApplication: KkpApplication = {
-      id: newId,
-      applicationNumber: newApplicationNumber,
-      title: applicationData.title || "Untitled KKP Application",
-      description: applicationData.description || "",
-      submission_date: new Date(),
-      start_date: applicationData.startDate || new Date(),
-      end_date: applicationData.endDate || new Date(),
-      status: "pending",
-      student: applicationData.student!,
-      groupMembers: applicationData.groupMembers || [],
-      company: applicationData.company!,
-      documents: applicationData.documents || [],
-    }
-
-    // Add the new application to the mock data
-    MOCK_KKP_APPLICATIONS.push(newApplication)
+    const newApplication = await prisma.kkp_applications.create({
+      data: {
+        id: `kkp-${Date.now()}`,
+        application_number: applicationNumber,
+        title: applicationData.title,
+        description: applicationData.description,
+        start_date: applicationData.startDate,
+        end_date: applicationData.endDate,
+        student_id: applicationData.studentId,
+        company_id: applicationData.companyId,
+        group_members: applicationData.groupMembers || [],
+        status: 'pending',
+        updated_at: new Date(),
+      },
+      include: {
+        students: {
+          include: {
+            prodi: true,
+          }
+        },
+        companies: true,
+        kkp_documents: true,
+        kkp_approvals: true,
+      },
+    })
 
     // Revalidate the paths to refresh the UI
     revalidatePath("/dashboard/mahasiswa/kkp")
@@ -731,12 +344,12 @@ export async function submitKkpApplication(applicationData: Partial<KkpApplicati
 
     return {
       success: true,
-      message: "KKP application submitted successfully",
-      application: newApplication,
+      message: "Permintaan KKP berhasil diajukan",
+      application: transformToKkpApplication(newApplication),
     }
   } catch (error) {
     console.error("Error submitting KKP application:", error)
-    return { success: false, message: "Failed to submit KKP application" }
+    return { success: false, message: "Gagal mengajukan permintaan KKP" }
   }
 }
 
@@ -746,30 +359,22 @@ export async function uploadKkpDocument(
   documentName: string,
   documentType: KkpDocumentType,
   documentUrl: string,
+  fileSize?: number,
+  mimeType?: string,
 ) {
   try {
-    // In a real app, this would update a database record
-    const applicationIndex = MOCK_KKP_APPLICATIONS.findIndex((app) => app.id === applicationId)
-
-    if (applicationIndex === -1) {
-      return { success: false, message: "Application not found" }
-    }
-
-    // Generate a new document ID
-    const newDocId = `doc-${Math.floor(Math.random() * 10000)}`
-
-    // Create the new document object
-    const newDocument: KkpDocument = {
-      id: newDocId,
-      name: documentName,
-      type: documentType,
-      url: documentUrl,
-      uploadDate: new Date(),
-      status: "pending",
-    }
-
-    // Add the document to the application
-    MOCK_KKP_APPLICATIONS[applicationIndex].documents.push(newDocument)
+    const newDocument = await prisma.kkp_documents.create({
+      data: {
+        id: `doc-${Date.now()}`,
+        name: documentName,
+        type: documentType,
+        url: documentUrl,
+        application_id: applicationId,
+        file_size: fileSize,
+        mime_type: mimeType,
+        status: 'pending',
+      }
+    })
 
     // Revalidate the paths to refresh the UI
     revalidatePath("/dashboard/mahasiswa/kkp")
@@ -779,12 +384,44 @@ export async function uploadKkpDocument(
 
     return {
       success: true,
-      message: "Document uploaded successfully",
+      message: "Dokumen berhasil diunggah",
       document: newDocument,
     }
   } catch (error) {
     console.error("Error uploading document:", error)
-    return { success: false, message: "Failed to upload document" }
+    return { success: false, message: "Gagal mengunggah dokumen" }
   }
 }
 
+// Function to get KKP statistics
+export async function getKkpStatistics() {
+  try {
+    const [total, pending, approved, rejected, inProgress, completed] = await Promise.all([
+      prisma.kkp_applications.count(),
+      prisma.kkp_applications.count({ where: { status: 'pending' } }),
+      prisma.kkp_applications.count({ where: { status: 'approved' } }),
+      prisma.kkp_applications.count({ where: { status: 'rejected' } }),
+      prisma.kkp_applications.count({ where: { status: 'in_progress' } }),
+      prisma.kkp_applications.count({ where: { status: 'completed' } }),
+    ])
+
+    return {
+      total,
+      pending,
+      approved,
+      rejected,
+      inProgress,
+      completed,
+    }
+  } catch (error) {
+    console.error("Error fetching KKP statistics:", error)
+    return {
+      total: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      inProgress: 0,
+      completed: 0,
+    }
+  }
+}

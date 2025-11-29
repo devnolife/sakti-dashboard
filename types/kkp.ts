@@ -1,11 +1,11 @@
-export type KkpStatus = "pending" | "approved" | "rejected" | "in-progress" | "completed"
+export type KkpStatus = "pending" | "approved" | "rejected" | "in_progress" | "completed"
 
 export type KkpDocumentType =
-  | "application-letter"
+  | "application_letter"
   | "proposal"
   | "transcript"
-  | "acceptance-letter"
-  | "supervisor-letter"
+  | "acceptance_letter"
+  | "supervisor_letter"
   | "report"
   | "evaluation"
 

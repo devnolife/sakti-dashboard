@@ -421,6 +421,19 @@ model kkp_requirements {
   @@unique([student_id, requirement_type])
 }
 
+model kkp_prodi_requirements {
+  id          String   @id
+  prodi_id    String
+  title       String
+  description String?
+  required    Boolean  @default(true)
+  order       Int      @default(0)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime
+  prodi       prodi    @relation(fields: [prodi_id], references: [kode])
+}
+
 model kkp_sub_locations {
   id             String        @id
   name           String
@@ -776,6 +789,7 @@ model prodi {
   rekomendasi_judul     rekomendasi_judul[]
   template_uploads      template_uploads[]
   ketentuan_surat       ketentuan_surat[]
+  kkp_prodi_requirements kkp_prodi_requirements[]
 }
 
 model sessions {
@@ -1702,31 +1716,31 @@ model laboratory_certificates {
   certificate_title String
   participant_name  String
   program_name      String
-  subtitle          String   @db.Text
+  subtitle          String?   @db.Text
   issue_date        DateTime @default(now())
 
   // Stats
-  meetings                Int
-  total_score             Int
-  materials               Int
-  attendance_rate         Int
-  assignment_completion   Int
-  participation_score     Int
+  meetings                Int?
+  total_score             Int?
+  materials               Int?
+  attendance_rate         Int?
+  assignment_completion   Int?
+  participation_score     Int?
 
   // Grades
-  overall_grade           String
+  overall_grade           String?
 
   // Learning Time
-  learning_hours          Int
+  learning_hours          Int?
   weekly_data             Int[]
 
   // Analytics
-  learning_velocity       Int
-  collaboration_score     Int
-  problem_solving_efficiency Int
+  learning_velocity       Int?
+  collaboration_score     Int?
+  problem_solving_efficiency Int?
 
   // Competencies (JSON)
-  competencies            Json
+  competencies            Json?
 
   // Technologies
   technologies            String[]

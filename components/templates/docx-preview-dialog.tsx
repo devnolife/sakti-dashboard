@@ -46,7 +46,7 @@ export function DocxPreviewDialog({
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <p class="text-sm font-medium text-red-700 dark:text-red-400">Gagal memuat preview</p>
+            <p class="text-sm font-medium text-red-700 dark:text-red-400">Gagal memuat previewss</p>
             <p class="text-xs text-muted-foreground mt-1">File mungkin rusak atau format tidak didukung</p>
           </div>
         `

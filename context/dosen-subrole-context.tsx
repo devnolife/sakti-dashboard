@@ -31,16 +31,6 @@ export function DosenSubRoleProvider({
   // This ensures we only show subroles that the user actually has access to
   const userAvailableSubRoles = user?.subRole ? parseUserSubRoles(user.subRole) : (availableSubRoles || ["dosen"])
 
-  // Debug logging - remove this after fixing
-  if (user) {
-    console.log('=== DEBUG DOSEN SUBROLE CONTEXT ===')
-    console.log('User username:', user.username)
-    console.log('User role:', user.role)
-    console.log('User subRole from DB:', user.subRole)
-    console.log('Parsed available subroles:', userAvailableSubRoles)
-    console.log('===============================')
-  }
-
   // Determine subrole from current path
   const getSubRoleFromPath = (path: string): DosenSubRole => {
     if (path === '/dashboard/dekan') return 'dekan'

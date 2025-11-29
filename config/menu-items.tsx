@@ -412,6 +412,11 @@ export const staffTuMenuItems = [
         href: "/dashboard/staff_tu/kkp-approval",
         badge: { text: "3", variant: "destructive" },
       },
+      {
+        id: "kkp-requirements",
+        title: "Persyaratan KKP",
+        href: "/dashboard/staff_tu/kkp/persyaratan",
+      },
     ],
   },
   {
@@ -554,6 +559,11 @@ export const prodiMenuItems = [
         id: "kkp-locations",
         title: "Lokasi KKP",
         href: "/dashboard/prodi/kkp/locations",
+      },
+      {
+        id: "kkp-requirements",
+        title: "Persyaratan KKP",
+        href: "/dashboard/prodi/kkp/persyaratan",
       },
     ],
   },

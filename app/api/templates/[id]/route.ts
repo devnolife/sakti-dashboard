@@ -4,9 +4,11 @@ import { getAuthStatus } from '@/lib/auth-middleware';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const authStatus = await getAuthStatus(request);
     if (!authStatus.isAuthenticated || !authStatus.user) {
       return NextResponse.json(
@@ -16,7 +18,7 @@ export async function GET(
     }
 
     const template = await prisma.template_uploads.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         prodi: {
           select: {
@@ -72,9 +74,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const authStatus = await getAuthStatus(request);
     if (!authStatus.isAuthenticated || !authStatus.user) {
       return NextResponse.json(
@@ -96,7 +100,7 @@ export async function PUT(
 
     // Fetch existing template
     const existingTemplate = await prisma.template_uploads.findUnique({
-      where: { id: params.id }
+      where: { id }
     });
 
     if (!existingTemplate) {
@@ -123,7 +127,7 @@ export async function PUT(
 
     // Update template
     const updatedTemplate = await prisma.template_uploads.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: name || existingTemplate.name,
         description: description !== undefined ? description : existingTemplate.description,
@@ -164,9 +168,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const authStatus = await getAuthStatus(request);
     if (!authStatus.isAuthenticated || !authStatus.user) {
       return NextResponse.json(
@@ -185,7 +191,7 @@ export async function DELETE(
 
     // Fetch existing template
     const existingTemplate = await prisma.template_uploads.findUnique({
-      where: { id: params.id }
+      where: { id }
     });
 
     if (!existingTemplate) {
@@ -212,7 +218,7 @@ export async function DELETE(
 
     // Soft delete: set is_active to false
     await prisma.template_uploads.update({
-      where: { id: params.id },
+      where: { id },
       data: { is_active: false }
     });
 

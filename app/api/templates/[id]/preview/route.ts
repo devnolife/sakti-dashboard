@@ -5,9 +5,11 @@ import mammoth from 'mammoth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const authStatus = await getAuthStatus(request);
     if (!authStatus.isAuthenticated || !authStatus.user) {
       return NextResponse.json(
@@ -18,7 +20,7 @@ export async function GET(
 
     // Get template from database
     const template = await prisma.template_uploads.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         prodi: {
           select: {
@@ -52,69 +54,111 @@ export async function GET(
     }
 
     // Download DOCX file from MinIO URL
-    const fileResponse = await fetch(template.file_url);
-    if (!fileResponse.ok) {
+    // Convert relative URL to absolute URL
+    const fileUrl = template.file_url.startsWith('http')
+      ? template.file_url
+      : `${request.nextUrl.origin}${template.file_url}`;
+
+    console.log('Fetching file from:', fileUrl);
+
+    let fileResponse;
+    try {
+      fileResponse = await fetch(fileUrl);
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
       return NextResponse.json(
-        { error: 'Failed to download template file' },
+        { error: 'Failed to fetch template file', details: fetchError instanceof Error ? fetchError.message : 'Network error' },
         { status: 500 }
       );
     }
 
-    const arrayBuffer = await fileResponse.arrayBuffer();
+    if (!fileResponse.ok) {
+      console.error('File response not ok:', fileResponse.status, fileResponse.statusText);
+      return NextResponse.json(
+        { error: 'Failed to download template file', status: fileResponse.status },
+        { status: 500 }
+      );
+    }
 
-    // Convert DOCX to HTML with enhanced style mappings
-    const htmlResult = await mammoth.convertToHtml(
-      { arrayBuffer },
-      {
-        styleMap: [
-          // Document Title - centered, large, bold
-          "p[style-name='Title'] => h1.text-3xl.font-bold.text-center.mb-6.mt-4:fresh",
-          "p[style-name='Subtitle'] => h2.text-xl.font-semibold.text-center.mb-4.text-gray-600:fresh",
+    let arrayBuffer;
+    try {
+      arrayBuffer = await fileResponse.arrayBuffer();
+    } catch (bufferError) {
+      console.error('Buffer error:', bufferError);
+      return NextResponse.json(
+        { error: 'Failed to read file buffer' },
+        { status: 500 }
+      );
+    }
 
-          // Headings - hierarchical styling
-          "p[style-name='Heading 1'] => h2.text-2xl.font-bold.mt-6.mb-3.border-b.border-gray-300.pb-2:fresh",
-          "p[style-name='Heading 2'] => h3.text-xl.font-bold.mt-5.mb-2:fresh",
-          "p[style-name='Heading 3'] => h4.text-lg.font-semibold.mt-4.mb-2:fresh",
-          "p[style-name='Heading 4'] => h5.text-base.font-semibold.mt-3.mb-1:fresh",
+    // Convert ArrayBuffer to Buffer for mammoth
+    const buffer = Buffer.from(arrayBuffer);
 
-          // Body text - proper spacing and line height
-          "p[style-name='Normal'] => p.mb-3.leading-relaxed.text-justify:fresh",
-          "p[style-name='Body Text'] => p.mb-3.leading-relaxed:fresh",
+    let htmlResult;
+    try {
+      // Convert DOCX to HTML with enhanced style mappings
+      htmlResult = await mammoth.convertToHtml(
+        { buffer },
+        {
+          styleMap: [
+            // Document Title - centered, large, bold
+            "p[style-name='Title'] => h1.text-3xl.font-bold.text-center.mb-6.mt-4:fresh",
+            "p[style-name='Subtitle'] => h2.text-xl.font-semibold.text-center.mb-4.text-gray-600:fresh",
 
-          // Lists
-          "p[style-name='List Paragraph'] => p.ml-6.mb-2:fresh",
+            // Headings - hierarchical styling
+            "p[style-name='Heading 1'] => h2.text-2xl.font-bold.mt-6.mb-3.border-b.border-gray-300.pb-2:fresh",
+            "p[style-name='Heading 2'] => h3.text-xl.font-bold.mt-5.mb-2:fresh",
+            "p[style-name='Heading 3'] => h4.text-lg.font-semibold.mt-4.mb-2:fresh",
+            "p[style-name='Heading 4'] => h5.text-base.font-semibold.mt-3.mb-1:fresh",
 
-          // Special formatting
-          "r[style-name='Strong'] => strong.font-bold",
-          "r[style-name='Emphasis'] => em.italic",
-          "p[style-name='Quote'] => blockquote.border-l-4.border-primary.pl-4.italic.my-4.text-gray-700:fresh",
+            // Body text - proper spacing and line height
+            "p[style-name='Normal'] => p.mb-3.leading-relaxed.text-justify:fresh",
+            "p[style-name='Body Text'] => p.mb-3.leading-relaxed:fresh",
 
-          // Alignment
-          "p[style-name='align-center'] => p.text-center:fresh",
-          "p[style-name='align-right'] => p.text-right:fresh",
-        ],
-        includeDefaultStyleMap: true,
-        convertImage: mammoth.images.imgElement((image) => {
-          return image.read("base64").then((imageBuffer) => {
-            return {
-              src: `data:${image.contentType};base64,${imageBuffer}`,
-            };
-          });
-        }),
-      }
-    );
+            // Lists
+            "p[style-name='List Paragraph'] => p.ml-6.mb-2:fresh",
+
+            // Special formatting
+            "r[style-name='Strong'] => strong.font-bold",
+            "r[style-name='Emphasis'] => em.italic",
+            "p[style-name='Quote'] => blockquote.border-l-4.border-primary.pl-4.italic.my-4.text-gray-700:fresh",
+
+            // Alignment
+            "p[style-name='align-center'] => p.text-center:fresh",
+            "p[style-name='align-right'] => p.text-right:fresh",
+          ],
+          includeDefaultStyleMap: true,
+          convertImage: mammoth.images.imgElement((image) => {
+            return image.read("base64").then((imageBuffer) => {
+              return {
+                src: `data:${image.contentType};base64,${imageBuffer}`,
+              };
+            });
+          }),
+        }
+      );
+    } catch (mammothError) {
+      console.error('Mammoth conversion error:', mammothError);
+      return NextResponse.json(
+        { error: 'Failed to convert DOCX to HTML', details: mammothError instanceof Error ? mammothError.message : 'Unknown error' },
+        { status: 500 }
+      );
+    }
 
     // Extract raw text
-    const textResult = await mammoth.extractRawText({ arrayBuffer });
+    let textResult;
+    try {
+      textResult = await mammoth.extractRawText({ buffer });
+    } catch (textError) {
+      console.error('Text extraction error:', textError);
+      textResult = { value: '' };
+    }
 
     return NextResponse.json({
-      success: true,
-      data: {
-        html: htmlResult.value,
-        rawText: textResult.value,
-        detectedFields: template.detected_fields,
-        variableMapping: template.variable_mapping || null,
-      }
+      html: htmlResult.value,
+      rawText: textResult.value,
+      detectedFields: template.detected_fields,
+      variableMapping: template.variable_mapping || {},
     });
 
   } catch (error) {

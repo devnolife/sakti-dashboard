@@ -4,10 +4,8 @@ import React, { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { FileText, Eye, Download, Plus, Search, Filter, Edit3, FileJson, FileCode, Sparkles, Clock, CheckCircle2, Globe2, Building2, File, Link2, Upload, FileUp, Wand2 } from "lucide-react"
+import { FileText, Eye, Download, Plus, Search, Filter, Edit3, Sparkles, Clock, CheckCircle2, Globe2, Building2, File, Link2, Upload, Wand2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -22,8 +20,9 @@ import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { saveAs } from "file-saver"
 import { InlineTemplateVariableEditor } from "@/components/templates/inline-template-variable-editor"
+import { PdfPreviewDialog } from "@/components/templates/pdf-preview-dialog"
 import { TemplateData, MockTemplate, TemplateVariable, TemplatePreview } from "@/types/template"
-import { replaceDocxVariables, generateFullHTMLDocument } from "@/lib/template-utils"
+import { replaceDocxVariables } from "@/lib/template-utils"
 
 const categoryConfig = {
   surat: { icon: FileText, color: "text-blue-500", bgColor: "bg-blue-50 dark:bg-blue-950", label: "Surat" },
@@ -36,7 +35,7 @@ export default function DocumentManagementTemplatesPage() {
   const [templates, setTemplates] = useState<TemplateData[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null)
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [isPdfPreviewOpen, setIsPdfPreviewOpen] = useState(false)
   const [previewData, setPreviewData] = useState<TemplatePreview | null>(null)
   const [isVariableEditorOpen, setIsVariableEditorOpen] = useState(false)
   const [mockTemplate, setMockTemplate] = useState<MockTemplate | null>(null)
@@ -109,7 +108,6 @@ export default function DocumentManagementTemplatesPage() {
         })
       }
     } catch (error) {
-      console.error("Error fetching templates:", error)
       toast({
         title: "Koneksi Gagal",
         description: "Tidak dapat terhubung ke server",
@@ -139,7 +137,7 @@ export default function DocumentManagementTemplatesPage() {
 
       if (response.ok) {
         setPreviewData(result)
-        setIsPreviewOpen(true)
+        setIsPdfPreviewOpen(true)
       } else {
         toast({
           title: "Gagal Memuat",
@@ -148,7 +146,6 @@ export default function DocumentManagementTemplatesPage() {
         })
       }
     } catch (error) {
-      console.error("Error loading preview:", error)
       toast({
         title: "Terjadi Kesalahan",
         description: "Tidak dapat memuat preview",
@@ -192,7 +189,6 @@ export default function DocumentManagementTemplatesPage() {
         })
       }
     } catch (error) {
-      console.error("Error loading template:", error)
       toast({
         title: "Terjadi Kesalahan",
         description: "Tidak dapat memuat template",
@@ -238,7 +234,6 @@ export default function DocumentManagementTemplatesPage() {
         })
       }
     } catch (error) {
-      console.error("Error saving variables:", error)
       toast({
         title: "Terjadi Kesalahan",
         description: "Tidak dapat menyimpan variabel",
@@ -277,7 +272,6 @@ export default function DocumentManagementTemplatesPage() {
         })
       }
     } catch (error) {
-      console.error("Error downloading:", error)
       toast({
         title: "Gagal Mengunduh",
         description: "Tidak dapat mengunduh template",
@@ -286,92 +280,6 @@ export default function DocumentManagementTemplatesPage() {
     }
   }
 
-  const handleDownloadHTML = async (template: TemplateData) => {
-    const headers = getAuthHeaders()
-    if (!headers) return
-
-    try {
-      const response = await fetch(`/api/templates/${template.id}/preview`, {
-        headers
-      })
-
-      if (response.status === 401) {
-        handleAuthError()
-        return
-      }
-
-      const result = await response.json()
-
-      if (response.ok) {
-        const variableMapping = template.variable_mapping || {}
-        const htmlContent = generateFullHTMLDocument(
-          template.name,
-          result.html,
-          variableMapping
-        )
-
-        const blob = new Blob([htmlContent], { type: 'text/html' })
-        saveAs(blob, `${template.name.replace('.docx', '')}.html`)
-
-        toast({
-          title: "Berhasil Diunduh! 📥",
-          description: "Template HTML berhasil diunduh"
-        })
-      }
-    } catch (error) {
-      console.error("Error downloading HTML:", error)
-      toast({
-        title: "Gagal Mengunduh",
-        description: "Tidak dapat mengunduh HTML",
-        variant: "destructive"
-      })
-    }
-  }
-
-  const handleDownloadJSON = async (template: TemplateData) => {
-    const headers = getAuthHeaders()
-    if (!headers) return
-
-    try {
-      const response = await fetch(`/api/templates/${template.id}/variables`, {
-        headers
-      })
-
-      if (response.status === 401) {
-        handleAuthError()
-        return
-      }
-
-      const result = await response.json()
-
-      if (response.ok) {
-        const jsonData = {
-          name: template.name,
-          variableMapping: result.variables || {},
-          metadata: {
-            variableCount: Object.keys(result.variables || {}).length,
-            createdAt: template.created_at,
-            templateId: template.id
-          }
-        }
-
-        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' })
-        saveAs(blob, `${template.name.replace('.docx', '')}_variabel.json`)
-
-        toast({
-          title: "Berhasil Diunduh! 📥",
-          description: "Konfigurasi variabel JSON berhasil diunduh"
-        })
-      }
-    } catch (error) {
-      console.error("Error downloading JSON:", error)
-      toast({
-        title: "Gagal Mengunduh",
-        description: "Tidak dapat mengunduh JSON",
-        variant: "destructive"
-      })
-    }
-  }
 
   const filteredTemplates = templates.filter(template => {
     const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -611,38 +519,15 @@ export default function DocumentManagementTemplatesPage() {
                     </Button>
                   </div>
 
-                  <div className="relative">
-                    <Button
-                      size="sm"
-                      variant="default"
-                      onClick={() => handleDownloadDOCX(template)}
-                      className="w-full gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      Unduh DOCX
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDownloadHTML(template)}
-                      className="gap-1 text-xs"
-                    >
-                      <FileCode className="w-3 h-3" />
-                      HTML
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDownloadJSON(template)}
-                      className="gap-1 text-xs"
-                    >
-                      <FileJson className="w-3 h-3" />
-                      JSON
-                    </Button>
-                  </div>
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={() => handleDownloadDOCX(template)}
+                    className="w-full gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Unduh DOCX
+                  </Button>
                 </CardContent>
               </Card>
             )
@@ -650,33 +535,15 @@ export default function DocumentManagementTemplatesPage() {
         </div>
       )}
 
-      {/* Preview Dialog */}
-      {previewData && (
-        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <DialogContent className="max-w-5xl max-h-[85vh]">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-xl">
-                <Eye className="w-5 h-5 text-primary" />
-                {selectedTemplate?.name}
-              </DialogTitle>
-              <DialogDescription className="flex items-center gap-4">
-                <span>Pratinjau template dengan {Object.keys(previewData.variableMapping || {}).length} variabel</span>
-                {Object.keys(previewData.variableMapping || {}).length > 0 && (
-                  <Badge variant="secondary" className="gap-1">
-                    <Edit3 className="w-3 h-3" />
-                    {Object.keys(previewData.variableMapping || {}).length} Variabel
-                  </Badge>
-                )}
-              </DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="h-[65vh] p-6 border rounded-lg bg-white dark:bg-gray-950">
-              <div
-                className="prose prose-sm max-w-none dark:prose-invert"
-                dangerouslySetInnerHTML={{ __html: previewData.html }}
-              />
-            </ScrollArea>
-          </DialogContent>
-        </Dialog>
+      {/* PDF Preview Dialog */}
+      {previewData && selectedTemplate && (
+        <PdfPreviewDialog
+          open={isPdfPreviewOpen}
+          onOpenChange={setIsPdfPreviewOpen}
+          htmlContent={previewData.html}
+          templateName={selectedTemplate.name}
+          variableCount={Object.keys(previewData.variableMapping || {}).length}
+        />
       )}
 
       {/* Variable Editor */}

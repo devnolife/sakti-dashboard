@@ -26,26 +26,44 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Search, FileText, CheckCircle, XCircle, Clock, AlertCircle, Download, Eye, FileCheck, User, Building, Calendar, ArrowUpDown, ChevronLeft, ChevronRight, MoreHorizontal, RotateCcw, BookOpen, GraduationCap, ClipboardList, UserPlus, ExternalLink } from 'lucide-react'
+import {
+  Search,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertCircle,
+  Download,
+  Eye,
+  FileCheck,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  RotateCcw,
+  ClipboardList
+} from 'lucide-react'
 import {
   getAllKkpApplications,
   getKkpApplicationById,
   updateKkpApplicationStatus,
   verifyDocument,
+  getKkpStatistics,
 } from "@/app/actions/kkp-management"
 import type { KkpApplication, KkpStatus } from "@/types/kkp"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/auth-context"
 
 export default function StaffKkpManagementPage() {
   const { toast } = useToast()
   const router = useRouter()
+  const { user } = useAuth()
   const [applications, setApplications] = useState<KkpApplication[]>([])
   const [filteredApplications, setFilteredApplications] = useState<KkpApplication[]>([])
   const [selectedApplication, setSelectedApplication] = useState<KkpApplication | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<KkpStatus | "all">("all")
   const [isLoading, setIsLoading] = useState(true)
-  const [showDetailsDialog, setShowDetailsDialog] = useState(false)
   const [showDocumentDialog, setShowDocumentDialog] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState<any>(null)
   const [documentVerificationStatus, setDocumentVerificationStatus] = useState<"pending" | "verified" | "rejected">(
@@ -53,33 +71,38 @@ export default function StaffKkpManagementPage() {
   )
   const [documentNotes, setDocumentNotes] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [sortField, setSortField] = useState<"submissionDate" | "title" | "status">("submissionDate")
+  const [sortField, setSortField] = useState<"submission_date" | "title" | "status">("submission_date")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
   const [rejectionReason, setRejectionReason] = useState("")
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0, inProgress: 0, completed: 0 })
   const itemsPerPage = 10
 
   // Fetch applications on component mount
   useEffect(() => {
-    const fetchApplications = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllKkpApplications()
-        setApplications(data)
-        setFilteredApplications(data)
+        const [applicationsData, statsData] = await Promise.all([
+          getAllKkpApplications(),
+          getKkpStatistics()
+        ])
+        setApplications(applicationsData)
+        setFilteredApplications(applicationsData)
+        setStats(statsData)
         setIsLoading(false)
       } catch (error) {
-        console.error("Error fetching applications:", error)
+        console.error("Error fetching data:", error)
         toast({
           title: "Error",
-          description: "Failed to fetch KKP applications",
+          description: "Gagal mengambil data permintaan KKP",
           variant: "destructive",
         })
         setIsLoading(false)
       }
     }
 
-    fetchApplications()
+    fetchData()
   }, [toast])
 
   // Filter applications based on status filter and search query
@@ -109,9 +132,9 @@ export default function StaffKkpManagementPage() {
       let aValue, bValue
 
       switch (sortField) {
-        case "submissionDate":
-          aValue = new Date(a.submissionDate).getTime()
-          bValue = new Date(b.submissionDate).getTime()
+        case "submission_date":
+          aValue = new Date(a.submission_date).getTime()
+          bValue = new Date(b.submission_date).getTime()
           break
         case "title":
           aValue = a.title
@@ -122,8 +145,8 @@ export default function StaffKkpManagementPage() {
           bValue = b.status
           break
         default:
-          aValue = new Date(a.submissionDate).getTime()
-          bValue = new Date(b.submissionDate).getTime()
+          aValue = new Date(a.submission_date).getTime()
+          bValue = new Date(b.submission_date).getTime()
       }
 
       if (sortDirection === "asc") {
@@ -137,7 +160,7 @@ export default function StaffKkpManagementPage() {
   }, [statusFilter, searchQuery, applications, sortField, sortDirection])
 
   // Handle sorting
-  const handleSort = (field: "submissionDate" | "title" | "status") => {
+  const handleSort = (field: "submission_date" | "title" | "status") => {
     if (field === sortField) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc")
     } else {
@@ -214,24 +237,30 @@ export default function StaffKkpManagementPage() {
 
     setIsProcessing(true)
     try {
+      const userId = user?.id || "unknown"
+      const userName = user?.name || "Staff TU"
+
       const result = await updateKkpApplicationStatus(
         id,
         status,
-        "staff-001", // Mock user ID
-        "Admin Prodi", // Mock user name
+        userId,
+        userName,
         status === "rejected" ? rejectionReason : undefined,
       )
 
       if (result.success) {
         toast({
-          title: "Success",
+          title: "Berhasil",
           description: result.message,
         })
 
-        // Update the application in state
-        if (result.application) {
-          setApplications((prev) => prev.map((app) => (app.id === id ? result.application : app)))
-        }
+        // Refresh data
+        const [applicationsData, statsData] = await Promise.all([
+          getAllKkpApplications(),
+          getKkpStatistics()
+        ])
+        setApplications(applicationsData)
+        setStats(statsData)
 
         // Close dialogs
         setShowRejectionDialog(false)
@@ -247,7 +276,7 @@ export default function StaffKkpManagementPage() {
       console.error("Error updating application status:", error)
       toast({
         title: "Error",
-        description: "Failed to update application status",
+        description: "Gagal memperbarui status permintaan",
         variant: "destructive",
       })
     } finally {
@@ -267,37 +296,37 @@ export default function StaffKkpManagementPage() {
     switch (status) {
       case "pending":
         return (
-          <Badge variant="outline" className="font-medium bg-amber-100 text-amber-600 border-amber-200">
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
             <Clock className="w-3 h-3 mr-1" />
             Pending
           </Badge>
         )
       case "approved":
         return (
-          <Badge variant="outline" className="font-medium bg-emerald-100 text-emerald-600 border-emerald-200">
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
             <CheckCircle className="w-3 h-3 mr-1" />
-            Approved
+            Disetujui
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="font-medium bg-rose-100 text-rose-600 border-rose-200">
+          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
             <XCircle className="w-3 h-3 mr-1" />
-            Rejected
+            Ditolak
           </Badge>
         )
-      case "in-progress":
+      case "in_progress":
         return (
-          <Badge variant="outline" className="font-medium bg-sky-100 text-sky-600 border-sky-200">
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-200">
             <AlertCircle className="w-3 h-3 mr-1" />
-            In Progress
+            Dalam Proses
           </Badge>
         )
       case "completed":
         return (
-          <Badge variant="outline" className="font-medium bg-violet-100 text-violet-600 border-violet-200">
+          <Badge variant="outline" className="bg-purple-500/10 text-purple-500 border-purple-200">
             <CheckCircle className="w-3 h-3 mr-1" />
-            Completed
+            Selesai
           </Badge>
         )
       default:
@@ -310,23 +339,23 @@ export default function StaffKkpManagementPage() {
     switch (status) {
       case "pending":
         return (
-          <Badge variant="outline" className="bg-amber-100 text-amber-600 border-amber-200">
-            <Clock className="h-3.5 w-3.5 mr-1" />
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
+            <Clock className="h-3 w-3 mr-1" />
             Pending
           </Badge>
         )
       case "verified":
         return (
-          <Badge variant="outline" className="bg-emerald-100 text-emerald-600 border-emerald-200">
-            <CheckCircle className="h-3.5 w-3.5 mr-1" />
-            Verified
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-200">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Terverifikasi
           </Badge>
         )
       case "rejected":
         return (
-          <Badge variant="outline" className="bg-rose-100 text-rose-600 border-rose-200">
-            <XCircle className="h-3.5 w-3.5 mr-1" />
-            Rejected
+          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-200">
+            <XCircle className="h-3 w-3 mr-1" />
+            Ditolak
           </Badge>
         )
       default:
@@ -350,140 +379,132 @@ export default function StaffKkpManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-sky-500">
-            Manajemen KKP
-          </span>
-        </h2>
-        <p className="mt-2 text-muted-foreground">Kelola dan proses permintaan Kuliah Kerja Praktik (KKP) mahasiswa</p>
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              Manajemen KKP
+            </span>
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Kelola dan proses permintaan Kuliah Kerja Praktik (KKP) mahasiswa
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-200">
+            {stats.pending} Menunggu Review
+          </Badge>
+        </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-sky-50">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Permintaan</CardTitle>
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-sky-100">
-              <ClipboardList className="w-4 h-4 text-sky-600" />
-            </div>
+            <ClipboardList className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{applications.length}</div>
+            <div className="text-2xl font-bold">{stats.total}</div>
             <p className="text-xs text-muted-foreground">Semua permintaan KKP</p>
           </CardContent>
         </Card>
-        <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-amber-50">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Pending</CardTitle>
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100">
-              <Clock className="w-4 h-4 text-amber-600" />
-            </div>
+            <Clock className="w-4 h-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{applications.filter((app) => app.status === "pending").length}</div>
+            <div className="text-2xl font-bold">{stats.pending}</div>
             <p className="text-xs text-muted-foreground">Menunggu persetujuan</p>
           </CardContent>
         </Card>
-        <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-emerald-50">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Disetujui</CardTitle>
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100">
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
-            </div>
+            <CheckCircle className="w-4 h-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{applications.filter((app) => app.status === "approved").length}</div>
+            <div className="text-2xl font-bold">{stats.approved}</div>
             <p className="text-xs text-muted-foreground">Permintaan disetujui</p>
           </CardContent>
         </Card>
-        <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-rose-50">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Ditolak</CardTitle>
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100">
-              <XCircle className="w-4 h-4 text-rose-600" />
-            </div>
+            <XCircle className="w-4 h-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{applications.filter((app) => app.status === "rejected").length}</div>
+            <div className="text-2xl font-bold">{stats.rejected}</div>
             <p className="text-xs text-muted-foreground">Permintaan ditolak</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters and Search */}
-      <Card className="overflow-hidden bg-white border-none shadow-lg">
-        <CardHeader className="border-b bg-gradient-to-r from-sky-50 to-teal-50">
+      <Card>
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-teal-600" />
-            <span>Permintaan KKP Mahasiswa</span>
+            <FileText className="w-5 h-5" />
+            Permintaan KKP Mahasiswa
           </CardTitle>
           <CardDescription>Tinjau dan proses permintaan KKP mahasiswa</CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex flex-col items-center justify-between gap-4 mb-6 md:flex-row">
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Pencarian"
-                className="w-full border-teal-100 rounded-full pl-9 focus-visible:ring-teal-500 bg-teal-50/30"
+                placeholder="Cari permintaan..."
+                className="pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex w-full gap-2 md:w-auto">
-              <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as KkpStatus | "all")}>
-                <SelectTrigger className="w-[180px] border-teal-100 focus:ring-teal-500">
-                  <SelectValue placeholder="Filter Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="approved">Disetujui</SelectItem>
-                  <SelectItem value="rejected">Ditolak</SelectItem>
-                  <SelectItem value="in-progress">Dalam Proses</SelectItem>
-                  <SelectItem value="completed">Selesai</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex flex-wrap gap-2">
+              {(["all", "pending", "approved", "rejected", "in_progress", "completed"] as const).map((status) => (
+                <Button
+                  key={status}
+                  variant={statusFilter === status ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter(status)}
+                >
+                  {status === "all" && "Semua"}
+                  {status === "pending" && "Pending"}
+                  {status === "approved" && "Disetujui"}
+                  {status === "rejected" && "Ditolak"}
+                  {status === "in_progress" && "Dalam Proses"}
+                  {status === "completed" && "Selesai"}
+                </Button>
+              ))}
             </div>
           </div>
 
           {/* Applications Table */}
-          <div className="overflow-hidden border shadow-sm rounded-xl">
+          <div className="border rounded-md">
             <Table>
-              <TableHeader className="bg-sky-50">
+              <TableHeader>
                 <TableRow>
-                  <TableHead onClick={() => handleSort("submissionDate")} className="cursor-pointer w-[140px]">
+                  <TableHead onClick={() => handleSort("submission_date")} className="cursor-pointer">
                     <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-2 text-sky-600" />
                       Tanggal
-                      <ArrowUpDown className="w-3 h-3 ml-1 text-muted-foreground" />
+                      <ArrowUpDown className="w-3 h-3 ml-1" />
                     </div>
                   </TableHead>
-                  <TableHead className="w-[180px]">
-                    <div className="flex items-center">
-                      <User className="w-4 h-4 mr-2 text-sky-600" />
-                      Mahasiswa
-                    </div>
-                  </TableHead>
+                  <TableHead>Mahasiswa</TableHead>
                   <TableHead onClick={() => handleSort("title")} className="cursor-pointer">
                     <div className="flex items-center">
-                      <BookOpen className="w-4 h-4 mr-2 text-sky-600" />
                       Judul KKP
-                      <ArrowUpDown className="w-3 h-3 ml-1 text-muted-foreground" />
+                      <ArrowUpDown className="w-3 h-3 ml-1" />
                     </div>
                   </TableHead>
-                  <TableHead>
-                    <div className="flex items-center">
-                      <Building className="w-4 h-4 mr-2 text-sky-600" />
-                      Perusahaan
-                    </div>
-                  </TableHead>
+                  <TableHead>Perusahaan</TableHead>
                   <TableHead onClick={() => handleSort("status")} className="cursor-pointer">
                     <div className="flex items-center">
                       Status
-                      <ArrowUpDown className="w-3 h-3 ml-1 text-muted-foreground" />
+                      <ArrowUpDown className="w-3 h-3 ml-1" />
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
@@ -493,26 +514,29 @@ export default function StaffKkpManagementPage() {
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <RotateCcw className="w-8 h-8 mb-2 text-sky-500 animate-spin" />
-                        <p className="text-muted-foreground">Loading applications...</p>
+                      <div className="flex items-center justify-center">
+                        <RotateCcw className="w-6 h-6 mr-2 animate-spin text-muted-foreground" />
+                        <span className="text-muted-foreground">Memuat data...</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : paginatedApplications.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <AlertCircle className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-muted-foreground">Tidak ada permintaan ditemukan</p>
+                    <TableCell colSpan={6}>
+                      <div className="flex flex-col items-center justify-center p-8 text-center">
+                        <FileText className="w-12 h-12 mb-4 text-muted-foreground" />
+                        <h3 className="text-lg font-medium">Tidak ada permintaan ditemukan</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Belum ada pengajuan KKP yang sesuai dengan kriteria pencarian.
+                        </p>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   paginatedApplications.map((application) => (
-                    <TableRow key={application.id} className="transition-colors hover:bg-sky-50/50">
+                    <TableRow key={application.id}>
                       <TableCell className="font-medium">
-                        {new Date(application.submissionDate).toLocaleDateString("id-ID", {
+                        {new Date(application.submission_date).toLocaleDateString("id-ID", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -520,8 +544,8 @@ export default function StaffKkpManagementPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Avatar className="w-8 h-8 border-2 border-teal-100">
-                            <AvatarFallback className="text-xs text-teal-600 bg-teal-100">
+                          <Avatar className="w-8 h-8">
+                            <AvatarFallback className="text-xs">
                               {getInitials(application.student.name)}
                             </AvatarFallback>
                           </Avatar>
@@ -532,44 +556,36 @@ export default function StaffKkpManagementPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{application.title}</div>
-                        <div className="hidden text-xs text-muted-foreground sm:block">
-                          {application.description && application.description.length > 60
-                            ? `${application.description.substring(0, 60)}...`
-                            : application.description}
+                        <div className="max-w-xs">
+                          <p className="font-medium truncate">{application.title}</p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {application.description && application.description.length > 50
+                              ? `${application.description.substring(0, 50)}...`
+                              : application.description}
+                          </p>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          {application.company.logo ? (
-                            <img
-                              src={application.company.logo || "/placeholder.svg"}
-                              alt={application.company.name}
-                              className="w-6 h-6 rounded-full"
-                            />
-                          ) : (
-                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-sky-100">
-                              <Building className="w-4 h-4 text-sky-600" />
-                            </div>
-                          )}
-                          <span>{application.company.name}</span>
+                        <div>
+                          <p className="font-medium">{application.company.name}</p>
+                          <p className="text-xs text-muted-foreground">{application.company.city}</p>
                         </div>
                       </TableCell>
                       <TableCell>{getStatusBadge(application.status)}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="w-8 h-8 p-0 rounded-full hover:bg-sky-100">
+                            <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
                               <MoreHorizontal className="w-4 h-4" />
                               <span className="sr-only">Menu</span>
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="min-w-[180px]">
+                          <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               onClick={() => handleViewDetails(application.id)}
                               className="cursor-pointer"
                             >
-                              <Eye className="w-4 h-4 mr-2 text-sky-600" />
+                              <Eye className="w-4 h-4 mr-2" />
                               Lihat Detail
                             </DropdownMenuItem>
                             {application.status === "pending" && (
@@ -577,9 +593,9 @@ export default function StaffKkpManagementPage() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                   onClick={() => handleUpdateStatus(application.id, "approved")}
-                                  className="cursor-pointer"
+                                  className="cursor-pointer text-green-600"
                                 >
-                                  <CheckCircle className="w-4 h-4 mr-2 text-emerald-600" />
+                                  <CheckCircle className="w-4 h-4 mr-2" />
                                   Setujui
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -587,16 +603,16 @@ export default function StaffKkpManagementPage() {
                                     setSelectedApplication(application)
                                     setShowRejectionDialog(true)
                                   }}
-                                  className="cursor-pointer"
+                                  className="cursor-pointer text-red-600"
                                 >
-                                  <XCircle className="w-4 h-4 mr-2 text-rose-600" />
+                                  <XCircle className="w-4 h-4 mr-2" />
                                   Tolak
                                 </DropdownMenuItem>
                               </>
                             )}
                             {application.status === "approved" && (
                               <DropdownMenuItem className="cursor-pointer">
-                                <Download className="w-4 h-4 mr-2 text-sky-600" />
+                                <Download className="w-4 h-4 mr-2" />
                                 Unduh Surat
                               </DropdownMenuItem>
                             )}
@@ -612,7 +628,7 @@ export default function StaffKkpManagementPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-4 mt-4 border-t">
+            <div className="flex items-center justify-between pt-4">
               <div className="text-sm text-muted-foreground">
                 Menampilkan {(currentPage - 1) * itemsPerPage + 1} -{" "}
                 {Math.min(currentPage * itemsPerPage, filteredApplications.length)} dari {filteredApplications.length}{" "}
@@ -624,23 +640,19 @@ export default function StaffKkpManagementPage() {
                   size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="w-8 h-8 p-0 border-teal-100 rounded-full hover:bg-teal-50"
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  <span className="sr-only">Previous Page</span>
                 </Button>
-                <div className="text-sm font-medium">
+                <span className="text-sm">
                   Halaman {currentPage} dari {totalPages}
-                </div>
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="w-8 h-8 p-0 border-teal-100 rounded-full hover:bg-teal-50"
                 >
                   <ChevronRight className="w-4 h-4" />
-                  <span className="sr-only">Next Page</span>
                 </Button>
               </div>
             </div>
@@ -651,10 +663,10 @@ export default function StaffKkpManagementPage() {
       {/* Document Verification Dialog */}
       {selectedDocument && (
         <Dialog open={showDocumentDialog} onOpenChange={setShowDocumentDialog}>
-          <DialogContent className="max-w-md bg-white">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-teal-600" />
+                <FileCheck className="w-5 h-5" />
                 Verifikasi Dokumen
               </DialogTitle>
               <DialogDescription>{selectedDocument.name}</DialogDescription>
@@ -672,7 +684,7 @@ export default function StaffKkpManagementPage() {
                   value={documentVerificationStatus}
                   onValueChange={(value) => setDocumentVerificationStatus(value as "pending" | "verified" | "rejected")}
                 >
-                  <SelectTrigger id="document-status" className="border-teal-100 focus:ring-teal-500">
+                  <SelectTrigger id="document-status">
                     <SelectValue placeholder="Pilih status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -691,11 +703,11 @@ export default function StaffKkpManagementPage() {
                   placeholder="Tambahkan catatan tentang dokumen ini..."
                   value={documentNotes}
                   onChange={(e) => setDocumentNotes(e.target.value)}
-                  className="min-h-[100px] border-teal-100 focus:ring-teal-500"
+                  className="min-h-[100px]"
                 />
               </div>
               <div className="flex justify-center">
-                <Button variant="outline" asChild className="w-full border-teal-100 hover:bg-teal-50">
+                <Button variant="outline" asChild className="w-full">
                   <a href={selectedDocument.url} target="_blank" rel="noopener noreferrer">
                     <FileText className="w-4 h-4 mr-2" />
                     Lihat Dokumen
@@ -704,10 +716,10 @@ export default function StaffKkpManagementPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowDocumentDialog(false)} className="border-teal-100 hover:bg-teal-50">
+              <Button variant="outline" onClick={() => setShowDocumentDialog(false)}>
                 Batal
               </Button>
-              <Button onClick={handleVerifyDocument} className="bg-teal-600 hover:bg-teal-700">Simpan Perubahan</Button>
+              <Button onClick={handleVerifyDocument}>Simpan Perubahan</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -715,10 +727,10 @@ export default function StaffKkpManagementPage() {
 
       {/* Rejection Reason Dialog */}
       <Dialog open={showRejectionDialog} onOpenChange={setShowRejectionDialog}>
-        <DialogContent className="max-w-md bg-white">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-600" />
+              <XCircle className="w-5 h-5 text-red-500" />
               Tolak Permintaan KKP
             </DialogTitle>
             <DialogDescription>
@@ -735,19 +747,18 @@ export default function StaffKkpManagementPage() {
                 placeholder="Berikan alasan mengapa permintaan ini ditolak..."
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                className="min-h-[120px] border-rose-100 focus:ring-rose-500"
+                className="min-h-[120px]"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isProcessing} className="border-rose-100 hover:bg-rose-50">
+            <Button variant="outline" onClick={() => setShowRejectionDialog(false)} disabled={isProcessing}>
               Batal
             </Button>
             <Button
               variant="destructive"
               onClick={handleRejectConfirm}
               disabled={!rejectionReason.trim() || isProcessing}
-              className="bg-rose-600 hover:bg-rose-700"
             >
               {isProcessing ? (
                 <>
