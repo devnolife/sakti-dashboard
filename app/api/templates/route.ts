@@ -87,10 +87,42 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Enrich templates with letter_type info from metadata
+    const enrichedTemplates = await Promise.all(
+      templates.map(async (template) => {
+        const metadata = template.metadata as any;
+        let letter_type = null;
+
+        if (metadata?.letter_type_id) {
+          try {
+            const letterType = await prisma.letter_types.findUnique({
+              where: { id: metadata.letter_type_id },
+              select: {
+                id: true,
+                title: true,
+                description: true
+              }
+            });
+            if (letterType) {
+              letter_type = letterType;
+            }
+          } catch (err) {
+            // Ignore error, continue without letter_type
+          }
+        }
+
+        return {
+          ...template,
+          letter_type_id: metadata?.letter_type_id || null,
+          letter_type
+        };
+      })
+    );
+
     return NextResponse.json({
       success: true,
-      data: templates,
-      count: templates.length,
+      data: enrichedTemplates,
+      count: enrichedTemplates.length,
     });
 
   } catch (error) {

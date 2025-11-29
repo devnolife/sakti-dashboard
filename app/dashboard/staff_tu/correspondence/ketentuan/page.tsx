@@ -107,12 +107,26 @@ export default function KetentuanDokumenPage() {
         setLoading(true)
 
         // Fetch user info first to get prodi_id
-        const userRes = await fetch('/api/auth/session')
+        const token = typeof window !== 'undefined' ? localStorage.getItem('session-token') : null
         let currentUserProdiId: string | null = null
-        if (userRes.ok) {
-          const userData = await userRes.json()
-          currentUserProdiId = userData?.user?.prodi_id || null
-          setUserProdiId(currentUserProdiId)
+
+        if (token) {
+          const userRes = await fetch('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+
+          if (userRes.ok) {
+            const userData = await userRes.json()
+            // Get prodi_id from user or staff profile
+            currentUserProdiId = userData?.user?.prodi_id ||
+                                userData?.user?.staff?.prodi_id ||
+                                userData?.user?.students?.prodi_id ||
+                                userData?.user?.lecturers?.prodi_id ||
+                                null
+            setUserProdiId(currentUserProdiId)
+          }
         }
 
         const [jenisRes, masalahRes, tujuanRes, ketentuanRes] = await Promise.all([

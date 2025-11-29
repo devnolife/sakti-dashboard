@@ -951,6 +951,7 @@ model template_uploads {
   file_type       String    @default("docx")
   category        String    @default("surat") // surat, sertifikat, laporan
   prodi_id        String?
+  ketentuan_id    Int?      // Link to ketentuan_dokumen
   is_global       Boolean   @default(false)
   is_active       Boolean   @default(true)
   detected_fields Json?     // From TemplateAnalyzer
@@ -960,14 +961,16 @@ model template_uploads {
   uploaded_by     String
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
-  
-  prodi           prodi?    @relation(fields: [prodi_id], references: [kode])
-  uploader        users     @relation(fields: [uploaded_by], references: [id])
+
+  prodi           prodi?           @relation(fields: [prodi_id], references: [kode])
+  uploader        users            @relation(fields: [uploaded_by], references: [id])
+  ketentuan       ketentuan_surat? @relation(fields: [ketentuan_id], references: [id])
 
   @@index([prodi_id])
   @@index([uploaded_by])
   @@index([is_active])
   @@index([category])
+  @@index([ketentuan_id])
 }
 
 model role_configurations {
@@ -1679,11 +1682,12 @@ model ketentuan_surat {
   is_global  Boolean       @default(true) // true = fakultas (semua prodi bisa lihat), false = prodi spesifik
   prodi_id   String?       // null jika is_global=true, diisi jika is_global=false
 
-  counter    document_counter? @relation(fields: [id_count], references: [id])
-  jenis      jenis_surat       @relation(fields: [id_jenis], references: [id])
-  masalah    masalah_surat     @relation(fields: [id_masalah], references: [id])
-  tujuan     tujuan            @relation(fields: [id_tujuan], references: [id])
-  prodi      prodi?            @relation(fields: [prodi_id], references: [kode])
+  counter          document_counter?  @relation(fields: [id_count], references: [id])
+  jenis            jenis_surat        @relation(fields: [id_jenis], references: [id])
+  masalah          masalah_surat      @relation(fields: [id_masalah], references: [id])
+  tujuan           tujuan             @relation(fields: [id_tujuan], references: [id])
+  prodi            prodi?             @relation(fields: [prodi_id], references: [kode])
+  template_uploads template_uploads[]
 
   @@unique([id_tujuan, id_masalah, id_jenis])
 }

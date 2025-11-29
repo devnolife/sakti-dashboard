@@ -1,8 +1,11 @@
 import { PrismaClient } from '../../lib/generated/prisma'
 
-const prisma = new PrismaClient()
+// Use shared prisma instance or create new one
+let prisma: PrismaClient
 
-export async function seedMasterData() {
+export async function seedMasterData(externalPrisma?: PrismaClient) {
+  prisma = externalPrisma || new PrismaClient()
+
   console.log('🌱 Seeding master data...')
 
   try {
@@ -51,13 +54,18 @@ export async function seedMasterData() {
         update: prodi,
         create: prodi,
       })
-      console.log(`✅ Seeded prodi: ${prodi.nama}`)
+      console.log(`  ✅ Seeded prodi: ${prodi.nama}`)
     }
 
     console.log('✅ Master data seeding completed!')
   } catch (error) {
     console.error('❌ Error seeding master data:', error)
     throw error
+  } finally {
+    // Only disconnect if we created our own instance
+    if (!externalPrisma) {
+      await prisma.$disconnect()
+    }
   }
 }
 
@@ -67,9 +75,6 @@ if (require.main === module) {
     .catch((error) => {
       console.error(error)
       process.exit(1)
-    })
-    .finally(async () => {
-      await prisma.$disconnect()
     })
 }
 
