@@ -3,12 +3,13 @@
 import type React from "react"
 import { useAuth } from "@/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { AppLayout } from "@/components/shared"
-import { menuItems, dosenSubRoleMenuItems } from "@/config/menu-items"
+import { menuItems, dosenSubRoleMenuItems, type MenuItem } from "@/config/menu-items"
 import type { Role, DosenSubRole } from "@/types/role"
 import { DosenSubRoleProvider } from "@/context/dosen-subrole-context"
 import { GlobalLoading } from "@/components/ui/global-loading"
+import { useKkpMenu } from "@/hooks/use-kkp-menu"
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode
@@ -26,8 +27,11 @@ export function DashboardLayoutClient({
   const roleFromPath = pathname.split('/')[2] // /dashboard/[role]/...
   const userRole = user?.role
 
+  // Use KKP menu hook for mahasiswa role
+  const { menuItems: dynamicKkpMenuItems, isLoading: kkpMenuLoading } = useKkpMenu()
+
   // Function to get menu items based on role and sub-role
-  const getMenuItems = (role: string) => {
+  const getMenuItems = (role: string): MenuItem[] => {
     // For dosen role, determine menu based on current path OR user's sub-role
     if (role === 'dosen') {
       // First priority: Check current path for specific wakil dekan routes
@@ -65,6 +69,25 @@ export function DashboardLayoutClient({
 
       // Default: regular dosen menu
       return menuItems.dosen
+    }
+
+    // For mahasiswa role, merge dynamic KKP menu with static menu items
+    if (role === 'mahasiswa') {
+      const staticMenuItems = menuItems.mahasiswa || []
+
+      // Replace KKP menu item with dynamic KKP menu if available and loaded
+      if (dynamicKkpMenuItems.length > 0 && !kkpMenuLoading) {
+        return staticMenuItems.map(item => {
+          if (item.id === 'kkp') {
+            // Return dynamic KKP menu with proper structure
+            return dynamicKkpMenuItems[0]
+          }
+          return item
+        })
+      }
+
+      // Return static menu items while dynamic menu is loading or if failed to load
+      return staticMenuItems
     }
 
     return menuItems[role as Role] || []
