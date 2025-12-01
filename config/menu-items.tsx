@@ -225,29 +225,14 @@ export const mahasiswaMenuItems = [
         href: "/dashboard/mahasiswa/kkp",
       },
       {
-        id: "kkp-requirements",
-        title: "Persyaratan",
-        href: "/dashboard/mahasiswa/kkp/requirements",
-      },
-      {
         id: "kkp-locations",
         title: "Lokasi KKP",
-        href: "/dashboard/mahasiswa/kkp/locations",
+        href: "/dashboard/mahasiswa/kkp/lokasi",
       },
       {
         id: "kkp-pengajuan",
-        title: "Pengajuan",
+        title: "Pengajuan KKP",
         href: "/dashboard/mahasiswa/kkp/pengajuan",
-      },
-      {
-        id: "kkp-in-progress",
-        title: "In KKP",
-        href: "/dashboard/mahasiswa/kkp/in-progress",
-      },
-      {
-        id: "kkp-finished",
-        title: "Finish KKP",
-        href: "/dashboard/mahasiswa/kkp/finished",
       },
     ],
   },

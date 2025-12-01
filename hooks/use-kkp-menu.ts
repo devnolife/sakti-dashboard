@@ -85,24 +85,12 @@ function generateKkpMenuByStatus(status: KkpStatus): MenuItem[] {
 
   switch (status) {
     case "no_application":
-      // Belum daftar KKP - Menu khusus untuk persiapan KKP
+      // Belum daftar KKP - Menu sederhana: Dashboard (berisi info & persyaratan), Lokasi, Pengajuan
       baseMenuItem.children = [
         {
           id: "kkp-dashboard",
           title: "Dashboard",
           href: "/dashboard/mahasiswa/kkp",
-        },
-        {
-          id: "kkp-requirements",
-          title: "Persyaratan",
-          href: "/dashboard/mahasiswa/kkp/persyaratan",
-          icon: FileCheck,
-        },
-        {
-          id: "kkp-information",
-          title: "Informasi KKP",
-          href: "/dashboard/mahasiswa/kkp/informasi",
-          icon: BookOpen,
         },
         {
           id: "kkp-locations",

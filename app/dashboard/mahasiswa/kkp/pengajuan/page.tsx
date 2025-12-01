@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,6 +17,7 @@ import {
   ArrowLeft,
   FileText,
   Clock,
+  Loader2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { LocationType } from "@/components/location-manager"
@@ -31,6 +33,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
+import { toast } from "@/hooks/use-toast"
 
 // SubLocation interface
 interface SubLocation {
@@ -56,8 +59,12 @@ interface Student {
 }
 
 export default function PengajuanPage() {
+  const searchParams = useSearchParams()
+  const locationIdParam = searchParams.get('locationId')
+
   // State for the current step in the submission process
   const [currentStep, setCurrentStep] = useState<"location" | "team" | "verification" | "success">("location")
+  const [isLoadingLocations, setIsLoadingLocations] = useState(true)
 
   // State for selected location and team members
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(null)
@@ -76,71 +83,71 @@ export default function PengajuanPage() {
     contactPhone: "",
   })
 
-  // Sample data for available locations
-  const [locations, setLocations] = useState<LocationType[]>([
-    {
-      id: "loc-001",
-      name: "PT Teknologi Maju",
-      address: "Jl. Sudirman No. 123, Jakarta Selatan",
-      city: "Jakarta",
-      industry: "Technology",
-      positions: ["Software Developer", "UI/UX Designer"],
-      quota: 10,
-      remaining: 5,
-      status: "available",
-      distance: 3.2,
-      favorite: true,
-      subLocations: [
-        {
-          id: "subloc-001",
-          name: "IT Department",
-          address: "Floor 5, PT Teknologi Maju Building",
-          contactPerson: "John Doe",
-          contactEmail: "john.doe@teknologimaju.com",
-          contactPhone: "081234567890",
-        },
-      ],
-    },
-    {
-      id: "loc-002",
-      name: "Bank Nasional Indonesia",
-      address: "Jl. MH Thamrin No. 45, Jakarta Pusat",
-      city: "Jakarta",
-      industry: "Banking & Finance",
-      positions: ["Financial Analyst", "Risk Management"],
-      quota: 8,
-      remaining: 2,
-      status: "limited",
-      distance: 5.7,
-      subLocations: [],
-    },
-    {
-      id: "loc-003",
-      name: "Rumah Sakit Medika",
-      address: "Jl. Diponegoro No. 78, Bandung",
-      city: "Bandung",
-      industry: "Healthcare",
-      positions: ["Medical Information Systems"],
-      quota: 5,
-      remaining: 0,
-      status: "full",
-      distance: 120.3,
-      subLocations: [],
-    },
-    {
-      id: "loc-004",
-      name: "Kementerian Pendidikan",
-      address: "Jl. Jenderal Sudirman, Jakarta Pusat",
-      city: "Jakarta",
-      industry: "Government",
-      positions: ["Education Policy", "Information Systems"],
-      quota: 12,
-      remaining: 8,
-      status: "available",
-      distance: 4.8,
-      subLocations: [],
-    },
-  ])
+  // State for locations from API
+  const [locations, setLocations] = useState<LocationType[]>([])
+
+  // Fetch locations from API
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        setIsLoadingLocations(true)
+        const response = await fetch('/api/kkp/locations')
+        const result = await response.json()
+
+        if (result.success) {
+          // Transform API data to LocationType format
+          const transformedLocations: LocationType[] = result.data.map((loc: any) => ({
+            id: loc.id,
+            name: loc.name,
+            address: loc.address,
+            city: loc.city,
+            industry: loc.industry,
+            positions: Array.isArray(loc.positions) ? loc.positions : [],
+            quota: loc.quota || 0,
+            remaining: loc.remaining || 0,
+            status: loc.remaining === 0 ? "full" : loc.remaining <= Math.ceil(loc.quota * 0.2) ? "limited" : "available",
+            distance: loc.distance,
+            favorite: false,
+            subLocations: loc.kkp_sub_locations?.map((sub: any) => ({
+              id: sub.id,
+              name: sub.name,
+              address: sub.address,
+              contactPerson: sub.contact_person || "",
+              contactEmail: sub.contact_email || "",
+              contactPhone: sub.contact_phone || "",
+            })) || [],
+          }))
+
+          setLocations(transformedLocations)
+
+          // Auto-select location if locationId is provided
+          if (locationIdParam) {
+            const preselectedLocation = transformedLocations.find(loc => loc.id === locationIdParam)
+            if (preselectedLocation) {
+              setSelectedLocation(preselectedLocation)
+            }
+          }
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Gagal memuat lokasi KKP",
+            variant: "destructive",
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching locations:', error)
+        toast({
+          title: "Error",
+          description: "Gagal memuat lokasi KKP",
+          variant: "destructive",
+        })
+      } finally {
+        setIsLoadingLocations(false)
+      }
+    }
+
+    fetchLocations()
+  }, [locationIdParam])
 
   // Filter locations based on search query
   const filteredLocations = locations.filter((location) => {
@@ -355,101 +362,115 @@ export default function PengajuanPage() {
             <CardDescription>Pilih lokasi untuk magang KKP Anda</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Cari lokasi..."
-                className="w-full pl-8 rounded-md border-primary/20 focus-visible:ring-primary"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {/* Locations List */}
-            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-              {filteredLocations.length > 0 ? (
-                filteredLocations.map((location) => (
-                  <div
-                    key={location.id}
-                    className={cn(
-                      "rounded-lg border p-4 hover:bg-muted/30 transition-colors cursor-pointer",
-                      selectedLocation?.id === location.id && "border-primary bg-primary/5",
-                      location.status === "full" && "opacity-70",
-                    )}
-                    onClick={() => handleSelectLocation(location)}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 shrink-0">
-                          <Building className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-medium">{location.name}</h3>
-                            {location.favorite && (
-                              <Badge
-                                variant="outline"
-                                className="text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
-                              >
-                                Favorit
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-muted-foreground">{location.industry}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">{getStatusBadge(location.status)}</div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-2 mt-3 md:grid-cols-3">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">
-                          {location.city} • {location.distance?.toFixed(1)} km
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">
-                          {location.positions.slice(0, 2).join(", ")}
-                          {location.positions.length > 2 && "..."}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">
-                          Kuota: {location.remaining}/{location.quota} tersisa
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Sub-locations */}
-                    {location.subLocations.length > 0 && (
-                      <div className="mt-3">
-                        <h4 className="mb-2 text-sm font-medium">Sub-lokasi:</h4>
-                        <div className="space-y-2">
-                          {location.subLocations.map((subLoc) => (
-                            <div key={subLoc.id} className="text-xs text-muted-foreground">
-                              {subLoc.name} - {subLoc.address}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg">
-                  <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-muted">
-                    <Building className="w-6 h-6 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-medium">Tidak ada lokasi ditemukan</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">Coba sesuaikan pencarian Anda atau cek kembali nanti</p>
+            {/* Loading State */}
+            {isLoadingLocations && (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex items-center space-x-2">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="text-muted-foreground">Memuat lokasi KKP...</span>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
+            {!isLoadingLocations && (
+              <>
+                {/* Search */}
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Cari lokasi..."
+                    className="w-full pl-8 rounded-md border-primary/20 focus-visible:ring-primary"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+
+                {/* Locations List */}
+                <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                  {filteredLocations.length > 0 ? (
+                    filteredLocations.map((location) => (
+                      <div
+                        key={location.id}
+                        className={cn(
+                          "rounded-lg border p-4 hover:bg-muted/30 transition-colors cursor-pointer",
+                          selectedLocation?.id === location.id && "border-primary bg-primary/5",
+                          location.status === "full" && "opacity-70",
+                        )}
+                        onClick={() => handleSelectLocation(location)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 shrink-0">
+                              <Building className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-medium">{location.name}</h3>
+                                {location.favorite && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
+                                  >
+                                    Favorit
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground">{location.industry}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">{getStatusBadge(location.status)}</div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-2 mt-3 md:grid-cols-3">
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              {location.city} • {location.distance?.toFixed(1)} km
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Briefcase className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              {location.positions.slice(0, 2).join(", ")}
+                              {location.positions.length > 2 && "..."}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              Kuota: {location.remaining}/{location.quota} tersisa
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Sub-locations */}
+                        {location.subLocations.length > 0 && (
+                          <div className="mt-3">
+                            <h4 className="mb-2 text-sm font-medium">Sub-lokasi:</h4>
+                            <div className="space-y-2">
+                              {location.subLocations.map((subLoc) => (
+                                <div key={subLoc.id} className="text-xs text-muted-foreground">
+                                  {subLoc.name} - {subLoc.address}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg">
+                      <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-muted">
+                        <Building className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                      <h3 className="text-lg font-medium">Tidak ada lokasi ditemukan</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">Coba sesuaikan pencarian Anda atau cek kembali nanti</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={startOver}>
