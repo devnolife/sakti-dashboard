@@ -47,6 +47,67 @@ async function deleteFileIfExists(fileName: string): Promise<void> {
 }
 
 /**
+ * Delete all certificate files with the same verification ID prefix
+ * This is useful when updating certificates where participant name might have changed
+ * Exported for external use (e.g., bulk operations, admin cleanup)
+ *
+ * @param verificationId - Certificate verification ID (e.g., "001/IF/20222/A.5-II/IX/46/2024")
+ * @returns Number of files deleted
+ */
+export async function deleteAllCertificatesByVerificationId(
+  verificationId: string
+): Promise<number> {
+  try {
+    const safeCertId = verificationId
+      .replace(/\//g, "-")
+      .replace(/[^a-zA-Z0-9\-]/g, "");
+
+    // List all files with this prefix in sertifikat/ folder
+    const prefix = `sertifikat/${safeCertId}_`;
+
+    const stream = minioClient.listObjectsV2(bucketName, prefix, true);
+    const filesToDelete: string[] = [];
+
+    // Collect all files with this prefix
+    for await (const obj of stream) {
+      if (obj.name) {
+        filesToDelete.push(obj.name);
+      }
+    }
+
+    // Delete all found files
+    if (filesToDelete.length > 0) {
+      console.log(
+        `🔍 Found ${filesToDelete.length} old certificate(s) to delete with verification_id: ${verificationId}`
+      );
+
+      for (const fileName of filesToDelete) {
+        try {
+          await minioClient.removeObject(bucketName, fileName);
+          console.log(`🗑️ Deleted old certificate: ${fileName}`);
+        } catch (deleteError) {
+          console.error(`⚠️ Failed to delete ${fileName}:`, deleteError);
+        }
+      }
+
+      console.log(
+        `✅ Cleaned up ${filesToDelete.length} old certificate file(s)`
+      );
+    } else {
+      console.log(
+        `ℹ️ No old certificates found with verification_id: ${verificationId}`
+      );
+    }
+
+    return filesToDelete.length;
+  } catch (error) {
+    console.error(`⚠️ Error deleting certificates by verification_id:`, error);
+    // Don't throw error, continue with upload
+    return 0;
+  }
+}
+
+/**
  * Upload certificate PDF directly to MinIO without timestamp prefix
  * This ensures all certificates are stored in 'sertifikat/' folder
  *
@@ -139,6 +200,10 @@ export async function uploadCertificatePDF(
 
     // Simple path: sertifikat/{filename}.pdf
     const fileName = `sertifikat/${safeCertId}_${safeName}.pdf`;
+
+    // 🔥 DELETE OLD CERTIFICATES WITH SAME VERIFICATION_ID BEFORE UPLOAD
+    // This prevents duplicate files when updating certificates (e.g., typo fixes)
+    await deleteAllCertificatesByVerificationId(verificationId);
 
     // Upload to MinIO
     const fileUrl = await uploadCertificateFile(
@@ -239,6 +304,12 @@ export async function uploadCertificatePDFFromBase64(
 
     // Simple path: sertifikat/{filename}.pdf
     const fileName = `sertifikat/${safeCertId}_${safeName}.pdf`;
+
+    // 🔥 DELETE OLD CERTIFICATES WITH SAME VERIFICATION_ID BEFORE UPLOAD
+    // This prevents duplicate files when updating certificates (e.g., typo fixes)
+    // Example: If name changes from "Muhammad Risal" to "Muhammad Rizki",
+    // both old and new files would exist without this cleanup
+    await deleteAllCertificatesByVerificationId(verificationId);
 
     // Upload to MinIO
     const fileUrl = await uploadCertificateFile(

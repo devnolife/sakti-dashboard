@@ -336,6 +336,11 @@ function GenerateCertificatesPage() {
     setSaved(false);
     setZoom(0.5);
     setAutoFit(true);
+
+    // Reset file input value to allow selecting the same file again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const processExcelFile = async (file: File) => {
@@ -638,7 +643,12 @@ function GenerateCertificatesPage() {
   const handleExcelUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Process the file
     processExcelFile(file);
+
+    // Reset input value to allow selecting the same file again
+    e.target.value = "";
   };
 
   const handleDownloadTemplate = () => {
@@ -1442,7 +1452,13 @@ function GenerateCertificatesPage() {
                   onDrop={(e) => {
                     e.preventDefault();
                     const f = e.dataTransfer.files?.[0];
-                    if (f) processExcelFile(f);
+                    if (f) {
+                      processExcelFile(f);
+                      // Reset file input to allow re-selecting
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                      }
+                    }
                   }}
                 >
                   <p className="text-xs text-muted-foreground mb-2">
@@ -1558,26 +1574,6 @@ function GenerateCertificatesPage() {
                   <ChevronRight className="w-3 h-3" />
                 </Button>
                 <Separator orientation="vertical" className="h-8" />
-                {/* TEMPORARY: Flip buttons disabled - only front side available */}
-                {/* 
-                 <Button
-                   type="button"
-                   size="sm"
-                   variant={!showBack ? "default" : "outline"}
-                   onClick={() => setShowBack(false)}
-                 >
-                   <Eye className="w-3 h-3" />Depan
-                 </Button>
-                 <Button
-                   type="button"
-                   size="sm"
-                   variant={showBack ? "default" : "outline"}
-                   onClick={() => setShowBack(true)}
-                 >
-                   Belakang
-                 </Button>
-                 <Separator orientation="vertical" className="h-8" />
-                 */}
                 <Button
                   type="button"
                   size="sm"
@@ -1620,17 +1616,6 @@ function GenerateCertificatesPage() {
                   <RotateCcw className="w-3 h-3" />
                 </Button>
                 <Separator orientation="vertical" className="h-8" />
-                {/* <Button
-                  type="button"
-                  size="sm"
-                  onClick={handlePrint}
-                  className="ml-auto"
-                  title="Print sertifikat dengan ukuran A4 Landscape"
-                  disabled={!records.length || isGeneratingBatch}
-                >
-                  <Printer className="w-3 h-3" />
-                  Print A4
-                </Button> */}
                 <Button
                   type="button"
                   size="sm"
