@@ -775,6 +775,7 @@ model prodi {
   curriculum              curriculum[]
   exam_requirements       exam_requirements[]
   ketentuan_surat         ketentuan_surat[]
+  kkp_prodi_requirements  kkp_prodi_requirements[]
   laboratories            laboratories[]
   laboratory_admins       laboratory_admins[]
   laboratory_certificates laboratory_certificates[]
@@ -953,29 +954,28 @@ model users {
 }
 
 model template_uploads {
-  id              String    @id @default(cuid())
-  name            String
-  description     String?
-  file_url        String
-  file_name       String
-  file_size       Int
-  file_type       String    @default("docx")
-  category        String    @default("surat") // surat, sertifikat, laporan
-  prodi_id        String?
-  ketentuan_id    Int?      // Link to ketentuan_dokumen
-  is_global       Boolean   @default(false)
-  is_active       Boolean   @default(true)
-  detected_fields Json?     // From TemplateAnalyzer
-  metadata        Json?
-  variable_mapping Json?    // Store variable definitions with positions
-  version         Int       @default(1)
-  uploaded_by     String
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-
-  prodi           prodi?           @relation(fields: [prodi_id], references: [kode])
-  uploader        users            @relation(fields: [uploaded_by], references: [id])
-  ketentuan       ketentuan_surat? @relation(fields: [ketentuan_id], references: [id])
+  id               String           @id @default(cuid())
+  name             String
+  description      String?
+  file_url         String
+  file_name        String
+  file_size        Int
+  file_type        String           @default("docx")
+  category         String           @default("surat")
+  prodi_id         String?
+  is_global        Boolean          @default(false)
+  is_active        Boolean          @default(true)
+  detected_fields  Json?
+  metadata         Json?
+  variable_mapping Json?
+  version          Int              @default(1)
+  uploaded_by      String
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  ketentuan_id     Int?
+  ketentuan        ketentuan_surat? @relation(fields: [ketentuan_id], references: [id])
+  prodi            prodi?           @relation(fields: [prodi_id], references: [kode])
+  uploader         users            @relation(fields: [uploaded_by], references: [id])
 
   @@index([prodi_id])
   @@index([uploaded_by])
@@ -1415,11 +1415,10 @@ model laboratory_certificates {
   verification_id            String    @unique
   certificate_title          String
   participant_name           String
+  participant_nim            String
   program_name               String
   subtitle                   String?
   issue_date                 DateTime  @default(now())
-  
-  // Performance & Analytics Fields (Optional - akan diisi kemudian)
   meetings                   Int?
   total_score                Int?
   materials                  Int?
@@ -1434,26 +1433,19 @@ model laboratory_certificates {
   problem_solving_efficiency Int?
   competencies               Json?
   technologies               String[]
-  
-  // QR Code & PDF Fields
   qr_code_url                String?
+  prodi_id                   String
+  created_by                 String?
+  created_at                 DateTime  @default(now())
+  updated_at                 DateTime  @updatedAt
   pdf_password               String?
   pdf_url                    String?
   qr_signature_url           String?
-  
-  // Digital Signature Fields
   signature                  String?
   signature_data             Json?
   signed_at                  DateTime?
   signed_by                  String?
-  
-  // Metadata
-  prodi_id                   String
-  created_by                 String?
   verification_count         Int       @default(0)
-  created_at                 DateTime  @default(now())
-  updated_at                 DateTime  @updatedAt
-  
   prodi                      prodi     @relation(fields: [prodi_id], references: [kode], onDelete: Cascade)
 
   @@index([prodi_id])
@@ -1704,404 +1696,4 @@ enum ThesisStatus {
   approved
   rejected
   archived
-}
-
-// ============================================
-// DOCUMENT SIGNING SYSTEM MODELS
-// ============================================
-
-// Table untuk konfigurasi dokumen
-model documents {
-  id              Int               @id @default(autoincrement())
-  type            String            @db.VarChar(50)
-  prodi           String?           @db.VarChar(100)
-  template_path   String?           @db.VarChar(255)
-  description     String?           @db.Text
-  version         String?           @db.VarChar(10) @default("1.0")
-  is_active       Boolean           @default(true)
-  max_filesize_mb Int?              @default(10)
-  created_at      DateTime?         @default(now()) @db.Timestamp(6)
-  updated_at      DateTime?         @updatedAt @db.Timestamp(6)
-
-  document_fields document_fields[]
-  signed_documents signed_documents[]
-  document_templates document_templates[]
-
-  @@unique([type, prodi])
-}
-
-model document_fields {
-  id            Int        @id @default(autoincrement())
-  document_id   Int?
-  field_name    String     @db.VarChar(255)
-  field_type    String     @db.VarChar(50)
-  is_required   Boolean?   @default(true)
-  default_value String?    @db.Text
-  validation_rules String? @db.Text
-  help_text     String?    @db.VarChar(500)
-  display_order Int?       @default(0)
-  is_active     Boolean?   @default(true)
-  created_at    DateTime?  @default(now()) @db.Timestamp(6)
-  updated_at    DateTime?  @updatedAt @db.Timestamp(6)
-
-  documents     documents? @relation(fields: [document_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-// Table untuk template dokumen fisik
-model document_templates {
-  id              Int       @id @default(autoincrement())
-  document_id     Int
-  template_name   String    @db.VarChar(255)
-  file_path       String    @db.VarChar(500)
-  file_type       String    @db.VarChar(10) @default("docx")
-  file_size       Int?
-  checksum        String?   @db.VarChar(64)
-  is_default      Boolean   @default(false)
-  created_at      DateTime  @default(now()) @db.Timestamp(6)
-  updated_at      DateTime  @updatedAt @db.Timestamp(6)
-
-  document        documents @relation(fields: [document_id], references: [id], onDelete: Cascade)
-
-  @@unique([document_id, template_name])
-}
-
-// Table untuk kategori dokumen
-model document_categories {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(100)
-  description String?  @db.Text
-  color_hex   String?  @db.VarChar(7) @default("#3B82F6")
-  icon        String?  @db.VarChar(50)
-  sort_order  Int?     @default(0)
-  is_active   Boolean  @default(true)
-  created_at  DateTime @default(now()) @db.Timestamp(6)
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-}
-
-// Table untuk penandatangan
-model signers {
-  id           Int      @id @default(autoincrement())
-  name         String   @db.VarChar(255)
-  nbm          String?  @db.VarChar(50)
-  email        String?  @db.VarChar(255)
-  phone        String?  @db.VarChar(20)
-  role         String   @db.VarChar(100)
-  department   String?  @db.VarChar(100)
-  prodi        String?  @db.VarChar(100)
-  public_key   String   @db.Text
-  private_key  String   @db.Text
-  key_id       String   @db.VarChar(32)
-  signature_image_path String? @db.VarChar(500)
-  position_title String? @db.VarChar(255)
-  is_active    Boolean  @default(true)
-  last_signed_at DateTime? @db.Timestamp(6)
-  created_at   DateTime @default(now()) @db.Timestamp(6)
-  updated_at   DateTime @updatedAt @db.Timestamp(6)
-
-  document_signatures document_signatures[]
-
-  @@unique([nbm])
-  @@unique([key_id])
-  @@unique([email])
-}
-
-// Table untuk dokumen yang telah ditandatangani
-model signed_documents {
-  id               String   @id @default(uuid())
-  document_type    String   @db.VarChar(50)
-  prodi            String   @db.VarChar(100)
-  document_content String   @db.Text
-  document_hash    String   @db.VarChar(64)
-  no_surat         String?  @db.VarChar(100)
-  file_path        String?  @db.VarChar(500)
-  file_size        Int?
-  qr_code_data     String   @db.Text
-  qr_code_image    String?  @db.VarChar(500)
-
-  total_signatures_required Int     @default(3)
-  total_signatures_received Int     @default(0)
-  is_complete              Boolean @default(false)
-
-  created_by       String?  @db.VarChar(255)
-  approved_by      String?  @db.VarChar(255)
-  priority_level   String?  @db.VarChar(20) @default("normal")
-  expiry_date      DateTime? @db.Timestamp(6)
-
-  status           String   @db.VarChar(50) @default("pending")
-  status_notes     String?  @db.Text
-
-  created_at       DateTime @default(now()) @db.Timestamp(6)
-  completed_at     DateTime? @db.Timestamp(6)
-  last_updated_at  DateTime @updatedAt @db.Timestamp(6)
-
-  document_id      Int?
-  counter_id       Int?     // Link ke counter yang digunakan
-  scope            String?  @db.VarChar(20) // "fakultas" atau "prodi"
-  
-  documents        documents? @relation(fields: [document_id], references: [id])
-  counter          document_counter? @relation(fields: [counter_id], references: [id])
-  document_signatures document_signatures[]
-  verification_logs verification_logs[]
-  document_history document_history[]
-}
-
-// Table untuk signature individual
-model document_signatures {
-  id              Int      @id @default(autoincrement())
-  signed_doc_id   String
-  signer_id       Int
-  signature_data  String   @db.Text
-  signature_hash  String   @db.VarChar(64)
-  signer_info     String   @db.Text
-  algorithm       String   @db.VarChar(50) @default("EdDSA")
-  timestamp       DateTime @default(now()) @db.Timestamp(6)
-  is_valid        Boolean  @default(true)
-
-  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
-  signer          signers @relation(fields: [signer_id], references: [id])
-
-  @@unique([signed_doc_id, signer_id])
-}
-
-// Table untuk log verifikasi
-model verification_logs {
-  id              Int      @id @default(autoincrement())
-  signed_doc_id   String
-  verifier_ip     String?  @db.VarChar(45)
-  verifier_agent  String?  @db.Text
-  verification_method String @db.VarChar(50)
-  verification_result Boolean
-  verification_details String? @db.Text
-  verified_at     DateTime @default(now()) @db.Timestamp(6)
-
-  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
-}
-
-// Table untuk konfigurasi signature requirements
-model document_signature_config {
-  id                        Int      @id @default(autoincrement())
-  document_type             String   @unique @db.VarChar(50)
-  required_signature_count  Int      @default(1)
-  required_roles            String[]
-  description               String?  @db.Text
-  is_active                Boolean  @default(true)
-  created_at               DateTime @default(now()) @db.Timestamp(6)
-  updated_at               DateTime @updatedAt @db.Timestamp(6)
-}
-
-// Table untuk konfigurasi sistem
-model system_config {
-  id          Int      @id @default(autoincrement())
-  config_key  String   @unique @db.VarChar(100)
-  config_value String  @db.Text
-  description String?  @db.Text
-  updated_at  DateTime @updatedAt @db.Timestamp(6)
-}
-
-// Table untuk history perubahan dokumen
-model document_history {
-  id              Int      @id @default(autoincrement())
-  signed_doc_id   String
-  action          String   @db.VarChar(50)
-  description     String   @db.Text
-  performed_by    String?  @db.VarChar(255)
-  ip_address      String?  @db.VarChar(45)
-  user_agent      String?  @db.Text
-  metadata        String?  @db.Text
-  created_at      DateTime @default(now()) @db.Timestamp(6)
-
-  signed_document signed_documents @relation(fields: [signed_doc_id], references: [id], onDelete: Cascade)
-}
-
-// Table untuk notifikasi sistem
-model system_notifications {
-  id            Int      @id @default(autoincrement())
-  recipient     String   @db.VarChar(255)
-  title         String   @db.VarChar(255)
-  message       String   @db.Text
-  type          String   @db.VarChar(50) @default("info")
-  is_read       Boolean  @default(false)
-  read_at       DateTime? @db.Timestamp(6)
-  related_doc_id String?
-  created_at    DateTime @default(now()) @db.Timestamp(6)
-}
-
-// ============================================
-// LETTER NUMBERING SYSTEM MODELS
-// ============================================
-
-// Table untuk surat yang tergenerate dengan nomor
-model surat {
-  id                 Int            @id @default(autoincrement())
-  nomor_surat        String         @unique
-  id_jenis_surat     Int?
-  id_instansi        Int?
-  id_kode_kategori   Int?
-  id_masalah_surat   Int?
-  bulan              String
-  tahun_hijriah      String
-  tahun_masehi       String
-  perihal            String
-  keterangan         String?
-  id_prodi           String?
-  kode_prodi         String?         // Kode prodi untuk format nomor (IF, SI, TI, dll)
-  letter_request_id  String?
-  signed_document_id String?
-  counter_id         Int?            // Link ke counter yang digunakan
-  scope              String          @default("fakultas") // "fakultas" atau "prodi"
-  created_at         DateTime        @default(now())
-  updated_at         DateTime        @updatedAt
-
-  tujuan             tujuan?         @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  counter            document_counter? @relation(fields: [counter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  jenis_surat        jenis_surat?    @relation(fields: [id_kode_kategori], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  masalah_surat      masalah_surat?  @relation(fields: [id_masalah_surat], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prodi              prodi?          @relation(fields: [id_prodi], references: [kode], onDelete: NoAction, onUpdate: NoAction)
-}
-
-// Table untuk counter - universal untuk semua dokumen (surat, sertifikat, dll)
-model document_counter {
-  id        Int               @id @default(autoincrement())
-  counter   Int               @default(0)
-  tahun     String            @default("2025")
-  prodi_id  String            @default("") // Empty string untuk fakultas
-  scope     String            @default("fakultas") // "fakultas" atau "prodi"
-  
-  // Relations
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-  signed_documents signed_documents[]
-
-  @@unique([tahun, prodi_id, scope])
-  @@index([scope, prodi_id, tahun])
-  @@map("count_surat") // Keep the same table name in database
-}
-
-// Table untuk masalah/kategori surat
-model masalah_surat {
-  id        Int               @id @default(autoincrement())
-  masalah   String
-  kode      String            @unique
-
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-}
-
-// Table untuk tujuan instansi
-model tujuan {
-  id        Int               @id @default(autoincrement())
-  nama      String
-  kode      String
-  id_jenis  Int               @db.SmallInt
-
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-  jenis     jenis_surat       @relation(fields: [id_jenis], references: [id])
-}
-
-// Table untuk jenis surat (keluar/masuk)
-model jenis_surat {
-  id        Int               @id @default(autoincrement())
-  nama      String
-  kode      String            @unique
-
-  ketentuan ketentuan_surat[]
-  surat     surat[]
-  tujuan    tujuan[]
-  letter_types letter_types[] @relation("LetterTypeJenisSurat")
-}
-
-// Table untuk ketentuan format nomor surat
-model ketentuan_surat {
-  id         Int           @id @default(autoincrement())
-  id_tujuan  Int
-  id_masalah Int
-  kode       String
-  nama       String        @unique
-  id_jenis   Int
-  id_count   Int?
-  format_template String?  @db.Text
-  description String?      @db.Text
-  is_global  Boolean       @default(true) // true = fakultas (semua prodi bisa lihat), false = prodi spesifik
-  prodi_id   String?       // null jika is_global=true, diisi jika is_global=false
-
-  counter          document_counter?  @relation(fields: [id_count], references: [id])
-  jenis            jenis_surat        @relation(fields: [id_jenis], references: [id])
-  masalah          masalah_surat      @relation(fields: [id_masalah], references: [id])
-  tujuan           tujuan             @relation(fields: [id_tujuan], references: [id])
-  prodi            prodi?             @relation(fields: [prodi_id], references: [kode])
-  template_uploads template_uploads[]
-
-  @@unique([id_tujuan, id_masalah, id_jenis])
-}
-
-// ============================================
-// LABORATORY CERTIFICATE SYSTEM MODELS
-// ============================================
-
-model laboratory_certificates {
-  id                String   @id @default(cuid())
-  verification_id   String   @unique
-  certificate_title String
-  participant_name  String
-  program_name      String
-  subtitle          String?   @db.Text
-  issue_date        DateTime @default(now())
-
-  // Stats
-  meetings                Int?
-  total_score             Int?
-  materials               Int?
-  attendance_rate         Int?
-  assignment_completion   Int?
-  participation_score     Int?
-
-  // Grades
-  overall_grade           String?
-
-  // Learning Time
-  learning_hours          Int?
-  weekly_data             Int[]
-
-  // Analytics
-  learning_velocity       Int?
-  collaboration_score     Int?
-  problem_solving_efficiency Int?
-
-  // Competencies (JSON)
-  competencies            Json?
-
-  // Technologies
-  technologies            String[]
-
-  // QR Code
-  qr_code_url             String?
-
-  // PDF Storage (MinIO)
-  pdf_url                 String?   // MinIO URL for the generated PDF
-  pdf_password            String?   // Password for PDF protection
-
-  // Digital Signature (HMAC-SHA256)
-  signature               String?   // HMAC-SHA256 signature
-  signature_data          Json?     // Data yang di-sign (untuk audit)
-  qr_signature_url        String?   // MinIO URL untuk QR code signature
-  signed_at               DateTime? // Timestamp signature dibuat
-  signed_by               String?   // User yang sign (nama + role)
-  verification_count      Int       @default(0) // Jumlah kali diverifikasi
-
-  // Prodi Association
-  prodi_id                String
-  created_by              String?   // laboratory_admin user_id
-
-  // Timestamps
-  created_at              DateTime  @default(now())
-  updated_at              DateTime  @updatedAt
-
-  // Relations
-  prodi                   prodi     @relation(fields: [prodi_id], references: [kode], onDelete: Cascade)
-
-  @@index([prodi_id])
-  @@index([verification_id])
-  @@index([created_by])
-  @@index([created_at])
 }

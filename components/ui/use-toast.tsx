@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 type ToastProps = {
-  title: string
-  description?: string
-  duration?: number
-}
+  title: string;
+  description?: string;
+  duration?: number;
+};
 
 export function toast({ title, description, duration = 3000 }: ToastProps) {
   const event = new CustomEvent("toast", {
@@ -15,28 +15,37 @@ export function toast({ title, description, duration = 3000 }: ToastProps) {
       description,
       duration,
     },
-  })
-  window.dispatchEvent(event)
+  });
+  window.dispatchEvent(event);
 }
 
 export function useToast() {
-  const [toasts, setToasts] = useState<(ToastProps & { id: string })[]>([])
+  const [toasts, setToasts] = useState<(ToastProps & { id: string })[]>([]);
 
   useEffect(() => {
     const handleToast = (event: Event) => {
-      const { title, description, duration } = (event as CustomEvent).detail
-      const id = Math.random().toString(36).substring(2, 9)
-      setToasts((prev) => [...prev, { id, title, description, duration }])
+      const { title, description, duration } = (event as CustomEvent).detail;
+      const id = Math.random().toString(36).substring(2, 9);
+      setToasts((prev) => [...prev, { id, title, description, duration }]);
 
       setTimeout(() => {
-        setToasts((prev) => prev.filter((toast) => toast.id !== id))
-      }, duration)
-    }
+        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      }, duration);
+    };
 
-    window.addEventListener("toast", handleToast)
-    return () => window.removeEventListener("toast", handleToast)
-  }, [])
+    const handleDismiss = (event: Event) => {
+      const { id } = (event as CustomEvent).detail;
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    };
 
-  return toasts
+    window.addEventListener("toast", handleToast);
+    window.addEventListener("toast-dismiss", handleDismiss);
+
+    return () => {
+      window.removeEventListener("toast", handleToast);
+      window.removeEventListener("toast-dismiss", handleDismiss);
+    };
+  }, []);
+
+  return toasts;
 }
-

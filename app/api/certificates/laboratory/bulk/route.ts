@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { uploadCertificatePDFFromBase64 } from "@/lib/certificate-upload";
 
 /**
  * POST /api/certificates/laboratory/bulk
  *
  * Bulk save laboratory certificates from Excel upload
- * Simplified version - only saves essential data from Excel
+ * Now includes automatic PDF upload to MinIO storage
  */
 export async function POST(req: NextRequest) {
   try {
@@ -16,8 +17,6 @@ export async function POST(req: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    console.log(session.user);
 
     // Check if user is laboratory_admin
     if (session.user.role !== "laboratory_admin") {
@@ -54,13 +53,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Process each certificate - save minimal data from Excel
+    // Process each certificate - save data + upload PDF to MinIO
     const successfulCerts: string[] = [];
     const updatedCerts: string[] = [];
     const failedCerts: Array<{ id: string; error: string }> = [];
 
     for (const cert of certificates) {
       try {
+        // Upload PDF to MinIO if provided
+        let pdfUrl: string | null = null;
+
+        if (cert.pdfBase64) {
+          try {
+            pdfUrl = await uploadCertificatePDFFromBase64(
+              cert.pdfBase64,
+              cert.verificationId,
+              cert.name
+            );
+            console.log(`✅ PDF uploaded for ${cert.verificationId}`);
+          } catch (uploadError: any) {
+            console.error(
+              `⚠️ Failed to upload PDF for ${cert.verificationId}:`,
+              uploadError
+            );
+            // Continue even if PDF upload fails - save certificate data without PDF
+          }
+        }
+
         // Check if certificate already exists
         const existingCert = await prisma.laboratory_certificates.findUnique({
           where: {
@@ -70,13 +89,35 @@ export async function POST(req: NextRequest) {
 
         // Prepare certificate data for database
         // Hanya data ESENSIAL yang dibaca dari Excel
+
+        // Parse Indonesian date format (e.g., "04 Desember 2025") to Date object
+        // If issueDate is already a valid Date, use it directly
+        let parsedIssueDate: Date;
+        try {
+          parsedIssueDate = new Date(cert.issueDate);
+          // If date is invalid, use current date
+          if (isNaN(parsedIssueDate.getTime())) {
+            console.warn(
+              `Invalid date format for ${cert.verificationId}, using current date`
+            );
+            parsedIssueDate = new Date();
+          }
+        } catch (e) {
+          console.warn(
+            `Error parsing date for ${cert.verificationId}, using current date`
+          );
+          parsedIssueDate = new Date();
+        }
+
         const certData = {
           verification_id: cert.verificationId,
           certificate_title: cert.certificateTitle,
           participant_name: cert.name,
+          participant_nim: cert.nim,
           program_name: cert.program,
           subtitle: cert.subtitle || null,
-          issue_date: new Date(cert.issueDate),
+          issue_date: parsedIssueDate,
+          pdf_url: pdfUrl, // Add PDF URL from MinIO
 
           // Prodi Association
           prodi_id: labAdmin.prodi_id,
@@ -99,9 +140,13 @@ export async function POST(req: NextRequest) {
               // Update participant & program details
               certificate_title: certData.certificate_title,
               participant_name: certData.participant_name,
+              participant_nim: certData.participant_nim,
               program_name: certData.program_name,
               subtitle: certData.subtitle,
               issue_date: certData.issue_date,
+
+              // Update PDF URL if new PDF is uploaded
+              ...(pdfUrl && { pdf_url: pdfUrl }),
 
               // Keep existing QR code & verification data intact
               // verification_id: NOT CHANGED

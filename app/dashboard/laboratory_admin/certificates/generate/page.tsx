@@ -6,7 +6,6 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import {
-  Printer,
   FileSpreadsheet,
   Download,
   ChevronLeft,
@@ -28,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
 
 // Helpers for auto-generated fields
 function formatIssueDate(date: Date = new Date()) {
@@ -62,9 +62,11 @@ function generateVerificationId(
 const defaultStudentData = {
   certificateTitle: "Nama Sertifikat",
   name: "Nama Peserta",
+  nim: "105841100125",
   program: "Nama Program",
   subtitle: "Atas keberhasilan menyelesaikan program pelatihan laboratorium",
   issueDate: "00 Bulan 0000",
+  issueDateRaw: new Date(),
   verificationId: "001/IF/20222/A.5-II/IX/44/2022",
   instructorName: "Muhyiddin A.M Hayat, S.Kom., M.T",
   organizationName: "Laboratorium Informatika",
@@ -108,6 +110,7 @@ function mapStudentDataToLabCertificate(
 interface StudentRowRaw {
   [key: string]: any;
   "Nama Peserta"?: string;
+  NIM?: string;
   "Nama Program"?: string;
   "Judul Sertifikat"?: string;
   "Nama Instruktur"?: string;
@@ -125,6 +128,19 @@ function buildRowMapper(warningsRef: string[]) {
   ): StudentDataType {
     // Map Indonesian columns to expected fields - HANYA DATA YANG DIBUTUHKAN
     const name = row["Nama Peserta"] || row.name || "";
+
+    // FIX: Handle NIM yang berformat scientific notation dari Excel
+    let nim = row["NIM"] || row.nim || "";
+    // Convert scientific notation to string if needed
+    if (typeof nim === "number") {
+      nim = nim.toString();
+      // If it's in scientific notation, convert it properly
+      if (nim.includes("e") || nim.includes("E")) {
+        nim = Number(nim).toFixed(0);
+      }
+    }
+    nim = String(nim).trim();
+
     const program = row["Nama Program"] || row.program || "";
     const certificateTitle =
       row["Judul Sertifikat"] || row.certificateTitle || "";
@@ -138,15 +154,24 @@ function buildRowMapper(warningsRef: string[]) {
       "Laboratorium Informatika";
 
     // New fields for certificate number format
-    const monthRoman = row["Bulan (Romawi)"] || row.monthRoman || "";
-    const yearHijri = row["Tahun Hijriah"] || row.yearHijri || "";
-    const yearMasehi = row["Tahun Masehi"] || row.yearMasehi || "";
+    const monthRoman = String(
+      row["Bulan (Romawi)"] || row.monthRoman || ""
+    ).trim();
+    const yearHijri = String(
+      row["Tahun Hijriah"] || row.yearHijri || ""
+    ).trim();
+    const yearMasehi = String(
+      row["Tahun Masehi"] || row.yearMasehi || ""
+    ).trim();
 
     // Validasi kolom wajib
     if (!name || name.trim() === "") {
       warningsRef.push(
         `Baris ${rowIdx + 2}: Nama Peserta kosong atau tidak valid`
       );
+    }
+    if (!nim || nim.trim() === "") {
+      warningsRef.push(`Baris ${rowIdx + 2}: NIM kosong atau tidak valid`);
     }
     if (!program || program.trim() === "") {
       warningsRef.push(
@@ -160,19 +185,36 @@ function buildRowMapper(warningsRef: string[]) {
     }
     if (!monthRoman || monthRoman.trim() === "") {
       warningsRef.push(
-        `Baris ${rowIdx + 2}: Bulan (Romawi) kosong atau tidak valid`
+        `Baris ${
+          rowIdx + 2
+        }: Bulan (Romawi) kosong atau tidak valid. Gunakan I, II, III, IV, V, VI, VII, VIII, IX, X, XI, atau XII`
       );
     }
     if (!yearHijri || yearHijri.trim() === "") {
       warningsRef.push(
-        `Baris ${rowIdx + 2}: Tahun Hijriah kosong atau tidak valid`
+        `Baris ${
+          rowIdx + 2
+        }: Tahun Hijriah kosong atau tidak valid. Contoh: 1446`
       );
     }
     if (!yearMasehi || yearMasehi.trim() === "") {
       warningsRef.push(
-        `Baris ${rowIdx + 2}: Tahun Masehi kosong atau tidak valid`
+        `Baris ${
+          rowIdx + 2
+        }: Tahun Masehi kosong atau tidak valid. Contoh: 2024`
       );
     }
+
+    // Debug log untuk setiap row
+    console.log(`Row ${rowIdx + 1}:`, {
+      name,
+      nim,
+      program,
+      certificateTitle,
+      monthRoman,
+      yearHijri,
+      yearMasehi,
+    });
 
     // Generate subtitle using universal template
     const generatedSubtitle = `Telah berhasil menyelesaikan Laboratorium ${
@@ -182,13 +224,18 @@ function buildRowMapper(warningsRef: string[]) {
     // Generate verification ID with row number (1-based index for display)
     const rowNumber = rowIdx + 1;
 
+    // Generate issue date - store both formatted string and raw Date object
+    const issueDateRaw = new Date();
+
     return {
       ...defaultStudentData,
       certificateTitle: certificateTitle || defaultStudentData.certificateTitle,
       name: name || defaultStudentData.name,
+      nim: nim || defaultStudentData.nim,
       program: program || defaultStudentData.program,
       subtitle: generatedSubtitle,
-      issueDate: formatIssueDate(),
+      issueDate: formatIssueDate(issueDateRaw), // For display
+      issueDateRaw: issueDateRaw, // For database
       verificationId: generateVerificationId(
         rowNumber,
         monthRoman,
@@ -211,13 +258,13 @@ function GenerateCertificatesPage() {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [error, setError] = useState<string | undefined>();
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [zoom, setZoom] = useState(0.5);
   const [autoFit, setAutoFit] = useState(true);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [isGeneratingBatch, setIsGeneratingBatch] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
+  const [batchPhase, setBatchPhase] = useState<string>(""); // Track current phase
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
   const activeStudent = records[selectedIndex] || defaultStudentData;
@@ -240,6 +287,21 @@ function GenerateCertificatesPage() {
     return () => ro.disconnect();
   }, [autoFit]);
 
+  // Force re-render when activeStudent changes
+  useEffect(() => {
+    // This ensures the preview updates when switching between records
+    if (autoFit && previewContainerRef.current) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        const el = previewContainerRef.current;
+        if (el) {
+          const event = new Event("resize");
+          window.dispatchEvent(event);
+        }
+      }, 100);
+    }
+  }, [activeStudent, autoFit]);
+
   const reset = () => {
     setRecords([]);
     setSelectedIndex(0);
@@ -248,61 +310,41 @@ function GenerateCertificatesPage() {
     setError(undefined);
     setUploadedFileName(null);
     setSaved(false);
-  };
-
-  const handleSaveToDatabase = async () => {
-    if (!records.length) {
-      alert("No certificates to save");
-      return;
-    }
-
-    setSaving(true);
-    setError(undefined);
-
-    try {
-      const response = await fetch("/api/certificates/bulk", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ certificates: records }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to save certificates");
-      }
-
-      setSaved(true);
-      alert(`Successfully saved ${data.count} certificates to database!`);
-    } catch (err: any) {
-      setError("Failed to save: " + (err?.message || "unknown error"));
-      alert("Error: " + (err?.message || "Failed to save certificates"));
-    } finally {
-      setSaving(false);
-    }
+    setZoom(0.5);
+    setAutoFit(true);
   };
 
   const processExcelFile = async (file: File) => {
     setUploading(true);
     setError(undefined);
     setWarnings([]);
+    setSaved(false); // Reset saved status
+    setSelectedIndex(0); // Reset to first record
     const localWarnings: string[] = [];
     const reader = new FileReader();
     reader.onload = async (evt) => {
       try {
         const data = new Uint8Array(evt.target?.result as ArrayBuffer);
-        const wb = XLSX.read(data, { type: "array" });
+        const wb = XLSX.read(data, {
+          type: "array",
+          cellDates: true,
+          cellText: false,
+        });
         const sheet = wb.Sheets[wb.SheetNames[0]];
         if (!sheet) {
           setError("Sheet pertama tidak ditemukan.");
           setUploading(false);
           return;
         }
+
+        // Read with raw: false to get formatted values
         const json: StudentRowRaw[] = XLSX.utils.sheet_to_json(sheet, {
           defval: "",
+          raw: false, // Get formatted string values instead of raw numbers
         });
+
+        console.log("📊 Raw Excel Data:", json); // Debug log
+
         if (!json.length) {
           setError("File kosong atau format tidak sesuai.");
           setUploading(false);
@@ -310,6 +352,9 @@ function GenerateCertificatesPage() {
         }
         const mapper = buildRowMapper(localWarnings);
         const mapped = json.map((row, idx) => mapper(row, idx));
+
+        console.log("✅ Mapped Data:", mapped); // Debug log
+
         setRecords(mapped);
         setSelectedIndex(0);
         setWarnings(localWarnings);
@@ -317,6 +362,14 @@ function GenerateCertificatesPage() {
 
         // ✅ Data loaded successfully - ready for preview and download
         console.log(`✅ Loaded ${mapped.length} certificates from Excel`);
+
+        // Show success toast with auto-dismiss
+        toast({
+          title: "✅ File Excel Berhasil Diupload",
+          description: `${mapped.length} data sertifikat siap untuk di-generate`,
+          duration: 3000,
+          variant: "default",
+        });
       } catch (err: any) {
         setError("Gagal membaca file: " + (err?.message || "unknown"));
       } finally {
@@ -341,6 +394,7 @@ function GenerateCertificatesPage() {
     const templateData = [
       {
         "Nama Peserta": "Ahmad Rizki Pratama",
+        NIM: "105841100125",
         "Nama Program": "Backend Development dengan NestJS",
         "Judul Sertifikat": "Backend Developer Expert",
         "Bulan (Romawi)": "IX",
@@ -351,6 +405,7 @@ function GenerateCertificatesPage() {
       },
       {
         "Nama Peserta": "Siti Nurhaliza",
+        NIM: "105841100225",
         "Nama Program": "Frontend Development dengan React",
         "Judul Sertifikat": "Frontend Developer Professional",
         "Bulan (Romawi)": "IX",
@@ -361,6 +416,7 @@ function GenerateCertificatesPage() {
       },
       {
         "Nama Peserta": "Muhammad Fauzi",
+        NIM: "105841100325",
         "Nama Program": "Full Stack Development",
         "Judul Sertifikat": "Full Stack Developer",
         "Bulan (Romawi)": "IX",
@@ -376,6 +432,7 @@ function GenerateCertificatesPage() {
     // Set column widths for better readability
     const colWidths = [
       { wch: 30 }, // Nama Peserta
+      { wch: 15 }, // NIM
       { wch: 40 }, // Nama Program
       { wch: 35 }, // Judul Sertifikat
       { wch: 15 }, // Bulan (Romawi)
@@ -424,6 +481,18 @@ function GenerateCertificatesPage() {
       {
         "Nama Peserta": "Nama lengkap peserta (WAJIB)",
         "Ahmad Rizki Pratama": "",
+      },
+      {
+        NIM: "Nomor Induk Mahasiswa (WAJIB)",
+        "202001001": "",
+      },
+      {
+        "": "⚠️ PENTING: Format kolom NIM sebagai TEXT!",
+        "": "",
+      },
+      {
+        "": "Klik kanan kolom B → Format Cells → Text",
+        "": "",
       },
       {
         "Nama Program": "Nama program/pelatihan laboratorium (WAJIB)",
@@ -498,6 +567,7 @@ function GenerateCertificatesPage() {
       { "✅ CONTOH DATA YANG BENAR:": "" },
       { "": "" },
       { "Nama Peserta": "Ahmad Rizki Pratama" },
+      { NIM: "202001001" },
       { "Nama Program": "Backend Development dengan NestJS" },
       { "Judul Sertifikat": "Backend Developer Expert" },
       { "Bulan (Romawi)": "IX" },
@@ -512,8 +582,9 @@ function GenerateCertificatesPage() {
       { "": "" },
       { "❌ HINDARI:": "" },
       { "": "" },
-      { "• Mengosongkan kolom wajib": "" },
+      { "• Mengosongkan kolom wajib (Nama Peserta, NIM, dll)": "" },
       { "• Menggunakan singkatan yang tidak jelas": "" },
+      { "• Format NIM yang salah atau tidak lengkap": "" },
       { "• Judul sertifikat terlalu panjang (lebih dari 50 karakter)": "" },
       { "• Typo atau kesalahan penulisan nama": "" },
       { "• Bulan Romawi dengan huruf kecil (ix) atau angka (9)": "" },
@@ -543,354 +614,6 @@ function GenerateCertificatesPage() {
 
     XLSX.writeFile(wb, "template-sertifikat-laboratorium.xlsx");
   };
-  const handlePrint = async () => {
-    // Get the certificate element from PREVIEW (not hidden print-area)
-    // Because preview has already rendered QR codes
-    const previewElement = document.querySelector(".certificate-content");
-    if (!previewElement) {
-      alert("Sertifikat tidak ditemukan. Silakan refresh halaman.");
-      return;
-    }
-
-    // Get all canvas elements from the PREVIEW (already rendered with QR codes)
-    const originalCanvases = previewElement.querySelectorAll("canvas");
-
-    // Wait a bit to ensure QR codes are fully rendered
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Convert all canvas QR codes to data URLs from the preview
-    const qrCodeDataUrls = new Map<string, string>();
-    originalCanvases.forEach((canvas) => {
-      try {
-        const dataQr = canvas.getAttribute("data-qr");
-        if (dataQr) {
-          const dataUrl = canvas.toDataURL("image/png");
-          qrCodeDataUrls.set(dataQr, dataUrl);
-          console.log(`Captured QR code: ${dataQr}`, dataUrl.substring(0, 50));
-        }
-      } catch (e) {
-        console.warn("Could not convert canvas to image:", e);
-      }
-    });
-
-    // Clone the certificate content from preview
-    const clonedContent = previewElement.cloneNode(true) as HTMLElement;
-
-    // Replace all canvas elements in cloned content with images
-    const clonedCanvases = clonedContent.querySelectorAll("canvas");
-    clonedCanvases.forEach((canvas) => {
-      const dataQr = canvas.getAttribute("data-qr");
-      if (dataQr && qrCodeDataUrls.has(dataQr)) {
-        const img = document.createElement("img");
-        img.src = qrCodeDataUrls.get(dataQr)!;
-
-        // Copy all attributes and styles
-        img.setAttribute("data-qr", dataQr);
-        img.className = canvas.className;
-
-        // Copy dimensions from canvas
-        const computedStyle = window.getComputedStyle(canvas);
-        img.style.width = canvas.style.width || computedStyle.width;
-        img.style.height = canvas.style.height || computedStyle.height;
-        img.style.display = computedStyle.display;
-        img.style.imageRendering = "crisp-edges";
-
-        // Replace canvas with image
-        canvas.parentNode?.replaceChild(img, canvas);
-        console.log(`Replaced canvas ${dataQr} with image`);
-      }
-    });
-
-    // Get all stylesheets from current document
-    const styleSheets = Array.from(document.styleSheets);
-    let allStyles = "";
-
-    // Extract CSS rules from all stylesheets
-    styleSheets.forEach((sheet) => {
-      try {
-        if (sheet.cssRules) {
-          Array.from(sheet.cssRules).forEach((rule) => {
-            allStyles += rule.cssText + "\n";
-          });
-        }
-      } catch (e) {
-        // Some stylesheets might have CORS issues, skip them
-        console.warn("Could not access stylesheet:", e);
-      }
-    });
-
-    // Get all style tags
-    const styleTags = Array.from(document.querySelectorAll("style"));
-    styleTags.forEach((tag) => {
-      allStyles += tag.innerHTML + "\n";
-    });
-
-    // Create new window for printing
-    const printWindow = window.open("", "_blank", "width=1123,height=794");
-    if (!printWindow) {
-      alert("Popup diblokir! Mohon izinkan popup untuk mencetak.");
-      return;
-    }
-
-    // Get certificate ID for QR code generation
-    const certificateId =
-      activeStudent.verificationId || "001/IF/20222/A.5-II/IX/1446/2024";
-
-    // Wrap cloned content in proper structure for print
-    const printContent = `
-      <div class="a4-landscape" style="width: 297mm; height: 210mm; position: relative; background: white; overflow: hidden;">
-        ${clonedContent.innerHTML}
-      </div>
-    `;
-
-    // Write clean HTML structure to new window with all existing styles
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Sertifikat Laboratorium - ${activeStudent.name}</title>
-          
-          <!-- Import Google Fonts used by the certificate -->
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-          
-          <style>
-            /* Copy all existing styles from main document */
-            ${allStyles}
-            
-            /* Additional print-specific overrides */
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
-
-            /* Page setup for A4 landscape */
-            @page {
-              size: A4 landscape;
-              margin: 0;
-            }
-
-            html, body {
-              width: 297mm;
-              height: 210mm;
-              margin: 0 !important;
-              padding: 0 !important;
-              background: white;
-              overflow: hidden;
-            }
-
-            /* Enable exact color printing - CRITICAL */
-            *,
-            *::before,
-            *::after {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-            }
-
-            /* Certificate container */
-            .a4-landscape {
-              width: 297mm !important;
-              height: 210mm !important;
-              position: relative;
-              background: white;
-              overflow: hidden;
-              page-break-after: avoid;
-              page-break-inside: avoid;
-            }
-
-            .certificate-content {
-              width: 100% !important;
-              height: 100% !important;
-              position: relative;
-            }
-
-            /* Hide elements that shouldn't be printed */
-            .no-print,
-            button,
-            input,
-            select,
-            textarea,
-            nav,
-            header:not(.certificate-header),
-            footer:not(.certificate-footer) {
-              display: none !important;
-            }
-
-            /* Ensure all backgrounds and colors print */
-            .bg-gradient-to-br,
-            .bg-gradient-to-r,
-            .bg-gradient-to-t,
-            .bg-gradient-to-b,
-            .bg-gradient-to-l,
-            [class*="bg-"],
-            [class*="text-"],
-            [class*="border-"],
-            [style*="background"],
-            [style*="color"] {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-            }
-
-            /* Preserve specific opacity values for decorative elements */
-            .opacity-15 {
-              opacity: 0.15 !important;
-            }
-
-            .opacity-30 {
-              opacity: 0.30 !important;
-            }
-
-            .opacity-3 {
-              opacity: 0.03 !important;
-            }
-
-            .opacity-\[0\.03\],
-            [class*="print:opacity-"] {
-              opacity: 0.03 !important;
-            }
-
-            .opacity-\[0\.25\] {
-              opacity: 0.25 !important;
-            }
-
-            /* Ensure images print correctly */
-            img {
-              max-width: 100%;
-              height: auto;
-              page-break-inside: avoid;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-
-            /* SVG and canvas (for QR code) */
-            svg, canvas {
-              page-break-inside: avoid;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-
-            /* Print-specific rules */
-            @media print {
-              html, body {
-                width: 297mm !important;
-                height: 210mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: hidden !important;
-              }
-
-              .a4-landscape {
-                page-break-after: avoid !important;
-                page-break-before: avoid !important;
-                page-break-inside: avoid !important;
-                width: 297mm !important;
-                height: 210mm !important;
-              }
-
-              /* Force single page */
-              body > * {
-                page-break-after: avoid !important;
-                page-break-before: avoid !important;
-              }
-
-              /* Ensure all colors print */
-              * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-              }
-
-              /* Preserve opacity for decorative elements in print */
-              .opacity-15 {
-                opacity: 0.15 !important;
-              }
-
-              .opacity-30 {
-                opacity: 0.30 !important;
-              }
-
-              .opacity-3 {
-                opacity: 0.03 !important;
-              }
-
-              .opacity-\[0\.03\],
-              [class*="print:opacity-"] {
-                opacity: 0.03 !important;
-              }
-
-              .opacity-\[0\.25\] {
-                opacity: 0.25 !important;
-              }
-            }
-
-            /* Screen preview in popup */
-            @media screen {
-              body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #f3f4f6;
-                min-height: 100vh;
-              }
-              
-              .a4-landscape {
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                margin: 20px;
-              }
-            }
-
-            /* Remove any transforms that might affect layout */
-            .print-reset {
-              transform: none !important;
-              transition: none !important;
-            }
-
-            /* QR Code images should maintain aspect ratio */
-            img[data-qr] {
-              image-rendering: crisp-edges;
-              image-rendering: -webkit-optimize-contrast;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="print-reset">
-            ${printContent}
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-
-    // Wait for content and fonts to load, then trigger print
-    printWindow.onload = () => {
-      // Delay to ensure fonts and images are loaded
-      setTimeout(() => {
-        console.log("Print window loaded, triggering print...");
-
-        // Setup event listener for after print
-        printWindow.onafterprint = () => {
-          console.log("Print dialog closed, closing window...");
-          printWindow.close();
-        };
-
-        // Also handle window beforeunload for cancel case
-        printWindow.onbeforeunload = () => {
-          console.log("Window closing...");
-        };
-
-        printWindow.focus();
-        printWindow.print();
-      }, 1000); // Give time for fonts to load
-    };
-  };
 
   // Generate PDF for a single certificate
   const generateCertificatePDF = async (
@@ -902,8 +625,8 @@ function GenerateCertificatesPage() {
     tempContainer.style.position = "fixed";
     tempContainer.style.left = "-9999px";
     tempContainer.style.top = "0";
-    tempContainer.style.width = "1123px"; // A4 landscape width in pixels at 96dpi
-    tempContainer.style.height = "794px"; // A4 landscape height in pixels at 96dpi
+    tempContainer.style.width = "1123px";
+    tempContainer.style.height = "794px";
     document.body.appendChild(tempContainer);
 
     try {
@@ -930,7 +653,7 @@ function GenerateCertificatesPage() {
 
       // Capture the rendered content
       const canvas = await html2canvas(tempContainer, {
-        scale: 2,
+        scale: 1.5, // Reduced from 2 to 1.5 for smaller file size (still high quality)
         useCORS: true,
         logging: false,
         width: 1123,
@@ -938,15 +661,17 @@ function GenerateCertificatesPage() {
         backgroundColor: "#ffffff",
       });
 
-      // Create PDF
+      // Create PDF with compression
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "mm",
         format: "a4",
+        compress: true, // Enable PDF compression
       });
 
-      const imgData = canvas.toDataURL("image/png");
-      pdf.addImage(imgData, "PNG", 0, 0, 297, 210);
+      // Convert to JPEG for better compression (instead of PNG)
+      const imgData = canvas.toDataURL("image/jpeg", 0.85); // 85% quality JPEG
+      pdf.addImage(imgData, "JPEG", 0, 0, 297, 210, undefined, "FAST"); // Use FAST compression
 
       // Cleanup
       root.unmount();
@@ -959,6 +684,19 @@ function GenerateCertificatesPage() {
       document.body.removeChild(tempContainer);
       throw error;
     }
+  };
+
+  // Convert PDF Blob to base64 for upload
+  const pdfBlobToBase64 = async (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   };
 
   // Download all certificates as ZIP
@@ -1005,124 +743,75 @@ function GenerateCertificatesPage() {
 
     setIsGeneratingBatch(true);
     setBatchProgress({ current: 0, total: records.length });
+    setBatchPhase("Generating PDFs");
 
     try {
-      // 🔥 STEP 1: SAVE TO DATABASE FIRST
-      console.log("💾 Saving certificates to database...");
+      // STEP 1: GENERATE PDFs (Store as Blobs for ZIP)
+      console.log("Generating PDFs for all certificates...");
+      const pdfBlobs: Array<{ blob: Blob; record: StudentDataType }> = [];
 
-      try {
-        const saveResponse = await fetch("/api/certificates/laboratory/bulk", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ certificates: records }),
-        });
-
-        const saveResult = await saveResponse.json();
-
-        if (!saveResponse.ok) {
-          // Show warning but allow user to continue
-          const continueWithoutSave = window.confirm(
-            `⚠️ Gagal menyimpan ke database:\n${saveResult.error}\n\n` +
-              `Apakah Anda tetap ingin melanjutkan download ZIP?\n` +
-              `(Data tidak akan tersimpan di database)`
-          );
-
-          if (!continueWithoutSave) {
-            throw new Error("User cancelled: Database save failed");
-          }
-
-          console.warn("⚠️ Continuing without database save");
-        } else {
-          console.log(
-            `✅ Successfully saved ${saveResult.count} certificates to database`
-          );
-          setSaved(true);
-
-          // Optional: Show brief success message
-          // User doesn't need to click OK, just shows for 2 seconds
-          const successMsg = document.createElement("div");
-          successMsg.textContent = `✅ ${saveResult.count} sertifikat disimpan ke database`;
-          successMsg.style.cssText =
-            "position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:16px 24px;border-radius:8px;z-index:9999;font-weight:600;box-shadow:0 4px 6px rgba(0,0,0,0.1)";
-          document.body.appendChild(successMsg);
-          setTimeout(() => document.body.removeChild(successMsg), 3000);
-        }
-      } catch (saveError: any) {
-        console.error("❌ Database save error:", saveError);
-
-        // Ask if user wants to continue without saving
-        const continueWithoutSave = window.confirm(
-          `❌ Error menyimpan ke database:\n${saveError.message}\n\n` +
-            `Apakah Anda tetap ingin melanjutkan download ZIP?\n` +
-            `(Data tidak akan tersimpan di database)`
-        );
-
-        if (!continueWithoutSave) {
-          throw new Error("User cancelled: Database save failed");
-        }
-      }
-
-      // 🔥 STEP 2: GENERATE ZIP FILE
-      console.log("📦 Generating ZIP file...");
-      const zip = new JSZip();
-
-      // Generate PDF for each student (front page only)
       for (let i = 0; i < records.length; i++) {
-        const student = records[i];
+        const cert = records[i];
         setBatchProgress({ current: i + 1, total: records.length });
 
         try {
-          // Generate front page PDF
-          const pdfBlob = await generateCertificatePDF(student, false);
+          // Generate PDF - keep as blob (no base64 conversion yet)
+          const pdfBlob = await generateCertificatePDF(cert, false);
+          pdfBlobs.push({ blob: pdfBlob, record: cert });
 
-          // Create safe filename: Name_Certificate-Number.pdf
-          const safeName = student.name
-            .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
-            .replace(/\s+/g, "_") // Replace spaces with underscore
-            .substring(0, 50); // Limit length
-
-          const safeCertId = student.verificationId
-            .replace(/\//g, "-") // Replace / with -
-            .replace(/[^a-zA-Z0-9\-]/g, ""); // Remove other special chars
-
-          const filename = `${safeName}_${safeCertId}.pdf`;
-
-          // Add to ZIP
-          zip.file(filename, pdfBlob);
-
-          // 🔧 OPTIMIZATION: Force garbage collection hint every 10 items
+          // Brief pause every 10 items to prevent memory overload
           if ((i + 1) % 10 === 0) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 50));
           }
         } catch (error) {
-          console.error(
-            `Error generating certificate for ${student.name}:`,
-            error
-          );
-
-          // Ask user if they want to continue
-          const continueOnError = window.confirm(
-            `❌ Error saat generate sertifikat untuk:\n${student.name}\n\n` +
-              `Sudah berhasil: ${i} dari ${records.length}\n\n` +
-              `Lanjutkan dengan sertifikat berikutnya?`
-          );
-
-          if (!continueOnError) {
-            throw new Error("User cancelled batch generation");
-          }
+          console.error(`Error generating PDF for ${cert.name}:`, error);
         }
       }
 
-      // Generate ZIP file
+      // STEP 2: CREATE ZIP FILE IMMEDIATELY
+      console.log("Creating ZIP file...");
+      setBatchPhase("Creating ZIP");
+      setBatchProgress({ current: 0, total: pdfBlobs.length });
+
+      const zip = new JSZip();
+
+      // Add PDFs directly to ZIP (no base64 conversion needed)
+      for (let i = 0; i < pdfBlobs.length; i++) {
+        const { blob, record } = pdfBlobs[i];
+        setBatchProgress({ current: i + 1, total: pdfBlobs.length });
+
+        try {
+          const safeName = record.name
+            .replace(/[^a-zA-Z0-9\s]/g, "")
+            .replace(/\s+/g, "_")
+            .substring(0, 50);
+
+          const safeCertId = record.verificationId
+            .replace(/\//g, "-")
+            .replace(/[^a-zA-Z0-9\-]/g, "");
+
+          const filename = `${safeName}_${safeCertId}.pdf`;
+          zip.file(filename, blob);
+        } catch (error) {
+          console.error(
+            `Error adding certificate to ZIP for ${record.name}:`,
+            error
+          );
+        }
+      }
+
+      // Generate ZIP blob
+      console.log("Compressing ZIP...");
+      setBatchPhase("Compressing ZIP");
       const zipBlob = await zip.generateAsync({
         type: "blob",
         compression: "DEFLATE",
         compressionOptions: { level: 6 },
       });
 
-      // Download ZIP
+      // STEP 3: DOWNLOAD ZIP IMMEDIATELY
+      console.log("Downloading ZIP...");
+      setBatchPhase("Downloading ZIP");
       const link = document.createElement("a");
       link.href = URL.createObjectURL(zipBlob);
       link.download = `Sertifikat_Laboratorium_${new Date().getTime()}.zip`;
@@ -1131,28 +820,130 @@ function GenerateCertificatesPage() {
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href);
 
-      alert(
-        `✅ Berhasil mengunduh ${records.length} sertifikat dalam format ZIP!\n\n` +
-          `File telah tersimpan di folder Downloads Anda.`
-      );
+      // Show success toast
+      toast({
+        title: "📦 ZIP Downloaded!",
+        description: `${pdfBlobs.length} sertifikat telah diunduh. Sedang menyimpan ke database...`,
+        duration: 3000,
+        variant: "default",
+      });
+
+      // STEP 4: UPLOAD TO DATABASE IN BACKGROUND (non-blocking)
+      console.log("Uploading to database & MinIO in background...");
+      setBatchPhase("Uploading to Database");
+      setBatchProgress({ current: 0, total: pdfBlobs.length });
+
+      // Convert blobs to base64 for upload (do this AFTER ZIP download)
+      const certificatesWithPdf: Array<any> = [];
+      for (let i = 0; i < pdfBlobs.length; i++) {
+        const { blob, record } = pdfBlobs[i];
+        setBatchProgress({ current: i + 1, total: pdfBlobs.length });
+
+        try {
+          const pdfBase64 = await pdfBlobToBase64(blob);
+          certificatesWithPdf.push({
+            ...record,
+            issueDate: record.issueDateRaw
+              ? record.issueDateRaw.toISOString()
+              : new Date().toISOString(),
+            pdfBase64: pdfBase64,
+          });
+
+          if ((i + 1) % 10 === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+          }
+        } catch (error) {
+          console.error(
+            `Error converting PDF to base64 for ${record.name}:`,
+            error
+          );
+          certificatesWithPdf.push({
+            ...record,
+            issueDate: record.issueDateRaw
+              ? record.issueDateRaw.toISOString()
+              : new Date().toISOString(),
+            pdfBase64: null,
+          });
+        }
+      }
+
+      // Upload to database & MinIO
+      try {
+        const saveResponse = await fetch("/api/certificates/laboratory/bulk", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            certificates: certificatesWithPdf,
+          }),
+        });
+
+        const saveResult = await saveResponse.json();
+
+        if (!saveResponse.ok) {
+          console.warn("Database save failed:", saveResult.error);
+          toast({
+            title: "⚠️ Upload Gagal",
+            description: `ZIP sudah terdownload, tapi gagal simpan ke database: ${saveResult.error}`,
+            duration: 5000,
+            variant: "destructive",
+          });
+        } else {
+          console.log(
+            `Successfully saved ${
+              saveResult.created + saveResult.updated
+            } certificates to database`
+          );
+          setSaved(true);
+
+          toast({
+            title: "✅ Selesai!",
+            description: `${
+              saveResult.created + saveResult.updated
+            } sertifikat berhasil disimpan ke database & MinIO`,
+            duration: 4000,
+            variant: "default",
+          });
+
+          if (saveResult.failed > 0) {
+            console.warn(
+              `Failed: ${saveResult.failed}`,
+              saveResult.failedCerts
+            );
+            toast({
+              title: "⚠️ Beberapa Gagal Upload",
+              description: `${saveResult.failed} sertifikat gagal diupload ke database/MinIO`,
+              duration: 5000,
+              variant: "destructive",
+            });
+          }
+        }
+      } catch (saveError: any) {
+        console.error("Database save error:", saveError);
+        toast({
+          title: "⚠️ Upload Gagal",
+          description: `ZIP sudah terdownload, tapi gagal simpan ke database: ${saveError.message}`,
+          duration: 5000,
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Error generating batch PDFs:", error);
 
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
 
-      alert(
-        `❌ Terjadi kesalahan saat generate sertifikat.\n\n` +
-          `Error: ${errorMessage}\n\n` +
-          `Saran:\n` +
-          `• Coba dengan batch lebih kecil (${MAX_RECOMMENDED} sertifikat)\n` +
-          `• Tutup tab/aplikasi lain untuk free up memory\n` +
-          `• Refresh halaman dan coba lagi\n` +
-          `• Hubungi administrator jika masalah berlanjut`
-      );
+      toast({
+        title: "❌ Gagal Generate Sertifikat",
+        description: `${errorMessage}. Coba dengan batch lebih kecil atau hubungi administrator.`,
+        duration: 5000,
+        variant: "destructive",
+      });
     } finally {
       setIsGeneratingBatch(false);
       setBatchProgress({ current: 0, total: 0 });
+      setBatchPhase("");
     }
   };
 
@@ -1180,7 +971,7 @@ function GenerateCertificatesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full overflow-x-hidden">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Generate Sertifikat Laboratorium
@@ -1190,8 +981,8 @@ function GenerateCertificatesPage() {
           akan otomatis mencetak dua halaman.
         </p>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="space-y-6 xl:col-span-1">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
+        <div className="space-y-6 xl:col-span-1 w-full min-w-0">
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-base flex items-center gap-2">
@@ -1425,6 +1216,39 @@ function GenerateCertificatesPage() {
                 </Button>
               </div>
 
+              {/* Warning Messages */}
+              {warnings.length > 0 && (
+                <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-3">
+                  <p className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-2 flex items-center gap-1">
+                    <span>⚠️</span>
+                    <span>
+                      Peringatan ({warnings.length} masalah ditemukan)
+                    </span>
+                  </p>
+                  <ul className="text-[10px] text-amber-700 dark:text-amber-300 space-y-0.5 ml-4 list-disc max-h-32 overflow-y-auto">
+                    {warnings.map((warning, idx) => (
+                      <li key={idx}>{warning}</li>
+                    ))}
+                  </ul>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2 italic">
+                    Perbaiki data di Excel dan upload ulang untuk hasil terbaik.
+                  </p>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {error && (
+                <div className="rounded-md bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 p-3">
+                  <p className="text-xs font-medium text-red-900 dark:text-red-100 mb-1 flex items-center gap-1">
+                    <span>❌</span>
+                    <span>Error</span>
+                  </p>
+                  <p className="text-[10px] text-red-700 dark:text-red-300">
+                    {error}
+                  </p>
+                </div>
+              )}
+
               {/* Print Instructions - Always visible */}
               <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 p-3">
                 <p className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
@@ -1530,46 +1354,53 @@ function GenerateCertificatesPage() {
               {isGeneratingBatch && (
                 <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-3">
                   <p className="text-xs font-medium text-amber-900 dark:text-amber-100 mb-2">
-                    ⏳ Sedang generate PDF...
+                    ⏳ {batchPhase || "Sedang generate PDF..."}
                   </p>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div
                       className="bg-amber-600 h-2 rounded-full transition-all duration-300"
                       style={{
                         width: `${
-                          (batchProgress.current / batchProgress.total) * 100
+                          batchProgress.total > 0
+                            ? (batchProgress.current / batchProgress.total) *
+                              100
+                            : 0
                         }%`,
                       }}
                     />
                   </div>
                   <p className="text-[10px] text-amber-700 dark:text-amber-300">
                     Progress: {batchProgress.current} / {batchProgress.total}{" "}
-                    sertifikat
+                    {batchPhase === "Uploading to Database"
+                      ? "uploaded"
+                      : "sertifikat"}
                   </p>
                   <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1">
-                    Mohon tunggu, jangan tutup halaman ini...
+                    {batchPhase === "Uploading to Database"
+                      ? "ZIP sudah terdownload. Sedang upload ke database..."
+                      : "Mohon tunggu, jangan tutup halaman ini..."}
                   </p>
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
-        <div className="space-y-6 xl:col-span-2">
-          <Card className="relative">
+        <div className="space-y-6 xl:col-span-2 w-full min-w-0">
+          <Card className="relative w-full">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Preview Sertifikat</CardTitle>
               <CardDescription className="text-xs">
                 Preview sertifikat laboratorium. Gunakan Print untuk mencetak.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-hidden w-full">
               <div
                 ref={previewContainerRef}
-                className="w-full overflow-auto rounded-md border bg-background p-4 preview-scroll"
+                className="w-full overflow-x-auto overflow-y-auto rounded-md border bg-background p-2 preview-scroll"
               >
-                <div className="mx-auto" style={{ width: "297mm" }}>
+                <div className="inline-flex justify-center items-start min-w-full">
                   <div
-                    className="a4-landscape relative origin-top mx-auto"
+                    className="a4-landscape relative origin-top-left flex-shrink-0"
                     style={{ transform: `scale(${zoom})` }}
                   >
                     <div className="relative certificate-content">
@@ -1584,8 +1415,9 @@ function GenerateCertificatesPage() {
               </div>
               {records.length > 0 && (
                 <p className="text-[11px] text-muted-foreground mt-3">
-                  Preview sertifikat. Gunakan tombol Print untuk mencetak dengan
-                  ukuran A4 Landscape.
+                  Preview sertifikat {selectedIndex + 1} dari {records.length}.
+                  Gunakan tombol Print untuk mencetak dengan ukuran A4
+                  Landscape.
                 </p>
               )}
             </CardContent>
@@ -1607,10 +1439,8 @@ function GenerateCertificatesPage() {
       <style jsx global>{`
         /* Certificate preview styles */
         .a4-landscape {
-          width: 297mm;
-          height: 210mm;
-          max-width: 297mm;
-          max-height: 210mm;
+          width: 1123px; /* A4 landscape width in pixels at 96dpi */
+          height: 794px; /* A4 landscape height in pixels at 96dpi */
           position: relative;
           box-sizing: border-box;
           background: white;
@@ -1627,6 +1457,8 @@ function GenerateCertificatesPage() {
 
         .preview-scroll {
           max-height: calc(100vh - 300px);
+          width: 100%;
+          max-width: 100%;
         }
 
         .preview-scroll::-webkit-scrollbar {
@@ -1641,6 +1473,11 @@ function GenerateCertificatesPage() {
 
         .preview-scroll::-webkit-scrollbar-track {
           background: transparent;
+        }
+
+        /* Prevent horizontal page overflow */
+        body {
+          overflow-x: hidden;
         }
       `}</style>
     </div>
