@@ -124,10 +124,10 @@ export default function VerifyCertificatePage() {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center justify-center space-y-4">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="text-lg font-medium">
-                Memverifikasi sertifikat...
+              <p className="text-lg font-medium">Memverifikasi sertifikat...</p>
+              <p className="text-sm text-muted-foreground">
+                Mohon tunggu sebentar
               </p>
-              <p className="text-sm text-muted-foreground">Mohon tunggu sebentar</p>
             </div>
           </CardContent>
         </Card>
@@ -260,7 +260,9 @@ export default function VerifyCertificatePage() {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {certificate.meetings && (
                           <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">Pertemuan</p>
+                            <p className="text-xs text-muted-foreground">
+                              Pertemuan
+                            </p>
                             <p className="text-lg font-semibold">
                               {certificate.meetings}x
                             </p>
@@ -268,7 +270,9 @@ export default function VerifyCertificatePage() {
                         )}
                         {certificate.totalScore && (
                           <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">Total Skor</p>
+                            <p className="text-xs text-muted-foreground">
+                              Total Skor
+                            </p>
                             <p className="text-lg font-semibold">
                               {certificate.totalScore}
                             </p>
@@ -276,7 +280,9 @@ export default function VerifyCertificatePage() {
                         )}
                         {certificate.overallGrade && (
                           <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">Grade</p>
+                            <p className="text-xs text-muted-foreground">
+                              Grade
+                            </p>
                             <p className="text-lg font-semibold">
                               {certificate.overallGrade}
                             </p>
@@ -284,7 +290,9 @@ export default function VerifyCertificatePage() {
                         )}
                         {certificate.attendanceRate !== undefined && (
                           <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">Kehadiran</p>
+                            <p className="text-xs text-muted-foreground">
+                              Kehadiran
+                            </p>
                             <p className="text-lg font-semibold">
                               {certificate.attendanceRate}%
                             </p>
@@ -292,7 +300,9 @@ export default function VerifyCertificatePage() {
                         )}
                         {certificate.assignmentCompletion !== undefined && (
                           <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">Tugas</p>
+                            <p className="text-xs text-muted-foreground">
+                              Tugas
+                            </p>
                             <p className="text-lg font-semibold">
                               {certificate.assignmentCompletion}%
                             </p>
@@ -300,7 +310,9 @@ export default function VerifyCertificatePage() {
                         )}
                         {certificate.learningHours && (
                           <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">Jam Belajar</p>
+                            <p className="text-xs text-muted-foreground">
+                              Jam Belajar
+                            </p>
                             <p className="text-lg font-semibold">
                               {certificate.learningHours}h
                             </p>
@@ -324,10 +336,7 @@ export default function VerifyCertificatePage() {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {certificate.technologies.map((tech, index) => (
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                              >
+                              <Badge key={index} variant="secondary">
                                 {tech}
                               </Badge>
                             ))}
@@ -361,9 +370,7 @@ export default function VerifyCertificatePage() {
                         <p className="text-sm font-medium text-muted-foreground">
                           Tanda Tangan Digital
                         </p>
-                        <p className="text-base">
-                          {certificate.signedBy}
-                        </p>
+                        <p className="text-base">{certificate.signedBy}</p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Ditandatangani: {formatDate(certificate.signedAt)}
                         </p>
@@ -399,9 +406,7 @@ export default function VerifyCertificatePage() {
                 <div className="flex items-start space-x-2">
                   <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium">
-                      Informasi Verifikasi
-                    </p>
+                    <p className="text-sm font-medium">Informasi Verifikasi</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Sertifikat ini telah terverifikasi dan terdaftar dalam
                       sistem database Laboratorium Informatika. Data yang
@@ -439,9 +444,7 @@ export default function VerifyCertificatePage() {
               </div>
 
               <div className="mt-6 space-y-2">
-                <p className="text-sm font-medium">
-                  Kemungkinan penyebab:
-                </p>
+                <p className="text-sm font-medium">Kemungkinan penyebab:</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                   <li>QR Code rusak atau tidak dapat dibaca</li>
                   <li>Sertifikat belum terdaftar dalam sistem</li>
