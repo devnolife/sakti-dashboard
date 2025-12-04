@@ -96,7 +96,7 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="overflow-y-auto scrollbar-hide">
         <SidebarGroup>
           <SidebarGroupLabel className="text-sm font-semibold">Menu</SidebarGroupLabel>
           <SidebarMenu className="gap-2">
