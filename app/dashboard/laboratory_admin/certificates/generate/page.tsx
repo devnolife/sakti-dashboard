@@ -39,14 +39,15 @@ function formatIssueDate(date: Date = new Date()) {
 }
 
 function generateVerificationId(
-  rowNumber: number,
+  certificateNumber: number,
   monthRoman?: string,
   yearHijri?: string,
   yearMasehi?: string
 ) {
   // Format: {no}/IF/20222/A.5-II/IX/44/2022
-  // no = 3-digit row number (001, 002, etc.)
-  const no = String(rowNumber).padStart(3, "0");
+  // no = 3-digit certificate number (001, 002, etc.)
+  // certificateNumber is now GLOBAL incremental number from database
+  const no = String(certificateNumber).padStart(3, "0");
   const month = monthRoman || "I";
 
   // Use only last 2 digits of Hijriah year
@@ -73,6 +74,8 @@ const defaultStudentData = {
   monthRoman: "IX",
   yearHijri: "44",
   yearMasehi: "2022",
+  _isUpdate: false, // Flag to indicate if this is an update (for UI indication)
+  _currentName: undefined as string | undefined, // Current name in database (if update)
 };
 
 type StudentDataType = typeof defaultStudentData;
@@ -121,7 +124,7 @@ interface StudentRowRaw {
 }
 
 // Simplified row mapper - only process data needed for front page
-function buildRowMapper(warningsRef: string[]) {
+function buildRowMapper(warningsRef: string[], startingNumber: number) {
   return function mapRowToStudentWithWarn(
     row: any,
     rowIdx: number
@@ -241,8 +244,9 @@ function buildRowMapper(warningsRef: string[]) {
       program || "Program"
     } yang mencakup teori, praktik, serta pengembangan kemampuan sesuai bidang keahlian.`;
 
-    // Generate verification ID with row number (1-based index for display)
-    const rowNumber = rowIdx + 1;
+    // GLOBAL INCREMENTAL NUMBER: startingNumber + rowIdx
+    // This ensures continuous numbering across all uploads
+    const certificateNumber = startingNumber + rowIdx;
 
     // Generate issue date - store both formatted string and raw Date object
     const issueDateRaw = new Date();
@@ -257,7 +261,7 @@ function buildRowMapper(warningsRef: string[]) {
       issueDate: formatIssueDate(issueDateRaw), // For display
       issueDateRaw: issueDateRaw, // For database
       verificationId: generateVerificationId(
-        rowNumber,
+        certificateNumber,
         monthRoman,
         yearHijri,
         yearMasehi
@@ -341,122 +345,294 @@ function GenerateCertificatesPage() {
     setSaved(false); // Reset saved status
     setSelectedIndex(0); // Reset to first record
     const localWarnings: string[] = [];
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      try {
-        const data = new Uint8Array(evt.target?.result as ArrayBuffer);
-        const wb = XLSX.read(data, {
-          type: "array",
-          cellDates: true,
-          cellText: true, // Enable cell text reading
-          cellNF: true, // Read number format
-        });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        if (!sheet) {
-          setError("Sheet pertama tidak ditemukan.");
-          setUploading(false);
-          return;
-        }
 
-        // Read with raw: true first to get original data
-        const json: StudentRowRaw[] = XLSX.utils.sheet_to_json(sheet, {
-          defval: "",
-          raw: false, // Use formatted values (this reads the 'w' property)
-        });
+    try {
+      // STEP 1: Fetch next certificate number from database (GLOBAL INCREMENT)
+      console.log("🔢 Fetching next certificate number from database...");
+      const response = await fetch("/api/certificates/laboratory/next-number");
 
-        console.log("📊 Raw Excel Data:", json); // Debug log
+      if (!response.ok) {
+        throw new Error("Failed to fetch next certificate number");
+      }
 
-        if (!json.length) {
-          setError("File kosong atau format tidak sesuai.");
-          setUploading(false);
-          return;
-        }
+      const { nextNumber, highestNumber, totalCertificates } =
+        await response.json();
+      console.log(`📊 Database Status:`, {
+        highestNumber,
+        nextNumber,
+        totalCertificates,
+      });
 
-        // ADVANCED FIX: Extract NIM directly from cell's formatted text (w property)
-        // This preserves the full digit display even if Excel stored it as number
-        const range = XLSX.utils.decode_range(sheet["!ref"] || "A1");
+      // Show info toast
+      toast({
+        title: "🔢 Nomor Sertifikat",
+        description: `Nomor tertinggi: ${String(highestNumber).padStart(
+          3,
+          "0"
+        )} | Nomor berikutnya: ${String(nextNumber).padStart(3, "0")}`,
+        duration: 3000,
+        variant: "default",
+      });
 
-        // Find NIM column index (column B or any column with "NIM" header)
-        const headers = XLSX.utils.sheet_to_json(sheet, {
-          header: 1,
-        })[0] as string[];
-        const nimColumnIndex = headers.findIndex((h) =>
-          String(h).toLowerCase().includes("nim")
-        );
+      // STEP 2: Process Excel file
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const data = new Uint8Array(evt.target?.result as ArrayBuffer);
+          const wb = XLSX.read(data, {
+            type: "array",
+            cellDates: true,
+            cellText: true, // Enable cell text reading
+            cellNF: true, // Read number format
+          });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          if (!sheet) {
+            setError("Sheet pertama tidak ditemukan.");
+            setUploading(false);
+            return;
+          }
 
-        if (nimColumnIndex >= 0) {
-          // Process each data row and extract NIM from cell's formatted text
-          for (let rowIdx = 0; rowIdx < json.length; rowIdx++) {
-            const cellAddress = XLSX.utils.encode_cell({
-              r: rowIdx + 1, // +1 because row 0 is header
-              c: nimColumnIndex,
-            });
-            const cell = sheet[cellAddress];
+          // Read with raw: true first to get original data
+          const json: StudentRowRaw[] = XLSX.utils.sheet_to_json(sheet, {
+            defval: "",
+            raw: false, // Use formatted values (this reads the 'w' property)
+          });
 
-            if (cell) {
-              // Priority: formatted text (w) > string value (t='s') > number (t='n')
-              if (cell.w && String(cell.w).trim()) {
-                // 'w' contains the displayed/formatted text - this is what user sees
-                json[rowIdx]["NIM"] = String(cell.w).trim();
-              } else if (cell.t === "s" && cell.v) {
-                // Cell type is string
-                json[rowIdx]["NIM"] = String(cell.v).trim();
-              } else if (cell.v !== undefined) {
-                // Fallback: convert value to string
-                const nimValue =
-                  typeof cell.v === "number"
-                    ? cell.v.toFixed(0)
-                    : String(cell.v);
-                json[rowIdx]["NIM"] = nimValue.trim();
+          console.log("📊 Raw Excel Data:", json); // Debug log
 
-                // Warn if it's a large number (precision loss risk)
-                if (
-                  typeof cell.v === "number" &&
-                  cell.v > Number.MAX_SAFE_INTEGER
-                ) {
-                  localWarnings.push(
-                    `Baris ${
-                      rowIdx + 2
-                    }: NIM sebagai Number terlalu besar (precision loss). ` +
-                      `Untuk hasil akurat, format kolom NIM sebagai TEXT di Excel.`
-                  );
+          if (!json.length) {
+            setError("File kosong atau format tidak sesuai.");
+            setUploading(false);
+            return;
+          }
+
+          // ADVANCED FIX: Extract NIM directly from cell's formatted text (w property)
+          // This preserves the full digit display even if Excel stored it as number
+          const range = XLSX.utils.decode_range(sheet["!ref"] || "A1");
+
+          // Find NIM column index (column B or any column with "NIM" header)
+          const headers = XLSX.utils.sheet_to_json(sheet, {
+            header: 1,
+          })[0] as string[];
+          const nimColumnIndex = headers.findIndex((h) =>
+            String(h).toLowerCase().includes("nim")
+          );
+
+          if (nimColumnIndex >= 0) {
+            // Process each data row and extract NIM from cell's formatted text
+            for (let rowIdx = 0; rowIdx < json.length; rowIdx++) {
+              const cellAddress = XLSX.utils.encode_cell({
+                r: rowIdx + 1, // +1 because row 0 is header
+                c: nimColumnIndex,
+              });
+              const cell = sheet[cellAddress];
+
+              if (cell) {
+                // Priority: formatted text (w) > string value (t='s') > number (t='n')
+                if (cell.w && String(cell.w).trim()) {
+                  // 'w' contains the displayed/formatted text - this is what user sees
+                  json[rowIdx]["NIM"] = String(cell.w).trim();
+                } else if (cell.t === "s" && cell.v) {
+                  // Cell type is string
+                  json[rowIdx]["NIM"] = String(cell.v).trim();
+                } else if (cell.v !== undefined) {
+                  // Fallback: convert value to string
+                  const nimValue =
+                    typeof cell.v === "number"
+                      ? cell.v.toFixed(0)
+                      : String(cell.v);
+                  json[rowIdx]["NIM"] = nimValue.trim();
+
+                  // Warn if it's a large number (precision loss risk)
+                  if (
+                    typeof cell.v === "number" &&
+                    cell.v > Number.MAX_SAFE_INTEGER
+                  ) {
+                    localWarnings.push(
+                      `Baris ${
+                        rowIdx + 2
+                      }: NIM sebagai Number terlalu besar (precision loss). ` +
+                        `Untuk hasil akurat, format kolom NIM sebagai TEXT di Excel.`
+                    );
+                  }
                 }
               }
             }
           }
+
+          // STEP 3: Map data with GLOBAL incremental numbering
+          const mapper = buildRowMapper(localWarnings, nextNumber);
+          const mapped = json.map((row, idx) => mapper(row, idx));
+
+          console.log("✅ Mapped Data:", mapped); // Debug log
+          console.log(
+            `🔢 Certificate numbers: ${nextNumber} - ${
+              nextNumber + mapped.length - 1
+            }`
+          );
+
+          // STEP 4: Check which certificates already exist in database
+          // This ensures preview shows correct certificate numbers (existing vs new)
+          try {
+            console.log("🔍 Checking existing certificates in database...");
+            const checkResponse = await fetch(
+              "/api/certificates/laboratory/check-existing",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  certificates: mapped.map((cert) => ({
+                    nim: cert.nim,
+                    program: cert.program,
+                    certificateTitle: cert.certificateTitle,
+                  })),
+                }),
+              }
+            );
+
+            if (checkResponse.ok) {
+              const checkResult = await checkResponse.json();
+              console.log(
+                `📊 Check result: ${checkResult.existing} existing, ${checkResult.new} new`
+              );
+
+              // Update mapped data with existing verification_id if found
+              let currentNextNumber = nextNumber;
+              const updatedMapped = mapped.map((cert, idx) => {
+                const existingInfo = checkResult.results[idx];
+                if (existingInfo && existingInfo.exists) {
+                  // Use existing verification_id
+                  console.log(
+                    `♻️ Will UPDATE: ${existingInfo.verification_id} (${cert.name})`
+                  );
+                  return {
+                    ...cert,
+                    verificationId: existingInfo.verification_id,
+                    _isUpdate: true, // Flag for UI indication
+                    _currentName: existingInfo.current_name,
+                  };
+                } else {
+                  // Generate new verification_id
+                  const certNumber = currentNextNumber++;
+                  const no = String(certNumber).padStart(3, "0");
+                  const monthRoman = cert.monthRoman || "I";
+                  const fullHijri = cert.yearHijri || "1446";
+                  const hijri = fullHijri.slice(-2);
+                  const masehi =
+                    cert.yearMasehi || new Date().getFullYear().toString();
+                  const newVerificationId = `${no}/IF/20222/A.5-II/${monthRoman}/${hijri}/${masehi}`;
+
+                  console.log(
+                    `✨ Will CREATE NEW: ${newVerificationId} (${cert.name})`
+                  );
+                  return {
+                    ...cert,
+                    verificationId: newVerificationId,
+                    _isUpdate: false,
+                  };
+                }
+              });
+
+              setRecords(updatedMapped);
+              setSelectedIndex(0);
+              setWarnings(localWarnings);
+              setUploadedFileName(file.name);
+
+              // Show success toast with update/create breakdown
+              const updateCount = checkResult.existing;
+              const createCount = checkResult.new;
+              const toastParts = [];
+              if (createCount > 0) {
+                toastParts.push(`${createCount} baru`);
+              }
+              if (updateCount > 0) {
+                toastParts.push(`${updateCount} update`);
+              }
+
+              toast({
+                title: "✅ File Excel Berhasil Diupload",
+                description: `${
+                  mapped.length
+                } data sertifikat siap untuk di-generate. ${toastParts.join(
+                  " | "
+                )}`,
+                duration: 5000,
+                variant: "default",
+              });
+
+              // Show update info if any
+              if (updateCount > 0) {
+                const updatedIds = checkResult.results
+                  .filter((r: any) => r.exists)
+                  .map((r: any) => r.verification_id)
+                  .slice(0, 3)
+                  .join(", ");
+                const moreText =
+                  updateCount > 3 ? ` dan ${updateCount - 3} lainnya` : "";
+
+                toast({
+                  title: "♻️ Preview: Sertifikat akan di-UPDATE",
+                  description: `${updateCount} sertifikat sudah ada di database dan akan di-update (nomor tetap): ${updatedIds}${moreText}`,
+                  duration: 6000,
+                  variant: "default",
+                });
+              }
+            } else {
+              // Fallback: use sequential numbering if check fails
+              console.warn(
+                "Failed to check existing certificates, using sequential numbering"
+              );
+              setRecords(mapped);
+              setSelectedIndex(0);
+              setWarnings(localWarnings);
+              setUploadedFileName(file.name);
+
+              toast({
+                title: "⚠️ Preview Mode",
+                description: `${mapped.length} data sertifikat (nomor preview, akan disesuaikan saat upload)`,
+                duration: 5000,
+                variant: "default",
+              });
+            }
+          } catch (checkError) {
+            console.error("Error checking existing certificates:", checkError);
+            // Fallback: use sequential numbering
+            setRecords(mapped);
+            setSelectedIndex(0);
+            setWarnings(localWarnings);
+            setUploadedFileName(file.name);
+
+            toast({
+              title: "⚠️ Preview Mode",
+              description: `${mapped.length} data sertifikat (nomor preview, akan disesuaikan saat upload)`,
+              duration: 5000,
+              variant: "default",
+            });
+          }
+
+          // ✅ Data loaded successfully - ready for preview and download
+          console.log(`✅ Loaded ${mapped.length} certificates from Excel`);
+        } catch (err: any) {
+          setError("Gagal membaca file: " + (err?.message || "unknown"));
+        } finally {
+          setUploading(false);
         }
-
-        const mapper = buildRowMapper(localWarnings);
-        const mapped = json.map((row, idx) => mapper(row, idx));
-
-        console.log("✅ Mapped Data:", mapped); // Debug log
-
-        setRecords(mapped);
-        setSelectedIndex(0);
-        setWarnings(localWarnings);
-        setUploadedFileName(file.name);
-
-        // ✅ Data loaded successfully - ready for preview and download
-        console.log(`✅ Loaded ${mapped.length} certificates from Excel`);
-
-        // Show success toast with auto-dismiss
-        toast({
-          title: "✅ File Excel Berhasil Diupload",
-          description: `${mapped.length} data sertifikat siap untuk di-generate`,
-          duration: 3000,
-          variant: "default",
-        });
-      } catch (err: any) {
-        setError("Gagal membaca file: " + (err?.message || "unknown"));
-      } finally {
+      };
+      reader.onerror = () => {
+        setError("Tidak dapat membaca file.");
         setUploading(false);
-      }
-    };
-    reader.onerror = () => {
-      setError("Tidak dapat membaca file.");
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (err: any) {
+      console.error("Error fetching next certificate number:", err);
+      setError(
+        "Gagal mengambil nomor sertifikat dari database: " +
+          (err?.message || "unknown")
+      );
       setUploading(false);
-    };
-    reader.readAsArrayBuffer(file);
+    }
   };
 
   const handleExcelUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -537,7 +713,19 @@ function GenerateCertificatesPage() {
           "",
       },
       {
-        "• Nomor urut (no) diambil dari urutan baris di Excel (001, 002, dst)":
+        "• 🔢 PENTING: Nomor urut (no) OTOMATIS dari database (GLOBAL INCREMENT)":
+          "",
+      },
+      {
+        "• Sistem akan otomatis mengambil nomor tertinggi dari database, lalu lanjutkan penomoran":
+          "",
+      },
+      {
+        "• Contoh: Jika nomor terakhir 054, maka file baru dimulai dari 055":
+          "",
+      },
+      {
+        "• Nomor TIDAK akan reset ke 001 meskipun upload file Excel berbeda":
           "",
       },
       { "• Tanggal terbit akan otomatis menggunakan tanggal saat upload": "" },
@@ -701,8 +889,30 @@ function GenerateCertificatesPage() {
       { "Nama Instruktur": "Muhyiddin A.M Hayat, S.Kom., M.T" },
       { "Nama Organisasi": "Laboratorium Informatika" },
       { "": "" },
-      { "↓ Nomor sertifikat yang akan digenerate:": "" },
-      { "001/IF/20222/A.5-II/IX/46/2024": "" },
+      { "↓ Contoh nomor sertifikat yang akan digenerate:": "" },
+      { "055/IF/20222/A.5-II/IX/46/2024": "" },
+      {
+        "(Nomor aktual akan disesuaikan dengan database - GLOBAL INCREMENT)":
+          "",
+      },
+      { "": "" },
+      { "": "" },
+      { "🔢 SISTEM PENOMORAN GLOBAL:": "" },
+      { "": "" },
+      {
+        "• Nomor sertifikat (3 digit pertama) bersifat GLOBAL dan INCREMENTAL":
+          "",
+      },
+      { "• Sistem otomatis ambil nomor tertinggi dari database": "" },
+      { "• Nomor TIDAK reset meskipun upload file Excel berbeda": "" },
+      { "• Contoh: Database terakhir 054 → File baru dimulai dari 055": "" },
+      { "• Nomor berlaku untuk SEMUA laboratorium (tidak per-lab)": "" },
+      { "": "" },
+      { "Skenario:": "" },
+      { "• Upload pertama (database kosong): 001 - 010": "" },
+      { "• Upload kedua (setelah 010): 011 - 025": "" },
+      { "• Upload ketiga (setelah 025): 026 - 050": "" },
+      { "• Dan seterusnya... TIDAK PERNAH RESET!": "" },
       { "": "" },
       { "": "" },
       { "❌ HINDARI:": "" },
@@ -748,11 +958,27 @@ function GenerateCertificatesPage() {
           "",
       },
       {
-        "• Nomor urut di nomor sertifikat (001, 002, 003) akan otomatis sesuai urutan baris di Excel":
+        "• 🔢 Nomor urut di nomor sertifikat (001, 002, 003) OTOMATIS dari database (GLOBAL INCREMENT)":
+          "",
+      },
+      {
+        "• Nomor TIDAK mengikuti urutan baris Excel - melanjutkan dari database terakhir":
+          "",
+      },
+      {
+        "• Contoh: Jika database terakhir 054, maka 10 sertifikat baru = 055 sampai 064":
           "",
       },
       {
         "• Baris pertama di Excel akan mendapat nomor 001, baris kedua 002, dst":
+          "",
+      },
+      {
+        "• ⚠️ UPDATE: Nomor sertifikat TIDAK lagi berdasarkan urutan baris Excel":
+          "",
+      },
+      {
+        "• Sistem menggunakan GLOBAL INCREMENT dari database untuk mencegah duplikasi":
           "",
       },
       {
@@ -1054,14 +1280,56 @@ function GenerateCertificatesPage() {
           );
           setSaved(true);
 
+          // Enhanced toast with create/update breakdown
+          const toastMessage = [];
+          if (saveResult.created > 0) {
+            toastMessage.push(`${saveResult.created} baru dibuat`);
+          }
+          if (saveResult.updated > 0) {
+            toastMessage.push(
+              `${saveResult.updated} diupdate (nama/data diperbaiki, nomor tetap)`
+            );
+          }
+          if (saveResult.skipped > 0) {
+            toastMessage.push(
+              `${saveResult.skipped} diskip (tidak ada perubahan)`
+            );
+          }
+
           toast({
             title: "✅ Selesai!",
-            description: `${
-              saveResult.created + saveResult.updated
-            } sertifikat berhasil disimpan ke database & MinIO`,
-            duration: 4000,
+            description: toastMessage.join(" | "),
+            duration: 6000,
             variant: "default",
           });
+
+          // Show update details if any certificates were updated
+          if (saveResult.updated > 0) {
+            console.log(
+              "📝 Updated certificates (typo fix):",
+              saveResult.updatedIds
+            );
+            toast({
+              title: "📝 Update Info",
+              description: `${saveResult.updated} sertifikat diupdate (fix nama/data). Identifier: NIM + Program + Judul. Nomor sertifikat & QR code TIDAK berubah!`,
+              duration: 5000,
+              variant: "default",
+            });
+          }
+
+          // Show skip info if any
+          if (saveResult.skipped > 0) {
+            console.log(
+              "⏭️ Skipped certificates (no changes):",
+              saveResult.skippedIds
+            );
+            toast({
+              title: "⏭️ Info: Data Sama",
+              description: `${saveResult.skipped} sertifikat diskip karena data tidak ada perubahan (efisiensi database).`,
+              duration: 4000,
+              variant: "default",
+            });
+          }
 
           if (saveResult.failed > 0) {
             console.warn(
@@ -1233,6 +1501,27 @@ function GenerateCertificatesPage() {
                       <p className="text-[11px] text-muted-foreground">
                         Total record: {records.length}
                       </p>
+                      {(() => {
+                        const updateCount = records.filter(
+                          (r) => r._isUpdate
+                        ).length;
+                        const newCount = records.length - updateCount;
+                        return (
+                          <>
+                            {newCount > 0 && (
+                              <p className="text-[11px] text-green-600">
+                                ✨ {newCount} sertifikat baru akan dibuat
+                              </p>
+                            )}
+                            {updateCount > 0 && (
+                              <p className="text-[11px] text-blue-600">
+                                ♻️ {updateCount} sertifikat akan di-update
+                                (nomor tetap)
+                              </p>
+                            )}
+                          </>
+                        );
+                      })()}
                       {saved && (
                         <p className="text-[11px] text-green-600 font-medium">
                           ✓ Data tersimpan di database
@@ -1545,9 +1834,33 @@ function GenerateCertificatesPage() {
         <div className="space-y-6 xl:col-span-2 w-full min-w-0">
           <Card className="relative w-full">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Preview Sertifikat</CardTitle>
+              <CardTitle className="text-base flex items-center justify-between">
+                <span>Preview Sertifikat</span>
+                {records.length > 0 && activeStudent._isUpdate && (
+                  <span className="text-xs font-normal px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-md flex items-center gap-1">
+                    ♻️ UPDATE
+                    {activeStudent._currentName &&
+                      activeStudent._currentName !== activeStudent.name && (
+                        <span className="text-[10px] opacity-75">
+                          (dari: {activeStudent._currentName})
+                        </span>
+                      )}
+                  </span>
+                )}
+                {records.length > 0 && !activeStudent._isUpdate && (
+                  <span className="text-xs font-normal px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 rounded-md">
+                    ✨ NEW
+                  </span>
+                )}
+              </CardTitle>
               <CardDescription className="text-xs">
                 Preview sertifikat laboratorium. Gunakan Print untuk mencetak.
+                {records.length > 0 && activeStudent._isUpdate && (
+                  <span className="block mt-1 text-blue-600 dark:text-blue-400">
+                    Nomor sertifikat & QR code akan tetap sama (UPDATE existing
+                    data).
+                  </span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent className="overflow-hidden w-full">

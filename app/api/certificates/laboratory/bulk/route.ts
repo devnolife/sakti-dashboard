@@ -56,123 +56,238 @@ export async function POST(req: NextRequest) {
     // Process each certificate - save data + upload PDF to MinIO
     const successfulCerts: string[] = [];
     const updatedCerts: string[] = [];
+    const skippedCerts: string[] = [];
     const failedCerts: Array<{ id: string; error: string }> = [];
+
+    // Get highest certificate number for generating new numbers
+    const allCerts = await prisma.laboratory_certificates.findMany({
+      select: { verification_id: true },
+      orderBy: { created_at: "desc" },
+    });
+
+    let highestNumber = 0;
+    for (const c of allCerts) {
+      const match = c.verification_id.match(/^(\d{3})\//);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > highestNumber) highestNumber = num;
+      }
+    }
+    let nextNumber = highestNumber + 1;
 
     for (const cert of certificates) {
       try {
-        // Upload PDF to MinIO if provided
-        let pdfUrl: string | null = null;
+        // Normalize data for composite key matching (trim whitespace, case-insensitive)
+        const normalizedNim = (cert.nim || "").toString().trim();
+        const normalizedProgram = (cert.program || "").toString().trim();
+        const normalizedTitle = (cert.certificateTitle || "").toString().trim();
 
-        if (cert.pdfBase64) {
-          try {
-            pdfUrl = await uploadCertificatePDFFromBase64(
-              cert.pdfBase64,
-              cert.verificationId,
-              cert.name
+        // STRATEGY: Check by COMPOSITE KEY (NIM + Program + Certificate Title)
+        // This allows one student to have MULTIPLE certificates from different labs/programs
+        const existingCertByComposite =
+          await prisma.laboratory_certificates.findFirst({
+            where: {
+              participant_nim: normalizedNim,
+              program_name: normalizedProgram,
+              certificate_title: normalizedTitle,
+              prodi_id: labAdmin.prodi_id,
+            },
+          });
+
+        if (existingCertByComposite) {
+          console.log(`✅ FOUND existing certificate:`, {
+            id: existingCertByComposite.verification_id,
+            currentName: existingCertByComposite.participant_name,
+            newName: cert.name,
+          });
+        } else {
+          console.log(`❌ NO existing certificate found - will create new`);
+
+          // Debug: Check if similar certificate exists with different composite key values
+          const similarCerts = await prisma.laboratory_certificates.findMany({
+            where: {
+              OR: [
+                { participant_nim: normalizedNim },
+                {
+                  participant_name: {
+                    contains: cert.name,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+              prodi_id: labAdmin.prodi_id,
+            },
+            select: {
+              verification_id: true,
+              participant_nim: true,
+              participant_name: true,
+              program_name: true,
+              certificate_title: true,
+            },
+            take: 5,
+          });
+
+          if (similarCerts.length > 0) {
+            console.log(
+              `🔎 Found ${similarCerts.length} similar certificates:`
             );
-            console.log(`✅ PDF uploaded for ${cert.verificationId}`);
-          } catch (uploadError: any) {
-            console.error(
-              `⚠️ Failed to upload PDF for ${cert.verificationId}:`,
-              uploadError
-            );
-            // Continue even if PDF upload fails - save certificate data without PDF
           }
         }
 
-        // Check if certificate already exists
-        const existingCert = await prisma.laboratory_certificates.findUnique({
-          where: {
-            verification_id: cert.verificationId,
-          },
-        });
+        // DECISION LOGIC:
+        // 1. If (NIM + Program + Title) exists → UPDATE (fix typo/data, preserve certificate number & QR code)
+        // 2. If not exists → CREATE NEW with next available certificate number
 
-        // Prepare certificate data for database
-        // Hanya data ESENSIAL yang dibaca dari Excel
+        if (existingCertByComposite) {
+          // Case 1: Same NIM + Program + Title → UPDATE existing certificate (fix typo/data)
+          console.log(
+            `📝 Updating certificate for NIM ${cert.nim} - ${cert.certificateTitle} (Preserve number: ${existingCertByComposite.verification_id})`
+          );
 
-        // Parse Indonesian date format (e.g., "04 Desember 2025") to Date object
-        // If issueDate is already a valid Date, use it directly
-        let parsedIssueDate: Date;
-        try {
-          parsedIssueDate = new Date(cert.issueDate);
-          // If date is invalid, use current date
-          if (isNaN(parsedIssueDate.getTime())) {
-            console.warn(
-              `Invalid date format for ${cert.verificationId}, using current date`
+          // Check if data actually changed (prevent unnecessary updates)
+          const hasChanges =
+            existingCertByComposite.participant_name !== cert.name ||
+            existingCertByComposite.subtitle !== (cert.subtitle || null);
+
+          if (!hasChanges) {
+            console.log(
+              `⏭️ Skipping update for ${existingCertByComposite.verification_id} - No changes detected`
             );
+            skippedCerts.push(existingCertByComposite.verification_id);
+            continue; // Skip if no changes
+          }
+
+          // Upload PDF to MinIO if provided (use existing verification_id for update)
+          let pdfUrl: string | null = null;
+
+          if (cert.pdfBase64) {
+            try {
+              pdfUrl = await uploadCertificatePDFFromBase64(
+                cert.pdfBase64,
+                existingCertByComposite.verification_id, // Use existing number
+                cert.name
+              );
+              console.log(
+                `✅ PDF uploaded for ${existingCertByComposite.verification_id}`
+              );
+            } catch (uploadError: any) {
+              console.error(
+                `⚠️ Failed to upload PDF for ${existingCertByComposite.verification_id}:`,
+                uploadError
+              );
+            }
+          }
+
+          // Prepare certificate data for database
+          // Parse issue date
+          let parsedIssueDate: Date;
+          try {
+            parsedIssueDate = new Date(cert.issueDate);
+            if (isNaN(parsedIssueDate.getTime())) {
+              parsedIssueDate = new Date();
+            }
+          } catch (e) {
             parsedIssueDate = new Date();
           }
-        } catch (e) {
-          console.warn(
-            `Error parsing date for ${cert.verificationId}, using current date`
-          );
-          parsedIssueDate = new Date();
-        }
 
-        const certData = {
-          verification_id: cert.verificationId,
-          certificate_title: cert.certificateTitle,
-          participant_name: cert.name,
-          participant_nim: cert.nim,
-          program_name: cert.program,
-          subtitle: cert.subtitle || null,
-          issue_date: parsedIssueDate,
-          pdf_url: pdfUrl, // Add PDF URL from MinIO
-
-          // Prodi Association
-          prodi_id: labAdmin.prodi_id,
-          created_by: session.user.id,
-
-          // Optional fields akan null/undefined (akan diisi kemudian)
-          // meetings, total_score, materials, attendance_rate, dll.
-          // tidak perlu diset karena sudah optional di schema
-        };
-
-        if (existingCert) {
-          // IMPORTANT: Preserve QR code data (verification_id & certificate number)
-          // Only update certificate details, NOT the verification ID
-          // This ensures QR codes remain valid even after re-generation
+          // UPDATE EXISTING CERTIFICATE (Fix typo/data, preserve certificate number & QR)
           await prisma.laboratory_certificates.update({
             where: {
-              verification_id: cert.verificationId,
+              id: existingCertByComposite.id,
             },
             data: {
-              // Update participant & program details
-              certificate_title: certData.certificate_title,
-              participant_name: certData.participant_name,
-              participant_nim: certData.participant_nim,
-              program_name: certData.program_name,
-              subtitle: certData.subtitle,
-              issue_date: certData.issue_date,
+              // Update changeable fields
+              participant_name: cert.name,
+              subtitle: cert.subtitle || null,
+              issue_date: parsedIssueDate,
 
               // Update PDF URL if new PDF is uploaded
               ...(pdfUrl && { pdf_url: pdfUrl }),
 
-              // Keep existing QR code & verification data intact
-              // verification_id: NOT CHANGED
-              // verification_count: NOT RESET
-              // qr_code_url: NOT CHANGED
-              // signature: NOT CHANGED
+              // PRESERVE: verification_id, QR code, signature, verification_count
+              // participant_nim, program_name, certificate_title (composite key)
 
               updated_at: new Date(),
             },
           });
 
-          updatedCerts.push(cert.verificationId);
+          updatedCerts.push(existingCertByComposite.verification_id);
+          console.log(
+            `✅ Updated certificate ${existingCertByComposite.verification_id} for NIM ${cert.nim} - ${cert.certificateTitle}`
+          );
         } else {
-          // Create new certificate
+          // Case 2: NEW CERTIFICATE (composite key not found)
+          // Generate new certificate number
+          const certNumber = nextNumber++;
+          const no = String(certNumber).padStart(3, "0");
+
+          // Extract month, year from cert data
+          const monthRoman = cert.monthRoman || "I";
+          const fullHijri = cert.yearHijri || "1446";
+          const hijri = fullHijri.slice(-2);
+          const masehi = cert.yearMasehi || new Date().getFullYear().toString();
+
+          const newVerificationId = `${no}/IF/20222/A.5-II/${monthRoman}/${hijri}/${masehi}`;
+
+          console.log(
+            `✨ Creating NEW certificate for NIM ${cert.nim} - ${cert.certificateTitle} (Number: ${newVerificationId})`
+          );
+
+          // Upload PDF to MinIO if provided (use new verification_id)
+          let pdfUrl: string | null = null;
+
+          if (cert.pdfBase64) {
+            try {
+              pdfUrl = await uploadCertificatePDFFromBase64(
+                cert.pdfBase64,
+                newVerificationId,
+                cert.name
+              );
+              console.log(`✅ PDF uploaded for ${newVerificationId}`);
+            } catch (uploadError: any) {
+              console.error(
+                `⚠️ Failed to upload PDF for ${newVerificationId}:`,
+                uploadError
+              );
+            }
+          }
+
+          // Parse issue date
+          let parsedIssueDate: Date;
+          try {
+            parsedIssueDate = new Date(cert.issueDate);
+            if (isNaN(parsedIssueDate.getTime())) {
+              parsedIssueDate = new Date();
+            }
+          } catch (e) {
+            parsedIssueDate = new Date();
+          }
+
+          // CREATE NEW CERTIFICATE
           await prisma.laboratory_certificates.create({
             data: {
-              ...certData,
+              verification_id: newVerificationId,
+              certificate_title: normalizedTitle,
+              participant_name: cert.name,
+              participant_nim: normalizedNim,
+              program_name: normalizedProgram,
+              subtitle: cert.subtitle || null,
+              issue_date: parsedIssueDate,
+              pdf_url: pdfUrl,
+              prodi_id: labAdmin.prodi_id,
+              created_by: session.user.id,
               verification_count: 0,
-              weekly_data: [], // Initialize empty array for weekly_data
-              technologies: [], // Initialize empty array for technologies
+              weekly_data: [],
+              technologies: [],
               created_at: new Date(),
               updated_at: new Date(),
             },
           });
 
-          successfulCerts.push(cert.verificationId);
+          successfulCerts.push(newVerificationId);
+          console.log(
+            `✅ Created new certificate ${newVerificationId} for NIM ${cert.nim} - ${cert.certificateTitle}`
+          );
         }
       } catch (error: any) {
         console.error(
@@ -193,15 +308,19 @@ export async function POST(req: NextRequest) {
       } of ${certificates.length} certificates`,
       created: successfulCerts.length,
       updated: updatedCerts.length,
+      skipped: skippedCerts.length,
       failed: failedCerts.length,
       successfulIds: successfulCerts,
       updatedIds: updatedCerts,
+      skippedIds: skippedCerts,
       failedCerts: failedCerts,
       totalProcessed: certificates.length,
       note:
         updatedCerts.length > 0
-          ? "Some certificates were updated. QR codes remain valid and unchanged."
-          : "All certificates created successfully.",
+          ? `${updatedCerts.length} certificates updated (name/data fixed). Certificate numbers & QR codes preserved. ${skippedCerts.length} skipped (no changes).`
+          : skippedCerts.length > 0
+          ? `${skippedCerts.length} certificates skipped (no changes detected).`
+          : "All certificates created successfully with auto-generated numbers.",
     });
   } catch (error: any) {
     console.error("Error saving certificates:", error);
