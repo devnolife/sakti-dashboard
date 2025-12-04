@@ -129,17 +129,37 @@ function buildRowMapper(warningsRef: string[]) {
     // Map Indonesian columns to expected fields - HANYA DATA YANG DIBUTUHKAN
     const name = row["Nama Peserta"] || row.name || "";
 
-    // FIX: Handle NIM yang berformat scientific notation dari Excel
+    // NIM handling - should already be processed from Excel cell reading
+    // This is just validation and cleanup
     let nim = row["NIM"] || row.nim || "";
-    // Convert scientific notation to string if needed
+
+    // Convert to string and clean
     if (typeof nim === "number") {
-      nim = nim.toString();
-      // If it's in scientific notation, convert it properly
-      if (nim.includes("e") || nim.includes("E")) {
-        nim = Number(nim).toFixed(0);
+      // Convert number to string (avoid scientific notation)
+      nim = nim.toFixed(0);
+    } else if (typeof nim === "string") {
+      nim = nim.trim();
+
+      // Handle scientific notation in string
+      if (nim.toLowerCase().includes("e")) {
+        nim = parseFloat(nim).toFixed(0);
+        warningsRef.push(
+          `Baris ${rowIdx + 2}: NIM dalam format scientific notation. ` +
+            `Format kolom NIM sebagai TEXT di Excel untuk hasil terbaik!`
+        );
       }
+    } else {
+      nim = String(nim).trim();
     }
-    nim = String(nim).trim();
+
+    // Validation: Warn if NIM has too many trailing zeros (precision loss indicator)
+    if (nim.length >= 12 && /0{4,}$/.test(nim)) {
+      warningsRef.push(
+        `⚠️ Baris ${rowIdx + 2}: NIM "${nim}" berakhir dengan 4+ angka nol. ` +
+          `Kemungkinan precision loss dari format Number. ` +
+          `Solusi: Format kolom NIM sebagai TEXT di Excel, lalu input ulang!`
+      );
+    }
 
     const program = row["Nama Program"] || row.program || "";
     const certificateTitle =
@@ -328,7 +348,8 @@ function GenerateCertificatesPage() {
         const wb = XLSX.read(data, {
           type: "array",
           cellDates: true,
-          cellText: false,
+          cellText: true, // Enable cell text reading
+          cellNF: true, // Read number format
         });
         const sheet = wb.Sheets[wb.SheetNames[0]];
         if (!sheet) {
@@ -337,10 +358,10 @@ function GenerateCertificatesPage() {
           return;
         }
 
-        // Read with raw: false to get formatted values
+        // Read with raw: true first to get original data
         const json: StudentRowRaw[] = XLSX.utils.sheet_to_json(sheet, {
           defval: "",
-          raw: false, // Get formatted string values instead of raw numbers
+          raw: false, // Use formatted values (this reads the 'w' property)
         });
 
         console.log("📊 Raw Excel Data:", json); // Debug log
@@ -350,6 +371,61 @@ function GenerateCertificatesPage() {
           setUploading(false);
           return;
         }
+
+        // ADVANCED FIX: Extract NIM directly from cell's formatted text (w property)
+        // This preserves the full digit display even if Excel stored it as number
+        const range = XLSX.utils.decode_range(sheet["!ref"] || "A1");
+
+        // Find NIM column index (column B or any column with "NIM" header)
+        const headers = XLSX.utils.sheet_to_json(sheet, {
+          header: 1,
+        })[0] as string[];
+        const nimColumnIndex = headers.findIndex((h) =>
+          String(h).toLowerCase().includes("nim")
+        );
+
+        if (nimColumnIndex >= 0) {
+          // Process each data row and extract NIM from cell's formatted text
+          for (let rowIdx = 0; rowIdx < json.length; rowIdx++) {
+            const cellAddress = XLSX.utils.encode_cell({
+              r: rowIdx + 1, // +1 because row 0 is header
+              c: nimColumnIndex,
+            });
+            const cell = sheet[cellAddress];
+
+            if (cell) {
+              // Priority: formatted text (w) > string value (t='s') > number (t='n')
+              if (cell.w && String(cell.w).trim()) {
+                // 'w' contains the displayed/formatted text - this is what user sees
+                json[rowIdx]["NIM"] = String(cell.w).trim();
+              } else if (cell.t === "s" && cell.v) {
+                // Cell type is string
+                json[rowIdx]["NIM"] = String(cell.v).trim();
+              } else if (cell.v !== undefined) {
+                // Fallback: convert value to string
+                const nimValue =
+                  typeof cell.v === "number"
+                    ? cell.v.toFixed(0)
+                    : String(cell.v);
+                json[rowIdx]["NIM"] = nimValue.trim();
+
+                // Warn if it's a large number (precision loss risk)
+                if (
+                  typeof cell.v === "number" &&
+                  cell.v > Number.MAX_SAFE_INTEGER
+                ) {
+                  localWarnings.push(
+                    `Baris ${
+                      rowIdx + 2
+                    }: NIM sebagai Number terlalu besar (precision loss). ` +
+                      `Untuk hasil akurat, format kolom NIM sebagai TEXT di Excel.`
+                  );
+                }
+              }
+            }
+          }
+        }
+
         const mapper = buildRowMapper(localWarnings);
         const mapped = json.map((row, idx) => mapper(row, idx));
 
@@ -484,14 +560,58 @@ function GenerateCertificatesPage() {
       },
       {
         NIM: "Nomor Induk Mahasiswa (WAJIB)",
-        "202001001": "",
+        "105841100125": "",
       },
       {
-        "": "⚠️ PENTING: Format kolom NIM sebagai TEXT!",
+        "": "🚨 SANGAT PENTING: Kolom NIM HARUS format TEXT!",
         "": "",
       },
       {
-        "": "Klik kanan kolom B → Format Cells → Text",
+        "": "✅ CARA TERBAIK:",
+        "": "",
+      },
+      {
+        "": "1. SEBELUM input data, format kolom B (NIM) sebagai TEXT",
+        "": "",
+      },
+      {
+        "": "   → Klik kolom B → Klik kanan → Format Cells → Text → OK",
+        "": "",
+      },
+      {
+        "": "2. Lalu input NIM seperti biasa: 105841100125",
+        "": "",
+      },
+      {
+        "": "",
+        "": "",
+      },
+      {
+        "": "💡 ALTERNATIF: Tambahkan tanda ' di depan NIM",
+        "": "",
+      },
+      {
+        "": "   → Ketik: '105841100125 (perhatikan tanda apostrof)",
+        "": "",
+      },
+      {
+        "": "",
+        "": "",
+      },
+      {
+        "": "⚠️ JANGAN gunakan format Number!",
+        "": "",
+      },
+      {
+        "": "   Format Number akan menyebabkan digit terakhir hilang:",
+        "": "",
+      },
+      {
+        "": "   • 105841104721 → 105841100000 ❌ (6 digit terakhir jadi 0)",
+        "": "",
+      },
+      {
+        "": "   • 105841100125 → 105841100000 ❌ (precision loss)",
         "": "",
       },
       {
@@ -562,12 +682,17 @@ function GenerateCertificatesPage() {
       {
         "7. Tahun Hijriah dan Masehi harus 4 digit angka": "",
       },
+      {
+        "8. ⚠️ WAJIB: Format kolom NIM sebagai TEXT sebelum input data": "",
+      },
       { "": "" },
       { "": "" },
       { "✅ CONTOH DATA YANG BENAR:": "" },
       { "": "" },
       { "Nama Peserta": "Ahmad Rizki Pratama" },
-      { NIM: "202001001" },
+      {
+        NIM: "'105841100125 (dengan tanda ' di depan atau format sebagai TEXT)",
+      },
       { "Nama Program": "Backend Development dengan NestJS" },
       { "Judul Sertifikat": "Backend Developer Expert" },
       { "Bulan (Romawi)": "IX" },
@@ -577,22 +702,51 @@ function GenerateCertificatesPage() {
       { "Nama Organisasi": "Laboratorium Informatika" },
       { "": "" },
       { "↓ Nomor sertifikat yang akan digenerate:": "" },
-      { "001/IF/20222/A.5-II/IX/1446/2024": "" },
+      { "001/IF/20222/A.5-II/IX/46/2024": "" },
       { "": "" },
       { "": "" },
       { "❌ HINDARI:": "" },
       { "": "" },
       { "• Mengosongkan kolom wajib (Nama Peserta, NIM, dll)": "" },
+      { "• Format NIM sebagai Number (akan kehilangan 6 digit terakhir!)": "" },
       { "• Menggunakan singkatan yang tidak jelas": "" },
-      { "• Format NIM yang salah atau tidak lengkap": "" },
       { "• Judul sertifikat terlalu panjang (lebih dari 50 karakter)": "" },
       { "• Typo atau kesalahan penulisan nama": "" },
       { "• Bulan Romawi dengan huruf kecil (ix) atau angka (9)": "" },
       { "• Tahun Hijriah atau Masehi kurang dari 4 digit": "" },
       { "": "" },
       { "": "" },
+      { "🚨 MASALAH UMUM: NIM BERAKHIR 000000": "" },
+      { "": "" },
+      {
+        "Jika NIM Anda berakhir dengan banyak angka 0, ini terjadi karena:": "",
+      },
+      { "": "" },
+      { "❌ SALAH: Format sebagai Number dengan Decimal Places = 0": "" },
+      {
+        "   Contoh hasil: 105841104721 → 105841100000 (6 digit terakhir hilang!)":
+          "",
+      },
+      { "": "" },
+      { "✅ BENAR: Format sebagai TEXT": "" },
+      { "   1. Klik kanan kolom NIM": "" },
+      { "   2. Pilih Format Cells": "" },
+      { "   3. Pilih kategori TEXT (bukan Number!)": "" },
+      { "   4. Klik OK": "" },
+      { "   5. Input ulang NIM atau tekan F2 + Enter untuk refresh": "" },
+      { "": "" },
+      { "💡 Atau gunakan tanda ' di depan: '105841104721": "" },
+      { "": "" },
+      { "": "" },
       { "📌 CATATAN PENTING:": "" },
       { "": "" },
+      {
+        "• 🚨 Kolom NIM HARUS diformat sebagai TEXT, bukan Number!": "",
+      },
+      {
+        "• Jika format sebagai Number, 6 digit terakhir akan hilang (jadi 000000)":
+          "",
+      },
       {
         "• Nomor urut di nomor sertifikat (001, 002, 003) akan otomatis sesuai urutan baris di Excel":
           "",
@@ -600,6 +754,9 @@ function GenerateCertificatesPage() {
       {
         "• Baris pertama di Excel akan mendapat nomor 001, baris kedua 002, dst":
           "",
+      },
+      {
+        "• Setelah upload, sistem akan memberi warning jika NIM bermasalah": "",
       },
       {
         "Setelah upload, Anda bisa preview sertifikat sebelum print/download.":
