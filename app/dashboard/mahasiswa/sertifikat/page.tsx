@@ -10,8 +10,8 @@ import {
   Download,
   FileText,
   Trophy,
-  Loader2,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -50,7 +50,6 @@ export default function StudentCertificatesPage() {
     nim: string;
     name: string;
   } | null>(null);
-  const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchCertificates();
@@ -89,44 +88,27 @@ export default function StudentCertificatesPage() {
       return;
     }
 
-    setDownloadingIds((prev) => new Set(prev).add(certificate.id));
+    // Generate safe filename
+    const safeName = certificate.participant_name
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .replace(/\s+/g, "_");
+    const safeCertId = certificate.verification_id.replace(/\//g, "-");
+    const fileName = `Sertifikat_${safeCertId}_${safeName}.pdf`;
 
-    try {
-      // Fetch the PDF from MinIO proxy
-      const response = await fetch(certificate.pdf_url);
+    // Add download=true query parameter and custom filename
+    const downloadUrl = `${
+      certificate.pdf_url
+    }?download=true&filename=${encodeURIComponent(fileName)}`;
 
-      if (!response.ok) {
-        throw new Error("Failed to download certificate");
-      }
+    // Create a temporary link element
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = fileName; // Fallback for older browsers
 
-      const blob = await response.blob();
-
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-
-      // Generate filename
-      const safeName = certificate.participant_name
-        .replace(/[^a-zA-Z0-9\s]/g, "")
-        .replace(/\s+/g, "_");
-      const safeCertId = certificate.verification_id.replace(/\//g, "-");
-      link.download = `Sertifikat_${safeCertId}_${safeName}.pdf`;
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err: any) {
-      console.error("Error downloading certificate:", err);
-      alert("Gagal mengunduh sertifikat. Silakan coba lagi.");
-    } finally {
-      setDownloadingIds((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(certificate.id);
-        return newSet;
-      });
-    }
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (loading) {
@@ -290,24 +272,16 @@ export default function StudentCertificatesPage() {
                 {/* Download Button */}
                 <div className="pt-4 border-t">
                   {certificate.pdf_url ? (
-                    <Button
-                      onClick={() => handleDownload(certificate)}
-                      disabled={downloadingIds.has(certificate.id)}
-                      className="w-full"
-                      variant="default"
-                    >
-                      {downloadingIds.has(certificate.id) ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Mengunduh...
-                        </>
-                      ) : (
-                        <>
-                          <Download className="w-4 h-4 mr-2" />
-                          Unduh Sertifikat
-                        </>
-                      )}
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        onClick={() => handleDownload(certificate)}
+                        className="w-full"
+                        variant="default"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Unduh Sertifikat
+                      </Button>
+                    </div>
                   ) : (
                     <Button disabled className="w-full" variant="secondary">
                       <AlertCircle className="w-4 h-4 mr-2" />

@@ -38,17 +38,40 @@ export async function GET(
     }
     const buffer = Buffer.concat(chunks);
 
+    // Determine content type - prioritize PDF for .pdf files
+    let contentType =
+      stat.metaData["content-type"] || "application/octet-stream";
+
+    // Force PDF content type for .pdf files
+    if (fileName.toLowerCase().endsWith(".pdf")) {
+      contentType = "application/pdf";
+    }
+
+    // Extract filename for Content-Disposition
+    const fileNamePart = fileName.split("/").pop() || fileName;
+
+    // Check if this is a download request (via query parameter)
+    const url = new URL(request.url);
+    const isDownload = url.searchParams.get("download") === "true";
+    const customFileName = url.searchParams.get("filename");
+
+    // Determine Content-Disposition based on request type
+    const disposition = isDownload
+      ? `attachment; filename="${encodeURIComponent(
+          customFileName || fileNamePart
+        )}"`
+      : `inline; filename="${encodeURIComponent(fileNamePart)}"`;
+
     // Return file with proper headers
     return new NextResponse(buffer, {
       status: 200,
       headers: {
-        "Content-Type":
-          stat.metaData["content-type"] || "application/octet-stream",
+        "Content-Type": contentType,
         "Content-Length": stat.size.toString(),
-        // Set Content-Disposition to 'inline' for PDF preview in browser
-        "Content-Disposition": "inline",
+        "Content-Disposition": disposition,
         "Cache-Control": "public, max-age=31536000, immutable",
         "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Content-Disposition, Content-Type",
       },
     });
   } catch (error: any) {
