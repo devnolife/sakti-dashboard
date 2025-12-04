@@ -50,26 +50,25 @@ import {
   Shield,
   Link2,
   Workflow,
-
-} from "lucide-react"
-import type { Role, DosenSubRole } from "@/types/role"
+} from "lucide-react";
+import type { Role, DosenSubRole } from "@/types/role";
 
 // Type definitions for menu items
 interface MenuBadge {
-  text: string
-  variant: "default" | "secondary" | "destructive" | "outline" | string
+  text: string;
+  variant: "default" | "secondary" | "destructive" | "outline" | string;
 }
 
 interface BaseMenuItem {
-  id: string
-  title: string
-  href?: string
-  icon?: React.ComponentType<any>
-  badge?: MenuBadge
+  id: string;
+  title: string;
+  href?: string;
+  icon?: React.ComponentType<any>;
+  badge?: MenuBadge;
 }
 
 export interface MenuItem extends BaseMenuItem {
-  children?: MenuItem[]
+  children?: MenuItem[];
 }
 
 export const mahasiswaMenuItems = [
@@ -140,6 +139,18 @@ export const mahasiswaMenuItems = [
     title: "Laboratorium",
     href: "/dashboard/mahasiswa/laboratory",
     icon: Briefcase,
+    children: [
+      {
+        id: "laboratory-overview",
+        title: "Daftar Lab",
+        href: "/dashboard/mahasiswa/laboratory",
+      },
+      {
+        id: "laboratory-certificates",
+        title: "Sertifikat",
+        href: "/dashboard/mahasiswa/sertifikat",
+      },
+    ],
   },
   {
     id: "correspondence",
@@ -270,7 +281,7 @@ export const mahasiswaMenuItems = [
     href: "/dashboard/mahasiswa/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items for staff (staff_tu)
 export const staffTuMenuItems = [
@@ -434,7 +445,7 @@ export const staffTuMenuItems = [
     href: "/dashboard/staff_tu/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items for head of study program (prodi)
 export const prodiMenuItems = [
@@ -565,7 +576,7 @@ export const prodiMenuItems = [
     href: "/dashboard/prodi/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items for dean (dekan)
 export const dekanMenuItems = [
@@ -808,7 +819,7 @@ export const dekanMenuItems = [
     href: "/dashboard/dekan/settings",
     icon: Settings,
   },
-]
+];
 export const readingRoomAdminMenuItems: MenuItem[] = [
   {
     id: "dashboard",
@@ -941,7 +952,7 @@ export const readingRoomAdminMenuItems: MenuItem[] = [
     href: "/dashboard/reading_room_admin/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items for Admin Umum staff
 export const adminUmumMenuItems = [
@@ -1141,7 +1152,7 @@ export const adminUmumMenuItems = [
     href: "/dashboard/admin_umum/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items for admin
 export const adminMenuItems: MenuItem[] = [
@@ -1401,7 +1412,7 @@ export const adminMenuItems: MenuItem[] = [
     icon: Shield,
     badge: { text: "Admin", variant: "destructive" as const },
   },
-]
+];
 
 // Menu items for dosen (formerly lecturer)
 export const lecturerMenuItems = [
@@ -1481,8 +1492,7 @@ export const lecturerMenuItems = [
     href: "/dashboard/dosen/settings",
     icon: Settings,
   },
-]
-
+];
 
 export const laboratoryAdminMenuItems: MenuItem[] = [
   {
@@ -1595,7 +1605,7 @@ export const laboratoryAdminMenuItems: MenuItem[] = [
     href: "/dashboard/laboratory_admin/settings",
     icon: Settings,
   },
-]
+];
 
 export const financeAdminMenuItems = [
   {
@@ -1685,7 +1695,7 @@ export const financeAdminMenuItems = [
     href: "/dashboard/admin_keuangan/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items untuk GKM (Gugus Kendali Mutu)
 export const gkmMenuItems: MenuItem[] = [
@@ -1857,7 +1867,7 @@ export const gkmMenuItems: MenuItem[] = [
     href: "/dashboard/gkm/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items untuk Kepala Tata Usaha
 export const kepalaTataUsahaMenuItems = [
@@ -1891,7 +1901,7 @@ export const kepalaTataUsahaMenuItems = [
     href: "/dashboard/kepala_tata_usaha/settings",
     icon: Settings,
   },
-]
+];
 
 // Menu items untuk SIMAK (Sistem Informasi Manajemen Akademik)
 export const simakMenuItems: MenuItem[] = [
@@ -2116,7 +2126,7 @@ export const simakMenuItems: MenuItem[] = [
     href: "/dashboard/simak/settings",
     icon: Settings,
   },
-]
+];
 
 export const menuItems: Record<Role, MenuItem[]> = {
   admin: adminMenuItems,
@@ -2132,7 +2142,7 @@ export const menuItems: Record<Role, MenuItem[]> = {
   gkm: gkmMenuItems,
   kepala_tata_usaha: kepalaTataUsahaMenuItems,
   simak: simakMenuItems,
-}
+};
 
 // Menu items for Wakil Dekan I (Akademik)
 export const wakilDekan1MenuItems: MenuItem[] = [
@@ -2193,7 +2203,7 @@ export const wakilDekan1MenuItems: MenuItem[] = [
       },
     ],
   },
-]
+];
 
 // Menu items for Wakil Dekan II (Administrasi, Perencanaan, Keuangan)
 export const wakilDekan2MenuItems: MenuItem[] = [
@@ -2227,7 +2237,7 @@ export const wakilDekan2MenuItems: MenuItem[] = [
     href: "/dashboard/dosen/vice-dean-2/reports",
     icon: FileSpreadsheet,
   },
-]
+];
 
 // Menu items for Wakil Dekan III (Kemahasiswaan)
 export const wakilDekan3MenuItems: MenuItem[] = [
@@ -2261,7 +2271,7 @@ export const wakilDekan3MenuItems: MenuItem[] = [
     href: "/dashboard/dosen/vice-dean-3/alumni",
     icon: GraduationCapIcon,
   },
-]
+];
 
 // Menu items for Wakil Dekan IV (Kerjasama & Pengembangan)
 export const wakilDekan4MenuItems: MenuItem[] = [
@@ -2295,7 +2305,7 @@ export const wakilDekan4MenuItems: MenuItem[] = [
     href: "/dashboard/dosen/vice-dean-4/internships",
     icon: Briefcase,
   },
-]
+];
 
 // Menu items untuk Sekretaris Prodi
 export const sekretarisProdiMenuItems: MenuItem[] = [
@@ -2363,7 +2373,7 @@ export const sekretarisProdiMenuItems: MenuItem[] = [
     href: "/dashboard/dosen/sekretaris-prodi/settings",
     icon: Settings,
   },
-]
+];
 
 // Mapping sub-roles to their specific menu items
 export const dosenSubRoleMenuItems: Record<DosenSubRole, MenuItem[]> = {
@@ -2376,7 +2386,7 @@ export const dosenSubRoleMenuItems: Record<DosenSubRole, MenuItem[]> = {
   gkm: gkmMenuItems,
   prodi: prodiMenuItems,
   sekretaris_prodi: sekretarisProdiMenuItems,
-}
+};
 
 export const dekanItems = [
   {
@@ -2421,5 +2431,4 @@ export const dekanItems = [
       },
     ],
   },
-]
-
+];
