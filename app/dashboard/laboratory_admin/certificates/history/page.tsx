@@ -555,18 +555,6 @@ export default function CertificateHistoryPage() {
                                         PDF
                                       </Button>
                                     )}
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        window.open(
-                                          `/dashboard/laboratory_admin/certificates/preview?id=${cert.id}`,
-                                          "_blank"
-                                        )
-                                      }
-                                    >
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
                                   </div>
                                 </div>
                               </div>
