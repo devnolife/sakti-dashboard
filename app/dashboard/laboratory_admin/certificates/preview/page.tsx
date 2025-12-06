@@ -1,290 +1,775 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import {
-  Download,
-  ArrowLeft,
-  Maximize2,
+  Search,
   Eye,
   Award,
-  Sparkles,
-  GraduationCap,
-  Layout
-} from "lucide-react"
-import { useRouter } from "next/navigation"
-import CanvasCertificate from "@/components/certificates/canvas-certificate"
-import CertificatePreview from "@/components/certificates/certificate-preview"
-import CertificateDownload from "@/components/certificates/certificate-download"
+  FileText,
+  Users,
+  TrendingUp,
+  Calendar,
+  ExternalLink,
+  Loader2,
+  Filter,
+  RefreshCw,
+  Info,
+  CheckCircle2,
+  XCircle,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-// Sample data untuk setiap template
-const certificateSamples = [
-  {
-    id: 1,
-    templateKey: "ux_design_foundations" as const,
-    name: "UX Design Foundations",
-    category: "Professional Course",
-    icon: Sparkles,
-    color: "from-blue-500 to-purple-600",
-    data: {
-      recipientName: "Ahmad Fauzi Rahman",
-      courseName: "UX Design Foundations",
-      achievement: "UX Design Foundations",
-      description: "The bearer of this certificate has successfully completed the UX Design Foundations course, which focuses on fundamental design principles and methodologies.",
-      issueDate: "May 31, 2024",
-      certificateId: "CERT-UX-2024-001", 
-      signatory: "Founders, Uxcel",
-      organization: "Lab Universitas"
-    }
-  },
-  {
-    id: 2,
-    templateKey: "product_designer_1" as const,
-    name: "Product Designer I",
-    category: "Professional Certification",
-    icon: Award,
-    color: "from-amber-500 to-orange-600",
-    data: {
-      recipientName: "Siti Nurhaliza",
-      courseName: "Product Designer I",
-      achievement: "Product Designer I",
-      description: "The bearer of this professional certificate has demonstrated a fundamental level of Product Design mastery and passed the core competencies for each design specialty.",
-      issueDate: "June 15, 2024",
-      certificateId: "CERT-PD1-2024-002", 
-      signatory: "Founders, Uxcel",
-      organization: "uxcel"
-    }
-  },
-  {
-    id: 3,
-    templateKey: "academic" as const,
-    name: "Template Academic",
-    category: "Academic Achievement",
-    icon: GraduationCap,
-    color: "from-indigo-500 to-purple-700",
-    data: {
-      recipientName: "Budi Santoso",
-      courseName: "Penghargaan Akademik Terbaik",
-      achievement: "Mahasiswa Berprestasi",
-      description: "Sertifikat ini diberikan kepada mahasiswa yang telah menunjukkan prestasi akademik yang luar biasa dalam bidang studi dan memiliki kontribusi positif untuk lingkungan kampus.",
-      issueDate: new Date().toLocaleDateString('id-ID'),
-      certificateId: "CERT-ACAD-2024-003", 
-      signatory: "Dr. Rektor Universitas",
-      organization: "Universitas Teknologi Indonesia"
-    }
-  },
-  {
-    id: 4,
-    templateKey: "modern" as const,
-    name: "Template Modern",
-    category: "Corporate Training",
-    icon: Layout,
-    color: "from-violet-500 to-indigo-500",
-    data: {
-      recipientName: "Diana Putri",
-      courseName: "Digital Innovation Workshop",
-      achievement: "Innovation Excellence",
-      description: "This certificate recognizes completion of an intensive digital innovation program focusing on emerging technologies and creative problem-solving methodologies.",
-      issueDate: new Date().toLocaleDateString('en-US'),
-      certificateId: "CERT-MOD-2024-004", 
-      signatory: "Digital Signature",
-      organization: "Innovation Hub"
-    }
-  }
-]
+interface Certificate {
+  id: string;
+  verification_id: string;
+  certificate_title: string;
+  participant_name: string;
+  program_name: string;
+  subtitle: string;
+  issue_date: string;
+  pdf_url: string | null;
+  pdf_password: string | null;
+  signature: string | null;
+  qr_code_url: string | null;
+  verification_count: number;
+  prodi_id: string;
+  created_at: string;
+  updated_at: string;
+  prodi: {
+    kode: string;
+    nama: string;
+  };
+}
 
 export default function CertificatePreviewPage() {
-  const router = useRouter()
-  const [selectedCertificate, setSelectedCertificate] = useState(certificateSamples[0])
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
+  const { toast } = useToast();
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterPeriod, setFilterPeriod] = useState("all");
+  const [sortBy, setSortBy] = useState<"date" | "verification_id">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
-  const handleCanvasReady = (canvasElement: HTMLCanvasElement) => {
-    setCanvas(canvasElement)
-  }
+  // Fetch certificates from API
+  const fetchCertificates = useCallback(
+    async (showLoading = true) => {
+      try {
+        if (showLoading) setLoading(true);
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen)
-  }
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: "12",
+          search: searchQuery,
+          sortBy: sortBy,
+          sortOrder: sortOrder,
+        });
+
+        const response = await fetch(`/api/certificates?${params}`);
+        const result = await response.json();
+
+        if (result.success) {
+          setCertificates(result.data);
+          setTotalPages(result.pagination.totalPages);
+          setTotal(result.pagination.total);
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Gagal mengambil data sertifikat",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching certificates:", error);
+        toast({
+          title: "Error",
+          description: "Terjadi kesalahan saat mengambil data",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [page, searchQuery, sortBy, sortOrder, toast]
+  );
+
+  // Initial fetch
+  useEffect(() => {
+    fetchCertificates();
+  }, [fetchCertificates]);
+
+  // Auto-refresh every 30 seconds for real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchCertificates(false); // Fetch without showing loading spinner
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchCertificates]);
+
+  // Manual refresh
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchCertificates();
+  };
+
+  // Handle search with debounce
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setPage(1); // Reset to first page on new search
+      fetchCertificates();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  // Filter by period
+  const filteredCertificates = certificates.filter((cert) => {
+    if (filterPeriod === "all") return true;
+
+    const certDate = new Date(cert.created_at);
+    const now = new Date();
+    const daysDiff = Math.floor(
+      (now.getTime() - certDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    switch (filterPeriod) {
+      case "7days":
+        return daysDiff <= 7;
+      case "30days":
+        return daysDiff <= 30;
+      case "90days":
+        return daysDiff <= 90;
+      default:
+        return true;
+    }
+  });
+
+  // Toggle sort order for the same sortBy
+  const handleSortChange = (newSortBy: "date" | "verification_id") => {
+    if (sortBy === newSortBy) {
+      // Toggle order if clicking the same sort option
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // Set new sort by with default desc order
+      setSortBy(newSortBy);
+      setSortOrder("desc");
+    }
+  };
+
+  // Calculate statistics
+  const stats = {
+    total: total,
+    thisMonth: certificates.filter((cert) => {
+      const certDate = new Date(cert.created_at);
+      const now = new Date();
+      return (
+        certDate.getMonth() === now.getMonth() &&
+        certDate.getFullYear() === now.getFullYear()
+      );
+    }).length,
+    verified: certificates.filter((cert) => cert.verification_count > 0).length,
+    uniqueParticipants: new Set(
+      certificates.map((cert) => cert.participant_name)
+    ).size,
+  };
+
+  // Open PDF preview
+  const handleViewPDF = (cert: Certificate) => {
+    if (!cert.pdf_url) {
+      toast({
+        title: "PDF Tidak Tersedia",
+        description: "File PDF untuk sertifikat ini belum tersedia",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Show password if exists
+    if (cert.pdf_password) {
+      navigator.clipboard.writeText(cert.pdf_password);
+      toast({
+        title: "Password PDF Disalin",
+        description: `Password: ${cert.pdf_password}`,
+      });
+    }
+
+    window.open(cert.pdf_url, "_blank");
+  };
+
+  // Show certificate details
+  const handleShowDetails = (cert: Certificate) => {
+    setSelectedCert(cert);
+    setPreviewOpen(true);
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.back()}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Kembali
-              </Button>
-              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 shadow-xl">
+          <div className="absolute inset-0 bg-grid-white/10"></div>
+          <div className="relative">
+            <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-lg font-semibold">Preview Sertifikat</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {selectedCertificate.name} - {selectedCertificate.data.recipientName}
+                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                  <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <Award className="h-8 w-8 text-white" />
+                  </div>
+                  Preview Sertifikat
+                </h1>
+                <p className="text-blue-100 mt-2 text-lg">
+                  Monitoring dan preview sertifikat yang telah diterbitkan
                 </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={toggleFullscreen}>
-                <Maximize2 className="mr-2 h-4 w-4" />
-                {isFullscreen ? "Exit" : "Fullscreen"}
+              <Button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                variant="secondary"
+                size="lg"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              >
+                <RefreshCw
+                  className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                />
+                Refresh
               </Button>
-              <CertificateDownload
-                canvas={canvas}
-                fileName={`certificate-${selectedCertificate.data.recipientName.toLowerCase().replace(/\s+/g, '-')}`}
-                size="sm"
-              />
             </div>
           </div>
         </div>
-      </div>
 
-      <div className={`${isFullscreen ? 'fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col' : 'max-w-7xl mx-auto p-6'}`}>
-        {isFullscreen && (
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="font-semibold">{selectedCertificate.name}</h2>
-            <Button variant="ghost" size="sm" onClick={toggleFullscreen}>
-              ✕
-            </Button>
-          </div>
-        )}
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
+                <Award className="h-4 w-4 text-blue-500" />
+                Total Sertifikat
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-blue-600">
+                {loading ? "-" : stats.total}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Semua sertifikat
+              </p>
+            </CardContent>
+          </Card>
 
-        <div className={`${isFullscreen ? 'flex-1 flex' : 'grid grid-cols-1 xl:grid-cols-4 gap-6'}`}>
-          {/* Template Selector - Hidden in fullscreen */}
-          {!isFullscreen && (
-            <div className="xl:col-span-1">
-              <Card>
-                <CardContent className="p-4">
-                  <h3 className="font-medium mb-4">Template Sertifikat</h3>
-                  <div className="space-y-2">
-                    {certificateSamples.map((cert) => {
-                      const IconComponent = cert.icon
-                      return (
-                        <button
-                          key={cert.id}
-                          onClick={() => setSelectedCertificate(cert)}
-                          className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left ${
-                            selectedCertificate.id === cert.id
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
-                              : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                              <IconComponent className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-sm">{cert.name}</div>
-                              <div className="text-xs text-gray-600 dark:text-gray-400">
-                                {cert.data.recipientName}
-                              </div>
-                            </div>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          <Card className="border-l-4 border-l-green-500 hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
+                <TrendingUp className="h-4 w-4 text-green-500" />
+                Bulan Ini
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-green-600">
+                {loading ? "-" : stats.thisMonth}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Sertifikat baru
+              </p>
+            </CardContent>
+          </Card>
 
-          {/* Certificate Display */}
-          <div className={`${isFullscreen ? 'flex-1 flex items-center justify-center p-8' : 'xl:col-span-3'}`}>
-            <div className={`${isFullscreen ? '' : 'bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8'} flex justify-center items-center`}>
-              <div className={`${isFullscreen ? 'max-w-5xl w-full' : ''}`}>
-                {selectedCertificate.templateKey === "ux_design_foundations" || 
-                 selectedCertificate.templateKey === "product_designer_1" ? (
-                  <div className={`${isFullscreen ? 'scale-125' : 'scale-100'} transition-transform duration-300`}>
-                    <CanvasCertificate
-                      template={selectedCertificate.templateKey}
-                      data={selectedCertificate.data}
-                      width={800}
-                      height={600}
-                      onCanvasReady={handleCanvasReady}
-                    />
-                  </div>
-                ) : (
-                  <div className={`${isFullscreen ? 'scale-125' : 'scale-100'} transition-transform duration-300`}>
-                    <CertificatePreview
-                      template={selectedCertificate.templateKey}
-                      data={selectedCertificate.data}
-                      width={800}
-                      height={600}
-                    />
-                  </div>
-                )}
+          <Card className="border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
+                <CheckCircle2 className="h-4 w-4 text-purple-500" />
+                Terverifikasi
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-purple-600">
+                {loading ? "-" : stats.verified}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Sudah diverifikasi
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-gray-600">
+                <Users className="h-4 w-4 text-orange-500" />
+                Partisipan
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-orange-600">
+                {loading ? "-" : stats.uniqueParticipants}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Partisipan unik
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <Card className="shadow-xl">
+          <CardHeader>
+            <div className="space-y-4">
+              <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
+                <div>
+                  <CardTitle className="text-2xl">Daftar Sertifikat</CardTitle>
+                  <p className="text-muted-foreground mt-1">
+                    Menampilkan {filteredCertificates.length} dari {total}{" "}
+                    sertifikat
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-sm">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    Auto-refresh: 30s
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Search and Filter */}
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Cari nama peserta, program, atau nomor sertifikat..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+
+                <Select value={filterPeriod} onValueChange={setFilterPeriod}>
+                  <SelectTrigger className="w-full lg:w-[200px]">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter Periode" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Periode</SelectItem>
+                    <SelectItem value="7days">7 Hari Terakhir</SelectItem>
+                    <SelectItem value="30days">30 Hari Terakhir</SelectItem>
+                    <SelectItem value="90days">90 Hari Terakhir</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Sort Buttons */}
+                <div className="flex gap-2">
+                  <Button
+                    variant={sortBy === "date" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleSortChange("date")}
+                    className="flex items-center gap-2"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Tanggal
+                    {sortBy === "date" &&
+                      (sortOrder === "asc" ? (
+                        <ArrowUp className="h-3 w-3" />
+                      ) : (
+                        <ArrowDown className="h-3 w-3" />
+                      ))}
+                  </Button>
+
+                  <Button
+                    variant={
+                      sortBy === "verification_id" ? "default" : "outline"
+                    }
+                    size="sm"
+                    onClick={() => handleSortChange("verification_id")}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4" />
+                    No. Sertifikat
+                    {sortBy === "verification_id" &&
+                      (sortOrder === "asc" ? (
+                        <ArrowUp className="h-3 w-3" />
+                      ) : (
+                        <ArrowDown className="h-3 w-3" />
+                      ))}
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </CardHeader>
 
-        {/* Certificate Info - Hidden in fullscreen */}
-        {!isFullscreen && (
-          <div className="mt-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-3">Informasi Penerima</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Nama:</span>
-                        <span className="font-medium">{selectedCertificate.data.recipientName}</span>
+          <CardContent>
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-500 mb-4" />
+                <p className="text-muted-foreground">
+                  Memuat data sertifikat...
+                </p>
+              </div>
+            ) : filteredCertificates.length === 0 ? (
+              <div className="text-center py-20">
+                <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">
+                  Tidak ada sertifikat
+                </h3>
+                <p className="text-muted-foreground">
+                  {searchQuery || filterPeriod !== "all"
+                    ? "Tidak ada sertifikat yang sesuai dengan filter"
+                    : "Belum ada sertifikat yang diterbitkan"}
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Certificate Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredCertificates.map((cert) => (
+                    <Card
+                      key={cert.id}
+                      className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-300"
+                    >
+                      <CardContent className="p-6">
+                        {/* Certificate Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                            <Award className="h-6 w-6 text-white" />
+                          </div>
+                          <Badge
+                            variant={
+                              cert.verification_count > 0
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {cert.verification_count > 0 ? (
+                              <CheckCircle2 className="h-3 w-3 mr-1" />
+                            ) : (
+                              <XCircle className="h-3 w-3 mr-1" />
+                            )}
+                            {cert.verification_count > 0
+                              ? "Verified"
+                              : "Unverified"}
+                          </Badge>
+                        </div>
+
+                        {/* Certificate Info */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="font-bold text-lg line-clamp-2 group-hover:text-blue-600 transition-colors">
+                              {cert.certificate_title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {cert.program_name}
+                            </p>
+                          </div>
+
+                          <div className="pt-3 border-t space-y-2">
+                            <div className="flex items-center gap-2 text-sm">
+                              <Users className="h-4 w-4 text-gray-400" />
+                              <span className="font-medium">
+                                {cert.participant_name}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Calendar className="h-4 w-4" />
+                              <span>{formatDate(cert.issue_date)}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm">
+                              <FileText className="h-4 w-4 text-gray-400" />
+                              <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+                                {cert.verification_id}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 pt-4">
+                            <Button
+                              onClick={() => handleViewPDF(cert)}
+                              disabled={!cert.pdf_url}
+                              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                              size="sm"
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Lihat PDF
+                            </Button>
+
+                            <Button
+                              onClick={() => handleShowDetails(cert)}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Info className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          {/* Verification Count */}
+                          {cert.verification_count > 0 && (
+                            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-2 border-t">
+                              <Eye className="h-3 w-3" />
+                              <span>
+                                Diverifikasi {cert.verification_count}x
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t">
+                    <div className="text-sm text-muted-foreground">
+                      Halaman {page} dari {totalPages} ({total} total
+                      sertifikat)
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                      >
+                        Sebelumnya
+                      </Button>
+
+                      <div className="flex gap-1">
+                        {Array.from(
+                          { length: Math.min(5, totalPages) },
+                          (_, i) => {
+                            const pageNum = i + 1;
+                            return (
+                              <Button
+                                key={pageNum}
+                                variant={
+                                  page === pageNum ? "default" : "outline"
+                                }
+                                size="sm"
+                                onClick={() => setPage(pageNum)}
+                                className="w-10"
+                              >
+                                {pageNum}
+                              </Button>
+                            );
+                          }
+                        )}
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Pencapaian:</span>
-                        <span className="font-medium">{selectedCertificate.data.achievement}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Tanggal:</span>
-                        <span className="font-medium">{selectedCertificate.data.issueDate}</span>
-                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setPage((p) => Math.min(totalPages, p + 1))
+                        }
+                        disabled={page === totalPages}
+                      >
+                        Selanjutnya
+                      </Button>
                     </div>
                   </div>
+                )}
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-                  <div>
-                    <h4 className="font-medium mb-3">Detail Sertifikat</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">ID:</span>
-                        <span className="font-mono text-xs">{selectedCertificate.data.certificateId}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Penerbit:</span>
-                        <span className="font-medium">{selectedCertificate.data.organization}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Penandatangan:</span>
-                        <span className="font-medium">{selectedCertificate.data.signatory}</span>
-                      </div>
-                    </div>
+      {/* Certificate Details Dialog */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-blue-600" />
+              Detail Sertifikat
+            </DialogTitle>
+            <DialogDescription>
+              Informasi lengkap tentang sertifikat yang dipilih
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedCert && (
+            <div className="space-y-6">
+              {/* Certificate Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Judul Sertifikat
+                  </label>
+                  <p className="text-sm font-semibold">
+                    {selectedCert.certificate_title}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Program
+                  </label>
+                  <p className="text-sm">{selectedCert.program_name}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Nama Peserta
+                  </label>
+                  <p className="text-sm font-semibold">
+                    {selectedCert.participant_name}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Tanggal Terbit
+                  </label>
+                  <p className="text-sm">
+                    {formatDate(selectedCert.issue_date)}
+                  </p>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    ID Verifikasi
+                  </label>
+                  <p className="text-sm font-mono bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded">
+                    {selectedCert.verification_id}
+                  </p>
+                </div>
+
+                {selectedCert.subtitle && (
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-sm font-medium text-gray-600">
+                      Subtitle
+                    </label>
+                    <p className="text-sm">{selectedCert.subtitle}</p>
                   </div>
+                )}
 
-                  <div>
-                    <h4 className="font-medium mb-3">Template Info</h4>
-                    <div className="space-y-2 text-sm">
-                      <Badge variant="outline">{selectedCertificate.category}</Badge>
-                      <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed">
-                        {selectedCertificate.data.description}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Program Studi
+                  </label>
+                  <p className="text-sm">{selectedCert.prodi.nama}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Status Verifikasi
+                  </label>
+                  <Badge
+                    variant={
+                      selectedCert.verification_count > 0
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {selectedCert.verification_count > 0
+                      ? `Verified (${selectedCert.verification_count}x)`
+                      : "Belum Diverifikasi"}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* PDF Password */}
+              {selectedCert.pdf_password && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-amber-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                        Password PDF
+                      </h4>
+                      <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">
+                        Sertifikat ini dilindungi dengan password:
                       </p>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 bg-white dark:bg-gray-900 px-3 py-2 rounded border text-sm font-mono">
+                          {selectedCert.pdf_password}
+                        </code>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              selectedCert.pdf_password!
+                            );
+                            toast({
+                              title: "Password Disalin",
+                              description:
+                                "Password telah disalin ke clipboard",
+                            });
+                          }}
+                        >
+                          Salin
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => handleViewPDF(selectedCert)}
+                  disabled={!selectedCert.pdf_url}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Buka PDF di Tab Baru
+                </Button>
+              </div>
+
+              {/* Timestamps */}
+              <div className="pt-4 border-t text-xs text-muted-foreground space-y-1">
+                <div className="flex justify-between">
+                  <span>Dibuat:</span>
+                  <span>{formatDate(selectedCert.created_at)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Terakhir Diupdate:</span>
+                  <span>{formatDate(selectedCert.updated_at)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-  )
+  );
 }

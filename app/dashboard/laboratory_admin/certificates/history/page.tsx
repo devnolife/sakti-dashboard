@@ -1,226 +1,217 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ClipboardList,
   Search,
-  Filter,
   Download,
   Eye,
   Calendar,
   Users,
   FileText,
-  Star,
   TrendingUp,
   BarChart3,
   Award,
-  Clock,
-  CheckCircle,
   User,
   GraduationCap,
-  Trash2,
   Loader2,
   Lock,
   Copy,
   QrCode,
-  Shield
-} from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+  Shield,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Certificate {
-  id: string
-  verification_id: string
-  certificate_title: string
-  participant_name: string
-  program_name: string
-  subtitle: string
-  issue_date: string
-  meetings: number
-  total_score: number
-  materials: number
-  attendance_rate: number
-  assignment_completion: number
-  participation_score: number
-  overall_grade: string
-  learning_hours: number
-  weekly_data: number[]
-  learning_velocity: number
-  collaboration_score: number
-  problem_solving_efficiency: number
-  competencies: any
-  technologies: string[]
-  qr_code_url: string | null
-  pdf_url: string | null
-  pdf_password: string | null
-  signature: string | null
-  qr_signature_url: string | null
-  signed_at: string | null
-  signed_by: string | null
-  verification_count: number
-  prodi_id: string
-  created_by: string | null
-  created_at: string
-  updated_at: string
+  id: string;
+  verification_id: string;
+  certificate_title: string;
+  participant_name: string;
+  program_name: string;
+  subtitle: string;
+  issue_date: string;
+  meetings: number;
+  total_score: number;
+  materials: number;
+  attendance_rate: number;
+  assignment_completion: number;
+  participation_score: number;
+  overall_grade: string;
+  learning_hours: number;
+  weekly_data: number[];
+  learning_velocity: number;
+  collaboration_score: number;
+  problem_solving_efficiency: number;
+  competencies: any;
+  technologies: string[];
+  qr_code_url: string | null;
+  pdf_url: string | null;
+  pdf_password: string | null;
+  signature: string | null;
+  qr_signature_url: string | null;
+  signed_at: string | null;
+  signed_by: string | null;
+  verification_count: number;
+  prodi_id: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
   prodi: {
-    kode: string
-    nama: string
-  }
+    kode: string;
+    nama: string;
+  };
 }
 
 export default function CertificateHistoryPage() {
-  const { toast } = useToast()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedPeriod, setSelectedPeriod] = useState("all")
-  const [certificates, setCertificates] = useState<Certificate[]>([])
-  const [loading, setLoading] = useState(true)
-  const [deleting, setDeleting] = useState<string | null>(null)
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [total, setTotal] = useState(0)
+  const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedPeriod, setSelectedPeriod] = useState("all");
+  const [sortBy, setSortBy] = useState<"date" | "verification_id">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
   const fetchCertificates = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
         limit: "10",
-        search: searchQuery
-      })
+        search: searchQuery,
+        sortBy: sortBy,
+        sortOrder: sortOrder,
+      });
 
-      const response = await fetch(`/api/certificates?${params}`)
-      const result = await response.json()
+      const response = await fetch(`/api/certificates?${params}`);
+      const result = await response.json();
 
       if (result.success) {
-        setCertificates(result.data)
-        setTotalPages(result.pagination.totalPages)
-        setTotal(result.pagination.total)
+        setCertificates(result.data);
+        setTotalPages(result.pagination.totalPages);
+        setTotal(result.pagination.total);
       } else {
         toast({
           title: "Error",
           description: result.error || "Failed to fetch certificates",
-          variant: "destructive"
-        })
+          variant: "destructive",
+        });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to fetch certificates",
-        variant: "destructive"
-      })
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCertificates()
-  }, [page, searchQuery])
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus sertifikat ini?")) return
-
-    try {
-      setDeleting(id)
-      const response = await fetch(`/api/certificates/${id}`, {
-        method: "DELETE"
-      })
-      const result = await response.json()
-
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "Certificate deleted successfully"
-        })
-        fetchCertificates()
-      } else {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to delete certificate",
-          variant: "destructive"
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete certificate",
-        variant: "destructive"
-      })
-    } finally {
-      setDeleting(null)
-    }
-  }
+    fetchCertificates();
+  }, [page, searchQuery, sortBy, sortOrder]);
 
   const copyPassword = (password: string) => {
-    navigator.clipboard.writeText(password)
+    navigator.clipboard.writeText(password);
     toast({
       title: "Copied!",
-      description: "Password berhasil disalin ke clipboard"
-    })
-  }
+      description: "Password berhasil disalin ke clipboard",
+    });
+  };
 
   const handleDownloadPDF = (cert: Certificate) => {
     if (!cert.pdf_url) {
       toast({
         title: "Error",
         description: "PDF tidak tersedia untuk sertifikat ini",
-        variant: "destructive"
-      })
-      return
+        variant: "destructive",
+      });
+      return;
     }
 
     // Show password info before downloading
     if (cert.pdf_password) {
-      const message = `Password PDF: ${cert.pdf_password}\n\nPassword telah disalin ke clipboard. Klik OK untuk download PDF.`
-      copyPassword(cert.pdf_password)
+      const message = `Password PDF: ${cert.pdf_password}\n\nPassword telah disalin ke clipboard. Klik OK untuk download PDF.`;
+      copyPassword(cert.pdf_password);
       if (confirm(message)) {
-        window.open(cert.pdf_url, '_blank')
+        window.open(cert.pdf_url, "_blank");
       }
     } else {
-      window.open(cert.pdf_url, '_blank')
+      window.open(cert.pdf_url, "_blank");
     }
-  }
+  };
 
-  const filteredHistory = certificates.filter(cert => {
+  const filteredHistory = certificates.filter((cert) => {
     // Period filtering
-    let matchesPeriod = true
+    let matchesPeriod = true;
     if (selectedPeriod !== "all") {
-      const certDate = new Date(cert.created_at)
-      const now = new Date()
-      const daysDiff = Math.floor((now.getTime() - certDate.getTime()) / (1000 * 60 * 60 * 24))
+      const certDate = new Date(cert.created_at);
+      const now = new Date();
+      const daysDiff = Math.floor(
+        (now.getTime() - certDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       switch (selectedPeriod) {
         case "7days":
-          matchesPeriod = daysDiff <= 7
-          break
+          matchesPeriod = daysDiff <= 7;
+          break;
         case "30days":
-          matchesPeriod = daysDiff <= 30
-          break
+          matchesPeriod = daysDiff <= 30;
+          break;
         case "90days":
-          matchesPeriod = daysDiff <= 90
-          break
+          matchesPeriod = daysDiff <= 90;
+          break;
       }
     }
 
-    return matchesPeriod
-  })
+    return matchesPeriod;
+  });
+
+  // Toggle sort order for the same sortBy
+  const handleSortChange = (newSortBy: "date" | "verification_id") => {
+    if (sortBy === newSortBy) {
+      // Toggle order if clicking the same sort option
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // Set new sort by with default desc order
+      setSortBy(newSortBy);
+      setSortOrder("desc");
+    }
+  };
 
   const stats = {
     total: total,
-    thisMonth: certificates.filter(cert => {
-      const certDate = new Date(cert.created_at)
-      const now = new Date()
-      return certDate.getMonth() === now.getMonth() && certDate.getFullYear() === now.getFullYear()
+    thisMonth: certificates.filter((cert) => {
+      const certDate = new Date(cert.created_at);
+      const now = new Date();
+      return (
+        certDate.getMonth() === now.getMonth() &&
+        certDate.getFullYear() === now.getFullYear()
+      );
     }).length,
     totalCerts: certificates.length,
-    uniqueParticipants: new Set(certificates.map(cert => cert.participant_name)).size
-  }
+    uniqueParticipants: new Set(
+      certificates.map((cert) => cert.participant_name)
+    ).size,
+  };
 
   return (
     <div className="space-y-6">
@@ -236,7 +227,9 @@ export default function CertificateHistoryPage() {
               Riwayat Sertifikat
             </span>
           </h1>
-          <p className="text-muted-foreground mt-2">Lihat dan kelola semua sertifikat yang telah dibuat</p>
+          <p className="text-muted-foreground mt-2">
+            Lihat dan kelola semua sertifikat yang telah dibuat
+          </p>
         </div>
       </div>
 
@@ -250,7 +243,9 @@ export default function CertificateHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "-" : stats.total}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "-" : stats.total}
+            </div>
             <p className="text-xs text-muted-foreground">Semua sertifikat</p>
           </CardContent>
         </Card>
@@ -263,7 +258,9 @@ export default function CertificateHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "-" : stats.thisMonth}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "-" : stats.thisMonth}
+            </div>
             <p className="text-xs text-muted-foreground">Sertifikat baru</p>
           </CardContent>
         </Card>
@@ -276,8 +273,12 @@ export default function CertificateHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "-" : stats.totalCerts}</div>
-            <p className="text-xs text-muted-foreground">Sertifikat ditampilkan</p>
+            <div className="text-2xl font-bold">
+              {loading ? "-" : stats.totalCerts}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Sertifikat ditampilkan
+            </p>
           </CardContent>
         </Card>
 
@@ -289,7 +290,9 @@ export default function CertificateHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? "-" : stats.uniqueParticipants}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "-" : stats.uniqueParticipants}
+            </div>
             <p className="text-xs text-muted-foreground">Partisipan berbeda</p>
           </CardContent>
         </Card>
@@ -314,7 +317,9 @@ export default function CertificateHistoryPage() {
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
                 <div>
                   <CardTitle>Riwayat Sertifikat</CardTitle>
-                  <p className="text-muted-foreground">Semua sertifikat yang telah dibuat dan diterbitkan</p>
+                  <p className="text-muted-foreground">
+                    Semua sertifikat yang telah dibuat dan diterbitkan
+                  </p>
                 </div>
                 <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
                   <Download className="mr-2 h-4 w-4" />
@@ -334,7 +339,10 @@ export default function CertificateHistoryPage() {
                   />
                 </div>
 
-                <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                <Select
+                  value={selectedPeriod}
+                  onValueChange={setSelectedPeriod}
+                >
                   <SelectTrigger className="w-full lg:w-[180px]">
                     <SelectValue placeholder="Periode" />
                   </SelectTrigger>
@@ -345,6 +353,43 @@ export default function CertificateHistoryPage() {
                     <SelectItem value="90days">90 Hari Terakhir</SelectItem>
                   </SelectContent>
                 </Select>
+
+                {/* Sort Buttons */}
+                <div className="flex gap-2">
+                  <Button
+                    variant={sortBy === "date" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleSortChange("date")}
+                    className="flex items-center gap-2"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Tanggal
+                    {sortBy === "date" &&
+                      (sortOrder === "asc" ? (
+                        <ArrowUp className="h-3 w-3" />
+                      ) : (
+                        <ArrowDown className="h-3 w-3" />
+                      ))}
+                  </Button>
+
+                  <Button
+                    variant={
+                      sortBy === "verification_id" ? "default" : "outline"
+                    }
+                    size="sm"
+                    onClick={() => handleSortChange("verification_id")}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4" />
+                    No. Sertifikat
+                    {sortBy === "verification_id" &&
+                      (sortOrder === "asc" ? (
+                        <ArrowUp className="h-3 w-3" />
+                      ) : (
+                        <ArrowDown className="h-3 w-3" />
+                      ))}
+                  </Button>
+                </div>
 
                 {(searchQuery || selectedPeriod !== "all") && (
                   <Badge variant="secondary">
@@ -363,21 +408,32 @@ export default function CertificateHistoryPage() {
                 <>
                   <div className="space-y-4">
                     {filteredHistory.map((cert) => (
-                      <Card key={cert.id} className="hover:shadow-md transition-all duration-200">
+                      <Card
+                        key={cert.id}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <CardContent className="p-4">
                           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                             <div className="flex items-start gap-4 flex-1">
                               <Avatar className="h-12 w-12 bg-gradient-to-br from-green-400 to-emerald-400">
                                 <AvatarFallback className="text-white font-semibold">
-                                  {cert.participant_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                  {cert.participant_name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")
+                                    .slice(0, 2)}
                                 </AvatarFallback>
                               </Avatar>
 
                               <div className="flex-1">
                                 <div className="flex items-start justify-between mb-2">
                                   <div>
-                                    <h3 className="font-semibold text-lg">{cert.certificate_title}</h3>
-                                    <p className="text-sm text-muted-foreground">{cert.subtitle}</p>
+                                    <h3 className="font-semibold text-lg">
+                                      {cert.certificate_title}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                      {cert.subtitle}
+                                    </p>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
@@ -396,24 +452,36 @@ export default function CertificateHistoryPage() {
                                   <div className="flex items-center gap-2">
                                     <User className="h-4 w-4 text-muted-foreground" />
                                     <div>
-                                      <div className="font-medium">{cert.participant_name}</div>
-                                      <div className="text-muted-foreground">Peserta</div>
+                                      <div className="font-medium">
+                                        {cert.participant_name}
+                                      </div>
+                                      <div className="text-muted-foreground">
+                                        Peserta
+                                      </div>
                                     </div>
                                   </div>
 
                                   <div className="flex items-center gap-2">
                                     <GraduationCap className="h-4 w-4 text-muted-foreground" />
                                     <div>
-                                      <div className="font-medium">{cert.program_name}</div>
-                                      <div className="text-muted-foreground">Program</div>
+                                      <div className="font-medium">
+                                        {cert.program_name}
+                                      </div>
+                                      <div className="text-muted-foreground">
+                                        Program
+                                      </div>
                                     </div>
                                   </div>
 
                                   <div className="flex items-center gap-2">
                                     <Award className="h-4 w-4 text-muted-foreground" />
                                     <div>
-                                      <div className="font-medium">{cert.total_score} poin</div>
-                                      <div className="text-muted-foreground">Total Skor</div>
+                                      <div className="font-medium">
+                                        {cert.total_score} poin
+                                      </div>
+                                      <div className="text-muted-foreground">
+                                        Total Skor
+                                      </div>
                                     </div>
                                   </div>
 
@@ -421,13 +489,17 @@ export default function CertificateHistoryPage() {
                                     <Calendar className="h-4 w-4 text-muted-foreground" />
                                     <div>
                                       <div className="font-medium">
-                                        {new Date(cert.issue_date).toLocaleDateString('id-ID', {
-                                          day: '2-digit',
-                                          month: 'short',
-                                          year: 'numeric'
+                                        {new Date(
+                                          cert.issue_date
+                                        ).toLocaleDateString("id-ID", {
+                                          day: "2-digit",
+                                          month: "short",
+                                          year: "numeric",
                                         })}
                                       </div>
-                                      <div className="text-muted-foreground">Tanggal terbit</div>
+                                      <div className="text-muted-foreground">
+                                        Tanggal terbit
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -438,17 +510,18 @@ export default function CertificateHistoryPage() {
                                       <FileText className="h-3 w-3" />
                                       ID: {cert.verification_id}
                                     </span>
-                                    <span>
-                                      Prodi: {cert.prodi.nama}
-                                    </span>
+                                    <span>Prodi: {cert.prodi.nama}</span>
                                     {cert.pdf_password && (
                                       <button
-                                        onClick={() => copyPassword(cert.pdf_password!)}
+                                        onClick={() =>
+                                          copyPassword(cert.pdf_password!)
+                                        }
                                         className="flex items-center gap-1 hover:text-primary transition-colors"
                                         title="Copy PDF Password"
                                       >
                                         <Lock className="h-3 w-3" />
-                                        Password: {cert.pdf_password.substring(0, 4)}***
+                                        Password:{" "}
+                                        {cert.pdf_password.substring(0, 4)}***
                                         <Copy className="h-3 w-3 ml-1" />
                                       </button>
                                     )}
@@ -459,7 +532,12 @@ export default function CertificateHistoryPage() {
                                         variant="default"
                                         size="sm"
                                         className="bg-blue-600 hover:bg-blue-700"
-                                        onClick={() => window.open(cert.qr_signature_url!, '_blank')}
+                                        onClick={() =>
+                                          window.open(
+                                            cert.qr_signature_url!,
+                                            "_blank"
+                                          )
+                                        }
                                         title="Download QR Code Signature"
                                       >
                                         <QrCode className="h-4 w-4 mr-1" />
@@ -480,22 +558,14 @@ export default function CertificateHistoryPage() {
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      onClick={() => window.open(`/dashboard/laboratory_admin/certificates/preview?id=${cert.id}`, '_blank')}
+                                      onClick={() =>
+                                        window.open(
+                                          `/dashboard/laboratory_admin/certificates/preview?id=${cert.id}`,
+                                          "_blank"
+                                        )
+                                      }
                                     >
                                       <Eye className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                      onClick={() => handleDelete(cert.id)}
-                                      disabled={deleting === cert.id}
-                                    >
-                                      {deleting === cert.id ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                      ) : (
-                                        <Trash2 className="h-4 w-4" />
-                                      )}
                                     </Button>
                                   </div>
                                 </div>
@@ -509,9 +579,13 @@ export default function CertificateHistoryPage() {
                     {filteredHistory.length === 0 && !loading && (
                       <div className="text-center py-12">
                         <ClipboardList className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Tidak ada sertifikat ditemukan</h3>
+                        <h3 className="text-lg font-semibold mb-2">
+                          Tidak ada sertifikat ditemukan
+                        </h3>
                         <p className="text-muted-foreground">
-                          {searchQuery ? "Coba ubah kata kunci pencarian" : "Belum ada sertifikat yang dibuat"}
+                          {searchQuery
+                            ? "Coba ubah kata kunci pencarian"
+                            : "Belum ada sertifikat yang dibuat"}
                         </p>
                       </div>
                     )}
@@ -527,7 +601,7 @@ export default function CertificateHistoryPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setPage(p => Math.max(1, p - 1))}
+                          onClick={() => setPage((p) => Math.max(1, p - 1))}
                           disabled={page === 1}
                         >
                           Sebelumnya
@@ -535,7 +609,9 @@ export default function CertificateHistoryPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                          onClick={() =>
+                            setPage((p) => Math.min(totalPages, p + 1))
+                          }
                           disabled={page === totalPages}
                         >
                           Selanjutnya
@@ -558,33 +634,49 @@ export default function CertificateHistoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {['A', 'B', 'C', 'D', 'E'].map(grade => {
-                    const count = certificates.filter(cert => cert.overall_grade === grade).length
-                    const percentage = certificates.length > 0
-                      ? Math.round((count / certificates.length) * 100)
-                      : 0
+                  {["A", "B", "C", "D", "E"].map((grade) => {
+                    const count = certificates.filter(
+                      (cert) => cert.overall_grade === grade
+                    ).length;
+                    const percentage =
+                      certificates.length > 0
+                        ? Math.round((count / certificates.length) * 100)
+                        : 0;
 
                     return (
-                      <div key={grade} className="flex items-center justify-between">
+                      <div
+                        key={grade}
+                        className="flex items-center justify-between"
+                      >
                         <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${
-                            grade === 'A' ? 'from-green-400 to-green-600' :
-                            grade === 'B' ? 'from-blue-400 to-blue-600' :
-                            grade === 'C' ? 'from-yellow-400 to-yellow-600' :
-                            grade === 'D' ? 'from-orange-400 to-orange-600' :
-                            'from-red-400 to-red-600'
-                          }`}></div>
+                          <div
+                            className={`w-3 h-3 rounded-full bg-gradient-to-r ${
+                              grade === "A"
+                                ? "from-green-400 to-green-600"
+                                : grade === "B"
+                                ? "from-blue-400 to-blue-600"
+                                : grade === "C"
+                                ? "from-yellow-400 to-yellow-600"
+                                : grade === "D"
+                                ? "from-orange-400 to-orange-600"
+                                : "from-red-400 to-red-600"
+                            }`}
+                          ></div>
                           <span className="font-medium">Grade {grade}</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="w-24 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full bg-gradient-to-r ${
-                                grade === 'A' ? 'from-green-400 to-green-600' :
-                                grade === 'B' ? 'from-blue-400 to-blue-600' :
-                                grade === 'C' ? 'from-yellow-400 to-yellow-600' :
-                                grade === 'D' ? 'from-orange-400 to-orange-600' :
-                                'from-red-400 to-red-600'
+                                grade === "A"
+                                  ? "from-green-400 to-green-600"
+                                  : grade === "B"
+                                  ? "from-blue-400 to-blue-600"
+                                  : grade === "C"
+                                  ? "from-yellow-400 to-yellow-600"
+                                  : grade === "D"
+                                  ? "from-orange-400 to-orange-600"
+                                  : "from-red-400 to-red-600"
                               }`}
                               style={{ width: `${percentage}%` }}
                             ></div>
@@ -594,7 +686,7 @@ export default function CertificateHistoryPage() {
                           </span>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </CardContent>
@@ -610,34 +702,66 @@ export default function CertificateHistoryPage() {
                   <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
                       {certificates.length > 0
-                        ? Math.round(certificates.reduce((sum, c) => sum + c.attendance_rate, 0) / certificates.length)
-                        : 0}%
+                        ? Math.round(
+                            certificates.reduce(
+                              (sum, c) => sum + c.attendance_rate,
+                              0
+                            ) / certificates.length
+                          )
+                        : 0}
+                      %
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">Kehadiran</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Kehadiran
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
                       {certificates.length > 0
-                        ? Math.round(certificates.reduce((sum, c) => sum + c.assignment_completion, 0) / certificates.length)
-                        : 0}%
+                        ? Math.round(
+                            certificates.reduce(
+                              (sum, c) => sum + c.assignment_completion,
+                              0
+                            ) / certificates.length
+                          )
+                        : 0}
+                      %
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">Tugas</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Tugas
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                     <div className="text-2xl font-bold text-purple-600">
                       {certificates.length > 0
-                        ? Math.round(certificates.reduce((sum, c) => sum + c.collaboration_score, 0) / certificates.length)
-                        : 0}%
+                        ? Math.round(
+                            certificates.reduce(
+                              (sum, c) => sum + c.collaboration_score,
+                              0
+                            ) / certificates.length
+                          )
+                        : 0}
+                      %
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">Kolaborasi</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Kolaborasi
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                     <div className="text-2xl font-bold text-orange-600">
                       {certificates.length > 0
-                        ? Math.round(certificates.reduce((sum, c) => sum + c.learning_velocity, 0) / certificates.length)
-                        : 0}%
+                        ? Math.round(
+                            certificates.reduce(
+                              (sum, c) => sum + c.learning_velocity,
+                              0
+                            ) / certificates.length
+                          )
+                        : 0}
+                      %
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">Kecepatan Belajar</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Kecepatan Belajar
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -646,5 +770,5 @@ export default function CertificateHistoryPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
